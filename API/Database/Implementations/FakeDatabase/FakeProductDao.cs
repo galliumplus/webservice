@@ -16,7 +16,7 @@ namespace GalliumPlusAPI.Database.Implementations.FakeDatabase
                     NonMemberPrice = 0.80,
                     MemberPrice = 0.60,
                     Availability = Availability.AUTO,
-                    CategoryId = 0,
+                    CategoryId = 1,
                 },
                 new Product {
                     Id = 1,
@@ -30,11 +30,11 @@ namespace GalliumPlusAPI.Database.Implementations.FakeDatabase
                 new Product {
                     Id = 2,
                     Name = "Pablo",
-                    Stock = 20,
+                    Stock = 1,
                     NonMemberPrice = 999.99,
                     MemberPrice = 500.00,
                     Availability = Availability.ALWAYS,
-                    CategoryId = 0,
+                    CategoryId = 2,
                 },
                 new Product {
                     Id = 3,
@@ -43,7 +43,7 @@ namespace GalliumPlusAPI.Database.Implementations.FakeDatabase
                     NonMemberPrice = 1.00,
                     MemberPrice = 0.80,
                     Availability = Availability.AUTO,
-                    CategoryId = 0,
+                    CategoryId = 1,
                 },
             };
         }
@@ -68,11 +68,12 @@ namespace GalliumPlusAPI.Database.Implementations.FakeDatabase
             return this.products[id];
         }
 
-        public void Update(int id, Product update)
+        public void Update(int id, Product product)
         {
             lock (products)
             {
-                if (update.Name != null) this.products[id].Name = update.Name;
+                product.Id = id;
+                this.products[id] = product;
             }
         }
 
