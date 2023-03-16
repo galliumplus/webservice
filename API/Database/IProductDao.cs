@@ -7,10 +7,10 @@ namespace GalliumPlusAPI.Database
         public void Create(Product product);
 
         public IEnumerable<Product> ReadAll();
+        public IEnumerable<Product> ReadAll(bool availableOnly);
+        public IEnumerable<Product> ReadAll(bool availableOnly, int categoryId);
 
-        public IEnumerable<Product> ReadAvailable();
-
-        public Product ReadOne(int id);
+        public Product? ReadOne(int id);
 
         public void Update(int id, Product product);
 

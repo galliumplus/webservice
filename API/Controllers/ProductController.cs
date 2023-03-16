@@ -1,12 +1,14 @@
-﻿using GalliumPlusAPI.Database;
+﻿using GalliumPlusAPI.Controllers;
+using GalliumPlusAPI.Database;
+using GalliumPlusAPI.Exceptions;
 using GalliumPlusAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 
-namespace API.Controllers
+namespace GalliumPlusAPI.Controllers
 {
     [Route("api/products")]
     [ApiController]
-    public class ProductController : ControllerBase
+    public class ProductController : Controller
     {
         private IProductDao productDao;
 
@@ -16,39 +18,64 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<Product> GetAll()
+        public IActionResult GetAll(bool availableOnly, int? category)
         {
-            return this.productDao.ReadAll();
-        }
-
-        [HttpGet("available")]
-        public IEnumerable<Product> GetAvailable()
-        {
-            return this.productDao.ReadAvailable();
+            if (category is int cat)
+            {
+                return Json(this.productDao.ReadAll(availableOnly, cat));
+            }
+            else
+            {
+                return Json(this.productDao.ReadAll(availableOnly));
+            }
         }
 
         [HttpGet("{id}")]
-        public Product Get(int id)
+        public IActionResult Get(int id)
         {
-            return this.productDao.ReadOne(id);
+            if (this.productDao.ReadOne(id) is Product product)
+            {
+                return Json(product);
+            }
+            else
+            {
+                return NotFound();
+            }
         }
 
         [HttpPost]
-        public void Post(Product newProduct)
+        public IActionResult Post(Product newProduct)
         {
             this.productDao.Create(newProduct);
+            return Created();
         }
 
         [HttpPut("{id}")]
-        public void Patch(int id, Product updatedProduct)
+        public IActionResult Patch(int id, Product updatedProduct)
         {
-            this.productDao.Update(id, updatedProduct);
+            try
+            {
+                this.productDao.Update(id, updatedProduct);
+                return Ok();
+            }
+            catch(ItemNotFoundException)
+            {
+                return NotFound();
+            }
         }
 
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public IActionResult Delete(int id)
         {
-            this.productDao.Delete(id);
+            try
+            {
+                this.productDao.Delete(id);
+                return Ok();
+            }
+            catch(ItemNotFoundException)
+            {
+                return NotFound();
+            }
         }
     }
 }

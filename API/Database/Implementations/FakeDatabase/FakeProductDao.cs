@@ -63,6 +63,16 @@ namespace GalliumPlusAPI.Database.Implementations.FakeDatabase
             return this.products;
         }
 
+        public IEnumerable<Product> ReadAll(bool availableOnly)
+        {
+            return this.products.FindAll(product => !availableOnly || product.Available);
+        }
+
+        public IEnumerable<Product> ReadAll(bool availableOnly, int categoryId)
+        {
+            return this.products.FindAll(product => (!availableOnly || product.Available) && (product.CategoryId == categoryId));
+        }
+
         public Product ReadOne(int id)
         {
             return this.products[id];
