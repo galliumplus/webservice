@@ -40,7 +40,7 @@ namespace GalliumPlusAPI.Models
         /// <summary>
         /// Catégorie du produit.
         /// </summary>
-        public int CategoryId { get; set; }
+        public int Category { get; set; }
     
         /// <summary>
         /// Indique si le produit est disponible ou non.
