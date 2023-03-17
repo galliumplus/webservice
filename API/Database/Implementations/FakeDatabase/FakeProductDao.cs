@@ -1,4 +1,5 @@
-﻿using GalliumPlusAPI.Models;
+﻿using GalliumPlusAPI.Database.Criteria;
+using GalliumPlusAPI.Models;
 
 namespace GalliumPlusAPI.Database.Implementations.FakeDatabase
 {
@@ -63,16 +64,6 @@ namespace GalliumPlusAPI.Database.Implementations.FakeDatabase
             return this.products;
         }
 
-        public IEnumerable<Product> ReadAll(bool availableOnly)
-        {
-            return this.products.FindAll(product => !availableOnly || product.Available);
-        }
-
-        public IEnumerable<Product> ReadAll(bool availableOnly, int categoryId)
-        {
-            return this.products.FindAll(product => (!availableOnly || product.Available) && (product.CategoryId == categoryId));
-        }
-
         public Product ReadOne(int id)
         {
             return this.products[id];
@@ -98,6 +89,17 @@ namespace GalliumPlusAPI.Database.Implementations.FakeDatabase
         public IEnumerable<Product> ReadAvailable()
         {
             return this.products.FindAll(product => product.Available);
+        }
+
+        private static Predicate<Product> ToPredicate(ProductCriteria criteria)
+        {
+            return product => (!criteria.AvailableOnly || product.Available)
+                           && (criteria.Category == null || product.CategoryId == criteria.Category);
+        }
+
+        public IEnumerable<Product> FindAll(ProductCriteria criteria)
+        {
+            return this.products.FindAll(ToPredicate(criteria));
         }
     }
 }

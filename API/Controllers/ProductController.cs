@@ -1,8 +1,10 @@
 ﻿using GalliumPlusAPI.Controllers;
 using GalliumPlusAPI.Database;
+using GalliumPlusAPI.Database.Criteria;
 using GalliumPlusAPI.Exceptions;
 using GalliumPlusAPI.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.Runtime.CompilerServices;
 
 namespace GalliumPlusAPI.Controllers
 {
@@ -18,16 +20,11 @@ namespace GalliumPlusAPI.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAll(bool availableOnly, int? category)
+        public IActionResult GetAll(int? category, bool availableOnly = true)
         {
-            if (category is int cat)
-            {
-                return Json(this.productDao.ReadAll(availableOnly, cat));
-            }
-            else
-            {
-                return Json(this.productDao.ReadAll(availableOnly));
-            }
+            return Json(this.productDao.FindAll(
+                new ProductCriteria { AvailableOnly = availableOnly, Category = category }
+            ));
         }
 
         [HttpGet("{id}")]
