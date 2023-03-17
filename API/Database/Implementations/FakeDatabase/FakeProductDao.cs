@@ -46,6 +46,24 @@ namespace GalliumPlusAPI.Database.Implementations.FakeDatabase
                     Availability = Availability.AUTO,
                     CategoryId = 1,
                 },
+                new Product {
+                    Id = 4,
+                    Name = "Chocolat chaud",
+                    Stock = 11,
+                    NonMemberPrice = 0.70,
+                    MemberPrice = 0.50,
+                    Availability = Availability.AUTO,
+                    CategoryId = 0,
+                },
+                new Product {
+                    Id = 5,
+                    Name = "Madeleine",
+                    Stock = 24,
+                    NonMemberPrice = 1.00,
+                    MemberPrice = 0.80,
+                    Availability = Availability.AUTO,
+                    CategoryId = 1,
+                },
             };
         }
 

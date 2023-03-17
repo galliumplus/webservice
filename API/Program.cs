@@ -6,7 +6,6 @@ using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddControllers();
 
 builder.Services.AddScoped<IDao, FakeDao>();
@@ -20,6 +19,7 @@ jsonOptions.AllowTrailingCommas = true;
 jsonOptions.PropertyNamingPolicy = null;
 // sérialise les énumérations sous forme de texte
 jsonOptions.Converters.Add(new JsonStringEnumConverter());
+
 Controller.JsonOptions = jsonOptions;
 
 #if DEBUG

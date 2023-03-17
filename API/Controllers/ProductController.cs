@@ -20,7 +20,7 @@ namespace GalliumPlusAPI.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAll(int? category, bool availableOnly = true)
+        public IActionResult Get(int? category, bool availableOnly = true)
         {
             return Json(this.productDao.FindAll(
                 new ProductCriteria { AvailableOnly = availableOnly, Category = category }
@@ -48,7 +48,7 @@ namespace GalliumPlusAPI.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult Patch(int id, Product updatedProduct)
+        public IActionResult Put(int id, Product updatedProduct)
         {
             try
             {
