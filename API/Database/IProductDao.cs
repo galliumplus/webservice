@@ -7,7 +7,7 @@ namespace GalliumPlusAPI.Database
     /// <summary>
     /// DAO des produits.
     /// </summary>
-    public interface IProductDao
+    public interface IProductDao : IBasicDao<int, Product>
     {
         /// <summary>
         /// Récupère tous les produits correpondants à certains critères.

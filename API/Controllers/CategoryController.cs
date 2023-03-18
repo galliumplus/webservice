@@ -10,23 +10,18 @@ namespace GalliumPlusAPI.Controllers
     [ApiController]
     public class CategoryController : Controller
     {
-        private ICategoryDao categoryDao;
+        public CategoryController(IMasterDao dao) : base(dao) { }
 
-        public CategoryController(IDao dao)
-        {
-            this.categoryDao = dao.Categories;
-        }
-        
         [HttpGet]
-        public IActionResult GetAll()
+        public IActionResult Get()
         {
-            return Json(this.categoryDao.ReadAll());
+            return Json(Dao.Categories.ReadAll());
         }
         
         [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
-            if (this.categoryDao.ReadOne(id) is Category category)
+            if (Dao.Categories.ReadOne(id) is Category category)
             {
                 return Json(category);
             }
@@ -39,7 +34,7 @@ namespace GalliumPlusAPI.Controllers
         [HttpPost]
         public IActionResult Post(Category newCategory)
         {
-            this.categoryDao.Create(newCategory);
+            Dao.Categories.Create(newCategory);
             return Created();
         }
 
@@ -48,7 +43,7 @@ namespace GalliumPlusAPI.Controllers
         {
             try
             {
-                this.categoryDao.Update(id, updatedCategory);
+                Dao.Categories.Update(id, updatedCategory);
                 return Ok();
             }
             catch (ItemNotFoundException)
@@ -62,7 +57,7 @@ namespace GalliumPlusAPI.Controllers
         {
             try
             {
-                this.categoryDao.Delete(id);
+                Dao.Categories.Delete(id);
                 return Ok();
             }
             catch (ItemNotFoundException)

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http.Json;
+﻿using GalliumPlusAPI.Database;
+using Microsoft.AspNetCore.Http.Json;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -9,6 +10,14 @@ namespace GalliumPlusAPI.Controllers
     {
         private static JsonSerializerOptions jsonOptions;
         public static JsonSerializerOptions JsonOptions { set => jsonOptions = value; }
+
+        private IMasterDao dao;
+        protected IMasterDao Dao => this.dao;
+
+        public Controller(IMasterDao dao)
+        {
+            this.dao = dao;
+        }
 
         public static IActionResult Json(object? value, int statusCode = StatusCodes.Status200OK)
         {
