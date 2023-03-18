@@ -5,7 +5,7 @@ namespace GalliumPlusAPI.Models
 	/// <summary>
 	/// Le rôle d'un utilisateur. 
 	/// </summary>
-	public class Role
+	public class Role : IModel<int>
 	{
 		/// <summary>
 		/// L'identifiant du rôle.

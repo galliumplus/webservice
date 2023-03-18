@@ -8,47 +8,47 @@ namespace API.Controllers
     [ApiController]
     public class ProductController : ControllerBase
     {
-        private IProductDao dao;
+        private IMasterDao dao;
 
-        public ProductController(IDao dao)
+        public ProductController(IMasterDao dao)
         {
-            this.dao = dao.Products;
+            this.dao = dao;
         }
 
         [HttpGet]
         public IEnumerable<Product> GetAll()
         {
-            return this.dao.ReadAll();
+            return this.dao.Products.ReadAll();
         }
 
         [HttpGet("available")]
         public IEnumerable<Product> GetAvailable()
         {
-            return this.dao.ReadAvailable();
+            return this.dao.Products.ReadAvailable();
         }
 
         [HttpGet("{id}")]
         public Product Get(int id)
         {
-            return this.dao.ReadOne(id);
+            return this.dao.Products.ReadOne(id);
         }
 
         [HttpPost]
         public void Post(Product newProduct)
         {
-            this.dao.Create(newProduct);
+            this.dao.Products.Create(newProduct);
         }
 
         [HttpPut("{id}")]
         public void Patch(int id, Product updatedProduct)
         {
-            this.dao.Update(id, updatedProduct);
+            this.dao.Products.Update(id, updatedProduct);
         }
 
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
-            this.dao.Delete(id);
+            this.dao.Products.Delete(id);
         }
     }
 }

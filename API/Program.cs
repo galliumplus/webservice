@@ -9,7 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllers();
 
-builder.Services.AddScoped<IDao, FakeDao>();
+builder.Services.AddScoped<IMasterDao, FakeDao>();
 
 // Configuration du sérialiseur JSON
 builder.Services.Configure<JsonOptions>(jsonOptions => {

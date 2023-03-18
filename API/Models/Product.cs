@@ -1,11 +1,12 @@
 ﻿using System.Text.Json.Serialization;
+using GalliumPlusAPI.Database;
 
 namespace GalliumPlusAPI.Models
 {
     /// <summary>
     /// Un produit.
     /// </summary>
-    public class Product
+    public class Product : IModel<int>
     {
         /// <summary>
         /// L'identifiant du produit.
