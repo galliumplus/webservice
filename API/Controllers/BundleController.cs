@@ -1,50 +1,51 @@
 ﻿using GalliumPlusAPI.Database;
+using GalliumPlusAPI.Database.Criteria;
 using GalliumPlusAPI.Exceptions;
 using GalliumPlusAPI.Models;
 using Microsoft.AspNetCore.Mvc;
-using System.Linq.Expressions;
 
 namespace GalliumPlusAPI.Controllers
 {
-    [Route("api/categories")]
+    [Route("api/bundles")]
     [ApiController]
-    public class CategoryController : Controller
+    public class BundleController : Controller
     {
-        public CategoryController(IMasterDao dao) : base(dao) { }
+        public BundleController(IMasterDao dao) : base(dao) { }
 
         [HttpGet]
-        public IActionResult Get()
+        public IActionResult Get(bool availableOnly = true)
         {
-            return Json(Dao.Categories.ReadAll());
+            return Json(Dao.Bundles.FindAll(
+                new BundleCriteria { AvailableOnly = availableOnly }
+            ));
         }
-        
+
         [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
             try
             {
-                return Json(Dao.Categories.ReadOne(id));
-
+                return Json(Dao.Bundles.ReadOne(id));
             }
             catch (ItemNotFoundException)
             {
                 return NotFound();
             }
         }
-        
+
         [HttpPost]
-        public IActionResult Post(Category newCategory)
+        public IActionResult Post(Bundle newBundle)
         {
-            Dao.Categories.Create(newCategory);
+            Dao.Bundles.Create(newBundle);
             return Created();
         }
 
         [HttpPut("{id}")]
-        public IActionResult Put(int id, Category updatedCategory)
+        public IActionResult Put(int id, Bundle updatedBundle)
         {
             try
             {
-                Dao.Categories.Update(id, updatedCategory);
+                Dao.Bundles.Update(id, updatedBundle);
                 return Ok();
             }
             catch (ItemNotFoundException)
@@ -58,7 +59,7 @@ namespace GalliumPlusAPI.Controllers
         {
             try
             {
-                Dao.Categories.Delete(id);
+                Dao.Bundles.Delete(id);
                 return Ok();
             }
             catch (ItemNotFoundException)

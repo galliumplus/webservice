@@ -31,7 +31,7 @@ namespace GalliumPlusAPI.Database.Implementations.FakeDatabase
             return this.categories;
         }
 
-        public Category? ReadOne(int id)
+        public Category ReadOne(int id)
         {
             try
             {
@@ -39,7 +39,7 @@ namespace GalliumPlusAPI.Database.Implementations.FakeDatabase
             }
             catch (ArgumentOutOfRangeException)
             {
-                return null;
+                throw new ItemNotFoundException();
             }
         }
 

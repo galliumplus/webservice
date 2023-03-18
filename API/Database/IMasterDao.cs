@@ -8,5 +8,7 @@ namespace GalliumPlusAPI.Database
         public IProductDao Products { get; }
 
         public ICategoryDao Categories { get; }
+
+        public IBundleDao Bundles { get; }
     }
 }

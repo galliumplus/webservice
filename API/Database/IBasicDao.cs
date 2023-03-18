@@ -24,7 +24,7 @@ namespace GalliumPlusAPI.Database
         /// <param name="id">L'identifiant de l'item à récupérer.</param>
         /// <returns>L'item correspondant.</returns>
         /// <exception cref="ItemNotFoundException"></exception>
-        public TItem? ReadOne(TKey key);
+        public TItem ReadOne(TKey key);
 
 
         /// <summary>

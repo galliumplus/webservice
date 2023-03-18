@@ -1,6 +1,5 @@
 ﻿using GalliumPlusAPI.Database.Criteria;
 using GalliumPlusAPI.Models;
-using GalliumPlusAPI.Exceptions;
 
 namespace GalliumPlusAPI.Database
 {

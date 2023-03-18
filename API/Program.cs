@@ -8,7 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
-builder.Services.AddScoped<IMasterDao, FakeDao>();
+builder.Services.AddScoped<IMasterDao, FakeDaoFacade>();
 
 JsonSerializerOptions jsonOptions = new JsonSerializerOptions();
 // accepte uniquement le format nombre JSON pour les entier et les floats
