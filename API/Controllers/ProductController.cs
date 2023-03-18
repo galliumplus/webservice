@@ -12,11 +12,11 @@ namespace GalliumPlusAPI.Controllers
     [ApiController]
     public class ProductController : Controller
     {
-        private IProductDao productDao;
+        private IMasterDao dao;
 
-        public ProductController(IDao dao)
+        public ProductController(IMasterDao dao)
         {
-            this.productDao = dao.Products;
+            this.dao = dao;
         }
 
         [HttpGet]

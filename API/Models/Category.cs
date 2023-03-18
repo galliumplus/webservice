@@ -5,7 +5,7 @@ namespace GalliumPlusAPI.Models
     /// <summary>
     /// Une catégorie de produits.
     /// </summary>
-    public class Category
+    public class Category : IModel<int>
     {
         /// <summary>
         /// L'identifiant de la catégorie.

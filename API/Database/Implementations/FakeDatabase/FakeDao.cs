@@ -1,8 +1,9 @@
 ﻿namespace GalliumPlusAPI.Database.Implementations.FakeDatabase
 {
-    public class FakeDao : IDao
+    public class FakeDao : IMasterDao
     {
         private FakeProductDao products;
+
         private FakeCategoryDao categories;
 
         public IProductDao Products => this.products;
