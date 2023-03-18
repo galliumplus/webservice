@@ -1,54 +1,73 @@
-﻿using GalliumPlusAPI.Database;
+﻿using GalliumPlusAPI.Controllers;
+using GalliumPlusAPI.Database;
+using GalliumPlusAPI.Database.Criteria;
+using GalliumPlusAPI.Exceptions;
 using GalliumPlusAPI.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.Runtime.CompilerServices;
 
-namespace API.Controllers
+namespace GalliumPlusAPI.Controllers
 {
     [Route("api/products")]
     [ApiController]
-    public class ProductController : ControllerBase
+    public class ProductController : Controller
     {
-        private IProductDao dao;
-
-        public ProductController(IDao dao)
-        {
-            this.dao = dao.Products;
-        }
+        public ProductController(IMasterDao dao) : base(dao) { }
 
         [HttpGet]
-        public IEnumerable<Product> GetAll()
+        public IActionResult Get(int? category, bool availableOnly = true)
         {
-            return this.dao.ReadAll();
-        }
-
-        [HttpGet("available")]
-        public IEnumerable<Product> GetAvailable()
-        {
-            return this.dao.ReadAvailable();
+            return Json(Dao.Products.FindAll(
+                new ProductCriteria { AvailableOnly = availableOnly, Category = category }
+            ));
         }
 
         [HttpGet("{id}")]
-        public Product Get(int id)
+        public IActionResult Get(int id)
         {
-            return this.dao.ReadOne(id);
+            if (Dao.Products.ReadOne(id) is Product product)
+            {
+                return Json(product);
+            }
+            else
+            {
+                return NotFound();
+            }
         }
 
         [HttpPost]
-        public void Post(Product newProduct)
+        public IActionResult Post(Product newProduct)
         {
-            this.dao.Create(newProduct);
+            Dao.Products.Create(newProduct);
+            return Created();
         }
 
         [HttpPut("{id}")]
-        public void Patch(int id, Product updatedProduct)
+        public IActionResult Put(int id, Product updatedProduct)
         {
-            this.dao.Update(id, updatedProduct);
+            try
+            {
+                Dao.Products.Update(id, updatedProduct);
+                return Ok();
+            }
+            catch(ItemNotFoundException)
+            {
+                return NotFound();
+            }
         }
 
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public IActionResult Delete(int id)
         {
-            this.dao.Delete(id);
+            try
+            {
+                Dao.Products.Delete(id);
+                return Ok();
+            }
+            catch(ItemNotFoundException)
+            {
+                return NotFound();
+            }
         }
     }
 }

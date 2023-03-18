@@ -3,7 +3,7 @@ namespace GalliumPlusAPI.Models
 	/// <summary>
 	/// Un utilisateur de l'application.
 	/// </summary>
-	public class User 
+	public class User : IModel<string>
 	{
 		/// <summary>
 		/// L'identifiant IUT (ou identifiant spécial) de l'utilisateur.
@@ -33,6 +33,6 @@ namespace GalliumPlusAPI.Models
 		/// <summary>
 		/// Indique si l'utilisateur doit valider les paiements avec son acompte.
 		/// </summary>
-		public bool? RequireValidationForPayments { get; set; }
+		public bool RequireValidationForPayments { get; set; }
 	}
 }

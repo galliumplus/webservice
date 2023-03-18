@@ -1,19 +1,19 @@
-﻿using GalliumPlusAPI.Models;
+﻿using GalliumPlusAPI.Database.Criteria;
+using GalliumPlusAPI.Models;
+using GalliumPlusAPI.Exceptions;
 
 namespace GalliumPlusAPI.Database
 {
-    public interface IProductDao
+    /// <summary>
+    /// DAO des produits.
+    /// </summary>
+    public interface IProductDao : IBasicDao<int, Product>
     {
-        public void Create(Product product);
-
-        public IEnumerable<Product> ReadAll();
-
-        public IEnumerable<Product> ReadAvailable();
-
-        public Product ReadOne(int id);
-
-        public void Update(int id, Product product);
-
-        public void Delete(int id);
+        /// <summary>
+        /// Récupère tous les produits correpondants à certains critères.
+        /// </summary>
+        /// <param name="criteria">Les critères de recherche.</param>
+        /// <returns>La liste des produits correspondants.</returns>
+        public IEnumerable<Product> FindAll(ProductCriteria criteria);
     }
 }
