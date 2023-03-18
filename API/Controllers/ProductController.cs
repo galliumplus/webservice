@@ -12,17 +12,12 @@ namespace GalliumPlusAPI.Controllers
     [ApiController]
     public class ProductController : Controller
     {
-        private IMasterDao dao;
-
-        public ProductController(IMasterDao dao)
-        {
-            this.dao = dao;
-        }
+        public ProductController(IMasterDao dao) : base(dao) { }
 
         [HttpGet]
         public IActionResult Get(int? category, bool availableOnly = true)
         {
-            return Json(this.dao.Products.FindAll(
+            return Json(Dao.Products.FindAll(
                 new ProductCriteria { AvailableOnly = availableOnly, Category = category }
             ));
         }
@@ -30,7 +25,7 @@ namespace GalliumPlusAPI.Controllers
         [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
-            if (this.dao.Products.ReadOne(id) is Product product)
+            if (Dao.Products.ReadOne(id) is Product product)
             {
                 return Json(product);
             }
@@ -43,7 +38,7 @@ namespace GalliumPlusAPI.Controllers
         [HttpPost]
         public IActionResult Post(Product newProduct)
         {
-            this.dao.Products.Create(newProduct);
+            Dao.Products.Create(newProduct);
             return Created();
         }
 
@@ -52,7 +47,7 @@ namespace GalliumPlusAPI.Controllers
         {
             try
             {
-                this.dao.Products.Update(id, updatedProduct);
+                Dao.Products.Update(id, updatedProduct);
                 return Ok();
             }
             catch(ItemNotFoundException)
@@ -66,7 +61,7 @@ namespace GalliumPlusAPI.Controllers
         {
             try
             {
-                this.dao.Products.Delete(id);
+                Dao.Products.Delete(id);
                 return Ok();
             }
             catch(ItemNotFoundException)
