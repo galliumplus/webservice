@@ -6,7 +6,7 @@ namespace GalliumPlusAPI.Models
     /// <summary>
     /// Une formule.
     /// </summary>
-    public class Bundle
+    public class Bundle : IModel<int>
     {
         /// <summary>
         /// L'identifiant de la formule.
@@ -34,14 +34,14 @@ namespace GalliumPlusAPI.Models
         public double MemberPrice { get; set; }
 
         /// <summary>
-        /// Disponibilité du produit.
+        /// Disponibilité de la formule.
         /// </summary>
         public Availability Availability { get; set; }
 
         /// <summary>
         /// Indique si le produit est disponible ou non.
         /// </summary>
-        public bool Available(IDao dao) {
+        public bool Available(IMasterDao dao) {
             switch (this.Availability)
             {
                 case Availability.ALWAYS: return true;
@@ -56,9 +56,9 @@ namespace GalliumPlusAPI.Models
         /// <summary>
         /// La quantité restante en stock.
         /// </summary>
-        public int Stock(IDao dao)
+        public int Stock(IMasterDao dao)
         {
-            return this.Products.MinBy(id => dao.Products.ReadOne(id).Stock);
+            return this.Products.MinBy(id => dao.Products.ReadOne(id)!.Stock);
         }
     }
 }
