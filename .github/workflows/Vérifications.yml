@@ -26,6 +26,7 @@ jobs:
   
   test:
     runs-on: ubuntu-latest
+    needs: [build]
     steps:
       - name: Newman Action
         uses: matt-ball/newman-action@v1.0.4
