@@ -10,9 +10,7 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v3
     - name: Setup .NET
@@ -25,3 +23,13 @@ jobs:
       run: dotnet restore
     - name: Build
       run: dotnet build --no-restore /warnaserror
+  
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Newman Action
+        uses: matt-ball/newman-action@v1.0.4
+        with:
+          collection: postman/collections/Collection.json
+          environment: postman/test.env.json
+    
