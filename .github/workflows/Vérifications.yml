@@ -26,11 +26,37 @@ jobs:
   
   test:
     runs-on: ubuntu-latest
-    needs: [build]
+    env:
+      GALLIUM_ENV: test
+      GALLIUM_HTTP: 5080
+      GALLIUM_HTTPS: 5443
     steps:
-      - name: Newman Action
-        uses: matt-ball/newman-action@v1.0.4
-        with:
-          collection: postman/collections/Collection.json
-          environment: postman/test.env.json
+    - uses: actions/checkout@v3
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 6.0.x
+    - name: Change directory
+      run: cd API
+    - name: Restore dependencies
+      run: dotnet restore
+    - name: Setup Node.js environment
+      uses: actions/setup-node@v3.6.0
+      with:
+        node-version: 12.x
+    - name: Install newman
+      run: npm install -g newman
+    - name: Run tests
+      uses: BerniWittmann/background-server-action@v1.1.0
+      with:
+        command: newman postman/collections/Collection.json -e postman/test.env.json
+        build: dotnet build --no-restore API
+        start: dotnet run --no-build API
+        wait-on: https://localhost:5080
+        wait-on-timeout: 20
+
+
+      
+
+
     
