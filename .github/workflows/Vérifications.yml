@@ -1,6 +1,6 @@
 # This workflow will build a .NET project
 
-name: Compilation
+name: Vérifications
 
 on:
   push:
