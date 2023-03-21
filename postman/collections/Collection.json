@@ -1,0 +1,100 @@
+{
+	"info": {
+		"_postman_id": "6f1b0ab3-abef-4b2f-98d0-ea684621f02d",
+		"name": "Collection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_uid": "23729786-6f1b0ab3-abef-4b2f-98d0-ea684621f02d"
+	},
+	"item": [
+		{
+			"name": "Products",
+			"item": [
+				{
+					"name": "Get all products",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "aa05f713-5c86-4532-a4f7-63f0907c9779",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"id": "29724401-9197-4369-90ee-fd5898ffc8ec",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/products?availableOnly=false",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"products"
+							],
+							"query": [
+								{
+									"key": "availableOnly",
+									"value": "false",
+									"type": "text"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"id": "0c688786-00e3-4d38-a02a-51971264b334",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "4bf57bb0-7b00-4aef-aca1-593516e7713a",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "05b84753-455b-43b4-89df-2ac9761f612a",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "603f27ca-8f34-4149-bbac-adb0fd862151",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "5ddd8b79-9c01-475f-a8c1-66bf6af2c949",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
