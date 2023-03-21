@@ -19,7 +19,7 @@ for n in range(10):
         ping_client.close()
         break
     except ConnectionRefusedError:
-        print(r"Server not up yet, retrying soon... ({n+1}/10)")
+        print(f"Server not up yet, retrying soon... ({n+1}/10)")
         time.sleep(2)
 else:
     print(f"{ANSI_RED_BOLD}Timed out{ANSI_RESET}")
