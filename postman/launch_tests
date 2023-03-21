@@ -16,13 +16,13 @@ for n in range(10):
     try:
         ping_client.connect()
         print("Server is up !")
-        ping_client..close()
+        ping_client.close()
         break
     except ConnectionRefusedError:
         print(r"Server not up yet, retrying soon... ({n+1}/10)")
         time.sleep(2)
 else:
-    print(f'{ANSI_RED_BOLD}Timed out{ANSI_RESET}')
+    print(f"{ANSI_RED_BOLD}Timed out{ANSI_RESET}")
     sys.exit(1)
 
 # run tests
