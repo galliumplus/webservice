@@ -28,18 +28,16 @@ builder.Services.Configure<JsonOptions>(jsonOptions => {
     serializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
 
-#if DEBUG
-#else
 // configuration HTTP/HTTPS
 builder.WebHost.ConfigureKestrel(opt => {
     int httpPort;
-    if (!Int32.TryParse(Environment.GetEnvironmentVariable("HTTP_PORT"), out httpPort))
+    if (!Int32.TryParse(Environment.GetEnvironmentVariable("GALLIUM_HTTP"), out httpPort))
     {
         httpPort = 5080;
     }
 
     int httpsPort;
-    if (!Int32.TryParse(Environment.GetEnvironmentVariable("HTTPS_PORT"), out httpsPort))
+    if (!Int32.TryParse(Environment.GetEnvironmentVariable("GALLIUM_HTTPS"), out httpsPort))
     {
         httpsPort = 5443;
     }
@@ -47,13 +45,23 @@ builder.WebHost.ConfigureKestrel(opt => {
     opt.ListenAnyIP(httpPort);
     opt.ListenAnyIP(httpsPort, opt =>
     {
-        opt.UseHttps(
-            Environment.GetEnvironmentVariable("CERTIFICATE_FILE") ?? "",
-            Environment.GetEnvironmentVariable("CERTIFICATE_PASSWORD" ?? "")
-        );
+        if (Environment.GetEnvironmentVariable("GALLIUM_CERTIFICATE_FILE") is string certififcate)
+        {
+            if (Environment.GetEnvironmentVariable("GALLIUM_CERTIFICATE_PASSWORD") is string password)
+            {
+                opt.UseHttps(certififcate, password);
+            }
+            else
+            {
+                opt.UseHttps(certififcate);
+            }
+        }
+        else
+        {
+            opt.UseHttps();
+        }
     });
 });
-#endif
 
 var app = builder.Build();
 

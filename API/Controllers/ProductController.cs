@@ -30,7 +30,7 @@ namespace API.Controllers
         [HttpGet("{id}")]
         public Product Get(int id)
         {
-            return this.dao.Products.ReadOne(id);
+            return this.dao.Products.ReadOne(id)!;
         }
 
         [HttpPost]
