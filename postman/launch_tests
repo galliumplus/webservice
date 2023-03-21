@@ -1,0 +1,48 @@
+import sys
+import subprocess
+import http.client
+import time
+
+ANSI_RED_BOLD = "\x1b[1;31m"
+ANSI_RESET = "\x1b[0m"
+
+# start test server
+server = subprocess.Popen(["dotnet", "run", "--no-build", "--project", "API"])
+
+# wait for server
+ping_client = http.client.HTTPConnection("info-dij-sae001.iut21.u-bourgogne.fr", 5443)
+
+for n in range(10):
+    try:
+        ping_client.connect()
+        print("Server is up !")
+        ping_client..close()
+        break
+    except ConnectionRefusedError:
+        print(r"Server not up yet, retrying soon... ({n+1}/10)")
+        time.sleep(2)
+else:
+    print(f'{ANSI_RED_BOLD}Timed out{ANSI_RESET}')
+    sys.exit(1)
+
+# run tests
+test_client = subprocess.Popen(
+    [
+        "newman",
+        "run",
+        # collection
+        "postman/collections/Collection.json",
+        # environement
+        "-e",
+        "postman/test.env.json",
+        # autorise le certificat auto-signé
+        "-k",
+    ]
+)
+code = test_client.wait()
+if code:
+    print(f"{ANSI_RED_BOLD}test command exited with code {code}{ANSI_RESET}")
+
+# clean up
+print("Killing server...")
+server.kill()
