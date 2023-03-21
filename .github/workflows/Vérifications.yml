@@ -52,7 +52,7 @@ jobs:
         command: newman postman/collections/Collection.json -e postman/test.env.json -k
         build: dotnet build --no-restore API
         start: dotnet run --no-build --project API
-        wait-on: http://localhost:5080
+        wait-on: http://localhost:5080/api/products
         wait-on-timeout: 20
 
 
