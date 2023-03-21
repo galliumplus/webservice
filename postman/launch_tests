@@ -10,7 +10,7 @@ ANSI_RESET = "\x1b[0m"
 server = subprocess.Popen(["dotnet", "run", "--no-build", "--project", "API"])
 
 # wait for server
-ping_client = http.client.HTTPConnection("info-dij-sae001.iut21.u-bourgogne.fr", 5443)
+ping_client = http.client.HTTPConnection("localhost", 5443)
 
 for n in range(10):
     try:
