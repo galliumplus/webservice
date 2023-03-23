@@ -18,10 +18,8 @@ jobs:
       with:
         dotnet-version: 6.0.x
     - name: Restore dependencies
-      working-directory: API
       run: dotnet restore
     - name: Build
-      working-directory: API
       run: dotnet build --no-restore /warnaserror
   
   test:
@@ -37,7 +35,6 @@ jobs:
       with:
         dotnet-version: 6.0.x
     - name: Build API
-      working-directory: API
       run: dotnet build
     - name: Setup Node.js environment
       uses: actions/setup-node@v3.6.0
