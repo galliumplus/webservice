@@ -1,42 +1,77 @@
-﻿namespace GalliumPlusAPI.Database.Implementations.FakeDatabase
+﻿using GalliumPlusAPI.Exceptions;
+using GalliumPlusAPI.Models;
+using System.Linq.Expressions;
+
+namespace GalliumPlusAPI.Database.Implementations.FakeDatabase
 {
-    public class FakeDao : IMasterDao
+    public abstract class FakeDao<TKey, TItem> : IBasicDao<TKey, TItem>
+    where TKey : notnull
+    where TItem : IModel<TKey>
     {
-        #region singleton
+        private Dictionary<TKey, TItem> items;
 
-        private static FakeDao current;
+        public Dictionary<TKey, TItem> Items => this.items;
 
-        public static FakeDao Current
+        public FakeDao()
         {
-            get
+            this.items = new Dictionary<TKey, TItem>();
+        }
+
+        virtual public void Create(TItem item)
+        {
+            if (!this.CheckConstraints(item))
             {
-                if (current == null)
-                {
-                    current = new FakeDao();
-                }
-                return current;
+                throw new ConstraintException("Custom constraints violated");
+            }
+
+            if (!this.items.TryAdd(item.Id, item))
+            {
+                throw new ConstraintException("An item with this key already exists");
             }
         }
 
-        private FakeDao()
+        virtual public void Delete(TKey key)
         {
-            this.products = new FakeProductDao();
-            this.categories = new FakeCategoryDao();
-            this.bundles = new FakeBundleDao(this);
+            if (!this.items.Remove(key))
+            {
+                throw new ItemNotFoundException();
+            }
         }
 
-        #endregion
+        virtual public IEnumerable<TItem> ReadAll()
+        {
+            return this.items.Values;
+        }
 
-        private FakeProductDao products;
+        virtual public TItem ReadOne(TKey key)
+        {
+            try
+            {
+                return this.items[key];
+            }
+            catch (KeyNotFoundException)
+            {
+                throw new ItemNotFoundException();
+            }
+        }
 
-        private FakeCategoryDao categories;
+        virtual public void Update(TKey key, TItem item)
+        {
+            if (!this.CheckConstraints(item))
+            {
+                throw new ConstraintException("Custom constraints violated");
+            }
 
-        private FakeBundleDao bundles;
+            try
+            {
+                this.items[key] = item;
+            }
+            catch (KeyNotFoundException)
+            {
+                throw new ItemNotFoundException();
+            }
+        }
 
-        public IProductDao Products => this.products;
-
-        public ICategoryDao Categories => this.categories;
-
-        public IBundleDao Bundles => this.bundles;
+        virtual protected bool CheckConstraints(TItem item) => true;
     }
 }

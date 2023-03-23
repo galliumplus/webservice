@@ -20,7 +20,7 @@ namespace GalliumPlusAPI.Models
 		/// <summary>
 		/// La somme des permissions attribuées au rôle.
 		/// </summary>
-		public int Permissions { get; set; }
+		public Permission Permissions { get; set; }
 
         /// <summary>
         /// Vérifie qu'un rôle a une certaine permission.
@@ -29,7 +29,7 @@ namespace GalliumPlusAPI.Models
         /// <returns><see langword="true"/> si le rôle a la permission, sinon <see langword="false"/>.</returns>
         public bool HasPermission(Permission perm)
 		{
-			return (this.Permissions & (int) perm) != 0;
+			return (this.Permissions & perm) != 0;
 		}
 	}
 }

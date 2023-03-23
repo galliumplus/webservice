@@ -5,93 +5,48 @@ using System.Runtime.CompilerServices;
 
 namespace GalliumPlusAPI.Database.Implementations.FakeDatabase
 {
-    public class FakeBundleDao : IBundleDao
+    public class FakeBundleDao : FakeDaoWithAutoIncrement<Bundle>, IBundleDao
     {
-        private List<Bundle> bundles;
-        private FakeDao master;
+        private FakeMasterDao master;
 
-        public FakeBundleDao(FakeDao master)
+        public FakeBundleDao(FakeMasterDao master)
         {
             this.master = master;
 
-            this.bundles = new List<Bundle> {
+            this.Create(
                 new Bundle {
-                    Id = 0,
                     Name = "Chocolat Matin",
                     NonMemberPrice = 0.70,
                     MemberPrice = 0.50,
                     Availability = Availability.AUTO,
                     Products = new List<int> {4, 5},
-                },
-            };
-        }
-
-        public void Create(Bundle bundle)
-        {
-            lock (bundles)
-            {
-                int id = this.bundles.Count;
-                bundle.Id = id;
-                this.bundles.Add(bundle);
-            }
-        }
-
-        public void Delete(int id)
-        {
-            lock (bundles)
-            {
-                try
-                {
-                    this.bundles.RemoveAt(id);
                 }
-                catch (ArgumentOutOfRangeException)
-                {
-                    throw new ItemNotFoundException();
-                }
-            }
+            );
         }
 
-        private Predicate<Bundle> ToPredicate(BundleCriteria criteria)
+        private Func<Bundle, bool> ToPredicate(BundleCriteria criteria)
         {
             return bundle => !criteria.AvailableOnly || bundle.Available(this.master);
         }
 
         public IEnumerable<Bundle> FindAll(BundleCriteria criteria)
         {
-            return this.bundles.FindAll(ToPredicate(criteria));
+            return this.Items.Values.Where(ToPredicate(criteria));
         }
 
-        public IEnumerable<Bundle> ReadAll()
+        protected override void SetAutoKey(Bundle item)
         {
-            return this.bundles;
+            item.Id = this.NextInsertKey;
         }
 
-        public Bundle ReadOne(int id)
+        protected override bool CheckConstraints(Bundle item)
         {
-            try
+            foreach (int productId in item.Products)
             {
-                return this.bundles[id];
+                if (this.master.Products.ReadOne(productId) == null) return false;
             }
-            catch (ArgumentOutOfRangeException)
-            {
-                throw new ItemNotFoundException();
-            }
-        }
 
-        public void Update(int id, Bundle bundle)
-        {
-            lock (bundles)
-            {
-                try
-                {
-                    bundle.Id = id;
-                    this.bundles[id] = bundle;
-                }
-                catch (ArgumentOutOfRangeException)
-                {
-                    throw new ItemNotFoundException();
-                }
-            }
+            return true;
         }
     }
 }
