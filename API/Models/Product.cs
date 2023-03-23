@@ -24,24 +24,24 @@ namespace GalliumPlusAPI.Models
         public int Stock { get; set; }
 
         /// <summary>
-        /// Prix non-adhérent.
+        /// Le prix non-adhérent.
         /// </summary>
         public double NonMemberPrice { get; set; }
 
         /// <summary>
-        /// Prix adhérent.
+        /// Le prix adhérent.
         /// </summary>
         public double MemberPrice { get; set; }
 
         /// <summary>
-        /// Disponibilité du produit.
+        /// La disponibilité du produit.
         /// </summary>
         public Availability Availability { get; set; }
 
         /// <summary>
-        /// Catégorie du produit.
+        /// La catégorie du produit.
         /// </summary>
-        public int CategoryId { get; set; }
+        public int Category { get; set; }
     
         /// <summary>
         /// Indique si le produit est disponible ou non.
@@ -50,11 +50,11 @@ namespace GalliumPlusAPI.Models
         public bool Available => this.Availability switch
         {
             Availability.ALWAYS => true,
-            Availability.AUTO => this.Stock > 0,
+            Availability.AUTO => this.Stock !=  0,
             Availability.NEVER => false,
 
             // ignore les états invalides
             _ => false,
-        };   
+        };
     }
 }

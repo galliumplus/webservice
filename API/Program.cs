@@ -1,32 +1,26 @@
+using GalliumPlusAPI.Controllers;
 using GalliumPlusAPI.Database;
 using GalliumPlusAPI.Database.Implementations.FakeDatabase;
-using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddControllers();
 
-builder.Services.AddScoped<IMasterDao, FakeDao>();
+builder.Services.AddScoped<IMasterDao, FakeDaoFacade>();
 
-// Configuration du sérialiseur JSON
-builder.Services.Configure<JsonOptions>(jsonOptions => {
-    JsonSerializerOptions serializerOptions = jsonOptions.JsonSerializerOptions;
+JsonSerializerOptions jsonOptions = new JsonSerializerOptions();
+// accepte uniquement le format nombre JSON pour les entier et les floats
+jsonOptions.NumberHandling = JsonNumberHandling.Strict;
+// accepte les virgules en fin de liste / d'objet
+jsonOptions.AllowTrailingCommas = true;
+// garde les noms de propriétés tels quels
+jsonOptions.PropertyNamingPolicy = null;
+// sérialise les énumérations sous forme de texte
+jsonOptions.Converters.Add(new JsonStringEnumConverter());
 
-    // accepte uniquement le format nombre JSON pour les entier et les floats
-    serializerOptions.NumberHandling = JsonNumberHandling.Strict;
-
-    // accepte les virgules en fin de liste / d'objet
-    serializerOptions.AllowTrailingCommas = true;
-
-    // garde les noms de propriétés tels quels
-    serializerOptions.PropertyNamingPolicy = null;
-
-    // sérialise les énumérations sous forme de texte
-    serializerOptions.Converters.Add(new JsonStringEnumConverter());
-});
+Controller.JsonOptions = jsonOptions;
 
 #if DEBUG
 #else

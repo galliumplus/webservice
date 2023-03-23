@@ -1,56 +1,54 @@
-﻿using GalliumPlusAPI.Controllers;
-using GalliumPlusAPI.Database;
+﻿using GalliumPlusAPI.Database;
 using GalliumPlusAPI.Database.Criteria;
 using GalliumPlusAPI.Exceptions;
 using GalliumPlusAPI.Models;
 using Microsoft.AspNetCore.Mvc;
-using System.Runtime.CompilerServices;
 
 namespace GalliumPlusAPI.Controllers
 {
-    [Route("api/products")]
+    [Route("api/bundles")]
     [ApiController]
-    public class ProductController : Controller
+    public class BundleController : Controller
     {
-        public ProductController(IMasterDao dao) : base(dao) { }
+        public BundleController(IMasterDao dao) : base(dao) { }
 
         [HttpGet]
-        public IActionResult Get(int? category, bool availableOnly = true)
+        public IActionResult Get(bool availableOnly = true)
         {
-            return Json(Dao.Products.FindAll(
-                new ProductCriteria { AvailableOnly = availableOnly, Category = category }
+            return Json(Dao.Bundles.FindAll(
+                new BundleCriteria { AvailableOnly = availableOnly }
             ));
         }
 
         [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
-            if (Dao.Products.ReadOne(id) is Product product)
+            try
             {
-                return Json(product);
+                return Json(Dao.Bundles.ReadOne(id));
             }
-            else
+            catch (ItemNotFoundException)
             {
                 return NotFound();
             }
         }
 
         [HttpPost]
-        public IActionResult Post(Product newProduct)
+        public IActionResult Post(Bundle newBundle)
         {
-            Dao.Products.Create(newProduct);
+            Dao.Bundles.Create(newBundle);
             return Created();
         }
 
         [HttpPut("{id}")]
-        public IActionResult Put(int id, Product updatedProduct)
+        public IActionResult Put(int id, Bundle updatedBundle)
         {
             try
             {
-                Dao.Products.Update(id, updatedProduct);
+                Dao.Bundles.Update(id, updatedBundle);
                 return Ok();
             }
-            catch(ItemNotFoundException)
+            catch (ItemNotFoundException)
             {
                 return NotFound();
             }
@@ -61,10 +59,10 @@ namespace GalliumPlusAPI.Controllers
         {
             try
             {
-                Dao.Products.Delete(id);
+                Dao.Bundles.Delete(id);
                 return Ok();
             }
-            catch(ItemNotFoundException)
+            catch (ItemNotFoundException)
             {
                 return NotFound();
             }

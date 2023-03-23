@@ -1,4 +1,6 @@
-﻿using GalliumPlusAPI.Models;
+﻿using GalliumPlusAPI.Database.Criteria;
+using GalliumPlusAPI.Exceptions;
+using GalliumPlusAPI.Models;
 
 namespace GalliumPlusAPI.Database.Implementations.FakeDatabase
 {
@@ -16,7 +18,7 @@ namespace GalliumPlusAPI.Database.Implementations.FakeDatabase
                     NonMemberPrice = 0.80,
                     MemberPrice = 0.60,
                     Availability = Availability.AUTO,
-                    CategoryId = 0,
+                    Category = 1,
                 },
                 new Product {
                     Id = 1,
@@ -25,16 +27,16 @@ namespace GalliumPlusAPI.Database.Implementations.FakeDatabase
                     NonMemberPrice = 1.00,
                     MemberPrice = 0.80,
                     Availability = Availability.AUTO,
-                    CategoryId = 0,
+                    Category = 0,
                 },
                 new Product {
                     Id = 2,
                     Name = "Pablo",
-                    Stock = 20,
+                    Stock = 1,
                     NonMemberPrice = 999.99,
                     MemberPrice = 500.00,
                     Availability = Availability.ALWAYS,
-                    CategoryId = 0,
+                    Category = 2,
                 },
                 new Product {
                     Id = 3,
@@ -43,7 +45,25 @@ namespace GalliumPlusAPI.Database.Implementations.FakeDatabase
                     NonMemberPrice = 1.00,
                     MemberPrice = 0.80,
                     Availability = Availability.AUTO,
-                    CategoryId = 0,
+                    Category = 1,
+                },
+                new Product {
+                    Id = 4,
+                    Name = "Chocolat chaud",
+                    Stock = 11,
+                    NonMemberPrice = 0.70,
+                    MemberPrice = 0.50,
+                    Availability = Availability.AUTO,
+                    Category = 0,
+                },
+                new Product {
+                    Id = 5,
+                    Name = "Madeleine",
+                    Stock = 24,
+                    NonMemberPrice = 1.00,
+                    MemberPrice = 0.80,
+                    Availability = Availability.AUTO,
+                    Category = 1,
                 },
             };
         }
@@ -65,14 +85,22 @@ namespace GalliumPlusAPI.Database.Implementations.FakeDatabase
 
         public Product ReadOne(int id)
         {
-            return this.products[id];
+            try
+            {
+                return this.products[id];
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                throw new ItemNotFoundException();
+            }
         }
 
-        public void Update(int id, Product update)
+        public void Update(int id, Product product)
         {
             lock (products)
             {
-                if (update.Name != null) this.products[id].Name = update.Name;
+                product.Id = id;
+                this.products[id] = product;
             }
         }
 
@@ -87,6 +115,17 @@ namespace GalliumPlusAPI.Database.Implementations.FakeDatabase
         public IEnumerable<Product> ReadAvailable()
         {
             return this.products.FindAll(product => product.Available);
+        }
+
+        private static Predicate<Product> ToPredicate(ProductCriteria criteria)
+        {
+            return product => (!criteria.AvailableOnly || product.Available)
+                           && (criteria.Category == null || product.Category == criteria.Category);
+        }
+
+        public IEnumerable<Product> FindAll(ProductCriteria criteria)
+        {
+            return this.products.FindAll(ToPredicate(criteria));
         }
     }
 }
