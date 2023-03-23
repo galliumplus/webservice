@@ -1,6 +1,6 @@
-﻿using GalliumPlusAPI.Models;
+﻿using GalliumPlus.WebApi.Models;
 
-namespace GalliumPlusAPI.Database.Implementations.FakeDatabase
+namespace GalliumPlus.WebApi.Data.Implementations.FakeDatabase
 {
     public class FakeProductDao : IProductDao
     {
@@ -58,12 +58,12 @@ namespace GalliumPlusAPI.Database.Implementations.FakeDatabase
             }
         }
 
-        public IEnumerable<Product> ReadAll()
+        public IEnumerable<Product> Read()
         {
             return this.products;
         }
 
-        public Product ReadOne(int id)
+        public Product Read(int id)
         {
             return this.products[id];
         }

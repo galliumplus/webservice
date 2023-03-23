@@ -1,7 +1,7 @@
-﻿namespace GalliumPlusAPI.Models
+﻿namespace GalliumPlus.WebApi.Models
 {
     /// <summary>
-    /// Possède un identifiant.
+    /// Une classe possédant un identifiant.
     /// </summary>
     /// <typeparam name="TKey">Le type de l'identifiant</typeparam>
     public interface IModel<TKey>

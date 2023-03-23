@@ -1,16 +1,15 @@
-﻿using GalliumPlusAPI.Models;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
+﻿using GalliumPlus.WebApi.Models;
 
-namespace GalliumPlusAPI.Database
+namespace GalliumPlus.WebApi.Data
 {
     public interface IBasicDao<TKey, TItem>
     where TItem : IModel<TKey>
     {
         public void Create(TItem item);
 
-        public IEnumerable<TItem> ReadAll();
+        public IEnumerable<TItem> Read();
 
-        public TItem? ReadOne(TKey key);
+        public TItem? Read(TKey key);
 
         public void Update(TKey key, TItem item);
 

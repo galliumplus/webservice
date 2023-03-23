@@ -1,7 +1,6 @@
 ﻿using System.Text.Json.Serialization;
-using GalliumPlusAPI.Database;
 
-namespace GalliumPlusAPI.Models
+namespace GalliumPlus.WebApi.Models
 {
     /// <summary>
     /// Un produit.

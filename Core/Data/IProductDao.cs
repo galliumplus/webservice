@@ -1,6 +1,6 @@
-﻿using GalliumPlusAPI.Models;
+﻿using GalliumPlus.WebApi.Models;
 
-namespace GalliumPlusAPI.Database
+namespace GalliumPlus.WebApi.Data
 {
     public interface IProductDao : IBasicDao<int, Product>
     {

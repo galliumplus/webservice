@@ -1,5 +1,5 @@
-using GalliumPlusAPI.Database;
-using GalliumPlusAPI.Database.Implementations.FakeDatabase;
+using GalliumPlus.WebApi.Data;
+using GalliumPlus.WebApi.Data.Implementations.FakeDatabase;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 using System.Text.Json.Serialization;

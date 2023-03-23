@@ -1,4 +1,4 @@
-namespace GalliumPlusAPI.Models
+namespace GalliumPlus.WebApi.Models
 {
 	/// <summary>
 	/// Les méthodes de paiement.

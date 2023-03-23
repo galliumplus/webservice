@@ -1,8 +1,8 @@
-﻿using GalliumPlusAPI.Database;
-using GalliumPlusAPI.Models;
+﻿using GalliumPlus.WebApi.Data;
+using GalliumPlus.WebApi.Models;
 using Microsoft.AspNetCore.Mvc;
 
-namespace API.Controllers
+namespace GalliumPlus.WebApi.Controllers
 {
     [Route("api/products")]
     [ApiController]
@@ -18,7 +18,7 @@ namespace API.Controllers
         [HttpGet]
         public IEnumerable<Product> GetAll()
         {
-            return this.dao.Products.ReadAll();
+            return this.dao.Products.Read();
         }
 
         [HttpGet("available")]
@@ -30,7 +30,7 @@ namespace API.Controllers
         [HttpGet("{id}")]
         public Product Get(int id)
         {
-            return this.dao.Products.ReadOne(id)!;
+            return this.dao.Products.Read(id)!;
         }
 
         [HttpPost]

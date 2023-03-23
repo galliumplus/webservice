@@ -1,6 +1,4 @@
-﻿using System.Text.Json.Serialization;
-
-namespace GalliumPlusAPI.Models
+﻿namespace GalliumPlus.WebApi.Models
 {
     /// <summary>
     /// Une catégorie de produits.

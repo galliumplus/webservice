@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace GalliumPlusAPI.Models
+namespace GalliumPlus.WebApi.Models
 {
 	/// <summary>
 	/// Le rôle d'un utilisateur. 

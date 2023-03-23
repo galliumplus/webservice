@@ -1,4 +1,4 @@
-namespace GalliumPlusAPI.Models
+namespace GalliumPlus.WebApi.Models
 {
 	/// <summary>
 	/// Permissions spéciales attribuées aux rôles.

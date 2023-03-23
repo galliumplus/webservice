@@ -1,6 +1,5 @@
-namespace GalliumPlusAPI.Models
+namespace GalliumPlus.WebApi.Models
 {
-
 	/// <summary>
 	/// Disponiblité d'un produit.
 	/// </summary>
