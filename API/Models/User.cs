@@ -18,7 +18,7 @@ namespace GalliumPlusAPI.Models
 		/// <summary>
 		/// L'identifiant du rôle de l'utilisateur.
 		/// </summary>
-		public int RoleId { get; set; }
+		public int Role { get; set; }
 
 		/// <summary>
 		/// La promotion de l'utilisateur.

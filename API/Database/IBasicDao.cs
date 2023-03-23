@@ -1,5 +1,4 @@
 ﻿using GalliumPlusAPI.Models;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace GalliumPlusAPI.Database
 {

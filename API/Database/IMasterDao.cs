@@ -1,10 +1,9 @@
-﻿using GalliumPlusAPI.Models;
-using Microsoft.AspNetCore.Mvc.TagHelpers.Cache;
-
-namespace GalliumPlusAPI.Database
+﻿namespace GalliumPlusAPI.Database
 {
     public interface IMasterDao
     {
         public IProductDao Products { get; }
+
+        public IRoleDao Roles { get; }
     }
 }
