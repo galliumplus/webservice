@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 namespace GalliumPlus.WebApi.Models
 {
 	/// <summary>
-	/// Une quantité d'un certain produit.
+	/// Une quantité d'un produit.
 	/// </summary>
 	public class PurchaseProduct
 	{

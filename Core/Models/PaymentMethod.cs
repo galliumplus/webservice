@@ -6,7 +6,7 @@ namespace GalliumPlus.WebApi.Models
 	public enum PaymentMethod
 	{
 		/// <summary>
-		/// Paiemen par acompte.
+		/// Paiement par acompte.
 		/// </summary>
 		DEPOSIT,
 

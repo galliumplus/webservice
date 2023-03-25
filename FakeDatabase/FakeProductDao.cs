@@ -9,42 +9,42 @@ namespace GalliumPlus.WebApi.Data.Implementations.FakeDatabase
         public FakeProductDao()
         {
             this.products = new List<Product> {
-                new Product {
-                    Id = 0,
-                    Name = "KitKat",
-                    Stock = 20,
-                    NonMemberPrice = 0.80,
-                    MemberPrice = 0.60,
-                    Availability = Availability.AUTO,
-                    CategoryId = 0,
-                },
-                new Product {
-                    Id = 1,
-                    Name = "Coca-Cola Cherry",
-                    Stock = 17,
-                    NonMemberPrice = 1.00,
-                    MemberPrice = 0.80,
-                    Availability = Availability.AUTO,
-                    CategoryId = 0,
-                },
-                new Product {
-                    Id = 2,
-                    Name = "Pablo",
-                    Stock = 20,
-                    NonMemberPrice = 999.99,
-                    MemberPrice = 500.00,
-                    Availability = Availability.ALWAYS,
-                    CategoryId = 0,
-                },
-                new Product {
-                    Id = 3,
-                    Name = "Kinder Bueno",
-                    Stock = 0,
-                    NonMemberPrice = 1.00,
-                    MemberPrice = 0.80,
-                    Availability = Availability.AUTO,
-                    CategoryId = 0,
-                },
+                new Product (
+                    0,
+                    "KitKat",
+                    20,
+                    0.80,
+                    0.60,
+                    Availability.AUTO,
+                    0
+                ),
+                new Product (
+                    1,
+                    "Coca-Cola Cherry",
+                    17,
+                    1.00,
+                    0.80,
+                    Availability.AUTO,
+                    0
+                ),
+                new Product (
+                    2,
+                    "Pablo",
+                    20,
+                    999.99,
+                    500.00,
+                    Availability.ALWAYS,
+                    0
+                ),
+                new Product (
+                    3,
+                    "Kinder Bueno",
+                    0,
+                    1.00,
+                    0.80,
+                    Availability.AUTO,
+                    0
+                ),
             };
         }
 

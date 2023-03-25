@@ -16,5 +16,16 @@ namespace GalliumPlus.WebApi.Models
 		/// La méthode de paiement utilisée.
 		/// </summary>
 		public PaymentMethod PaymentMethod { get; set; }
+
+        /// <summary>
+        /// Crée un achat.
+        /// </summary>
+        /// <param name="products">Les produits achetés.</param>
+        /// <param name="paymentMethod">La méthode de paiement utilisée.</param>
+        public Purchase(List<PurchaseProduct> products, PaymentMethod paymentMethod)
+		{
+			this.Products = products;
+			this.PaymentMethod = paymentMethod;
+		}
 	}
 }

@@ -5,7 +5,7 @@ namespace GalliumPlus.WebApi.Models
     /// <summary>
     /// Un produit.
     /// </summary>
-    public class Product : IModel<int>
+    public class Product
     {
         /// <summary>
         /// L'identifiant du produit.
@@ -41,7 +41,7 @@ namespace GalliumPlus.WebApi.Models
         /// Catégorie du produit.
         /// </summary>
         public int CategoryId { get; set; }
-    
+
         /// <summary>
         /// Indique si le produit est disponible ou non.
         /// </summary>
@@ -54,6 +54,35 @@ namespace GalliumPlus.WebApi.Models
 
             // ignore les états invalides
             _ => false,
-        };   
+        };
+
+        /// <summary>
+        /// Crée un produit.
+        /// </summary>
+        /// <param name="id">L'identifiant du produit.</param>
+        /// <param name="name">Le nom affiché du produit.</param>
+        /// <param name="stock">La quantité restante en stock.</param>
+        /// <param name="nonMemberPrice">Prix non-adhérent.</param>
+        /// <param name="memberPrice">Prix adhérent.</param>
+        /// <param name="availability">Disponibilité du produit.</param>
+        /// <param name="categoryId">Catégorie du produit.</param>
+        public Product(
+            int id,
+            string name,
+            int stock,
+            double nonMemberPrice,
+            double memberPrice,
+            Availability availability,
+            int categoryId)
+        {
+            this.Id = id;
+            this.Name = name;
+            this.Stock = stock;
+            this.NonMemberPrice = nonMemberPrice;
+            this.MemberPrice = memberPrice;
+            this.Availability = availability;
+            this.CategoryId = categoryId;
+        }
+
     }
 }
