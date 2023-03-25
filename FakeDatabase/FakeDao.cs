@@ -1,4 +1,4 @@
-﻿namespace GalliumPlusAPI.Database.Implementations.FakeDatabase
+﻿namespace GalliumPlus.WebApi.Data.Implementations.FakeDatabase
 {
     public class FakeDao : IMasterDao
     {

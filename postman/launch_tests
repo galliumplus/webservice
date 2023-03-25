@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 import sys
 import subprocess
 import http.client
@@ -7,7 +9,7 @@ ANSI_RED_BOLD = "\x1b[1;31m"
 ANSI_RESET = "\x1b[0m"
 
 # start test server
-server = subprocess.Popen(["dotnet", "run", "--no-build", "--project", "API"])
+server = subprocess.Popen(["dotnet", "run", "--no-build", "--project", "Service"])
 
 # wait for server
 ping_client = http.client.HTTPConnection("localhost", 5443)
