@@ -1,14 +1,18 @@
-using GalliumPlus.WebApi.Data;
-using GalliumPlus.WebApi.Data.Implementations.FakeDatabase;
-using Microsoft.AspNetCore.Mvc;
-using System.Text.Json;
+using GalliumPlus.WebApi.Controllers;
+using GalliumPlus.WebApi.Core.Data;
 using System.Text.Json.Serialization;
+
+#if FAKE_DB
+using GalliumPlus.WebApi.Data.Implementations.FakeDatabase;
+#endif
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
-builder.Services.AddScoped<IMasterDao, FakeDaoFacade>();
+#if FAKE_DB
+builder.Services.AddScoped<IMasterDao, FakeDao>();
+#endif
 
 // accepte uniquement le format nombre JSON pour les entier et les floats
 Controller.JsonOptions.NumberHandling = JsonNumberHandling.Strict;
@@ -58,6 +62,7 @@ var app = builder.Build();
 
 app.UseHttpsRedirection();
 app.UseAuthorization();
+app.UseAuthentication();
 app.MapControllers();
 
 app.Run();

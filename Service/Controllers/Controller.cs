@@ -1,8 +1,8 @@
-﻿using GalliumPlusAPI.Database;
+﻿using GalliumPlus.WebApi.Core.Data;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 
-namespace GalliumPlusAPI.Controllers
+namespace GalliumPlus.WebApi.Controllers
 {
     public class Controller : ControllerBase
     {
@@ -10,7 +10,7 @@ namespace GalliumPlusAPI.Controllers
         public static JsonSerializerOptions JsonOptions { get => jsonOptions; }
 
         private IMasterDao dao;
-        protected IMasterDao Dao => this.dao;
+        protected IMasterDao Dao => dao;
 
         public Controller(IMasterDao dao)
         {

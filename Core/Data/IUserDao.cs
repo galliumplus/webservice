@@ -1,6 +1,4 @@
-﻿using GalliumPlusAPI.Models;
-
-namespace GalliumPlusAPI.Database
+﻿namespace GalliumPlus.WebApi.Core.Data
 {
     public interface IUserDao : IBasicDao<string, User>
     {

@@ -1,9 +1,9 @@
-﻿using GalliumPlus.WebApi.Models;
-
-namespace GalliumPlus.WebApi.Data
+﻿namespace GalliumPlus.WebApi.Core.Data
 {
     public interface IMasterDao
     {
-        public IProductDao Products { get; }
+        public IRoleDao Roles { get; }
+
+        public IUserDao Users { get; }
     }
 }

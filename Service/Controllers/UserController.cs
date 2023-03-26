@@ -1,10 +1,8 @@
-﻿using GalliumPlusAPI.Database;
-using GalliumPlusAPI.Exceptions;
-using GalliumPlusAPI.Models;
-using Microsoft.AspNetCore.Http;
+﻿using GalliumPlus.WebApi.Core;
+using GalliumPlus.WebApi.Core.Data;
 using Microsoft.AspNetCore.Mvc;
 
-namespace GalliumPlusAPI.Controllers
+namespace GalliumPlus.WebApi.Controllers
 {
 
     [Route("api/users")]
@@ -16,7 +14,7 @@ namespace GalliumPlusAPI.Controllers
         [HttpGet]
         public IActionResult Get()
         {
-            return Json(Dao.Users.ReadAll());
+            return Json(Dao.Users.Read());
         }
 
         [HttpGet("me")]
@@ -30,7 +28,7 @@ namespace GalliumPlusAPI.Controllers
         {
             try
             {
-                return Json(Dao.Users.ReadOne(id));
+                return Json(Dao.Users.Read(id));
             }
             catch (ItemNotFoundException)
             {

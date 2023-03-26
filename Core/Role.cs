@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace GalliumPlus.WebApi.Models
+namespace GalliumPlus.WebApi.Core
 {
     /// <summary>
     /// Le rôle d'un utilisateur. 
@@ -20,7 +20,7 @@ namespace GalliumPlus.WebApi.Models
         /// <summary>
         /// La somme des permissions attribuées au rôle.
         /// </summary>
-        private int Permissions { get; set; }
+        private Permission Permissions { get; set; }
 
         /// <summary>
         /// Vérifie que le rôle a une certaine permission.
@@ -29,7 +29,7 @@ namespace GalliumPlus.WebApi.Models
         /// <returns><see langword="true"/> si le rôle a la permission, sinon <see langword="false"/>.</returns>
         public bool HasPermission(Permission perm)
         {
-            return (this.Permissions & (int)perm) != 0;
+            return (Permissions & perm) != 0;
         }
 
         /// <summary>
@@ -38,11 +38,11 @@ namespace GalliumPlus.WebApi.Models
         /// <param name="id">L'identifiant du rôle.</param>
         /// <param name="name">Le nom affiché du rôle.</param>
         /// <param name="permissions">La somme des permissions attribuées au rôle.</param>
-        public Role(int id, string name, int permissions)
+        public Role(int id, string name, Permission permissions)
         {
-            this.Id = id;
-            this.Name = name;
-            this.Permissions = permissions;
+            Id = id;
+            Name = name;
+            Permissions = permissions;
         }
     }
 }
