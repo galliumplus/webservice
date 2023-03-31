@@ -5,16 +5,29 @@ namespace GalliumPlus.WebApi.Data.Implementations.FakeDatabase
 {
     public class UserDao : BaseDao<string, User>, IUserDao
     {
-        public UserDao()
+        private RoleDao roles;
+
+        public UserDao(RoleDao roles)
         {
+            this.roles = roles;
+
             this.Create(
-                new User("lomens", "Nicolas RESIN", 1, "Prof", 20)
+                new User(
+                    "lomens", "Nicolas RESIN", this.roles.Read(0), "Prof", 20, false,
+                    PasswordInformation.FromPassword("motdepasse")
+                )
             );
             this.Create(
-                new User("mf187870", "Matéo FAVARD", 0, "2A", 1_000_000_000)
+                new User(
+                    "mf187870", "Matéo FAVARD", this.roles.Read(1), "2A", 1_000_000_000, false,
+                    PasswordInformation.FromPassword("motdepasse")
+                )
             );
             this.Create(
-                new User("eb069420", "Evan BEUGNOT", 1, "1A", double.MaxValue)
+                new User(
+                    "eb069420", "Evan BEUGNOT", this.roles.Read(2), "1A", double.MaxValue, false,
+                    PasswordInformation.FromPassword("motdepasse")
+                )
             );
         }
 

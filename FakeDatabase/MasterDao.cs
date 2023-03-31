@@ -20,13 +20,13 @@ namespace GalliumPlus.WebApi.Data.Implementations.FakeDatabase
             }
         }
 
+        #endregion
+
         private MasterDao()
         {
-            users = new UserDao();
-            roles = new RoleDao();
+            this.roles = new RoleDao();
+            this.users = new UserDao(this.roles);
         }
-
-        #endregion
 
         private RoleDao roles;
         private UserDao users;

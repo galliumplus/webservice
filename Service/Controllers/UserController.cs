@@ -1,5 +1,6 @@
 ﻿using GalliumPlus.WebApi.Core;
 using GalliumPlus.WebApi.Core.Data;
+using GalliumPlus.WebApi.Core.Serialization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GalliumPlus.WebApi.Controllers
@@ -15,12 +16,6 @@ namespace GalliumPlus.WebApi.Controllers
         public IActionResult Get()
         {
             return Json(Dao.Users.Read());
-        }
-
-        [HttpGet("me")]
-        public IActionResult GetCurrent()
-        {
-            throw new NotImplementedException();
         }
 
         [HttpGet("{id}")]
@@ -63,6 +58,20 @@ namespace GalliumPlus.WebApi.Controllers
             try
             {
                 Dao.Users.Delete(id);
+                return Ok();
+            }
+            catch (ItemNotFoundException)
+            {
+                return NotFound();
+            }
+        }
+
+        [HttpPut("{id}/deposit")]
+        public IActionResult PutDeposit(string id, [FromBody] double updatedDeposit)
+        {
+            try
+            {
+                Dao.Users.UpdateDeposit(id, updatedDeposit);
                 return Ok();
             }
             catch (ItemNotFoundException)

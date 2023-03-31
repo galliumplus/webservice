@@ -1,6 +1,7 @@
 using GalliumPlus.WebApi.Controllers;
 using GalliumPlus.WebApi.Core.Data;
 using System.Text.Json.Serialization;
+using GalliumPlus.WebApi.Middleware;
 
 #if FAKE_DB
 using GalliumPlus.WebApi.Data.Implementations.FakeDatabase;
@@ -58,11 +59,13 @@ builder.WebHost.ConfigureKestrel(opt => {
     });
 });
 
+builder.Services.AddAuthentication(defaultScheme: "Basic").AddBasic();
+
 var app = builder.Build();
 
 app.UseHttpsRedirection();
-app.UseAuthorization();
 app.UseAuthentication();
+app.UseAuthorization();
 app.MapControllers();
 
 app.Run();

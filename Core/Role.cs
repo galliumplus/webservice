@@ -1,3 +1,4 @@
+using GalliumPlus.WebApi.Core.Serialization;
 using System.Text.Json.Serialization;
 
 namespace GalliumPlus.WebApi.Core
@@ -7,20 +8,25 @@ namespace GalliumPlus.WebApi.Core
     /// </summary>
     public class Role
     {
+        private int id;
+        private string name;
+        private Permission permissions;
+
         /// <summary>
         /// L'identifiant du rôle.
         /// </summary>
-        public int Id { get; set; }
+        [JsonReferenceKey]
+        public int Id { get => this.id; set => this.id = value; }
 
         /// <summary>
         /// Le nom affiché du rôle.
         /// </summary>
-        public string Name { get; set; }
+        public string Name { get => this.name; set => this.name = value; }
 
         /// <summary>
         /// La somme des permissions attribuées au rôle.
         /// </summary>
-        private Permission Permissions { get; set; }
+        private Permission Permissions { get => this.permissions; set => this.permissions = value; }
 
         /// <summary>
         /// Vérifie que le rôle a une certaine permission.
@@ -40,9 +46,9 @@ namespace GalliumPlus.WebApi.Core
         /// <param name="permissions">La somme des permissions attribuées au rôle.</param>
         public Role(int id, string name, Permission permissions)
         {
-            Id = id;
-            Name = name;
-            Permissions = permissions;
+            this.id = id;
+            this.name = name;
+            this.permissions = permissions;
         }
     }
 }

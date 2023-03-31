@@ -4,12 +4,23 @@ using System.Text.Json;
 
 namespace GalliumPlus.WebApi.Controllers
 {
+    /// <summary>
+    /// Contrôleur de base.
+    /// </summary>
     public class Controller : ControllerBase
     {
         private static JsonSerializerOptions jsonOptions = new JsonSerializerOptions();
+
+        /// <summary>
+        /// Options par défaut pour la Sérialisation en JSON.
+        /// </summary>
         public static JsonSerializerOptions JsonOptions { get => jsonOptions; }
 
         private IMasterDao dao;
+
+        /// <summary>
+        /// Le DAO général pour toutes les ressources.
+        /// </summary>
         protected IMasterDao Dao => dao;
 
         public Controller(IMasterDao dao)
@@ -17,6 +28,11 @@ namespace GalliumPlus.WebApi.Controllers
             this.dao = dao;
         }
 
+        /// <summary>
+        /// Crée une réponse avec un corps JSON.
+        /// </summary>
+        /// <param name="value">L'objet à sérialiser.</param>
+        /// <param name="statusCode">Le statut de la réponse.</param>
         public static IActionResult Json(object? value, int statusCode = StatusCodes.Status200OK)
         {
             return new ContentResult
@@ -27,6 +43,9 @@ namespace GalliumPlus.WebApi.Controllers
             };
         }
 
+        /// <summary>
+        /// Crée une réponse avec un statut de 201, sans informations sur la ressource créée.
+        /// </summary>
         public static IActionResult Created() => new StatusCodeResult(StatusCodes.Status201Created);
     }
 }
