@@ -1,7 +1,7 @@
 ﻿using GalliumPlus.WebApi.Core;
 using GalliumPlus.WebApi.Core.Data;
 
-namespace GalliumPlus.WebApi.Data.Implementations.FakeDatabase
+namespace GalliumPlus.WebApi.Data.FakeDatabase
 {
     public abstract class BaseDao<TKey, TItem> : IBasicDao<TKey, TItem>
     where TKey : notnull
@@ -19,12 +19,12 @@ namespace GalliumPlus.WebApi.Data.Implementations.FakeDatabase
         {
             if (!CheckConstraints(item))
             {
-                throw new ValueException("Custom constraints violated");
+                throw new InvalidItemException("Custom constraints violated");
             }
 
             if (!items.TryAdd(GetKey(item), item))
             {
-                throw new ValueException("An item with this key already exists");
+                throw new InvalidItemException("An item with this key already exists");
             }
         }
 
@@ -57,7 +57,7 @@ namespace GalliumPlus.WebApi.Data.Implementations.FakeDatabase
         {
             if (!CheckConstraints(item))
             {
-                throw new ValueException("Custom constraints violated");
+                throw new InvalidItemException("Custom constraints violated");
             }
 
             try
