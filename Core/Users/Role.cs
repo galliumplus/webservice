@@ -22,7 +22,7 @@ namespace GalliumPlus.WebApi.Core.Users
         /// <summary>
         /// La somme des permissions attribuées au rôle.
         /// </summary>
-        private Permissions Permissions { get => permissions; set => permissions = value; }
+        public Permissions Permissions { get => permissions; set => permissions = value; }
 
         /// <summary>
         /// Vérifie que le rôle a une certaine permission.

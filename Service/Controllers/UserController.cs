@@ -1,5 +1,4 @@
-﻿using GalliumPlus.WebApi.Core;
-using GalliumPlus.WebApi.Core.Data;
+﻿using GalliumPlus.WebApi.Core.Data;
 using GalliumPlus.WebApi.Core.Users;
 using GalliumPlus.WebApi.Dto;
 using Microsoft.AspNetCore.Mvc;
@@ -11,37 +10,34 @@ namespace GalliumPlus.WebApi.Controllers
     [ApiController]
     public class UserController : Controller
     {
-        private IMapper<User, UserSummary> mapper;
+        private UserSummary.Mapper summaryMapper = new();
+        private UserDetails.Mapper detailsMapper = new();
 
-        public UserController(IMasterDao dao, IMapper<User, UserSummary> mapper)
-        : base(dao)
-        {
-            this.mapper = mapper;
-        }
+        public UserController(IMasterDao dao) : base(dao) { }
 
         [HttpGet]
         public IActionResult Get()
         {
-            return Json(mapper.FromModel(Dao.Users.Read()));
+            return Json(summaryMapper.FromModel(Dao.Users.Read()));
         }
 
         [HttpGet("{id}")]
         public IActionResult Get(string id)
         {
-            return Json(mapper.FromModel(Dao.Users.Read(id)));
+            return Json(detailsMapper.FromModel(Dao.Users.Read(id)));
         }
 
         [HttpPost]
         public IActionResult Post(UserSummary newUser)
         {
-            Dao.Users.Create(mapper.ToModel(newUser, Dao));
+            Dao.Users.Create(summaryMapper.ToModel(newUser, Dao));
             return Created();
         }
 
         [HttpPut("{id}")]
         public IActionResult Put(string id, UserSummary updatedUser)
         {
-            Dao.Users.Update(id, mapper.ToModel(updatedUser, Dao));
+            Dao.Users.Update(id, summaryMapper.ToModel(updatedUser, Dao));
             return Ok();
         }
 

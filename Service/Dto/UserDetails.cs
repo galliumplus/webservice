@@ -4,17 +4,17 @@ using System.Text.Json.Serialization;
 
 namespace GalliumPlus.WebApi.Dto
 {
-    public class UserSummary
+    public class UserDetails
     {
         public string Id { get; }
         public string Name { get; }
-        public int Role { get; }
+        public RoleDetails Role { get; }
         public string Year { get; }
         public double Deposit { get; }
         public bool FormerMember { get; }
 
         [JsonConstructor]
-        public UserSummary(string id, string name, int role, string year, double deposit, bool formerMember)
+        public UserDetails(string id, string name, RoleDetails role, string year, double deposit, bool formerMember)
         {
             Id = id;
             Name = name;
@@ -24,29 +24,31 @@ namespace GalliumPlus.WebApi.Dto
             FormerMember = formerMember;
         }
 
-        public class Mapper : Mapper<User, UserSummary>
+        public class Mapper : Mapper<User, UserDetails>
         {
-            public override UserSummary FromModel(User user)
+            private RoleDetails.Mapper roleMapper = new();
+
+            public override UserDetails FromModel(User user)
             {
-                return new UserSummary(
+                return new UserDetails(
                     user.Id,
                     user.Name,
-                    user.Role.Id,
+                    roleMapper.FromModel(user.Role),
                     user.Year,
                     user.Deposit,
                     user.FormerMember
                 );
             }
 
-            public override User ToModel(UserSummary summary, IMasterDao dao)
+            public override User ToModel(UserDetails details, IMasterDao dao)
             {
                 return new User(
-                    summary.Id,
-                    summary.Name,
-                    dao.Roles.Read(summary.Role),
-                    summary.Year,
-                    summary.Deposit,
-                    summary.FormerMember
+                    details.Id,
+                    details.Name,
+                    roleMapper.ToModel(details.Role, dao),
+                    details.Year,
+                    details.Deposit,
+                    details.FormerMember
                 );
             }
         }

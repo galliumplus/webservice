@@ -21,8 +21,6 @@ builder.Services.AddControllers(options =>
 builder.Services.AddScoped<IMasterDao, FakeDao>();
 #endif
 
-builder.Services.AddTransient<IMapper<User, UserSummary>, UserSummary.Mapper>();
-
 // accepte uniquement le format nombre JSON pour les entier et les floats
 Controller.JsonOptions.NumberHandling = JsonNumberHandling.Strict;
 // accepte les virgules en fin de liste / d'objet
@@ -36,10 +34,16 @@ Controller.JsonOptions.Converters.Add(new JsonStringEnumConverter());
 builder.WebHost.ConfigureKestrel(opt =>
 {
     int httpPort;
-    if (!Int32.TryParse(Environment.GetEnvironmentVariable("GALLIUM_HTTP"), out httpPort)) httpPort = 5080;
+    if (!Int32.TryParse(Environment.GetEnvironmentVariable("GALLIUM_HTTP"), out httpPort))
+    {
+        httpPort = 5080;
+    }
 
     int httpsPort;
-    if (!Int32.TryParse(Environment.GetEnvironmentVariable("GALLIUM_HTTPS"), out httpsPort)) httpsPort = 5443;
+    if (!Int32.TryParse(Environment.GetEnvironmentVariable("GALLIUM_HTTPS"), out httpsPort))
+    {
+        httpsPort = 5443;
+    }
 
     opt.ListenAnyIP(httpPort);
     opt.ListenAnyIP(httpsPort, opt =>
