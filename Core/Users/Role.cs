@@ -1,7 +1,4 @@
-using GalliumPlus.WebApi.Core.Serialization;
-using System.Text.Json.Serialization;
-
-namespace GalliumPlus.WebApi.Core
+namespace GalliumPlus.WebApi.Core.Users
 {
     /// <summary>
     /// Le rôle d'un utilisateur. 
@@ -10,30 +7,29 @@ namespace GalliumPlus.WebApi.Core
     {
         private int id;
         private string name;
-        private Permission permissions;
+        private Permissions permissions;
 
         /// <summary>
         /// L'identifiant du rôle.
         /// </summary>
-        [JsonReferenceKey]
-        public int Id { get => this.id; set => this.id = value; }
+        public int Id { get => this.id; set => id = value; }
 
         /// <summary>
         /// Le nom affiché du rôle.
         /// </summary>
-        public string Name { get => this.name; set => this.name = value; }
+        public string Name { get => name; set => name = value; }
 
         /// <summary>
         /// La somme des permissions attribuées au rôle.
         /// </summary>
-        private Permission Permissions { get => this.permissions; set => this.permissions = value; }
+        private Permissions Permissions { get => permissions; set => permissions = value; }
 
         /// <summary>
         /// Vérifie que le rôle a une certaine permission.
         /// </summary>
         /// <param name="perm">La permission à vérifier</param>
         /// <returns><see langword="true"/> si le rôle a la permission, sinon <see langword="false"/>.</returns>
-        public bool HasPermission(Permission perm)
+        public bool HasPermission(Permissions perm)
         {
             return (Permissions & perm) != 0;
         }
@@ -44,7 +40,7 @@ namespace GalliumPlus.WebApi.Core
         /// <param name="id">L'identifiant du rôle.</param>
         /// <param name="name">Le nom affiché du rôle.</param>
         /// <param name="permissions">La somme des permissions attribuées au rôle.</param>
-        public Role(int id, string name, Permission permissions)
+        public Role(int id, string name, Permissions permissions)
         {
             this.id = id;
             this.name = name;

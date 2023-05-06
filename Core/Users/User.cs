@@ -1,7 +1,6 @@
-using GalliumPlus.WebApi.Core.Serialization;
 using System.Text.Json.Serialization;
 
-namespace GalliumPlus.WebApi.Core
+namespace GalliumPlus.WebApi.Core.Users
 {
     /// <summary>
     /// Un utilisateur de l'application.
@@ -24,19 +23,17 @@ namespace GalliumPlus.WebApi.Core
         /// <summary>
         /// Le prénom et nom de l'utilisateur.
         /// </summary>
-        public string Name { get => this.name; set => this.name =  value; }
+        public string Name { get => this.name; set => this.name = value; }
 
         /// <summary>
         /// L'identifiant du rôle de l'utilisateur.
         /// </summary>
-        [JsonReference]
         public Role Role { get => this.role; set => this.role = value; }
 
         /// <summary>
         /// Le mot de passe de l'ulitlisateur.
         /// Cette propriété ne doit pas être exposée par l'API.
         /// </summary>
-        [JsonIgnore]
         public PasswordInformation? Password { get => this.password; set => this.password = value; }
 
         /// <summary>
@@ -63,7 +60,6 @@ namespace GalliumPlus.WebApi.Core
         /// <param name="year">La promotion de l'utilisateur.</param>
         /// <param name="deposit">L'acompte de l'utilisateur.</param>
         /// <param name="formerMember"> <see langword="true"/> si l'utilisateur n'est plus adhérent.</param>
-        [JsonConstructor]
         public User(
             string id,
             string name,
