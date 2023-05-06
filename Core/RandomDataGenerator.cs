@@ -1,20 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace GalliumPlus.WebApi.Core
+﻿namespace GalliumPlus.WebApi.Core
 {
     /// <summary>
-    /// Classes encapsulant un RNG utile pour générer du texte aléatoire.
+    /// Classe encapsulant un RNG, utile pour générer du texte aléatoire.
     /// </summary>
     public class RandomDataGenerator
     {
         private Random rng;
 
-        private const String ALPHANUM = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        private const string ALPHANUM = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
         /// <summary>
         /// Crée un nouveau <see cref="RandomDataGenerator"/> en utilisant un RNG avec une seed par défaut.
