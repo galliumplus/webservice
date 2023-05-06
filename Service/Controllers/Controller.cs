@@ -33,7 +33,7 @@ namespace GalliumPlus.WebApi.Controllers
         /// </summary>
         /// <param name="value">L'objet à sérialiser.</param>
         /// <param name="statusCode">Le statut de la réponse.</param>
-        public static IActionResult Json(object? value, int statusCode = StatusCodes.Status200OK)
+        public IActionResult Json(object? value, int statusCode = StatusCodes.Status200OK)
         {
             return new ContentResult
             {
@@ -46,6 +46,6 @@ namespace GalliumPlus.WebApi.Controllers
         /// <summary>
         /// Crée une réponse avec un statut de 201, sans informations sur la ressource créée.
         /// </summary>
-        public static IActionResult Created() => new StatusCodeResult(StatusCodes.Status201Created);
+        public IActionResult Created() => new StatusCodeResult(StatusCodes.Status201Created);
     }
 }

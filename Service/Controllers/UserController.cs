@@ -1,6 +1,7 @@
 ﻿using GalliumPlus.WebApi.Core;
 using GalliumPlus.WebApi.Core.Data;
-using GalliumPlus.WebApi.Core.Serialization;
+using GalliumPlus.WebApi.Core.Users;
+using GalliumPlus.WebApi.Dto;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GalliumPlus.WebApi.Controllers
@@ -10,74 +11,52 @@ namespace GalliumPlus.WebApi.Controllers
     [ApiController]
     public class UserController : Controller
     {
-        public UserController(IMasterDao dao) : base(dao) { }
+        private IMapper<User, UserSummary> mapper;
+
+        public UserController(IMasterDao dao, IMapper<User, UserSummary> mapper)
+        : base(dao)
+        {
+            this.mapper = mapper;
+        }
 
         [HttpGet]
         public IActionResult Get()
         {
-            return Json(Dao.Users.Read());
+            return Json(mapper.FromModel(Dao.Users.Read()));
         }
 
         [HttpGet("{id}")]
         public IActionResult Get(string id)
         {
-            try
-            {
-                return Json(Dao.Users.Read(id));
-            }
-            catch (ItemNotFoundException)
-            {
-                return NotFound();
-            }
+            return Json(mapper.FromModel(Dao.Users.Read(id)));
         }
 
         [HttpPost]
-        public IActionResult Post(User newUser)
+        public IActionResult Post(UserSummary newUser)
         {
-            Dao.Users.Create(newUser);
+            Dao.Users.Create(mapper.ToModel(newUser, Dao));
             return Created();
         }
 
         [HttpPut("{id}")]
-        public IActionResult Put(string id, User updatedUser)
+        public IActionResult Put(string id, UserSummary updatedUser)
         {
-            try
-            {
-                Dao.Users.Update(id, updatedUser);
-                return Ok();
-            }
-            catch (ItemNotFoundException)
-            {
-                return NotFound();
-            }
+            Dao.Users.Update(id, mapper.ToModel(updatedUser, Dao));
+            return Ok();
         }
 
         [HttpDelete("{id}")]
         public IActionResult Delete(string id)
         {
-            try
-            {
-                Dao.Users.Delete(id);
-                return Ok();
-            }
-            catch (ItemNotFoundException)
-            {
-                return NotFound();
-            }
+            Dao.Users.Delete(id);
+            return Ok();
         }
 
         [HttpPut("{id}/deposit")]
         public IActionResult PutDeposit(string id, [FromBody] double updatedDeposit)
         {
-            try
-            {
-                Dao.Users.UpdateDeposit(id, updatedDeposit);
-                return Ok();
-            }
-            catch (ItemNotFoundException)
-            {
-                return NotFound();
-            }
+            Dao.Users.UpdateDeposit(id, updatedDeposit);
+            return Ok();
         }
     }
 }

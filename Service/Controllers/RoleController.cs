@@ -1,5 +1,6 @@
 ﻿using GalliumPlus.WebApi.Core;
 using GalliumPlus.WebApi.Core.Data;
+using GalliumPlus.WebApi.Core.Users;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GalliumPlus.WebApi.Controllers
@@ -19,14 +20,7 @@ namespace GalliumPlus.WebApi.Controllers
         [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
-            try
-            {
-                return Json(Dao.Roles.Read(id));
-            }
-            catch (ItemNotFoundException)
-            {
-                return NotFound();
-            }
+            return Json(Dao.Roles.Read(id));
         }
 
         [HttpPost]
@@ -39,29 +33,15 @@ namespace GalliumPlus.WebApi.Controllers
         [HttpPut("{id}")]
         public IActionResult Put(int id, Role updatedRole)
         {
-            try
-            {
-                Dao.Roles.Update(id, updatedRole);
-                return Ok();
-            }
-            catch (ItemNotFoundException)
-            {
-                return NotFound();
-            }
+            Dao.Roles.Update(id, updatedRole);
+            return Ok();
         }
 
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            try
-            {
-                Dao.Roles.Delete(id);
-                return Ok();
-            }
-            catch (ItemNotFoundException)
-            {
-                return NotFound();
-            }
+            Dao.Roles.Delete(id);
+            return Ok();
         }
     }
 }

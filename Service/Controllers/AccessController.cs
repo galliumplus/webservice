@@ -1,5 +1,4 @@
 ﻿using GalliumPlus.WebApi.Core.Data;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GalliumPlus.WebApi.Controllers

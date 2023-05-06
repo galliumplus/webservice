@@ -1,19 +1,27 @@
 using GalliumPlus.WebApi.Controllers;
 using GalliumPlus.WebApi.Core.Data;
-using System.Text.Json.Serialization;
+using GalliumPlus.WebApi.Core.Users;
+using GalliumPlus.WebApi.Data.FakeDatabase;
+using GalliumPlus.WebApi.Dto;
 using GalliumPlus.WebApi.Middleware;
+using System.Text.Json.Serialization;
 
 #if FAKE_DB
-using GalliumPlus.WebApi.Data.Implementations.FakeDatabase;
 #endif
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(options =>
+{
+    // Ajoute un filtre pour les exceptions propres à gallium
+    options.Filters.Add<CoreExceptionsFilter>();
+});
 
 #if FAKE_DB
 builder.Services.AddScoped<IMasterDao, FakeDao>();
 #endif
+
+builder.Services.AddTransient<IMapper<User, UserSummary>, UserSummary.Mapper>();
 
 // accepte uniquement le format nombre JSON pour les entier et les floats
 Controller.JsonOptions.NumberHandling = JsonNumberHandling.Strict;
@@ -25,18 +33,13 @@ Controller.JsonOptions.PropertyNamingPolicy = null;
 Controller.JsonOptions.Converters.Add(new JsonStringEnumConverter());
 
 // configuration HTTP/HTTPS
-builder.WebHost.ConfigureKestrel(opt => {
+builder.WebHost.ConfigureKestrel(opt =>
+{
     int httpPort;
-    if (!Int32.TryParse(Environment.GetEnvironmentVariable("GALLIUM_HTTP"), out httpPort))
-    {
-        httpPort = 5080;
-    }
+    if (!Int32.TryParse(Environment.GetEnvironmentVariable("GALLIUM_HTTP"), out httpPort)) httpPort = 5080;
 
     int httpsPort;
-    if (!Int32.TryParse(Environment.GetEnvironmentVariable("GALLIUM_HTTPS"), out httpsPort))
-    {
-        httpsPort = 5443;
-    }
+    if (!Int32.TryParse(Environment.GetEnvironmentVariable("GALLIUM_HTTPS"), out httpsPort)) httpsPort = 5443;
 
     opt.ListenAnyIP(httpPort);
     opt.ListenAnyIP(httpsPort, opt =>

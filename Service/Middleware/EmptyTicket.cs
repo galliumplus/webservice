@@ -1,8 +1,5 @@
-﻿using GalliumPlus.WebApi.Core;
-using Microsoft.AspNetCore.Authentication;
-using System.Reflection.Metadata.Ecma335;
+﻿using Microsoft.AspNetCore.Authentication;
 using System.Security.Claims;
-using System.Security.Principal;
 
 namespace GalliumPlus.WebApi.Middleware
 {

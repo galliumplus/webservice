@@ -1,18 +1,19 @@
 ﻿using GalliumPlus.WebApi.Core;
 using GalliumPlus.WebApi.Core.Data;
+using GalliumPlus.WebApi.Core.Users;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Options;
 using System.Net.Http.Headers;
-using System.Runtime.CompilerServices;
-using System.Security.Principal;
 using System.Text;
 using System.Text.Encodings.Web;
+
+#pragma warning disable CS1998 // Cette méthode async n'a pas d'opérateur 'await' et elle s'exécutera de façon synchrone
 
 namespace GalliumPlus.WebApi.Middleware
 {
     public class BasicAuthenticationHandler : AuthenticationHandler<AuthenticationSchemeOptions>
     {
-        IUserDao users;
+        private IUserDao users;
 
         public BasicAuthenticationHandler(
             IOptionsMonitor<AuthenticationSchemeOptions> options,
@@ -35,10 +36,10 @@ namespace GalliumPlus.WebApi.Middleware
                 var authHeader = AuthenticationHeaderValue.Parse(Request.Headers["Authorization"]);
                 var credentialBytes = Convert.FromBase64String(authHeader.Parameter ?? "");
                 var credentials = Encoding.UTF8.GetString(credentialBytes).Split(':', 2);
-                
+
                 username = credentials[0];
                 password = credentials[1];
-                
+
                 return true;
             }
             catch
