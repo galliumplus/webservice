@@ -3,9 +3,9 @@
     /// <summary>
     /// Erreur indiquant des données non valides.
     /// </summary>
-    public class ValueException : Exception
+    public class InvalidItemException : Exception
     {
-        public ValueException(string message) : base(message) { }
+        public InvalidItemException(string message) : base(message) { }
     }
 
     /// <summary>
