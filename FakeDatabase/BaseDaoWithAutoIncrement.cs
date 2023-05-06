@@ -1,4 +1,4 @@
-﻿namespace GalliumPlus.WebApi.Data.Implementations.FakeDatabase
+﻿namespace GalliumPlus.WebApi.Data.FakeDatabase
 {
     public abstract class BaseDaoWithAutoIncrement<TItem> : BaseDao<int, TItem>
     {

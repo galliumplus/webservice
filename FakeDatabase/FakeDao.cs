@@ -1,6 +1,6 @@
 ﻿using GalliumPlus.WebApi.Core.Data;
 
-namespace GalliumPlus.WebApi.Data.Implementations.FakeDatabase
+namespace GalliumPlus.WebApi.Data.FakeDatabase
 {
     public class FakeDao : IMasterDao
     {

@@ -4,7 +4,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <RootNamespace>GalliumPlus.WebApi.Data.Implementations.FakeDatabase</RootNamespace>
+    <RootNamespace>GalliumPlus.WebApi.Data.FakeDatabase</RootNamespace>
     <Configurations>Debug;Release</Configurations>
   </PropertyGroup>
 

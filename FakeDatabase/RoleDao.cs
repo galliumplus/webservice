@@ -1,7 +1,7 @@
-﻿using GalliumPlus.WebApi.Core;
-using GalliumPlus.WebApi.Core.Data;
+﻿using GalliumPlus.WebApi.Core.Data;
+using GalliumPlus.WebApi.Core.Users;
 
-namespace GalliumPlus.WebApi.Data.Implementations.FakeDatabase
+namespace GalliumPlus.WebApi.Data.FakeDatabase
 {
 
     public class RoleDao : BaseDaoWithAutoIncrement<Role>, IRoleDao
@@ -13,23 +13,22 @@ namespace GalliumPlus.WebApi.Data.Implementations.FakeDatabase
             );
             this.Create(
                 new Role(0, "CA",
-                    Permission.MANAGE_PRODUCTS
-                    | Permission.SEE_ALL_USERS
-                    | Permission.SELL
-                    | Permission.MANAGE_DEPOSITS
+                    Permissions.MANAGE_PRODUCTS
+                    | Permissions.SEE_ALL_USERS
+                    | Permissions.SELL
+                    | Permissions.MANAGE_DEPOSITS
                 )
             );
-            Create(
+            this.Create(
                 new Role(0, "Président",
-                    Permission.MANAGE_PRODUCTS
-                    | Permission.SEE_ALL_USERS
-                    | Permission.SELL
-                    | Permission.MANAGE_DEPOSITS
-                    | Permission.MANAGE_CATEGORIES
-                    | Permission.READ_LOGS
-                    | Permission.MANAGE_ROLES
-                    | Permission.MANAGE_USERS
-                    | Permission.RESET_MEMBERSHIPS
+                    Permissions.MANAGE_PRODUCTS
+                    | Permissions.SEE_ALL_USERS
+                    | Permissions.SELL
+                    | Permissions.MANAGE_CATEGORIES
+                    | Permissions.READ_LOGS
+                    | Permissions.MANAGE_ROLES
+                    | Permissions.MANAGE_USERS
+                    | Permissions.RESET_MEMBERSHIPS
                 )
             );
         }

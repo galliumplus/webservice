@@ -1,7 +1,7 @@
-﻿using GalliumPlus.WebApi.Core;
-using GalliumPlus.WebApi.Core.Data;
+﻿using GalliumPlus.WebApi.Core.Data;
+using GalliumPlus.WebApi.Core.Users;
 
-namespace GalliumPlus.WebApi.Data.Implementations.FakeDatabase
+namespace GalliumPlus.WebApi.Data.FakeDatabase
 {
     public class UserDao : BaseDao<string, User>, IUserDao
     {
