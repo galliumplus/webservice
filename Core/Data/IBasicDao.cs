@@ -33,7 +33,7 @@
         /// <param name="key">La clé de l'item.</param>
         /// <param name="item">Le nouvel item.</param>
         /// <exception cref="ItemNotFoundException"></exception>
-        /// <exception cref="ValueException"></exception>
+        /// <exception cref="InvalidItemException"></exception>
         public void Update(TKey key, TItem item);
 
         /// <summary>
