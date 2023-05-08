@@ -3,7 +3,6 @@ using GalliumPlus.WebApi.Core.Users;
 
 namespace GalliumPlus.WebApi.Data.FakeDatabase
 {
-
     public class RoleDao : BaseDaoWithAutoIncrement<Role>, IRoleDao
     {
         public RoleDao()

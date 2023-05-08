@@ -303,6 +303,7 @@ paket-files/
 .cr/personal
 
 # Python Tools for Visual Studio (PTVS)
+venv
 __pycache__/
 *.pyc
 

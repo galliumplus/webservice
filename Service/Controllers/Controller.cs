@@ -9,13 +9,6 @@ namespace GalliumPlus.WebApi.Controllers
     /// </summary>
     public class Controller : ControllerBase
     {
-        private static JsonSerializerOptions jsonOptions = new JsonSerializerOptions();
-
-        /// <summary>
-        /// Options par défaut pour la Sérialisation en JSON.
-        /// </summary>
-        public static JsonSerializerOptions JsonOptions { get => jsonOptions; }
-
         private IMasterDao dao;
 
         /// <summary>
@@ -35,12 +28,7 @@ namespace GalliumPlus.WebApi.Controllers
         /// <param name="statusCode">Le statut de la réponse.</param>
         public IActionResult Json(object? value, int statusCode = StatusCodes.Status200OK)
         {
-            return new ContentResult
-            {
-                Content = JsonSerializer.Serialize(value, jsonOptions),
-                ContentType = "application/json",
-                StatusCode = statusCode,
-            };
+            return new JsonResult(value) { StatusCode = statusCode };
         }
 
         /// <summary>

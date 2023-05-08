@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using System.Security.Claims;
 
-namespace GalliumPlus.WebApi.Middleware
+namespace GalliumPlus.WebApi.Middleware.Authentication
 {
     /// <summary>
     /// Un ticket d'authentification sans informations particulières.

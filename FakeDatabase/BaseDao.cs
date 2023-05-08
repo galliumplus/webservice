@@ -24,7 +24,7 @@ namespace GalliumPlus.WebApi.Data.FakeDatabase
 
             if (!items.TryAdd(GetKey(item), item))
             {
-                throw new InvalidItemException("An item with this key already exists");
+                throw new DuplicateItemException();
             }
         }
 
@@ -62,6 +62,7 @@ namespace GalliumPlus.WebApi.Data.FakeDatabase
 
             try
             {
+                SetKey(item, key);
                 items[key] = item;
             }
             catch (KeyNotFoundException)
@@ -71,6 +72,8 @@ namespace GalliumPlus.WebApi.Data.FakeDatabase
         }
 
         abstract protected TKey GetKey(TItem item);
+
+        protected abstract void SetKey(TItem item, TKey key);
 
         virtual protected bool CheckConstraints(TItem item) => true;
     }

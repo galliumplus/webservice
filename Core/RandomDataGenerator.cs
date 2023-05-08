@@ -3,7 +3,7 @@
     /// <summary>
     /// Classe encapsulant un RNG, utile pour générer du texte aléatoire.
     /// </summary>
-    public class RandomDataGenerator
+    internal class RandomDataGenerator
     {
         private Random rng;
 

@@ -2,33 +2,36 @@ using GalliumPlus.WebApi.Controllers;
 using GalliumPlus.WebApi.Core.Data;
 using GalliumPlus.WebApi.Core.Users;
 using GalliumPlus.WebApi.Data.FakeDatabase;
-using GalliumPlus.WebApi.Dto;
 using GalliumPlus.WebApi.Middleware;
+using GalliumPlus.WebApi.Middleware.Authentication;
+using Microsoft.AspNetCore.Mvc;
 using System.Text.Json.Serialization;
-
-#if FAKE_DB
-#endif
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers(options =>
-{
-    // Ajoute un filtre pour les exceptions propres à gallium
-    options.Filters.Add<CoreExceptionsFilter>();
-});
+builder.Services
+    .AddControllers(options =>
+    {
+        // Ajoute un filtre pour les exceptions propres à gallium
+        options.Filters.Add<ExceptionHandler>();
+    })
+    .ConfigureApiBehaviorOptions(ExceptionHandler.ConfigureInvalidModelStateResponseFactory);
 
 #if FAKE_DB
 builder.Services.AddScoped<IMasterDao, FakeDao>();
 #endif
 
-// accepte uniquement le format nombre JSON pour les entier et les floats
-Controller.JsonOptions.NumberHandling = JsonNumberHandling.Strict;
-// accepte les virgules en fin de liste / d'objet
-Controller.JsonOptions.AllowTrailingCommas = true;
-// garde les noms de propriétés tels quels
-Controller.JsonOptions.PropertyNamingPolicy = null;
-// sérialise les énumérations sous forme de texte
-Controller.JsonOptions.Converters.Add(new JsonStringEnumConverter());
+builder.Services.Configure<JsonOptions>(options =>
+{
+    // accepte uniquement le format nombre JSON pour les entier et les floats
+    options.JsonSerializerOptions.NumberHandling = JsonNumberHandling.Strict;
+    // accepte les virgules en fin de liste / d'objet
+    options.JsonSerializerOptions.AllowTrailingCommas = true;
+    // garde les noms de propriétés tels quels
+    options.JsonSerializerOptions.PropertyNamingPolicy = null;
+    // sérialise les énumérations sous forme de texte
+    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+});
 
 // configuration HTTP/HTTPS
 builder.WebHost.ConfigureKestrel(opt =>

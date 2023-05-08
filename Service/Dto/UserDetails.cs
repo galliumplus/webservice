@@ -13,7 +13,6 @@ namespace GalliumPlus.WebApi.Dto
         public double Deposit { get; }
         public bool FormerMember { get; }
 
-        [JsonConstructor]
         public UserDetails(string id, string name, RoleDetails role, string year, double deposit, bool formerMember)
         {
             Id = id;

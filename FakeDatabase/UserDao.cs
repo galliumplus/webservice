@@ -1,4 +1,5 @@
-﻿using GalliumPlus.WebApi.Core.Data;
+﻿using GalliumPlus.WebApi.Core;
+using GalliumPlus.WebApi.Core.Data;
 using GalliumPlus.WebApi.Core.Users;
 
 namespace GalliumPlus.WebApi.Data.FakeDatabase
@@ -31,6 +32,27 @@ namespace GalliumPlus.WebApi.Data.FakeDatabase
             );
         }
 
+        override public void Update(string key, User item)
+        {
+            try
+            {
+                if (GetKey(item) == key)
+                {
+                    this.Items[key] = item;
+                }
+                else
+                {
+                    if (this.Items.ContainsKey(GetKey(item))) throw new DuplicateItemException();
+                    this.Items.Remove(key);
+                    this.Create(item);
+                }
+            }
+            catch (KeyNotFoundException)
+            {
+                throw new ItemNotFoundException();
+            }
+        }
+
         public void UpdateDeposit(string id, double deposit)
         {
             User user = this.Read(id);
@@ -39,5 +61,7 @@ namespace GalliumPlus.WebApi.Data.FakeDatabase
         }
 
         protected override string GetKey(User item) => item.Id;
+
+        protected override void SetKey(User item, string key) => item.Id = key;
     }
 }

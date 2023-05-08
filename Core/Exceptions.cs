@@ -15,4 +15,12 @@
     {
         public ItemNotFoundException() : base() { }
     }
+
+    /// <summary>
+    /// Erreur indiquant qu'un élément existe déjà.
+    /// </summary>
+    public class DuplicateItemException : Exception
+    {
+        public DuplicateItemException() : base() { }
+    }
 }

@@ -9,7 +9,7 @@ using System.Text.Encodings.Web;
 
 #pragma warning disable CS1998 // Cette méthode async n'a pas d'opérateur 'await' et elle s'exécutera de façon synchrone
 
-namespace GalliumPlus.WebApi.Middleware
+namespace GalliumPlus.WebApi.Middleware.Authentication
 {
     public class BasicAuthenticationHandler : AuthenticationHandler<AuthenticationSchemeOptions>
     {
@@ -23,7 +23,7 @@ namespace GalliumPlus.WebApi.Middleware
             IMasterDao dao)
         : base(options, logger, encoder, clock)
         {
-            this.users = dao.Users;
+            users = dao.Users;
         }
 
         protected bool TryParseHeader(out string username, out string password)
@@ -56,7 +56,7 @@ namespace GalliumPlus.WebApi.Middleware
             }
 
             string username, password;
-            if (!this.TryParseHeader(out username, out password))
+            if (!TryParseHeader(out username, out password))
             {
                 return AuthenticateResult.Fail("Invalid header format");
             }
@@ -64,7 +64,7 @@ namespace GalliumPlus.WebApi.Middleware
             User user;
             try
             {
-                user = this.users.Read(username);
+                user = users.Read(username);
             }
             catch (ItemNotFoundException)
             {
@@ -76,9 +76,9 @@ namespace GalliumPlus.WebApi.Middleware
                 return AuthenticateResult.Fail("Password don't match");
             }
 
-            this.Context.Items.Add("User", user);
+            Context.Items.Add("User", user);
 
-            return AuthenticateResult.Success(new EmptyTicket(this.Scheme));
+            return AuthenticateResult.Success(new EmptyTicket(Scheme));
         }
     }
 

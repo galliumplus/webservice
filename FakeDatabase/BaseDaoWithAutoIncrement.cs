@@ -4,8 +4,6 @@
     {
         private int nextInsertKey = 0;
 
-        protected abstract void SetKey(TItem item, int key);
-
         public override void Create(TItem item)
         {
             SetKey(item, nextInsertKey);

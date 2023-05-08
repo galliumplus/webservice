@@ -1,6 +1,7 @@
 ﻿using GalliumPlus.WebApi.Core.Data;
 using GalliumPlus.WebApi.Core.Users;
 using GalliumPlus.WebApi.Dto;
+using GalliumPlus.WebApi.Middleware;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GalliumPlus.WebApi.Controllers
