@@ -2,6 +2,6 @@
 {
     public class Session
     {
-
+        private string token;
     }
 }

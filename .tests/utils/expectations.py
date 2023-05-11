@@ -1,5 +1,5 @@
 """
-BBD-style assertions for unittest
+BDD-style assertions for unittest
 """
 
 

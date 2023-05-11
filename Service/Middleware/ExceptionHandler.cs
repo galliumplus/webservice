@@ -30,7 +30,7 @@ namespace GalliumPlus.WebApi.Middleware
             /// (utile pour le déboguage).
             /// </summary>
             [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-            public object? ErrorData { get; set; } = null;
+            public object? DebugInfo { get; set; } = null;
         }
 
         /// <summary>
@@ -47,7 +47,7 @@ namespace GalliumPlus.WebApi.Middleware
             int statusCode,
             object? errorData = null)
         {
-            Error error = new Error { Code = errorCode, Message = errorMessage, ErrorData = errorData };
+            Error error = new Error { Code = errorCode, Message = errorMessage, DebugInfo = errorData };
             return new JsonResult(error) { StatusCode = statusCode };
         }
 

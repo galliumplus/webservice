@@ -15,7 +15,11 @@ builder.Services
         // Ajoute un filtre pour les exceptions propres à gallium
         options.Filters.Add<ExceptionHandler>();
     })
-    .ConfigureApiBehaviorOptions(ExceptionHandler.ConfigureInvalidModelStateResponseFactory);
+    .ConfigureApiBehaviorOptions(options =>
+    {
+        ExceptionHandler.ConfigureInvalidModelStateResponseFactory(options);
+        options.SuppressMapClientErrors = true;
+    });
 
 #if FAKE_DB
 builder.Services.AddScoped<IMasterDao, FakeDao>();

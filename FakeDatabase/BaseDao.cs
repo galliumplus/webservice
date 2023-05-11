@@ -60,15 +60,10 @@ namespace GalliumPlus.WebApi.Data.FakeDatabase
                 throw new InvalidItemException("Custom constraints violated");
             }
 
-            try
-            {
-                SetKey(item, key);
-                items[key] = item;
-            }
-            catch (KeyNotFoundException)
-            {
-                throw new ItemNotFoundException();
-            }
+            if (!items.ContainsKey(key)) throw new ItemNotFoundException();
+            
+            SetKey(item, key);
+            items[key] = item;
         }
 
         abstract protected TKey GetKey(TItem item);
