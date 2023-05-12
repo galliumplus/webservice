@@ -20,10 +20,10 @@ namespace GalliumPlus.WebApi.Middleware.Authentication
             ILoggerFactory logger,
             UrlEncoder encoder,
             ISystemClock clock,
-            IMasterDao dao)
+            IUserDao user)
         : base(options, logger, encoder, clock)
         {
-            users = dao.Users;
+            this.users = user;
         }
 
         protected bool TryParseHeader(out string username, out string password)

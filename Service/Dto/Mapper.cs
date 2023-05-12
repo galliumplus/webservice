@@ -2,9 +2,9 @@
 
 namespace GalliumPlus.WebApi.Dto
 {
-    public abstract class Mapper<TModel, TDto>
+    public abstract class Mapper<TModel, TDto, TDao>
     {
-        public abstract TModel ToModel(TDto dto, IMasterDao dao);
+        public abstract TModel ToModel(TDto dto, TDao dao);
 
         public abstract TDto FromModel(TModel model);
 

@@ -1,11 +1,11 @@
-using GalliumPlus.WebApi.Controllers;
 using GalliumPlus.WebApi.Core.Data;
-using GalliumPlus.WebApi.Core.Users;
-using GalliumPlus.WebApi.Data.FakeDatabase;
 using GalliumPlus.WebApi.Middleware;
 using GalliumPlus.WebApi.Middleware.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json.Serialization;
+#if FAKE_DB
+using GalliumPlus.WebApi.Data.FakeDatabase;
+#endif
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,9 +21,8 @@ builder.Services
         options.SuppressMapClientErrors = true;
     });
 
-#if FAKE_DB
-builder.Services.AddScoped<IMasterDao, FakeDao>();
-#endif
+builder.Services.AddScoped<IUserDao, UserDao>();
+builder.Services.AddScoped<IRoleDao, RoleDao>();
 
 builder.Services.Configure<JsonOptions>(options =>
 {

@@ -23,7 +23,7 @@ namespace GalliumPlus.WebApi.Dto
             FormerMember = formerMember;
         }
 
-        public class Mapper : Mapper<User, UserDetails>
+        public class Mapper : Mapper<User, UserDetails, IUserDao>
         {
             private RoleDetails.Mapper roleMapper = new();
 
@@ -39,12 +39,12 @@ namespace GalliumPlus.WebApi.Dto
                 );
             }
 
-            public override User ToModel(UserDetails details, IMasterDao dao)
+            public override User ToModel(UserDetails details, IUserDao dao)
             {
                 return new User(
                     details.Id,
                     details.Name,
-                    roleMapper.ToModel(details.Role, dao),
+                    roleMapper.ToModel(details.Role, dao.Roles),
                     details.Year,
                     details.Deposit,
                     details.FormerMember

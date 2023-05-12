@@ -9,40 +9,44 @@ namespace GalliumPlus.WebApi.Controllers
     [ApiController]
     public class RoleController : Controller
     {
+        private IRoleDao roleDao;
         private RoleDetails.Mapper mapper = new();
 
-        public RoleController(IMasterDao dao) : base(dao) { }
+        public RoleController(IRoleDao roleDao)
+        {
+            this.roleDao = roleDao;
+        }
 
         [HttpGet]
         public IActionResult Get()
         {
-            return Json(mapper.FromModel(Dao.Roles.Read()));
+            return Json(mapper.FromModel(this.roleDao.Read()));
         }
 
         [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
-            return Json(mapper.FromModel(Dao.Roles.Read(id)));
+            return Json(mapper.FromModel(this.roleDao.Read(id)));
         }
 
         [HttpPost]
         public IActionResult Post(RoleDetails newRole)
         {
-            Dao.Roles.Create(mapper.ToModel(newRole, Dao));
+            this.roleDao.Create(mapper.ToModel(newRole, this.roleDao));
             return Created();
         }
 
         [HttpPut("{id}")]
         public IActionResult Put(int id, RoleDetails updatedRole)
         {
-            Dao.Roles.Update(id, mapper.ToModel(updatedRole, Dao));
+            this.roleDao.Update(id, mapper.ToModel(updatedRole, this.roleDao));
             return Ok();
         }
 
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            Dao.Roles.Delete(id);
+            this.roleDao.Delete(id);
             return Ok();
         }
     }

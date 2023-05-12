@@ -7,8 +7,6 @@ namespace GalliumPlus.WebApi.Controllers
     [ApiController]
     public class AccessController : Controller
     {
-        public AccessController(IMasterDao dao) : base(dao) { }
-
         [HttpPost("signin")]
         public IActionResult SignIn()
         {

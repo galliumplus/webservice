@@ -9,18 +9,6 @@ namespace GalliumPlus.WebApi.Controllers
     /// </summary>
     public class Controller : ControllerBase
     {
-        private IMasterDao dao;
-
-        /// <summary>
-        /// Le DAO général pour toutes les ressources.
-        /// </summary>
-        protected IMasterDao Dao => dao;
-
-        public Controller(IMasterDao dao)
-        {
-            this.dao = dao;
-        }
-
         /// <summary>
         /// Crée une réponse avec un corps JSON.
         /// </summary>

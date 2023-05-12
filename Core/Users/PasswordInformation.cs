@@ -8,6 +8,10 @@ namespace GalliumPlus.WebApi.Core.Users
         private byte[] hash;
         private string salt;
 
+        public byte[] Hash => this.hash;
+
+        public string Salt => this.salt;
+
         public PasswordInformation(byte[] hash, string salt)
         {
             this.hash = hash;

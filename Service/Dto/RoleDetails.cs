@@ -1,5 +1,6 @@
 ﻿using GalliumPlus.WebApi.Core.Data;
 using GalliumPlus.WebApi.Core.Users;
+using GalliumPlus.WebApi.Data.FakeDatabase;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
@@ -18,7 +19,7 @@ namespace GalliumPlus.WebApi.Dto
             this.Permissions = null;
         }
 
-        public class Mapper : Mapper<Role, RoleDetails>
+        public class Mapper : Mapper<Role, RoleDetails, IRoleDao>
         {
             public override RoleDetails FromModel(Role model)
             {
@@ -30,7 +31,7 @@ namespace GalliumPlus.WebApi.Dto
                 };
             }
 
-            public override Role ToModel(RoleDetails dto, IMasterDao dao)
+            public override Role ToModel(RoleDetails dto, IRoleDao dao)
             {
                 return new Role(dto.Id, dto.Name, (Permissions)dto.Permissions!.Value);
             }

@@ -24,7 +24,7 @@ namespace GalliumPlus.WebApi.Dto
             this.FormerMember = null;
         }
 
-        public class Mapper : Mapper<User, UserSummary>
+        public class Mapper : Mapper<User, UserSummary, IUserDao>
         {
             public override UserSummary FromModel(User user)
             {
@@ -38,7 +38,7 @@ namespace GalliumPlus.WebApi.Dto
                 };
             }
 
-            public override User ToModel(UserSummary summary, IMasterDao dao)
+            public override User ToModel(UserSummary summary, IUserDao dao)
             {
                 Role role;
                 try
