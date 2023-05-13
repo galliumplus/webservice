@@ -22,8 +22,10 @@ builder.Services
     });
 
 #if FAKE_DB
+// ajout en singleton, sinon les données ne sont pas persistées d'une requête à l'autre
 builder.Services.AddSingleton<IRoleDao, RoleDao>();
 builder.Services.AddSingleton<IUserDao, UserDao>();
+builder.Services.AddSingleton<ISessionDao, SessionDao>();
 #endif
 
 builder.Services.Configure<JsonOptions>(options =>
