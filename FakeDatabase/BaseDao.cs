@@ -15,17 +15,21 @@ namespace GalliumPlus.WebApi.Data.FakeDatabase
             items = new Dictionary<TKey, TItem>();
         }
 
-        virtual public void Create(TItem item)
+        virtual public TItem Create(TItem item)
         {
             if (!CheckConstraints(item))
             {
                 throw new InvalidItemException("Custom constraints violated");
             }
 
-            if (!items.TryAdd(GetKey(item), item))
+            TKey key = GetKey(item);
+
+            if (!items.TryAdd(key, item))
             {
                 throw new DuplicateItemException();
             }
+
+            return items[key];
         }
 
         virtual public void Delete(TKey key)
@@ -53,7 +57,7 @@ namespace GalliumPlus.WebApi.Data.FakeDatabase
             }
         }
 
-        virtual public void Update(TKey key, TItem item)
+        virtual public TItem Update(TKey key, TItem item)
         {
             if (!CheckConstraints(item))
             {
@@ -64,6 +68,7 @@ namespace GalliumPlus.WebApi.Data.FakeDatabase
             
             SetKey(item, key);
             items[key] = item;
+            return item;
         }
 
         abstract protected TKey GetKey(TItem item);

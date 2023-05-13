@@ -18,7 +18,7 @@ class Expectations:
             or isinstance(self.value, tuple)
             or isinstance(self.value, dict)
             or isinstance(self.value, set)
-            or hasattr(self.value, " __len__")
+            or hasattr(self.value, "__len__")
         ):
             raise ValueError(f"Values of type {type(self.value)} have no length")
 
@@ -28,6 +28,7 @@ class Expectations:
             or isinstance(self.value, list)
             or isinstance(self.value, tuple)
             or isinstance(self.value, set)
+            or hasattr(self.value, "__getitem__")
         ):
             raise ValueError(f"{type(self.value)} is not a collection type")
 

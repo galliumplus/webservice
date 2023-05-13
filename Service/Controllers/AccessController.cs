@@ -1,4 +1,5 @@
 ﻿using GalliumPlus.WebApi.Core.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GalliumPlus.WebApi.Controllers
@@ -10,7 +11,7 @@ namespace GalliumPlus.WebApi.Controllers
         [HttpPost("signin")]
         public IActionResult SignIn()
         {
-            return Ok();
+            return Json(HttpContext.Items["User"]);
         }
     }
 }

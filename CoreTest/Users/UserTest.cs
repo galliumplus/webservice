@@ -2,8 +2,8 @@
 {
     public class UserTest
     {
-        private Role profRole = new Role(0, "Prof", 0);
-        private PasswordInformation password = PasswordInformation.FromPassword("motdepasse123");
+        private readonly Role profRole = new Role(0, "Prof", 0);
+        private readonly PasswordInformation password = PasswordInformation.FromPassword("motdepasse123");
 
         [Fact]
         public void ConstructorWithoutPasswordInformation()

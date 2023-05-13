@@ -4,11 +4,11 @@
     {
         private int nextInsertKey = 0;
 
-        public override void Create(TItem item)
+        public override TItem Create(TItem item)
         {
             SetKey(item, nextInsertKey);
             nextInsertKey++;
-            base.Create(item);
+            return base.Create(item);
         }
     }
 }

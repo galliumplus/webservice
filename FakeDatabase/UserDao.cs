@@ -34,19 +34,21 @@ namespace GalliumPlus.WebApi.Data.FakeDatabase
             );
         }
 
-        override public void Update(string key, User item)
+        override public User Update(string key, User item)
         {
             try
             {
                 if (GetKey(item) == key)
                 {
                     this.Items[key] = item;
+                    return item;
                 }
                 else
                 {
                     if (this.Items.ContainsKey(GetKey(item))) throw new DuplicateItemException();
                     this.Items.Remove(key);
-                    this.Create(item);
+                    return this.Create(item);
+
                 }
             }
             catch (KeyNotFoundException)

@@ -86,7 +86,7 @@ namespace GalliumPlus.WebApi.Middleware.Authentication
     {
         public static AuthenticationBuilder AddBasic(this AuthenticationBuilder builder)
         {
-            return builder.AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("Basic", (options) => { });
+            return builder.AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("Basic", null);
         }
     }
 }

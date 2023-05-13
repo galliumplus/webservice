@@ -26,7 +26,7 @@ namespace GalliumPlus.WebApi.Controllers
             return Json(summaryMapper.FromModel(this.userDao.Read()));
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id}", Name = "user")]
         public IActionResult Get(string id)
         {
             return Json(detailsMapper.FromModel(this.userDao.Read(id)));
@@ -35,8 +35,8 @@ namespace GalliumPlus.WebApi.Controllers
         [HttpPost]
         public IActionResult Post(UserSummary newUser)
         {
-            this.userDao.Create(summaryMapper.ToModel(newUser, this.userDao));
-            return Created();
+            User user = this.userDao.Create(summaryMapper.ToModel(newUser, this.userDao));
+            return Created("user", user.Id, detailsMapper.FromModel(user));
         }
 
         [HttpPut("{id}")]

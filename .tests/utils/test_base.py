@@ -12,7 +12,10 @@ class TestBase(TestCase, ABC):
         self.requests_options = {"verify": False}
 
     def prepend_base_url(self, url):
-        return self.base_url + url.lstrip("/")
+        if url.startswith("http://") or url.startswith("https://"):
+            return url
+        else:
+            return self.base_url + url.lstrip("/")
 
     def set_authorization(self, auth):
         self.requests_options["auth"] = auth

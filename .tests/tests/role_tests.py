@@ -63,14 +63,21 @@ class RoleTests(TestBase):
 
         response = self.post("roles", valid_role)
         self.expect(response.status_code).to.be.equal_to(201)
+        location = self.expect(response.headers).to.have.an_item("Location").value
 
-        roles = self.get("roles").json()
-        new_role_count = len(roles)
-        created_role = roles[-1]
-
-        self.expect(new_role_count).to.be.equal_to(previous_role_count + 1)
+        created_role = response.json()
+        self.expect(created_role).to.have.an_item("Id")
         self.expect(created_role["Name"]).to.be.equal_to("Vice-Trésorier")
         self.expect(created_role["Permissions"]).to.be.equal_to(permissions)
+
+        response = self.get(location)
+        self.expect(response.status_code).to.be.equal_to(200)
+        created_role = response.json()
+        self.expect(created_role["Name"]).to.be.equal_to("Vice-Trésorier")
+        self.expect(created_role["Permissions"]).to.be.equal_to(permissions)
+
+        new_role_count = len(self.get("roles").json())
+        self.expect(new_role_count).to.be.equal_to(previous_role_count + 1)
 
         # Informations manquantes
 

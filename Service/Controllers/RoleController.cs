@@ -23,7 +23,7 @@ namespace GalliumPlus.WebApi.Controllers
             return Json(mapper.FromModel(this.roleDao.Read()));
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id}", Name = "role")]
         public IActionResult Get(int id)
         {
             return Json(mapper.FromModel(this.roleDao.Read(id)));
@@ -32,8 +32,8 @@ namespace GalliumPlus.WebApi.Controllers
         [HttpPost]
         public IActionResult Post(RoleDetails newRole)
         {
-            this.roleDao.Create(mapper.ToModel(newRole, this.roleDao));
-            return Created();
+            Role role = this.roleDao.Create(mapper.ToModel(newRole, this.roleDao));
+            return Created("role", role.Id, mapper.FromModel(role));
         }
 
         [HttpPut("{id}")]
