@@ -21,8 +21,10 @@ builder.Services
         options.SuppressMapClientErrors = true;
     });
 
-builder.Services.AddScoped<IUserDao, UserDao>();
-builder.Services.AddScoped<IRoleDao, RoleDao>();
+#if FAKE_DB
+builder.Services.AddSingleton<IRoleDao, RoleDao>();
+builder.Services.AddSingleton<IUserDao, UserDao>();
+#endif
 
 builder.Services.Configure<JsonOptions>(options =>
 {

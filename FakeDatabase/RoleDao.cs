@@ -13,7 +13,7 @@ namespace GalliumPlus.WebApi.Data.FakeDatabase
             this.Create(
                 new Role(0, "CA",
                     Permissions.MANAGE_PRODUCTS
-                    | Permissions.SEE_ALL_USERS
+                    | Permissions.SEE_ALL_USERS_AND_ROLES
                     | Permissions.SELL
                     | Permissions.MANAGE_DEPOSITS
                 )
@@ -21,7 +21,7 @@ namespace GalliumPlus.WebApi.Data.FakeDatabase
             this.Create(
                 new Role(0, "Président",
                     Permissions.MANAGE_PRODUCTS
-                    | Permissions.SEE_ALL_USERS
+                    | Permissions.SEE_ALL_USERS_AND_ROLES
                     | Permissions.SELL
                     | Permissions.MANAGE_CATEGORIES
                     | Permissions.READ_LOGS

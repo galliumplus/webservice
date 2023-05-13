@@ -94,11 +94,10 @@ namespace GalliumPlus.WebApi.Core.Users
             string year,
             double deposit,
             bool formerMember,
-            PasswordInformation? password)
+            PasswordInformation password)
         : this(id, name, role, year, deposit, formerMember)
         {
             this.password = password;
         }
-
     }
 }

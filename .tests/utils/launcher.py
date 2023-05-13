@@ -44,10 +44,14 @@ class Launcher:
                 ping_client.close()
                 break
             except ConnectionRefusedError:
-                print(f"Server not up yet, retrying soon... ({n+1}/10)")
-                time.sleep(2)
+                if server.poll():
+                    print(f"{cls.ANSI_RED_BOLD}Failed to start server.{cls.ANSI_RESET}")
+                    sys.exit(1)
+                else:
+                    print(f"Server not up yet, retrying soon... ({n+1}/10)")
+                    time.sleep(2)
         else:
-            print(f"{cls.ANSI_RED_BOLD}Timed out{cls.ANSI_RESET}")
+            print(f"{cls.ANSI_RED_BOLD}Timed out.{cls.ANSI_RESET}")
             sys.exit(1)
 
         # run tests

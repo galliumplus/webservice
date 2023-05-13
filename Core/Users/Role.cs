@@ -12,17 +12,17 @@ namespace GalliumPlus.WebApi.Core.Users
         /// <summary>
         /// L'identifiant du rôle.
         /// </summary>
-        public int Id { get => this.id; set => id = value; }
+        public int Id { get => this.id; set => this.id = value; }
 
         /// <summary>
         /// Le nom affiché du rôle.
         /// </summary>
-        public string Name { get => name; set => name = value; }
+        public string Name { get => this.name; set => this.name = value; }
 
         /// <summary>
         /// La somme des permissions attribuées au rôle.
         /// </summary>
-        public Permissions Permissions { get => permissions; set => permissions = value; }
+        public Permissions Permissions { get => this.permissions; set => this.permissions = value; }
 
         /// <summary>
         /// Vérifie que le rôle a une certaine permission.
@@ -31,7 +31,7 @@ namespace GalliumPlus.WebApi.Core.Users
         /// <returns><see langword="true"/> si le rôle a la permission, sinon <see langword="false"/>.</returns>
         public bool HasPermission(Permissions perm)
         {
-            return (Permissions & perm) != 0;
+            return (this.Permissions & perm) == perm;
         }
 
         /// <summary>

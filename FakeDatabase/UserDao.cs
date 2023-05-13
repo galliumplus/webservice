@@ -6,9 +6,11 @@ namespace GalliumPlus.WebApi.Data.FakeDatabase
 {
     public class UserDao : BaseDao<string, User>, IUserDao
     {
-        private RoleDao roles;
+        private IRoleDao roles;
 
-        public UserDao(RoleDao roles)
+        public IRoleDao Roles => roles;
+
+        public UserDao(IRoleDao roles)
         {
             this.roles = roles;
 
@@ -62,6 +64,9 @@ namespace GalliumPlus.WebApi.Data.FakeDatabase
 
         protected override string GetKey(User item) => item.Id;
 
-        protected override void SetKey(User item, string key) => item.Id = key;
+        protected override void SetKey(User item, string key)
+        {
+            throw new InvalidOperationException("Can't set the user ID automatically");
+        }
     }
 }
