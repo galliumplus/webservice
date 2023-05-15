@@ -1,8 +1,10 @@
 using GalliumPlus.WebApi.Core.Data;
 using GalliumPlus.WebApi.Middleware;
 using GalliumPlus.WebApi.Middleware.Authentication;
+using GalliumPlus.WebApi.Middleware.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 #if FAKE_DB
 using GalliumPlus.WebApi.Data.FakeDatabase;
 #endif
@@ -12,12 +14,14 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services
     .AddControllers(options =>
     {
-        // Ajoute un filtre pour les exceptions propres à gallium
-        options.Filters.Add<ExceptionHandler>();
+        // Filtre pour les exceptions propres à Gallium
+        options.Filters.Add<ExceptionsFilter>();
+        // Filtre pour les permissions de Gallium
+        options.Filters.Add<PermissionsFilter>();
     })
     .ConfigureApiBehaviorOptions(options =>
     {
-        ExceptionHandler.ConfigureInvalidModelStateResponseFactory(options);
+        ExceptionsFilter.ConfigureInvalidModelStateResponseFactory(options);
         options.SuppressMapClientErrors = true;
     });
 
@@ -43,40 +47,53 @@ builder.Services.Configure<JsonOptions>(options =>
 // configuration HTTP/HTTPS
 builder.WebHost.ConfigureKestrel(opt =>
 {
-    int httpPort;
-    if (!Int32.TryParse(Environment.GetEnvironmentVariable("GALLIUM_HTTP"), out httpPort))
+    if (!Int32.TryParse(Environment.GetEnvironmentVariable("GALLIUM_HTTP"), out int httpPort))
     {
+        // default HTTP port
         httpPort = 5080;
     }
 
-    int httpsPort;
-    if (!Int32.TryParse(Environment.GetEnvironmentVariable("GALLIUM_HTTPS"), out httpsPort))
+    if (!Int32.TryParse(Environment.GetEnvironmentVariable("GALLIUM_HTTPS"), out int httpsPort))
     {
+        // default HTTPS port
         httpsPort = 5443;
     }
 
-    opt.ListenAnyIP(httpPort);
-    opt.ListenAnyIP(httpsPort, opt =>
+    Action<ListenOptions> httpsConfiguration = options =>
     {
         if (Environment.GetEnvironmentVariable("GALLIUM_CERTIFICATE_FILE") is string certififcate)
         {
             if (Environment.GetEnvironmentVariable("GALLIUM_CERTIFICATE_PASSWORD") is string password)
             {
-                opt.UseHttps(certififcate, password);
+                options.UseHttps(certififcate, password);
             }
             else
             {
-                opt.UseHttps(certififcate);
+                options.UseHttps(certififcate);
             }
         }
         else
         {
-            opt.UseHttps();
+            options.UseHttps();
         }
-    });
+    };
+
+    if (Environment.GetEnvironmentVariable("GALLIUM_LISTEN_ANY_IP") is string)
+    {
+        opt.ListenAnyIP(httpPort);
+        opt.ListenAnyIP(httpsPort, httpsConfiguration);
+    }
+    else
+    {
+        opt.ListenLocalhost(httpPort);
+        opt.ListenLocalhost(httpsPort, httpsConfiguration);
+    }
 });
 
-builder.Services.AddAuthentication(defaultScheme: "Basic").AddBasic();
+builder.Services
+    .AddAuthentication(defaultScheme: "Bearer")
+    .AddBearer()
+    .AddBasic();
 
 var app = builder.Build();
 

@@ -23,26 +23,26 @@ namespace GalliumPlus.WebApi.Controllers
         [HttpGet]
         public IActionResult Get()
         {
-            return Json(summaryMapper.FromModel(this.userDao.Read()));
+            return Json(this.summaryMapper.FromModel(this.userDao.Read()));
         }
 
         [HttpGet("{id}", Name = "user")]
         public IActionResult Get(string id)
         {
-            return Json(detailsMapper.FromModel(this.userDao.Read(id)));
+            return Json(this.detailsMapper.FromModel(this.userDao.Read(id)));
         }
 
         [HttpPost]
         public IActionResult Post(UserSummary newUser)
         {
-            User user = this.userDao.Create(summaryMapper.ToModel(newUser, this.userDao));
-            return Created("user", user.Id, detailsMapper.FromModel(user));
+            User user = this.userDao.Create(this.summaryMapper.ToModel(newUser, this.userDao));
+            return Created("user", user.Id, this.detailsMapper.FromModel(user));
         }
 
         [HttpPut("{id}")]
         public IActionResult Put(string id, UserSummary updatedUser)
         {
-            this.userDao.Update(id, summaryMapper.ToModel(updatedUser, this.userDao));
+            this.userDao.Update(id, this.summaryMapper.ToModel(updatedUser, this.userDao));
             return Ok();
         }
 

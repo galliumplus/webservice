@@ -3,9 +3,13 @@ using GalliumPlus.WebApi.Core.Data;
 using GalliumPlus.WebApi.Core.Users;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Options;
+using System.Collections;
+using System.Diagnostics.CodeAnalysis;
 using System.Net.Http.Headers;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.Encodings.Web;
+using System.Text.Json;
 
 #pragma warning disable CS1998 // Cette méthode async n'a pas d'opérateur 'await' et elle s'exécutera de façon synchrone
 
@@ -26,20 +30,22 @@ namespace GalliumPlus.WebApi.Middleware.Authentication
             this.users = user;
         }
 
-        protected bool TryParseHeader(out string username, out string password)
+        private readonly record struct Credentials(string Username, string Password);
+
+        private bool TryParseHeader(out Credentials credentials)
         {
-            username = "";
-            password = "";
+            credentials = new Credentials();
 
             try
             {
                 var authHeader = AuthenticationHeaderValue.Parse(Request.Headers["Authorization"]);
-                var credentialBytes = Convert.FromBase64String(authHeader.Parameter ?? "");
-                var credentials = Encoding.UTF8.GetString(credentialBytes).Split(':', 2);
 
-                username = credentials[0];
-                password = credentials[1];
+                if (authHeader.Scheme != "Basic") return false;
 
+                var credentialsBytes = Convert.FromBase64String(authHeader.Parameter ?? "");
+                var credentialsParts = Encoding.UTF8.GetString(credentialsBytes).Split(':', 2);
+
+                credentials = new Credentials(credentialsParts[0], credentialsParts[1]);
                 return true;
             }
             catch
@@ -48,32 +54,67 @@ namespace GalliumPlus.WebApi.Middleware.Authentication
             }
         }
 
+        private async Task<Credentials?> ParseBodyAsync()
+        {
+            try
+            {
+                var body = (await JsonSerializer
+                    .DeserializeAsync<Dictionary<string, string>>(Request.Body))!;
+
+                string username;
+                string password;
+                if (body.TryGetValue("Username", out username!)
+                    && body.TryGetValue("Password", out password!))
+                {
+                    return new Credentials(username, password);
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
         protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
         {
-            if (!Request.Headers.ContainsKey("Authorization"))
+            Credentials credentials;
+            if (Request.Headers.ContainsKey("Authorization"))
             {
-                return AuthenticateResult.Fail("Missing Authorization header");
+                if (!TryParseHeader(out credentials))
+                {
+                    return AuthenticateResult.Fail("Invalid header format");
+                }
             }
-
-            string username, password;
-            if (!TryParseHeader(out username, out password))
+            else
             {
-                return AuthenticateResult.Fail("Invalid header format");
+                if (await ParseBodyAsync() is Credentials creds)
+                {
+                    credentials = creds;
+                }
+                else
+                {
+                    return AuthenticateResult.Fail("Missing header, Invalid body format");
+                }
+                
             }
 
             User user;
             try
             {
-                user = users.Read(username);
+                user = users.Read(credentials.Username);
             }
             catch (ItemNotFoundException)
             {
                 return AuthenticateResult.Fail("User not found");
             }
 
-            if (!user.Password!.Value.Match(password))
+            if (!user.Password!.Value.Match(credentials.Password))
             {
-                return AuthenticateResult.Fail("Password don't match");
+                return AuthenticateResult.Fail("Passwords don't match");
             }
 
             Context.Items.Add("User", user);

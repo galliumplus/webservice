@@ -89,9 +89,9 @@ namespace CoreTest.Users
             DateTime now = DateTime.UtcNow;
             DateTime exp = now + Session.LIFETIME;
 
-            Session newSession = Session.LogIn("abcdef", user);
+            Session newSession = Session.LogIn(user);
 
-            Assert.Equal("abcdef", newSession.Token);
+            Assert.Equal(20, newSession.Token.Length);
             Assert.InRange(newSession.LastUse, now, now + timeMargin);
             Assert.InRange(newSession.Expiration, exp, exp + timeMargin);
             Assert.Equal(user, newSession.User);

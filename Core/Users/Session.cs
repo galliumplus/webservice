@@ -81,8 +81,9 @@ namespace GalliumPlus.WebApi.Core.Users
         /// <param name="token">Le jeton à utiliser pour identifier la session.</param>
         /// <param name="user">L'utilisateur pour qui ouvrir la session.</param>
         /// <returns></returns>
-        public static Session LogIn(string token, User user)
+        public static Session LogIn(User user)
         {
+            string token = new RandomTextGenerator().AlphaNumericString(20);
             return new(token, Now, Now.Add(LIFETIME), user);
         }
 

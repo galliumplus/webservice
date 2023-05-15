@@ -28,7 +28,7 @@ namespace GalliumPlus.WebApi.Data.FakeDatabase
             );
             this.Create(
                 new User(
-                    "eb069420", "Evan BEUGNOT", this.roles.Read(2), "1A", double.MaxValue, false,
+                    "eb069420", "Evan BEUGNOT", this.roles.Read(2), "1A", 1_000_000_000, false,
                     PasswordInformation.FromPassword("motdepasse")
                 )
             );

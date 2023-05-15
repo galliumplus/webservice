@@ -3,16 +3,16 @@
     /// <summary>
     /// Classe encapsulant un RNG, utile pour générer du texte aléatoire.
     /// </summary>
-    internal class RandomDataGenerator
+    internal class RandomTextGenerator
     {
         private Random rng;
 
         private const string ALPHANUM = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
         /// <summary>
-        /// Crée un nouveau <see cref="RandomDataGenerator"/> en utilisant un RNG avec une seed par défaut.
+        /// Crée un nouveau <see cref="RandomTextGenerator"/> en utilisant un RNG avec une seed par défaut.
         /// </summary>
-        public RandomDataGenerator()
+        public RandomTextGenerator()
         {
             this.rng = new Random();
         }

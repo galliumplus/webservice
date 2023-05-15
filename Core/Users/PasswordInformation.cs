@@ -32,7 +32,7 @@ namespace GalliumPlus.WebApi.Core.Users
 
         public static PasswordInformation FromPassword(string password)
         {
-            string salt = new RandomDataGenerator().AlphaNumericString(32);
+            string salt = new RandomTextGenerator().AlphaNumericString(32);
             return new PasswordInformation(SaltAndHash(password, salt), salt);
         }
     }

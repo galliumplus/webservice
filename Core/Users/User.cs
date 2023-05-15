@@ -32,8 +32,10 @@ namespace GalliumPlus.WebApi.Core.Users
 
         /// <summary>
         /// Le mot de passe de l'ulitlisateur.
-        /// Cette propriété ne doit pas être exposée par l'API.
         /// </summary>
+        /// <remarks>
+        /// Cette propriété ne doit pas être exposée par l'API.
+        /// </remarks>
         public PasswordInformation? Password { get => this.password; set => this.password = value; }
 
         /// <summary>

@@ -8,7 +8,7 @@ namespace GalliumPlus.WebApi.Middleware
     /// <summary>
     /// Gestion des erreurs propres au code métier.
     /// </summary>
-    public class ExceptionHandler : IActionFilter, IOrderedFilter
+    public class ExceptionsFilter : IActionFilter, IOrderedFilter
     {
         /// <summary>
         /// Représente une erreur.
@@ -98,7 +98,7 @@ namespace GalliumPlus.WebApi.Middleware
                 );
                 context.ExceptionHandled = true;
             }
-            else if (context.Exception is DuplicateItemException duplicateItem)
+            else if (context.Exception is DuplicateItemException)
             {
                 context.Result = BuildErrorResult(
                     "DUPLICATE_ITEM",
