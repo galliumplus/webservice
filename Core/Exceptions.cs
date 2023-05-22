@@ -1,4 +1,6 @@
-﻿namespace GalliumPlus.WebApi.Core
+﻿using GalliumPlus.WebApi.Core.Users;
+
+namespace GalliumPlus.WebApi.Core
 {
     /// <summary>
     /// Erreur indiquant des données non valides.
@@ -22,5 +24,25 @@
     public class DuplicateItemException : Exception
     {
         public DuplicateItemException() : base() { }
+    }
+
+    /// <summary>
+    /// Erreur indiquant que l'utilisateur n'a pas les permissions suffisantes
+    /// pour effectuer une action.
+    /// </summary>
+    public class PermissionDeniedException : Exception
+    {
+        private Permissions required;
+
+        public Permissions Required { get => this.required; }
+
+        /// <summary>
+        /// Instancie l'exception.
+        /// </summary>
+        /// <param name="required">Les permissions requises pour effectuer l'action.</param>
+        public PermissionDeniedException(Permissions required) : base()
+        {
+            this.required = required;
+        }
     }
 }

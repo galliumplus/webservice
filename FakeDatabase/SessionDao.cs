@@ -13,6 +13,24 @@ namespace GalliumPlus.WebApi.Data.FakeDatabase
         public SessionDao(IUserDao users)
         {
             this.users = users;
+
+            this.Create(
+                new Session(
+                    "12345678901234567890",
+                    DateTime.UtcNow,
+                    new DateTime(2099, 12, 31),
+                    this.Users.Read("lomens")
+                )
+            );
+
+            this.Create(
+                new Session(
+                    "09876543210987654321",
+                    DateTime.UtcNow,
+                    new DateTime(2099, 12, 31),
+                    this.Users.Read("eb069420")
+                )
+            );
         }
 
         protected override string GetKey(Session item) => item.Token;

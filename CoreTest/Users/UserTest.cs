@@ -2,7 +2,7 @@
 {
     public class UserTest
     {
-        private readonly Role profRole = new Role(0, "Prof", 0);
+        private readonly Role profRole = new Role(0, "Prof", Permissions.NONE);
         private readonly PasswordInformation password = PasswordInformation.FromPassword("motdepasse123");
 
         [Fact]

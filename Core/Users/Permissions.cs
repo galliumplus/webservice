@@ -67,5 +67,25 @@ namespace GalliumPlus.WebApi.Core.Users
         /// Faire des ventes.
         /// </summary>
         SELL = MANAGE_PRODUCTS | MANAGE_DEPOSITS,
+
+        //=== VALEURS SPÉCIALES ===//
+
+        /// <summary>
+        /// Aucune permission
+        /// </summary>
+        NONE = 0,
+    }
+
+    public static class PermissionsExtensions
+    {
+        /// <summary>
+        /// Vérifie que <paramref name="other"/> est inclus dans ces permissions.
+        /// </summary>
+        /// <param name="other">Les permissions à tester.</param>
+        /// <returns><see langword="true"/> si les permissions sont incluses, sinon <see langword="false"/></returns>
+        public static bool Includes(this Permissions @this, Permissions other)
+        {
+            return (@this & other) == other;
+        }
     }
 }

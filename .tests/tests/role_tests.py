@@ -1,4 +1,5 @@
 from utils.test_base import TestBase
+from utils.auth import BearerAuth
 
 
 class Permissions:
@@ -15,6 +16,13 @@ class Permissions:
 
 
 class RoleTests(TestBase):
+    def setUp(self):
+        super().setUp()
+        self.set_authentification(BearerAuth("09876543210987654321"))
+
+    def tearDown(self):
+        self.unset_authentification()
+
     def test_role_get_all(self):
         response = self.get("roles")
         self.expect(response.status_code).to.be.equal_to(200)
@@ -150,3 +158,31 @@ class RoleTests(TestBase):
 
         response = self.delete(f"roles/{roleId}")
         self.expect(response.status_code).to.be.equal_to(404)
+
+    def test_role_no_authentification(self):
+        self.unset_authentification()
+
+        response = self.get("roles")
+        self.expect(response.status_code).to.be.equal_to(401)
+        response = self.post("roles", {})
+        self.expect(response.status_code).to.be.equal_to(401)
+        response = self.get("roles/0")
+        self.expect(response.status_code).to.be.equal_to(401)
+        response = self.put("roles/0", {})
+        self.expect(response.status_code).to.be.equal_to(401)
+        response = self.delete("roles/0")
+        self.expect(response.status_code).to.be.equal_to(401)
+
+    def test_role_no_permission(self):
+        self.set_authentification(BearerAuth("12345678901234567890"))
+
+        response = self.get("roles")
+        self.expect(response.status_code).to.be.equal_to(403)
+        response = self.post("roles", {"Name": "/", "Permissions": 0})
+        self.expect(response.status_code).to.be.equal_to(403)
+        response = self.get("roles/0")
+        self.expect(response.status_code).to.be.equal_to(403)
+        response = self.put("roles/0", {"Name": "/", "Permissions": 0})
+        self.expect(response.status_code).to.be.equal_to(403)
+        response = self.delete("roles/0")
+        self.expect(response.status_code).to.be.equal_to(403)

@@ -8,7 +8,7 @@ namespace GalliumPlus.WebApi.Data.FakeDatabase
         public RoleDao()
         {
             this.Create(
-                new Role(0, "Adhérent", 0)
+                new Role(0, "Adhérent", Permissions.NONE)
             );
             this.Create(
                 new Role(0, "CA",

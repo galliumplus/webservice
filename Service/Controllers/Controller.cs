@@ -1,4 +1,5 @@
-﻿using GalliumPlus.WebApi.Core.Data;
+﻿using GalliumPlus.WebApi.Core;
+using GalliumPlus.WebApi.Core.Data;
 using GalliumPlus.WebApi.Core.Users;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
@@ -108,5 +109,14 @@ namespace GalliumPlus.WebApi.Controllers
         [NonAction]
         public IActionResult Created(string route, string id, object? value = null)
             => Created(route, new { id }, value);
+
+        [NonAction]
+        public void RequirePermissions(Permissions required)
+        {
+            if (!this.User!.Role.Permissions.Includes(required))
+            {
+                throw new PermissionDeniedException(required);
+            }
+        }
     }
 }

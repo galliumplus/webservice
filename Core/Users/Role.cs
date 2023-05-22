@@ -25,16 +25,6 @@ namespace GalliumPlus.WebApi.Core.Users
         public Permissions Permissions { get => this.permissions; set => this.permissions = value; }
 
         /// <summary>
-        /// Vérifie que le rôle a une certaine permission.
-        /// </summary>
-        /// <param name="perm">La permission à vérifier</param>
-        /// <returns><see langword="true"/> si le rôle a la permission, sinon <see langword="false"/>.</returns>
-        public bool HasPermission(Permissions perm)
-        {
-            return (this.Permissions & perm) == perm;
-        }
-
-        /// <summary>
         /// Crée un rôle.
         /// </summary>
         /// <param name="id">L'identifiant du rôle.</param>

@@ -13,7 +13,7 @@ class BasicAuth(AuthBase):
         base64_payload = base64.b64encode(payload)
         # modify and return the request
         request.headers["Authorization"] = f"Basic {base64_payload}"
-        return r
+        return request
 
 
 class BearerAuth(AuthBase):
@@ -23,4 +23,4 @@ class BearerAuth(AuthBase):
     def __call__(self, request):
         # modify and return the request
         request.headers["Authorization"] = f"Bearer {self.token}"
-        return r
+        return request

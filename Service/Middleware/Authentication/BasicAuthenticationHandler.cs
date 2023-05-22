@@ -58,19 +58,16 @@ namespace GalliumPlus.WebApi.Middleware.Authentication
         {
             try
             {
-                var body = (await JsonSerializer
-                    .DeserializeAsync<Dictionary<string, string>>(Request.Body))!;
-
-                string username;
-                string password;
-                if (body.TryGetValue("Username", out username!)
-                    && body.TryGetValue("Password", out password!))
+                Credentials result = await JsonSerializer
+                    .DeserializeAsync<Credentials>(Request.Body);
+                
+                if (result.Username == null || result.Password == null)
                 {
-                    return new Credentials(username, password);
+                    return null;
                 }
                 else
                 {
-                    return null;
+                    return result;
                 }
             }
             catch

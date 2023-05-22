@@ -11,22 +11,23 @@ class TestBase(TestCase, ABC):
         self.base_url = "https://localhost:5443/api/"
         self.requests_options = {"verify": False}
 
+    def setUp(self):
+        requests.packages.urllib3.disable_warnings(
+            requests.packages.urllib3.exceptions.InsecureRequestWarning
+        )
+
     def prepend_base_url(self, url):
         if url.startswith("http://") or url.startswith("https://"):
             return url
         else:
             return self.base_url + url.lstrip("/")
 
-    def set_authorization(self, auth):
+    def set_authentification(self, auth):
         self.requests_options["auth"] = auth
 
-    def setUp(self):
-        requests.packages.urllib3.disable_warnings(
-            requests.packages.urllib3.exceptions.InsecureRequestWarning
-        )
-
-    def unset_authorization(self):
-        del self.requests_options["auth"]
+    def unset_authentification(self):
+        if "auth" in self.requests_options:
+            del self.requests_options["auth"]
 
     def head(self, url):
         return requests.head(self.prepend_base_url(url), **self.requests_options)

@@ -18,7 +18,7 @@ namespace CoreTest.Users
         private readonly User user = new User(
             "mmansouri",
             "Mehdi Mansouri", 
-            new Role(0, "Membre", 0),
+            new Role(0, "Membre", Permissions.NONE),
             "Prof",
             21.30,
             false

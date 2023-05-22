@@ -5,6 +5,14 @@
     public class PermissionsTest
     {
         [Fact]
+        public void Includes()
+        {
+            Assert.True(P.MANAGE_PRODUCTS.Includes(P.MANAGE_PRODUCTS));
+            Assert.True(P.MANAGE_PRODUCTS.Includes(P.SEE_PRODUCTS_AND_CATEGORIES));
+            Assert.False(P.MANAGE_PRODUCTS.Includes(P.MANAGE_CATEGORIES));
+        }
+
+        [Fact]
         public void Regression()
         {
             /**

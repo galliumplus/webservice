@@ -1,7 +1,15 @@
 from utils.test_base import TestBase
+from utils.auth import BearerAuth
 
 
 class UserTests(TestBase):
+    def setUp(self):
+        super().setUp()
+        self.set_authentification(BearerAuth("09876543210987654321"))
+
+    def tearDown(self):
+        self.unset_authentification()
+
     def test_user_get_all(self):
         response = self.get("users")
         self.expect(response.status_code).to.be.equal_to(200)
@@ -140,10 +148,17 @@ class UserTests(TestBase):
         )
 
     def test_user_edit(self):
-        users = self.get("/users").json()
-        user = users[0]
-        user_id = user["Id"]
-        other_user_id = users[1]["Id"]
+        role = self.get("roles").json()[0]
+        user_id = "ar113926"
+        user = {
+            "Id": user_id,
+            "Name": "Aimeric ROURA",
+            "Role": role["Id"],
+            "Year": "2A",
+            "Deposit": 7001.01,
+            "FormerMember": False,
+        }
+        other_user_id = self.get("users").json()[0]["Id"]
 
         # Test avec un utilisateur valide
 
@@ -255,3 +270,52 @@ class UserTests(TestBase):
 
         response = self.delete("users/ar113926")
         self.expect(response.status_code).to.be.equal_to(404)
+
+    def test_user_no_authentification(self):
+        self.unset_authentification()
+
+        response = self.get("users")
+        self.expect(response.status_code).to.be.equal_to(401)
+        response = self.post("users", {})
+        self.expect(response.status_code).to.be.equal_to(401)
+        response = self.get("users/ar113926")
+        self.expect(response.status_code).to.be.equal_to(401)
+        response = self.put("users/ar113926", {})
+        self.expect(response.status_code).to.be.equal_to(401)
+        response = self.delete("users/ar113926")
+        self.expect(response.status_code).to.be.equal_to(401)
+
+    def test_user_no_permission(self):
+        role = self.get("roles").json()[0]
+        user = {
+            "Id": "ar113926",
+            "Name": "Aimeric ROURA",
+            "Role": role["Id"],
+            "Year": "2A",
+            "Deposit": 7001.01,
+            "FormerMember": False,
+        }
+
+        self.set_authentification(BearerAuth("12345678901234567890"))
+
+        # tests sur d'autres utilisateurs
+
+        response = self.get("users")
+        self.expect(response.status_code).to.be.equal_to(403)
+        response = self.post("users", user)
+        self.expect(response.status_code).to.be.equal_to(403)
+        response = self.get("users/ar113926")
+        self.expect(response.status_code).to.be.equal_to(403)
+        response = self.put("users/ar113926", user)
+        self.expect(response.status_code).to.be.equal_to(403)
+        response = self.delete("users/ar113926")
+        self.expect(response.status_code).to.be.equal_to(403)
+
+        # tests sur soi-même
+
+        response = self.get("users/lomens")
+        self.expect(response.status_code).to.be.equal_to(200)
+        response = self.put("users/lomens", user)
+        self.expect(response.status_code).to.be.equal_to(403)
+        response = self.delete("users/lomens")
+        self.expect(response.status_code).to.be.equal_to(403)
