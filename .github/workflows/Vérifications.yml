@@ -55,7 +55,7 @@ jobs:
     - name: Install dependencies
       run: python3 -m pip install -r .tests/requirements.txt
     - name: Run API behavior tests
-      run: python3 .tests/main.py
+      run: python3 .tests/main.py --long-timeout
 
       
 

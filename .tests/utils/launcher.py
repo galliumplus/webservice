@@ -19,6 +19,12 @@ class Launcher:
         if not auto:
             sys.argv.remove("--manual")
 
+        if "--long-timeout" in sys.argv:
+            sys.argv.remove("--long-timeout")
+            timeout = 60
+        else:
+            timeout = 10
+
         success = False
 
         # free port
@@ -40,7 +46,7 @@ class Launcher:
         # wait for server
         ping_client = http.client.HTTPConnection("localhost", 5443)
 
-        for n in range(10):
+        for n in range(timeout):
             try:
                 ping_client.connect()
                 print("Server is up !")
@@ -51,7 +57,7 @@ class Launcher:
                     print(f"{cls.ANSI_RED_BOLD}Failed to start server.{cls.ANSI_RESET}")
                     sys.exit(1)
                 else:
-                    print(f"Server not up yet, retrying soon... ({n+1}/10)")
+                    print(f"Server not up yet, retrying soon... ({n+1}/{timeout})")
                     time.sleep(2)
         else:
             print(f"{cls.ANSI_RED_BOLD}Timed out.{cls.ANSI_RESET}")
