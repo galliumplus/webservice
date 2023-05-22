@@ -1,71 +1,104 @@
-using GalliumPlus.WebApi.Data;
-using GalliumPlus.WebApi.Data.Implementations.FakeDatabase;
+using GalliumPlus.WebApi.Core.Data;
+using GalliumPlus.WebApi.Middleware;
+using GalliumPlus.WebApi.Middleware.Authentication;
+using GalliumPlus.WebApi.Middleware.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Text.Json;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
+#if FAKE_DB
+using GalliumPlus.WebApi.Data.FakeDatabase;
+#endif
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddControllers();
+builder.Services
+    .AddControllers(options =>
+    {
+        // Filtre pour les exceptions propres à Gallium
+        options.Filters.Add<ExceptionsFilter>();
+        // Filtre pour les permissions de Gallium
+        options.Filters.Add<PermissionsFilter>();
+    })
+    .ConfigureApiBehaviorOptions(options =>
+    {
+        ExceptionsFilter.ConfigureInvalidModelStateResponseFactory(options);
+        options.SuppressMapClientErrors = true;
+    });
 
-builder.Services.AddScoped<IMasterDao, FakeDao>();
+#if FAKE_DB
+// ajout en singleton, sinon les données ne sont pas persistées d'une requête à l'autre
+builder.Services.AddSingleton<IRoleDao, RoleDao>();
+builder.Services.AddSingleton<IUserDao, UserDao>();
+builder.Services.AddSingleton<ISessionDao, SessionDao>();
+#endif
 
-// Configuration du sérialiseur JSON
-builder.Services.Configure<JsonOptions>(jsonOptions => {
-    JsonSerializerOptions serializerOptions = jsonOptions.JsonSerializerOptions;
-
+builder.Services.Configure<JsonOptions>(options =>
+{
     // accepte uniquement le format nombre JSON pour les entier et les floats
-    serializerOptions.NumberHandling = JsonNumberHandling.Strict;
-
+    options.JsonSerializerOptions.NumberHandling = JsonNumberHandling.Strict;
     // accepte les virgules en fin de liste / d'objet
-    serializerOptions.AllowTrailingCommas = true;
-
+    options.JsonSerializerOptions.AllowTrailingCommas = true;
     // garde les noms de propriétés tels quels
-    serializerOptions.PropertyNamingPolicy = null;
-
+    options.JsonSerializerOptions.PropertyNamingPolicy = null;
     // sérialise les énumérations sous forme de texte
-    serializerOptions.Converters.Add(new JsonStringEnumConverter());
+    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
 
 // configuration HTTP/HTTPS
-builder.WebHost.ConfigureKestrel(opt => {
-    int httpPort;
-    if (!Int32.TryParse(Environment.GetEnvironmentVariable("GALLIUM_HTTP"), out httpPort))
+builder.WebHost.ConfigureKestrel(opt =>
+{
+    if (!Int32.TryParse(Environment.GetEnvironmentVariable("GALLIUM_HTTP"), out int httpPort))
     {
+        // default HTTP port
         httpPort = 5080;
     }
 
-    int httpsPort;
-    if (!Int32.TryParse(Environment.GetEnvironmentVariable("GALLIUM_HTTPS"), out httpsPort))
+    if (!Int32.TryParse(Environment.GetEnvironmentVariable("GALLIUM_HTTPS"), out int httpsPort))
     {
+        // default HTTPS port
         httpsPort = 5443;
     }
 
-    opt.ListenAnyIP(httpPort);
-    opt.ListenAnyIP(httpsPort, opt =>
+    Action<ListenOptions> httpsConfiguration = options =>
     {
         if (Environment.GetEnvironmentVariable("GALLIUM_CERTIFICATE_FILE") is string certififcate)
         {
             if (Environment.GetEnvironmentVariable("GALLIUM_CERTIFICATE_PASSWORD") is string password)
             {
-                opt.UseHttps(certififcate, password);
+                options.UseHttps(certififcate, password);
             }
             else
             {
-                opt.UseHttps(certififcate);
+                options.UseHttps(certififcate);
             }
         }
         else
         {
-            opt.UseHttps();
+            options.UseHttps();
         }
-    });
+    };
+
+    if (Environment.GetEnvironmentVariable("GALLIUM_LISTEN_ANY_IP") is string)
+    {
+        opt.ListenAnyIP(httpPort);
+        opt.ListenAnyIP(httpsPort, httpsConfiguration);
+    }
+    else
+    {
+        opt.ListenLocalhost(httpPort);
+        opt.ListenLocalhost(httpsPort, httpsConfiguration);
+    }
 });
+
+builder.Services
+    .AddAuthentication(defaultScheme: "Bearer")
+    .AddBearer()
+    .AddBasic();
 
 var app = builder.Build();
 
 app.UseHttpsRedirection();
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
