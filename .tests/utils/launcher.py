@@ -23,7 +23,10 @@ class Launcher:
 
         # free port
         if auto:
-            cls.free_port(5443)
+            try:
+                cls.free_port(5443)
+            except:
+                pass
 
         # start test server
         if auto:
