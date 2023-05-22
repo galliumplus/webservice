@@ -57,6 +57,24 @@ class UserTests(TestBase):
             "ITEM_NOT_FOUND"
         )
 
+    def test_user_get_self(self):
+        response = self.get(f"users/@me")
+        self.expect(response.status_code).to.be.equal_to(200)
+
+        user = response.json()
+        self.expect(user).to.be.a(dict)
+
+        self.expect(user).to.have.an_item("Id").of.type(str)
+        self.expect(user).to.have.an_item("Name").of.type(str)
+        self.expect(user).to.have.an_item("Year").of.type(str)
+        self.expect(user).to.have.an_item("Deposit").that._is.a_number()
+        self.expect(user).to.have.an_item("FormerMember").of.type(bool)
+
+        role = self.expect(user).to.have.an_item("Role").that._is.a(dict).value
+        self.expect(role).to.have.an_item("Id").of.type(int)
+        self.expect(role).to.have.an_item("Name").of.type(str)
+        self.expect(role).to.have.an_item("Permissions").of.type(int)
+
     def test_user_create(self):
         previous_user_count = len(self.get("users").json())
         roles = self.get("roles").json()
@@ -284,6 +302,8 @@ class UserTests(TestBase):
         self.expect(response.status_code).to.be.equal_to(401)
         response = self.delete("users/ar113926")
         self.expect(response.status_code).to.be.equal_to(401)
+        response = self.get("users/@me")
+        self.expect(response.status_code).to.be.equal_to(401)
 
     def test_user_no_permission(self):
         role = self.get("roles").json()[0]
@@ -319,3 +339,5 @@ class UserTests(TestBase):
         self.expect(response.status_code).to.be.equal_to(403)
         response = self.delete("users/lomens")
         self.expect(response.status_code).to.be.equal_to(403)
+        response = self.get("users/@me")
+        self.expect(response.status_code).to.be.equal_to(200)
