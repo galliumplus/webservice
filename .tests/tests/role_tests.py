@@ -90,7 +90,7 @@ class RoleTests(TestBase):
         # Informations manquantes
 
         invalid_role = {"Name": "Vice-Trésorier"}
-        response = self.post("users", invalid_role)
+        response = self.post("roles", invalid_role)
         self.expect(response.status_code).to.be.equal_to(400)
         self.expect(response.json()).to.have.an_item("Code").that._is.equal_to(
             "INVALID_ITEM"
@@ -99,7 +99,7 @@ class RoleTests(TestBase):
         # Informations non valides
 
         invalid_role = {"Name": "", "Permissions": -1}
-        response = self.post("users", invalid_role)
+        response = self.post("roles", invalid_role)
         self.expect(response.status_code).to.be.equal_to(400)
         self.expect(response.json()).to.have.an_item("Code").that._is.equal_to(
             "INVALID_ITEM"
@@ -123,7 +123,7 @@ class RoleTests(TestBase):
         # Informations manquantes
 
         invalid_role = {"Name": "Vice-Trésorier"}
-        response = self.put("users/0", invalid_role)
+        response = self.put("roles/0", invalid_role)
         self.expect(response.status_code).to.be.equal_to(400)
         self.expect(response.json()).to.have.an_item("Code").that._is.equal_to(
             "INVALID_ITEM"
@@ -132,7 +132,7 @@ class RoleTests(TestBase):
         # Informations non valides
 
         invalid_role = {"Name": "", "Permissions": -1}
-        response = self.put("users/0", invalid_role)
+        response = self.put("roles/0", invalid_role)
         self.expect(response.status_code).to.be.equal_to(400)
         self.expect(response.json()).to.have.an_item("Code").that._is.equal_to(
             "INVALID_ITEM"
@@ -140,23 +140,21 @@ class RoleTests(TestBase):
 
     def test_role_delete(self):
         role = {"Name": "Responsable Communication", "Permissions": 0}
-        self.post("users", role)
-
-        roleId = self.get("roles").json()[-1]["Id"]
+        location = self.post("roles", role).headers["Location"]
 
         # On supprimme le rôle
 
-        response = self.delete(f"roles/{roleId}")
+        response = self.delete(location)
         self.expect(response.status_code).to.be.equal_to(200)
 
         # Le rôle n'existe plus
 
-        response = self.get(f"roles/{roleId}")
+        response = self.get(location)
         self.expect(response.status_code).to.be.equal_to(404)
 
         # On ne peut plus le supprimer
 
-        response = self.delete(f"roles/{roleId}")
+        response = self.delete(location)
         self.expect(response.status_code).to.be.equal_to(404)
 
     def test_role_no_authentification(self):

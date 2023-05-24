@@ -5,6 +5,8 @@ import time
 import unittest
 import psutil, signal
 
+from utils.test_base import TestBase
+
 
 class Launcher:
     ANSI_RED_BOLD = "\x1b[1;31m"
@@ -69,6 +71,8 @@ class Launcher:
             success = result.wasSuccessful()
         except Exception as e:
             print(f"{cls.ANSI_RED_BOLD}Tests failed: {e}{cls.ANSI_RESET}")
+
+        print(f"({TestBase.request_count()} requests sent)")
 
         # clean up
         if auto:

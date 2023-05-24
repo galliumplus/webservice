@@ -5,6 +5,7 @@ using GalliumPlus.WebApi.Middleware.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
+using GalliumPlus.WebApi.Core.Stocks;
 #if FAKE_DB
 using GalliumPlus.WebApi.Data.FakeDatabase;
 #endif
@@ -27,9 +28,11 @@ builder.Services
 
 #if FAKE_DB
 // ajout en singleton, sinon les données ne sont pas persistées d'une requête à l'autre
+builder.Services.AddSingleton<ICategoryDao, CategoryDao>();
+builder.Services.AddSingleton<IProductDao, ProductDao>();
 builder.Services.AddSingleton<IRoleDao, RoleDao>();
-builder.Services.AddSingleton<IUserDao, UserDao>();
 builder.Services.AddSingleton<ISessionDao, SessionDao>();
+builder.Services.AddSingleton<IUserDao, UserDao>();
 #endif
 
 builder.Services.Configure<JsonOptions>(options =>
