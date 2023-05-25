@@ -9,7 +9,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="images\serial-designation-n.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Core\Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+	<EmbeddedResource Include="images\serial-designation-n.png" />
   </ItemGroup>
 
 </Project>
