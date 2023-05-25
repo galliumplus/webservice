@@ -2,6 +2,7 @@
 using GalliumPlus.WebApi.Core.Stocks;
 using GalliumPlus.WebApi.Core.Users;
 using GalliumPlus.WebApi.Dto;
+using GalliumPlus.WebApi.Middleware;
 using GalliumPlus.WebApi.Middleware.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -36,6 +37,15 @@ namespace GalliumPlus.WebApi.Controllers
             return Json(this.detailsMapper.FromModel(this.productDao.Read(id)));
         }
 
+        [HttpGet("{id}/image")]
+        [AllowAnonymous]
+        [Produces("image/png")]
+        //[RequiresPermissions(Permissions.SEE_PRODUCTS_AND_CATEGORIES)]
+        public IActionResult GetImage(int id)
+        {
+            return File(this.productDao.ReadImage(id).Bytes, "image/png");
+        }
+
         [HttpPost]
         [RequiresPermissions(Permissions.MANAGE_CATEGORIES)]
         public IActionResult Post(ProductSummary newProduct)
@@ -52,11 +62,30 @@ namespace GalliumPlus.WebApi.Controllers
             return Ok();
         }
 
+        [HttpPut("{id}/image")]
+        [ConsumesProductImages]
+        [RequiresPermissions(Permissions.MANAGE_CATEGORIES)]
+        public async Task<IActionResult> PutImage(int id, [FromBody] byte[] image)
+        {
+            Console.WriteLine(Request.ContentType);
+            ProductImage normalisedImage = await ProductImage.FromAnyImage(image, Request.ContentType ?? "");
+            this.productDao.SetImage(id, normalisedImage);
+            return Ok();
+        }
+
         [HttpDelete("{id}")]
         [RequiresPermissions(Permissions.MANAGE_CATEGORIES)]
         public IActionResult Delete(int id)
         {
             this.productDao.Delete(id);
+            return Ok();
+        }
+
+        [HttpDelete("{id}/image")]
+        [RequiresPermissions(Permissions.MANAGE_CATEGORIES)]
+        public IActionResult DeleteImage(int id)
+        {
+            this.productDao.UnsetImage(id);
             return Ok();
         }
     }

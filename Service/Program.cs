@@ -19,6 +19,9 @@ builder.Services
         options.Filters.Add<ExceptionsFilter>();
         // Filtre pour les permissions de Gallium
         options.Filters.Add<PermissionsFilter>();
+
+        // Pour accepter les images
+        options.InputFormatters.Add(new AnyBinaryDataInputFormatter());
     })
     .ConfigureApiBehaviorOptions(options =>
     {
