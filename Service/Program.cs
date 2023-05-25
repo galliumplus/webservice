@@ -5,6 +5,7 @@ using GalliumPlus.WebApi.Middleware.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
+using System.Runtime.InteropServices;
 #if FAKE_DB
 using GalliumPlus.WebApi.Data.FakeDatabase;
 #endif
@@ -90,6 +91,8 @@ builder.WebHost.ConfigureKestrel(opt =>
     }
 });
 
+builder.Services.AddServerInfo();
+
 builder.Services
     .AddAuthentication(defaultScheme: "Bearer")
     .AddBearer()
@@ -98,8 +101,12 @@ builder.Services
 var app = builder.Build();
 
 app.UseHttpsRedirection();
+app.UseServerInfo();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+
+ServerInfo.Current.Version = "0.2.0.230525 (alpha/test)";
+Console.WriteLine(ServerInfo.Current);
 
 app.Run();
