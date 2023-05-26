@@ -39,7 +39,7 @@ namespace GalliumPlus.WebApi.Controllers
 
         [HttpGet("{id}/image")]
         [Produces("image/png")]
-        //[RequiresPermissions(Permissions.SEE_PRODUCTS_AND_CATEGORIES)]
+        [RequiresPermissions(Permissions.SEE_PRODUCTS_AND_CATEGORIES)]
         public IActionResult GetImage(int id)
         {
             return File(this.productDao.ReadImage(id).Bytes, "image/png");
