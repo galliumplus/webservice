@@ -96,6 +96,8 @@ builder.WebHost.ConfigureKestrel(opt =>
     }
 });
 
+builder.Services.AddServerInfo();
+
 builder.Services
     .AddAuthentication(defaultScheme: "Bearer")
     .AddBearer()
@@ -104,8 +106,12 @@ builder.Services
 var app = builder.Build();
 
 app.UseHttpsRedirection();
+app.UseServerInfo();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+
+ServerInfo.Current.Version = "0.2.1.2305261536 (alpha/test)";
+Console.WriteLine(ServerInfo.Current);
 
 app.Run();
