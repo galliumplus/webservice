@@ -17,26 +17,32 @@ namespace GalliumPlus.WebApi.Data.FakeDatabase
 
         virtual public TItem Create(TItem item)
         {
-            if (!CheckConstraints(item))
+            lock (this.items)
             {
-                throw new InvalidItemException("Custom constraints violated");
+                if (!CheckConstraints(item))
+                {
+                    throw new InvalidItemException("Custom constraints violated");
+                }
+
+                TKey key = GetKey(item);
+
+                if (!items.TryAdd(key, item))
+                {
+                    throw new DuplicateItemException();
+                }
+
+                return items[key];
             }
-
-            TKey key = GetKey(item);
-
-            if (!items.TryAdd(key, item))
-            {
-                throw new DuplicateItemException();
-            }
-
-            return items[key];
         }
 
         virtual public void Delete(TKey key)
         {
-            if (!items.Remove(key))
+            lock (this.items)
             {
-                throw new ItemNotFoundException();
+                if (!items.Remove(key))
+                {
+                    throw new ItemNotFoundException();
+                }
             }
         }
 
@@ -59,16 +65,19 @@ namespace GalliumPlus.WebApi.Data.FakeDatabase
 
         virtual public TItem Update(TKey key, TItem item)
         {
-            if (!CheckConstraints(item))
+            lock (this.items)
             {
-                throw new InvalidItemException("Custom constraints violated");
-            }
+                if (!CheckConstraints(item))
+                {
+                    throw new InvalidItemException("Custom constraints violated");
+                }
 
-            if (!items.ContainsKey(key)) throw new ItemNotFoundException();
-            
-            SetKey(item, key);
-            items[key] = item;
-            return item;
+                if (!items.ContainsKey(key)) throw new ItemNotFoundException();
+
+                SetKey(item, key);
+                items[key] = item;
+                return item;
+            }
         }
 
         abstract protected TKey GetKey(TItem item);

@@ -34,6 +34,9 @@ namespace GalliumPlus.WebApi.Core
     {
         private Permissions required;
 
+        /// <summary>
+        /// Les permissions qu étaient requises.
+        /// </summary>
         public Permissions Required { get => this.required; }
 
         /// <summary>
@@ -44,5 +47,13 @@ namespace GalliumPlus.WebApi.Core
         {
             this.required = required;
         }
+    }
+
+    /// <summary>
+    /// Erreur indiquant une vente refusée.
+    /// </summary>
+    public class CantSellException : Exception
+    {
+        public CantSellException(string message) : base(message) { }
     }
 }

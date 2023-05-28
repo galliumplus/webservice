@@ -54,6 +54,14 @@ namespace GalliumPlus.WebApi.Data.FakeDatabase
             this.images.Remove(key);
         }
 
+        public void WithdrawFromStock(int id, int amount)
+        {
+            lock (this.Items)
+            {
+                this.Read(id).Stock -= amount;
+            }
+        }
+
         public ProductImage ReadImage(int id)
         {
             if (!this.images.ContainsKey(id)) throw new ItemNotFoundException();
