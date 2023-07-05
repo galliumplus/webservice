@@ -1,4 +1,6 @@
-﻿namespace GalliumPlus.WebApi.Middleware
+﻿using Microsoft.Extensions.Configuration;
+
+namespace GalliumPlus.WebApi.Middleware
 {
     public class ServerInfoMiddleware : IMiddleware
     {
@@ -34,15 +36,38 @@
             }
         }
 
-        private string version = "N/A";
+        private string version = $"unknown (unknown/{configuration})";
 
-        public string Version { get => this.version; set => this.version = value; }
+#if TEST
+        private const string configuration = "test";
+#elif DEBUG
+        private const string configuration = "debug";
+#else
+        private const string configuration = "release";
+#endif
+
+        public string Version => this.version;
+
 
         private ServerInfo() { }
 
+        public void SetVersion(int major, int minor, int patch, string stage = "unknown")
+        {
+            string build = Builtins.CompileDateTime.ToString("yyMMddHHmm");
+            this.version = $"{major}.{minor}.{patch}.{build} ({stage}/{configuration})";
+        }
+
         public override string ToString()
         {
-            return $"Gallium+ Web API Server v{this.version}";
+            return $"Gallium+ Web API Server v{this.Version}";
         }
     }
 }
+
+public static partial class Builtins
+{
+    // astuce pour récupérer l'heure du build
+    // CompileTime est bien défini, ce n'est pas grave s'il apparaît comme une erreur
+    public static DateTime CompileDateTime => new DateTime(CompileTime, DateTimeKind.Utc);
+}
+

@@ -111,7 +111,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
-ServerInfo.Current.Version = "0.2.1.2305261536 (alpha/test)";
+ServerInfo.Current.SetVersion(0, 2, 1, "alpha");
 Console.WriteLine(ServerInfo.Current);
 
 app.Run();
