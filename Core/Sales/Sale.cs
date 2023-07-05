@@ -15,6 +15,8 @@ namespace GalliumPlus.WebApi.Core.Sales
     /// </summary>
     public class Sale
     {
+        public const string ANONYMOUS_MEMBER_ID = "@anonymousmember";
+
         private PaymentMethod paymentMethod;
         private List<SaleItem> items;
         private User? customer;

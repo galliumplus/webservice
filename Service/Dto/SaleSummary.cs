@@ -1,6 +1,7 @@
 ﻿using GalliumPlus.WebApi.Core.Data;
+using GalliumPlus.WebApi.Core.Sales;
+using GalliumPlus.WebApi.Core.Users;
 using System.ComponentModel.DataAnnotations;
-using System.Runtime.CompilerServices;
 
 namespace GalliumPlus.WebApi.Dto
 {
@@ -16,23 +17,51 @@ namespace GalliumPlus.WebApi.Dto
             Items = null;
         }
 
-        public class Mapper : Mapper<int, SaleSummary, (IProductDao, IUserDao)>
+        public class Mapper : Mapper<Sale, SaleSummary, (IProductDao, IUserDao)>
         {
-            public override SaleSummary FromModel(int model)
+            private SaleItemSummary.Mapper saleItemMapper = new();
+
+            public override SaleSummary FromModel(Sale model)
             {
                 throw new NotImplementedException();
             }
 
-            public override int ToModel(SaleSummary dto, (IProductDao, IUserDao) daos)
+            public override Sale ToModel(SaleSummary dto, (IProductDao, IUserDao) daos)
             {
-                foreach (SaleItemSummary item in dto.Items)
-                {
-                    Console.Write(item);
-                    Console.Write(", ");
-                }
-                Console.WriteLine();
+                (IProductDao productDao, IUserDao userDao) = daos;
+                PaymentMethodFactory factory = new(daos.Item2);
 
-                return 4;
+                User? customer;
+                if (dto.Customer == null)
+                {
+                    customer = null;
+                }
+                else if (dto.Customer == Sale.ANONYMOUS_MEMBER_ID)
+                {
+                    customer = BuildAnonymousMember();
+                }
+                else
+                {
+                    customer = userDao.Read(dto.Customer);
+                }
+
+                return new Sale(
+                    factory.Create(dto.PaymentMethod, dto.Customer),
+                    dto.Items!.Select(saleItemDto => saleItemMapper.ToModel(saleItemDto, daos.Item1)),
+                    customer
+                );
+            }
+
+            private static User BuildAnonymousMember()
+            {
+                return new User(
+                    Sale.ANONYMOUS_MEMBER_ID,
+                    "Anonyme",
+                    new Role(-1, "Membre anonyme", Permissions.NONE),
+                    "Anonyme",
+                    0.00,
+                    false
+                );
             }
         }
     }

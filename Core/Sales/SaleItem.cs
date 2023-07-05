@@ -38,7 +38,7 @@ namespace GalliumPlus.WebApi.Core.Sales
         /// <summary>
         /// Le prix total adhérent, en euros.
         /// </summary>
-        public double MemberTotalPrice => this.MemberTotalPrice * this.quantity;
+        public double MemberTotalPrice => this.MemberUnitPrice * this.quantity;
 
         /// <summary>
         /// Crée un item de vente.

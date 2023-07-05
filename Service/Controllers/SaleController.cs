@@ -10,8 +10,9 @@ namespace GalliumPlus.WebApi.Controllers
     [Route("api/sales")]
     [Authorize]
     [ApiController]
-    public class SaleController : ControllerBase
+    public class SaleController : Controller
     {
+        private SaleSummary.Mapper mapper = new();
         private IProductDao productDao;
         private IUserDao userDao;
 
@@ -22,10 +23,13 @@ namespace GalliumPlus.WebApi.Controllers
         }
 
         [HttpPost]
-        public IActionResult Post(SaleSummary sale)
+        public IActionResult Post(SaleSummary newSale)
         {
-            new SaleSummary.Mapper().ToModel(sale, (this.productDao, this.userDao));
-            return Ok();
+            Sale sale = mapper.ToModel(newSale, (this.productDao, this.userDao));
+
+            string result = sale.ProcessPaymentAndUpdateStock(productDao);
+
+            return Json(result);
         }
     }
 }
