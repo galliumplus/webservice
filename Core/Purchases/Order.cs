@@ -13,12 +13,12 @@ namespace GalliumPlus.WebApi.Core.Sales
     /// <summary>
     /// Représente une vente.
     /// </summary>
-    public class Sale
+    public class Order
     {
         public const string ANONYMOUS_MEMBER_ID = "@anonymousmember";
 
         private PaymentMethod paymentMethod;
-        private List<SaleItem> items;
+        private List<OrderItem> items;
         private User? customer;
 
         /// <summary>
@@ -27,7 +27,7 @@ namespace GalliumPlus.WebApi.Core.Sales
         /// <param name="paymentMethod">La méthode de paiement utilisée.</param>
         /// <param name="items">Les produits vendus.</param>
         /// <param name="customer">Le client.</param>
-        public Sale(PaymentMethod paymentMethod, IEnumerable<SaleItem> items, User? customer = null)
+        public Order(PaymentMethod paymentMethod, IEnumerable<OrderItem> items, User? customer = null)
         {
             this.paymentMethod = paymentMethod;
             this.items = items.ToList();
@@ -56,7 +56,7 @@ namespace GalliumPlus.WebApi.Core.Sales
 
         private void CheckEnoughInStock()
         {
-            foreach (SaleItem item in this.items)
+            foreach (OrderItem item in this.items)
             {
                 if (item.Product.Stock < item.Quantity)
                 {
@@ -69,7 +69,7 @@ namespace GalliumPlus.WebApi.Core.Sales
 
         private void WithdrawFromStock(IProductDao productDao)
         {
-            foreach (SaleItem item in this.items)
+            foreach (OrderItem item in this.items)
             {
                 productDao.WithdrawFromStock(item.Product.Id, item.Quantity);
             }
@@ -81,7 +81,7 @@ namespace GalliumPlus.WebApi.Core.Sales
 
             bool memberDiscount = (this.customer != null) && (!this.customer.FormerMember);
 
-            foreach (SaleItem item in this.items)
+            foreach (OrderItem item in this.items)
             {
                 if (memberDiscount)
                 {

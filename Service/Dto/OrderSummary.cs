@@ -1,32 +1,34 @@
-﻿using GalliumPlus.WebApi.Core.Data;
+﻿using GalliumPlus.WebApi.Core;
+using GalliumPlus.WebApi.Core.Data;
 using GalliumPlus.WebApi.Core.Sales;
 using GalliumPlus.WebApi.Core.Users;
 using System.ComponentModel.DataAnnotations;
 
 namespace GalliumPlus.WebApi.Dto
 {
-    public class SaleSummary
+    public class OrderSummary
     {
         [Required] public string PaymentMethod { get; set; }
         public string? Customer { get; set; }
-        [Required] public List<SaleItemSummary>? Items { get; set; }
+        [Required] public List<OrderItemSummary>? Items { get; set; }
 
-        public SaleSummary()
+        public OrderSummary()
         {
             PaymentMethod = String.Empty;
             Items = null;
         }
 
-        public class Mapper : Mapper<Sale, SaleSummary, (IProductDao, IUserDao)>
+        public class Mapper : Mapper<Order, OrderSummary, (IProductDao, IUserDao)>
         {
-            private SaleItemSummary.Mapper saleItemMapper = new();
+            private OrderItemSummary.Mapper saleItemMapper = new();
 
-            public override SaleSummary FromModel(Sale model)
+            public override OrderSummary FromModel(Order model)
             {
+                // ne sort jamais du serveur !
                 throw new NotImplementedException();
             }
 
-            public override Sale ToModel(SaleSummary dto, (IProductDao, IUserDao) daos)
+            public override Order ToModel(OrderSummary dto, (IProductDao, IUserDao) daos)
             {
                 (IProductDao productDao, IUserDao userDao) = daos;
                 PaymentMethodFactory factory = new(daos.Item2);
@@ -36,16 +38,23 @@ namespace GalliumPlus.WebApi.Dto
                 {
                     customer = null;
                 }
-                else if (dto.Customer == Sale.ANONYMOUS_MEMBER_ID)
+                else if (dto.Customer == Order.ANONYMOUS_MEMBER_ID)
                 {
                     customer = BuildAnonymousMember();
                 }
                 else
                 {
-                    customer = userDao.Read(dto.Customer);
+                    try
+                    {
+                        customer = userDao.Read(dto.Customer);
+                    }
+                    catch(ItemNotFoundException)
+                    {
+                        throw new InvalidItemException($"L'utilisateur « {dto.Customer} » n'existe pas");
+                    }
                 }
 
-                return new Sale(
+                return new Order(
                     factory.Create(dto.PaymentMethod, dto.Customer),
                     dto.Items!.Select(saleItemDto => saleItemMapper.ToModel(saleItemDto, daos.Item1)),
                     customer
@@ -55,7 +64,7 @@ namespace GalliumPlus.WebApi.Dto
             private static User BuildAnonymousMember()
             {
                 return new User(
-                    Sale.ANONYMOUS_MEMBER_ID,
+                    Order.ANONYMOUS_MEMBER_ID,
                     "Anonyme",
                     new Role(-1, "Membre anonyme", Permissions.NONE),
                     "Anonyme",

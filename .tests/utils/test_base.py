@@ -7,6 +7,7 @@ from utils.expectations import Expectations
 
 class TestBase(TestCase, ABC):
     __request_count = 0
+    __total_time = 0
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -16,6 +17,10 @@ class TestBase(TestCase, ABC):
     @classmethod
     def request_count(cls):
         return cls.__request_count
+
+    @classmethod
+    def average_latency(cls):
+        return cls.__total_time / cls.__request_count
 
     def setUp(self):
         requests.packages.urllib3.disable_warnings(
@@ -35,36 +40,47 @@ class TestBase(TestCase, ABC):
         if "auth" in self.requests_options:
             del self.requests_options["auth"]
 
-    def head(self, url):
+    def __send(self, requests_method, *args, **kwargs):
         TestBase.__request_count += 1
-        return requests.head(self.prepend_base_url(url), **self.requests_options)
+        r = requests_method(*args, **kwargs)
+        TestBase.__total_time += r.elapsed.total_seconds()
+        return r
+
+    def head(self, url):
+        return self.__send(
+            requests.head, self.prepend_base_url(url), **self.requests_options
+        )
 
     def get(self, url, **params):
-        TestBase.__request_count += 1
-        return requests.get(self.prepend_base_url(url), **self.requests_options)
+        return self.__send(
+            requests.get, self.prepend_base_url(url), **self.requests_options
+        )
 
     def post(self, url, json):
-        TestBase.__request_count += 1
-        return requests.post(
-            self.prepend_base_url(url), json=json, **self.requests_options
+        return self.__send(
+            requests.post,
+            self.prepend_base_url(url),
+            json=json,
+            **self.requests_options
         )
 
     def put(self, url, json):
-        TestBase.__request_count += 1
-        return requests.put(
-            self.prepend_base_url(url), json=json, **self.requests_options
+        return self.__send(
+            requests.put, self.prepend_base_url(url), json=json, **self.requests_options
         )
 
     def patch(self, url, json):
-        TestBase.__request_count += 1
-        return requests.patch(
-            self.prepend_base_url(url), json=json, **self.requests_options
+        return self.__send(
+            requests.patch,
+            self.prepend_base_url(url),
+            json=json,
+            **self.requests_options
         )
 
     def delete(self, url):
-        TestBase.__request_count += 1
-        return requests.delete(self.prepend_base_url(url), **self.requests_options)
+        return self.__send(
+            requests.delete, self.prepend_base_url(url), **self.requests_options
+        )
 
     def expect(self, value):
-        TestBase.__request_count += 1
         return Expectations(self, value)

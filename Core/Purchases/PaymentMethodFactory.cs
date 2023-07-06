@@ -22,7 +22,7 @@ namespace GalliumPlus.WebApi.Core.Sales
                 case "DEPOSIT":
                     if (customer == null || customer == "@anonymousmember") {
                         throw new InvalidItemException(
-                            "L'identifiant de l'adhérent est obligatoire pour les paiments en acompte."
+                            "L'identifiant de l'adhérent est obligatoire pour les paiments par acompte."
                         );
                     }
 

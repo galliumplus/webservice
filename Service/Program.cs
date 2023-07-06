@@ -5,7 +5,6 @@ using GalliumPlus.WebApi.Middleware.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
-using GalliumPlus.WebApi.Core.Stocks;
 #if FAKE_DB
 using GalliumPlus.WebApi.Data.FakeDatabase;
 #endif

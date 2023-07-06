@@ -5,7 +5,7 @@ namespace GalliumPlus.WebApi.Core.Sales
     /// <summary>
     /// Un produit en une certaine quantité.
     /// </summary>
-    public class SaleItem
+    public class OrderItem
     {
         private Product product;
         private int quantity;
@@ -45,7 +45,7 @@ namespace GalliumPlus.WebApi.Core.Sales
         /// </summary>
         /// <param name="product">Le produit vendu.</param>
         /// <param name="quantity">La quantité de ce produit.</param>
-        public SaleItem(Product product, int quantity)
+        public OrderItem(Product product, int quantity)
         {
             this.product = product;
             this.quantity = quantity;

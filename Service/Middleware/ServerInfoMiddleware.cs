@@ -59,7 +59,12 @@ namespace GalliumPlus.WebApi.Middleware
 
         public override string ToString()
         {
-            return $"Gallium+ Web API Server v{this.Version}";
+            return "   ___        _ _ _                   _    \n"
+                 + "  / __|  __ _| | (_)_   _ _ __ ___  _| |_  \n"
+                 + " | |  _ / _` | | | | | | | '_ ` _ \\'_   _|\n"
+                 + " | |_| | (_| | | | | |_| | | | | | | |_|   \n"
+                 + "  \\____|\\__,_|_|_|_|\\__,_|_| |_| |_|    \n"
+                 + $"\n Gallium+ Web API Server v{this.Version}\n";
         }
     }
 }
