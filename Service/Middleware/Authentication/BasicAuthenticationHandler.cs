@@ -3,15 +3,10 @@ using GalliumPlus.WebApi.Core.Data;
 using GalliumPlus.WebApi.Core.Users;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Options;
-using System.Collections;
-using System.Diagnostics.CodeAnalysis;
 using System.Net.Http.Headers;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
-
-#pragma warning disable CS1998 // Cette méthode async n'a pas d'opérateur 'await' et elle s'exécutera de façon synchrone
 
 namespace GalliumPlus.WebApi.Middleware.Authentication
 {
@@ -109,7 +104,7 @@ namespace GalliumPlus.WebApi.Middleware.Authentication
                 return AuthenticateResult.Fail("User not found");
             }
 
-            if (!user.Password!.Value.Match(credentials.Password))
+            if (!user.Password!.Match(credentials.Password))
             {
                 return AuthenticateResult.Fail("Passwords don't match");
             }

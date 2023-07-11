@@ -24,6 +24,7 @@ namespace GalliumPlus.WebApi.Core.Users
         /// </summary>
         MANAGE_PRODUCTS = 2 | SEE_PRODUCTS_AND_CATEGORIES,
 
+
         /// <summary>
         /// Gestion des catégories (accès, création, modification et suppression).
         /// </summary>
@@ -74,6 +75,11 @@ namespace GalliumPlus.WebApi.Core.Users
         /// Aucune permission
         /// </summary>
         NONE = 0,
+
+        /// <summary>
+        /// Toutes les permissions
+        /// </summary>
+        ALL = 511,
     }
 
     public static class PermissionsExtensions
@@ -86,6 +92,26 @@ namespace GalliumPlus.WebApi.Core.Users
         public static bool Includes(this Permissions @this, Permissions other)
         {
             return (@this & other) == other;
+        }
+
+        /// <summary>
+        /// Ajoute <paramref name="other"/> à ces permissions.
+        /// </summary>
+        /// <param name="other">Les permissions à ajouter.</param>
+        /// <returns>Les permissions combinées.</returns>
+        public static Permissions Grant(this Permissions @this, Permissions other)
+        {
+            return @this | other;
+        }
+
+        /// <summary>
+        /// Enlève <paramref name="other"/> de ces permissions.
+        /// </summary>
+        /// <param name="other">Les permissions à enlever.</param>
+        /// <returns>Les permissions restantes.</returns>
+        public static Permissions Revoke(this Permissions @this, Permissions other)
+        {
+            return @this & ~other;
         }
     }
 }

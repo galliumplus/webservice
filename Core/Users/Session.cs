@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using GalliumPlus.WebApi.Core.Random;
+using System.ComponentModel;
 
 namespace GalliumPlus.WebApi.Core.Users
 {
@@ -15,7 +16,7 @@ namespace GalliumPlus.WebApi.Core.Users
         public static readonly TimeSpan LIFETIME = TimeSpan.FromHours(24);
 
         /// <summary>
-        /// La durée d'une session sans activité (20 minutes).
+        /// La durée d'une session sans activité (30 minutes).
         /// </summary>
         public static readonly TimeSpan INACTIVITY_TIMEOUT = TimeSpan.FromMinutes(30);
 
@@ -83,7 +84,8 @@ namespace GalliumPlus.WebApi.Core.Users
         /// <returns></returns>
         public static Session LogIn(User user)
         {
-            string token = new RandomTextGenerator().AlphaNumericString(20);
+            var rtg = new RandomTextGenerator(new BasicRandomProvider());
+            string token = rtg.AlphaNumericString(20);
             return new(token, Now, Now.Add(LIFETIME), user);
         }
 
