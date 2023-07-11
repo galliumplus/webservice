@@ -7,7 +7,7 @@ from utils.launcher import Launcher
 from tests.category_tests import CategoryTests
 from tests.product_tests import ProductTests
 from tests.role_tests import RoleTests
-from tests.purchase_tests import PurchaseTests
+from tests.order_tests import OrderTests
 from tests.user_tests import UserTests
 
 

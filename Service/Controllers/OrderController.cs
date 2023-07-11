@@ -24,7 +24,7 @@ namespace GalliumPlus.WebApi.Controllers
             this.userDao = userDao;
         }
 
-        [HttpPost("order")]
+        [HttpPost("orders")]
         [RequiresPermissions(Permissions.SELL)]
         public IActionResult Post(OrderSummary newOrder)
         {

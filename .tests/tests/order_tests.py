@@ -4,7 +4,7 @@ from utils.test_base import TestBase
 from utils.auth import BearerAuth
 
 
-class PurchaseTests(TestBase):
+class OrderTests(TestBase):
     def setUp(self):
         super().setUp()
         self.set_authentification(BearerAuth("09876543210987654321"))
@@ -15,7 +15,7 @@ class PurchaseTests(TestBase):
     def test_buy_nothing(self):
         empty_order = {"Items": [], "PaymentMethod": "CASH"}
 
-        response = self.post("order", empty_order)
+        response = self.post("orders", empty_order)
         self.expect(response.status_code).to.be.equal_to(400)
         self.expect(response.json()).to.have.an_item("Code").that._is.equal_to(
             "CANT_SELL"
@@ -49,7 +49,7 @@ class PurchaseTests(TestBase):
         if customer is not None:
             valid_order["Customer"] = customer
 
-        response = self.post("order", valid_order)
+        response = self.post("orders", valid_order)
         self.expect(response.status_code).to.be.equal_to(200)
 
     def test_buy_deposit_invalid(self):
@@ -64,28 +64,28 @@ class PurchaseTests(TestBase):
             "PaymentMethod": "DEPOSIT",
         }
 
-        response = self.post("order", order)
+        response = self.post("orders", order)
         self.expect(response.status_code).to.be.equal_to(400)
 
         # adhérent anonyme
 
         order.update(Customer="@anonymousmember")
 
-        response = self.post("order", order)
+        response = self.post("orders", order)
         self.expect(response.status_code).to.be.equal_to(400)
 
         # adhérent inexistant
 
         order.update(Customer="jj000000")
 
-        response = self.post("order", order)
+        response = self.post("orders", order)
         self.expect(response.status_code).to.be.equal_to(400)
 
         # l'id doit être explicite
 
         order.update(Customer="@me")
 
-        response = self.post("order", order)
+        response = self.post("orders", order)
         self.expect(response.status_code).to.be.equal_to(400)
 
     def test_buy_deposit_member(self):
@@ -100,7 +100,7 @@ class PurchaseTests(TestBase):
             "Customer": "lomens",
         }
 
-        response = self.post("order", order)
+        response = self.post("orders", order)
         self.expect(response.status_code).to.be.equal_to(200)
 
         self.expect(self.stock(0)).to.be.equal_to(18)
@@ -123,7 +123,7 @@ class PurchaseTests(TestBase):
             "Customer": "lomens",
         }
 
-        response = self.post("order", order)
+        response = self.post("orders", order)
         self.expect(response.status_code).to.be.equal_to(200)
 
         self.expect(self.stock(0)).to.be.equal_to(18)
@@ -144,7 +144,7 @@ class PurchaseTests(TestBase):
             "PaymentMethod": "CASH",
         }
 
-        response = self.post("order", order)
+        response = self.post("orders", order)
         self.expect(response.status_code).to.be.equal_to(200)
 
         # quantité = stock
@@ -153,7 +153,7 @@ class PurchaseTests(TestBase):
 
         order["Items"][0]["Quantity"] = 6
 
-        response = self.post("order", order)
+        response = self.post("orders", order)
         self.expect(response.status_code).to.be.equal_to(200)
 
         # quantité > stock
@@ -162,21 +162,21 @@ class PurchaseTests(TestBase):
 
         order["Items"][0]["Quantity"] = 9
 
-        response = self.post("order", order)
+        response = self.post("orders", order)
         self.expect(response.status_code).to.be.equal_to(400)
 
         # quantité nulle
 
         order["Items"][0]["Quantity"] = 0
 
-        response = self.post("order", order)
+        response = self.post("orders", order)
         self.expect(response.status_code).to.be.equal_to(400)
 
         # quantité négative
 
         order["Items"][0]["Quantity"] = -5
 
-        response = self.post("order", order)
+        response = self.post("orders", order)
         self.expect(response.status_code).to.be.equal_to(400)
 
     def test_buy_deposit_amount(self):
@@ -196,27 +196,27 @@ class PurchaseTests(TestBase):
 
         self.set_deposit("lomens", order_total_price * 2)
 
-        response = self.post("order", order)
+        response = self.post("orders", order)
         self.expect(response.status_code).to.be.equal_to(200)
 
         # crédit = prix
 
         self.set_deposit("lomens", order_total_price * 2)
 
-        response = self.post("order", order)
+        response = self.post("orders", order)
         self.expect(response.status_code).to.be.equal_to(200)
 
         # crédit < prix
 
         self.set_deposit("lomens", order_total_price / 2)
 
-        response = self.post("order", order)
+        response = self.post("orders", order)
         self.expect(response.status_code).to.be.equal_to(400)
 
     def test_buy_no_authentification(self):
         self.unset_authentification()
 
-        response = self.post("order", {})
+        response = self.post("orders", {})
         self.expect(response.status_code).to.be.equal_to(401)
 
     def test_buy_no_authorization(self):
@@ -228,7 +228,7 @@ class PurchaseTests(TestBase):
             "Customer": "lomens",
         }
 
-        response = self.post("order", order)
+        response = self.post("orders", order)
         self.expect(response.status_code).to.be.equal_to(403)
 
     def stock(self, product_id):
