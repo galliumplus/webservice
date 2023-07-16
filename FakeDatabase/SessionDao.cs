@@ -13,22 +13,26 @@ namespace GalliumPlus.WebApi.Data.FakeDatabase
         public SessionDao(IUserDao users)
         {
             this.users = users;
-
+ 
+            User lomens = this.Users.Read("lomens");
             this.Create(
                 new Session(
                     "12345678901234567890",
                     DateTime.UtcNow,
                     new DateTime(2099, 12, 31),
-                    this.Users.Read("lomens")
+                    lomens,
+                    lomens.Role.Permissions
                 )
             );
 
+            User eb069420 = this.Users.Read("eb069420");
             this.Create(
                 new Session(
                     "09876543210987654321",
                     DateTime.UtcNow,
                     new DateTime(2099, 12, 31),
-                    this.Users.Read("eb069420")
+                    eb069420,
+                    eb069420.Role.Permissions
                 )
             );
         }
@@ -37,7 +41,7 @@ namespace GalliumPlus.WebApi.Data.FakeDatabase
 
         protected override void SetKey(Session item, string key)
         {
-            throw new InvalidOperationException("The session token is read-only");
+            throw new InvalidOperationException("A session token is read-only");
         }
     }
 }

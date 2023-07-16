@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Text.Json.Serialization;
 
-namespace GalliumPlus.WebApi.Middleware
+namespace GalliumPlus.WebApi.Middleware.ErrorHandling
 {
     public class ErrorResult : JsonResult
     {
@@ -43,8 +43,8 @@ namespace GalliumPlus.WebApi.Middleware
             object? errorData = null)
         : base(null)
         {
-            this.Value = new Error { Code = errorCode, Message = errorMessage, DebugInfo = errorData };
-            this.StatusCode = statusCode;
+            Value = new Error { Code = errorCode, Message = errorMessage, DebugInfo = errorData };
+            StatusCode = statusCode;
         }
     }
 }

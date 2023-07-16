@@ -24,7 +24,7 @@ namespace GalliumPlus.WebApi.Core.Applications
         /// <param name="isEnabled">Si l'application est active ou non.</param>
         /// <param name="permissions">Les permissions accordées au bot.</param>
         public BotClient(string apiKey, string secret, string name, bool isEnabled, Permissions permissions)
-        : base(apiKey, name, isEnabled, permissions, Permissions.NONE)
+        : base(apiKey, name, isEnabled, permissions, Permissions.NONE, false)
         {
             this.secret = secret;
         }
@@ -35,7 +35,7 @@ namespace GalliumPlus.WebApi.Core.Applications
         /// <param name="name">Le nom du bot.</param>
         /// <param name="permissions">Les permissions accordées au bot.</param>
         public BotClient(string name, Permissions permissions)
-        : base(name, permissions)
+        : base(name, granted: permissions, allowUsers: false)
         {
             this.secret = "";
             this.RegenerateSecret();

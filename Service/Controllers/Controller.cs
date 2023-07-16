@@ -1,4 +1,5 @@
 ﻿using GalliumPlus.WebApi.Core;
+using GalliumPlus.WebApi.Core.Applications;
 using GalliumPlus.WebApi.Core.Data;
 using GalliumPlus.WebApi.Core.Users;
 using Microsoft.AspNetCore.Mvc;
@@ -11,61 +12,43 @@ namespace GalliumPlus.WebApi.Controllers
     /// </summary>
     public class Controller : ControllerBase
     {
+        private T? FindContextItem<T>(string name)
+        where T : class
+        {
+            T? result = null;
+
+            if (this.HttpContext.Items.TryGetValue(name, out object? value))
+            {
+                if (value is T expected)
+                {
+                    result = expected;
+                }
+                else if (value is not null)
+                {
+                    throw new InvalidOperationException(
+                        $"The \"{name}\" item must be of type {typeof(T).FullName}, "
+                        + $"not {value.GetType().FullName}"
+                    );
+                }
+            }
+
+            return result;
+        }
+
         /// <summary>
         /// L'utilisateur qui a émis la requête actuelle.
         /// </summary>
-        public new User? User
-        {
-            get
-            {
-                User? result = null;
-
-                if (this.HttpContext.Items.TryGetValue("User", out object? value))
-                {
-                    if (value is User user)
-                    {
-                        result = user;
-                    }
-                    else if (value is not null)
-                    {
-                        throw new InvalidOperationException(
-                            "The \"User\" item must be of type GalliumPlus.WebApi.Core.Users.User, "
-                            + $"not {value.GetType().FullName}"
-                        );
-                    }
-                }
-
-                return result;
-            }
-        }
+        public new User? User => FindContextItem<User>("User");
 
         /// <summary>
         /// La session de l'utilisateur qui a émis la requête actuelle.
         /// </summary>
-        public Session? Session
-        {
-            get
-            {
-                Session? result = null;
+        public Session? Session => FindContextItem<Session>("Session");
 
-                if (this.HttpContext.Items.TryGetValue("Session", out object? value))
-                {
-                    if (value is Session session)
-                    {
-                        result = session;
-                    }
-                    else if (value is not null)
-                    {
-                        throw new InvalidOperationException(
-                            "The \"Session\" item must be of type GalliumPlus.WebApi.Core.Users.Session, "
-                            + $"not {value.GetType().FullName}"
-                        );
-                    }
-                }
-
-                return result;
-            }
-        }
+        /// <summary>
+        /// L'application depuis laquelle la requête actuelle a été émise.
+        /// </summary>
+        public Client? Client => FindContextItem<Client>("Client");
 
         /// <summary>
         /// Crée une réponse avec un corps JSON.

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using GalliumPlus.WebApi.Core;
 using System.Text.Json.Serialization;
 
-namespace GalliumPlus.WebApi.Middleware
+namespace GalliumPlus.WebApi.Middleware.ErrorHandling
 {
     /// <summary>
     /// Gestion des erreurs propres au code métier.
@@ -11,7 +11,7 @@ namespace GalliumPlus.WebApi.Middleware
     public class ExceptionsFilter : IExceptionFilter, IOrderedFilter
     {
         // priorité haute, on veut qu'il s'applique juste après le contrôleur
-        public int Order => 1_000_000; 
+        public int Order => 1_000_000;
 
         public void OnException(ExceptionContext context)
         {
@@ -20,7 +20,7 @@ namespace GalliumPlus.WebApi.Middleware
                 context.Result = new ErrorResult(
                     "ITEM_NOT_FOUND",
                     "La ressource demandée n'existe pas.",
-                    404
+                    StatusCodes.Status404NotFound
                 );
                 context.ExceptionHandled = true;
             }
@@ -29,7 +29,7 @@ namespace GalliumPlus.WebApi.Middleware
                 context.Result = new ErrorResult(
                     "INVALID_ITEM",
                     invalidItem.Message,
-                    400
+                    StatusCodes.Status400BadRequest
                 );
                 context.ExceptionHandled = true;
             }
@@ -38,7 +38,7 @@ namespace GalliumPlus.WebApi.Middleware
                 context.Result = new ErrorResult(
                     "DUPLICATE_ITEM",
                     "Cette ressource existe déjà.",
-                    400
+                    StatusCodes.Status400BadRequest
                 );
                 context.ExceptionHandled = true;
             }

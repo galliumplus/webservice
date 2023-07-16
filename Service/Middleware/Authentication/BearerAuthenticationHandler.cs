@@ -69,6 +69,11 @@ namespace GalliumPlus.WebApi.Middleware.Authentication
                 return AuthenticateResult.Fail("Session not found");
             }
 
+            if (!session.Refresh())
+            {
+                return AuthenticateResult.Fail("Session expired");
+            }
+
             Context.Items.Add("Session", session);
             Context.Items.Add("User", session.User);
 

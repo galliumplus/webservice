@@ -13,7 +13,8 @@
                 name: "App",
                 isEnabled: false,
                 granted: Permissions.SEE_PRODUCTS_AND_CATEGORIES,
-                revoked: Permissions.MANAGE_USERS
+                revoked: Permissions.MANAGE_USERS,
+                allowUsers: true
             );
 
             Assert.Equal("test-api-key", client.ApiKey);
@@ -21,6 +22,7 @@
             Assert.False(client.IsEnabled);
             Assert.Equal(Permissions.SEE_PRODUCTS_AND_CATEGORIES, client.Granted);
             Assert.Equal(Permissions.MANAGE_USERS, client.Revoked);
+            Assert.True(client.AllowUsers);
         }
 
         [Fact]
@@ -36,6 +38,49 @@
             Assert.True(client.IsEnabled);
             Assert.Equal(Permissions.NONE, client.Granted);
             Assert.Equal(Permissions.MANAGE_USERS, client.Revoked);
+            Assert.True(client.AllowUsers);
+        }
+
+        [Fact]
+        public void AllowUserLogin()
+        {
+            Client client1 = new Client(
+                apiKey: "test-api-key",
+                name: "App",
+                isEnabled: true,
+                granted: Permissions.NONE,
+                revoked: Permissions.NONE,
+                allowUsers: true
+            );
+            Client client2 = new Client(
+                apiKey: "test-api-key",
+                name: "App",
+                isEnabled: false,
+                granted: Permissions.NONE,
+                revoked: Permissions.NONE,
+                allowUsers: true
+            );
+            Client client3 = new Client(
+                apiKey: "test-api-key",
+                name: "App",
+                isEnabled: true,
+                granted: Permissions.NONE,
+                revoked: Permissions.NONE,
+                allowUsers: false
+            );
+            Client client4 = new Client(
+                apiKey: "test-api-key",
+                name: "App",
+                isEnabled: false,
+                granted: Permissions.NONE,
+                revoked: Permissions.NONE,
+                allowUsers: false
+            );
+
+            Assert.True(client1.AllowUserLogin);
+            Assert.False(client2.AllowUserLogin);
+            Assert.False(client2.AllowUserLogin);
+            Assert.False(client4.AllowUserLogin);
         }
 
         [Fact]

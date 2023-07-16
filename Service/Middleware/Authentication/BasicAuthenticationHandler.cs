@@ -1,4 +1,5 @@
 ﻿using GalliumPlus.WebApi.Core;
+using GalliumPlus.WebApi.Core.Applications;
 using GalliumPlus.WebApi.Core.Data;
 using GalliumPlus.WebApi.Core.Users;
 using Microsoft.AspNetCore.Authentication;
@@ -13,16 +14,19 @@ namespace GalliumPlus.WebApi.Middleware.Authentication
     public class BasicAuthenticationHandler : AuthenticationHandler<AuthenticationSchemeOptions>
     {
         private IUserDao users;
+        private IClientDao clients;
 
         public BasicAuthenticationHandler(
             IOptionsMonitor<AuthenticationSchemeOptions> options,
             ILoggerFactory logger,
             UrlEncoder encoder,
             ISystemClock clock,
-            IUserDao user)
+            IUserDao users,
+            IClientDao clients)
         : base(options, logger, encoder, clock)
         {
-            this.users = user;
+            this.users = users;
+            this.clients = clients;
         }
 
         private readonly record struct Credentials(string Username, string Password);
@@ -94,14 +98,21 @@ namespace GalliumPlus.WebApi.Middleware.Authentication
                 
             }
 
+            if (!ApiKey.Find(out string? apiKey, Request.Headers))
+            {
+                return AuthenticateResult.Fail("Missing API key");
+            }
+
             User user;
+            Client app;
             try
             {
                 user = users.Read(credentials.Username);
+                app = clients.Read(apiKey);
             }
             catch (ItemNotFoundException)
             {
-                return AuthenticateResult.Fail("User not found");
+                return AuthenticateResult.Fail("Invalid API key / user not found");
             }
 
             if (!user.Password!.Match(credentials.Password))
@@ -110,6 +121,7 @@ namespace GalliumPlus.WebApi.Middleware.Authentication
             }
 
             Context.Items.Add("User", user);
+            Context.Items.Add("Client", app);
 
             return AuthenticateResult.Success(new EmptyTicket(Scheme));
         }

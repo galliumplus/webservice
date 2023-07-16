@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GalliumPlus.WebApi.Core.Applications;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -25,6 +26,7 @@ namespace CoreTest.Applications
             Assert.True(bot.IsEnabled);
             Assert.Equal(Permissions.RESET_MEMBERSHIPS, bot.Granted);
             Assert.Equal(Permissions.NONE, bot.Revoked);
+            Assert.False(bot.AllowUsers);
         }
 
         [Fact]
@@ -41,6 +43,7 @@ namespace CoreTest.Applications
             Assert.True(bot.IsEnabled);
             Assert.Equal(Permissions.RESET_MEMBERSHIPS, bot.Granted);
             Assert.Equal(Permissions.NONE, bot.Revoked);
+            Assert.False(bot.AllowUsers);
         }
 
         [Fact]

@@ -9,6 +9,7 @@ namespace GalliumPlus.WebApi.Core.Users
         private DateTime lastUse;
         private DateTime expiration;
         private User user;
+        private Permissions permissions;
 
         /// <summary>
         /// La durée maximum d'une session (24 heures).
@@ -57,7 +58,12 @@ namespace GalliumPlus.WebApi.Core.Users
         public User User => this.user;
 
         /// <summary>
-        /// Indique si la session a expiré ou non.
+        /// Les permissions accordées pour cette session.
+        /// </summary>
+        public Permissions Permissions => this.permissions;
+
+        /// <summary>
+        /// Indique si la session a expiré ou non, en prenant en compte l'inactivité.
         /// </summary>
         public bool Expired => this.UnusedSince > INACTIVITY_TIMEOUT || this.ExpiresIn < TimeSpan.Zero;
 
@@ -68,12 +74,13 @@ namespace GalliumPlus.WebApi.Core.Users
         /// <param name="lastUse">La dernière utilisation de la session.</param>
         /// <param name="expiration">Le moment auquel la session expirera.</param>
         /// <param name="user">L'utilisateur qui a ouvert cette session.</param>
-        public Session(string token, DateTime lastUse, DateTime expiration, User user)
+        public Session(string token, DateTime lastUse, DateTime expiration, User user, Permissions permissions)
         {
             this.token = token;
             this.lastUse = lastUse;
             this.expiration = expiration;
             this.user = user;
+            this.permissions = permissions;
         }
 
         /// <summary>
@@ -81,12 +88,13 @@ namespace GalliumPlus.WebApi.Core.Users
         /// </summary>
         /// <param name="token">Le jeton à utiliser pour identifier la session.</param>
         /// <param name="user">L'utilisateur pour qui ouvrir la session.</param>
+        /// <param name="permissions">Les permissions à donner à l'utilisateur durant cette session.</param>
         /// <returns></returns>
-        public static Session LogIn(User user)
+        public static Session LogIn(User user, Permissions permissions)
         {
             var rtg = new RandomTextGenerator(new BasicRandomProvider());
             string token = rtg.AlphaNumericString(20);
-            return new(token, Now, Now.Add(LIFETIME), user);
+            return new(token, Now, Now.Add(LIFETIME), user, permissions);
         }
 
         /// <summary>

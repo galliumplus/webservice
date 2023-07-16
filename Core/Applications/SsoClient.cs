@@ -43,6 +43,7 @@ namespace GalliumPlus.WebApi.Core.Applications
         /// <param name="redirectUrl">L'URL de redirection après authentification.</param>
         /// <param name="granted">Les permissions accordées à tous les utilisateurs.</param>
         /// <param name="revoked">Les permissions refusées à tous les utilisateurs.</param>
+        /// <param name="allowUsers">Autorise ou non les utilisateur à se connecter via l'application.</param>
         /// <param name="logoUrl">L'URL du logo de l'application.</param>
         public SsoClient(
             string apiKey,
@@ -52,9 +53,10 @@ namespace GalliumPlus.WebApi.Core.Applications
             string redirectUrl,
             Permissions granted,
             Permissions revoked,
+            bool allowUsers,
             string? logoUrl
         )
-        : base(apiKey, name, isEnabled, granted, revoked)
+        : base(apiKey, name, isEnabled, granted, revoked, allowUsers)
         {
             this.secret = secret;
             this.redirectUrl = redirectUrl;
@@ -68,15 +70,17 @@ namespace GalliumPlus.WebApi.Core.Applications
         /// <param name="redirectUrl">L'URL de redirection après authentification.</param>
         /// <param name="granted">Les permissions accordées à tous les utilisateurs.</param>
         /// <param name="revoked">Les permissions refusées à tous les utilisateurs.</param>
+        /// <param name="allowUsers">Autorise ou non les utilisateur à se connecter via l'application.</param>
         /// <param name="logoUrl">L'URL du logo de l'application.</param>
         public SsoClient(
             string name,
             string redirectUrl,
             Permissions granted = Permissions.NONE,
             Permissions revoked = Permissions.NONE,
+            bool allowUsers = false,
             string? logoUrl = null
         )
-        : base(name, granted, revoked)
+        : base(name, granted, revoked, allowUsers)
         {
             this.redirectUrl = redirectUrl;
             this.logoUrl = logoUrl;

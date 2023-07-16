@@ -18,7 +18,7 @@ namespace CoreTest.Users
         private readonly User user = new User(
             "mmansouri",
             "Mehdi Mansouri", 
-            new Role(0, "Membre", Permissions.NONE),
+            new Role(0, "Adhérent", Permissions.NONE),
             "Prof",
             21.30,
             false
@@ -29,12 +29,13 @@ namespace CoreTest.Users
         [Fact]
         public void Constructor()
         {
-            Session session = new Session("abcdef", lastUse, expiration, user);
+            Session session = new Session("abcdef", lastUse, expiration, user, Permissions.MANAGE_PRODUCTS);
 
             Assert.Equal("abcdef", session.Token);
             Assert.Equal(lastUse, session.LastUse);
             Assert.Equal(expiration, session.Expiration);
             Assert.Equal(user, session.User);
+            Assert.Equal(Permissions.MANAGE_PRODUCTS, session.Permissions);
         }
 
         [Fact]
@@ -43,7 +44,7 @@ namespace CoreTest.Users
             TimeSpan fiveMinutes = TimeSpan.FromMinutes(5);
             DateTime fiveMinutesAgo = DateTime.UtcNow.Subtract(fiveMinutes);
 
-            Session session = new Session("abcdef", fiveMinutesAgo, expiration, user);
+            Session session = new Session("abcdef", fiveMinutesAgo, expiration, user, Permissions.NONE);
 
             Assert.InRange(session.UnusedSince, fiveMinutes, fiveMinutes + timeMargin);
         }
@@ -54,7 +55,7 @@ namespace CoreTest.Users
             TimeSpan twoDays = TimeSpan.FromDays(2);
             DateTime twoDaysLater = DateTime.UtcNow.Add(twoDays);
 
-            Session session = new Session("abcdef", lastUse, twoDaysLater, user);
+            Session session = new Session("abcdef", lastUse, twoDaysLater, user, Permissions.NONE);
 
             Assert.InRange(session.ExpiresIn, twoDays - timeMargin, twoDays);
         }
@@ -67,19 +68,19 @@ namespace CoreTest.Users
             DateTime future = DateTime.UtcNow.AddHours(1);
             DateTime past = DateTime.UtcNow.AddHours(-1);
 
-            Session notExpired = new Session("abcdef", recent, future, user);
+            Session notExpired = new Session("abcdef", recent, future, user, Permissions.NONE);
             Assert.False(notExpired.Expired);
 
-            Session expiredInactivity = new Session("abcdef", notRecent, future, user);
+            Session expiredInactivity = new Session("abcdef", notRecent, future, user, Permissions.NONE);
             Assert.True(expiredInactivity.Expired);
 
-            Session expiredLifetime = new Session("abcdef", recent, past, user);
+            Session expiredLifetime = new Session("abcdef", recent, past, user, Permissions.NONE);
             Assert.True(expiredLifetime.Expired);
 
-            Session expiredBoth = new Session("abcdef", notRecent, past, user);
+            Session expiredBoth = new Session("abcdef", notRecent, past, user, Permissions.NONE);
             Assert.True(expiredBoth.Expired);
 
-            Session createdInTheFuture = new Session("abcdef", future, future, user);
+            Session createdInTheFuture = new Session("abcdef", future, future, user, Permissions.NONE);
             Assert.False(createdInTheFuture.Expired);
         }
 
@@ -89,12 +90,13 @@ namespace CoreTest.Users
             DateTime now = DateTime.UtcNow;
             DateTime exp = now + Session.LIFETIME;
 
-            Session newSession = Session.LogIn(user);
+            Session newSession = Session.LogIn(user, Permissions.SEE_PRODUCTS_AND_CATEGORIES);
 
             Assert.Equal(20, newSession.Token.Length);
             Assert.InRange(newSession.LastUse, now, now + timeMargin);
             Assert.InRange(newSession.Expiration, exp, exp + timeMargin);
             Assert.Equal(user, newSession.User);
+            Assert.Equal(Permissions.SEE_PRODUCTS_AND_CATEGORIES, newSession.Permissions);
         }
 
         [Fact]
@@ -105,20 +107,20 @@ namespace CoreTest.Users
             DateTime future = DateTime.UtcNow.AddHours(1);
             DateTime past = DateTime.UtcNow.AddHours(-1);
 
-            Session notExpired = new Session("abcdef", recent, future, user);
+            Session notExpired = new Session("abcdef", recent, future, user, Permissions.NONE);
             Assert.True(notExpired.Refresh());
             Assert.InRange(notExpired.UnusedSince, TimeSpan.Zero, timeMargin);
 
-            Session expiredInactivity = new Session("abcdef", notRecent, future, user);
+            Session expiredInactivity = new Session("abcdef", notRecent, future, user, Permissions.NONE);
             Assert.False(expiredInactivity.Refresh());
 
-            Session expiredLifetime = new Session("abcdef", recent, past, user);
+            Session expiredLifetime = new Session("abcdef", recent, past, user, Permissions.NONE);
             Assert.False(expiredLifetime.Refresh());
 
-            Session expiredBoth = new Session("abcdef", notRecent, past, user);
+            Session expiredBoth = new Session("abcdef", notRecent, past, user, Permissions.NONE);
             Assert.False(expiredBoth.Refresh());
 
-            Session createdInTheFuture = new Session("abcdef", future, future, user);
+            Session createdInTheFuture = new Session("abcdef", future, future, user, Permissions.NONE);
             Assert.True(createdInTheFuture.Refresh());
             Assert.InRange(createdInTheFuture.UnusedSince, TimeSpan.Zero, timeMargin);
         }
