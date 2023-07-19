@@ -1,4 +1,5 @@
-﻿using GalliumPlus.WebApi.Core.Random;
+﻿using GalliumPlus.WebApi.Core.Application;
+using GalliumPlus.WebApi.Core.Random;
 using GalliumPlus.WebApi.Core.Users;
 
 namespace GalliumPlus.WebApi.Core.Applications
@@ -8,12 +9,12 @@ namespace GalliumPlus.WebApi.Core.Applications
     /// </summary>
     public class BotClient : Client
     {
-        private string secret;
+        private OneTimeSecret secret;
 
         /// <summary>
         /// Le code secret servant à authentifier le bot.
         /// </summary>
-        public string Secret => this.secret;
+        public OneTimeSecret Secret => this.secret;
 
         /// <summary>
         /// Crée un bot existant.
@@ -23,7 +24,7 @@ namespace GalliumPlus.WebApi.Core.Applications
         /// <param name="name">Le nom du bot.</param>
         /// <param name="isEnabled">Si l'application est active ou non.</param>
         /// <param name="permissions">Les permissions accordées au bot.</param>
-        public BotClient(string apiKey, string secret, string name, bool isEnabled, Permissions permissions)
+        public BotClient(string apiKey, OneTimeSecret secret, string name, bool isEnabled, Permissions permissions)
         : base(apiKey, name, isEnabled, permissions, Permissions.NONE, false)
         {
             this.secret = secret;
@@ -37,14 +38,7 @@ namespace GalliumPlus.WebApi.Core.Applications
         public BotClient(string name, Permissions permissions)
         : base(name, granted: permissions, allowUsers: false)
         {
-            this.secret = "";
-            this.RegenerateSecret();
-        }
-
-        public void RegenerateSecret()
-        {
-            var rtg = new RandomTextGenerator(new CryptoRandomProvider());
-            this.secret = rtg.SecretKey();
+            this.secret = new OneTimeSecret();
         }
     }
 }
