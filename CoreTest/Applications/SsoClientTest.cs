@@ -6,6 +6,7 @@
         public void ConstructorExisting()
         {
             SsoClient client = new(
+                id: 123,
                 apiKey: "sso-service-id",
                 secret: "sso-secret",
                 name: "App",
@@ -17,6 +18,7 @@
                 logoUrl: "https://etiq-dijon.fr/assets/images/logo.png"
             );
 
+            Assert.Equal(123, client.Id);
             Assert.Equal("sso-service-id", client.ApiKey);
             Assert.Equal("sso-secret", client.Secret);
             Assert.Equal("App", client.Name);

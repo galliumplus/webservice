@@ -16,21 +16,22 @@ namespace GalliumPlus.WebApi.Core.Applications
         /// <summary>
         /// Le code secret utilisé pour signer les jeton d'authentification
         /// </summary>
-        public string Secret => this.secret;
+        public string Secret { get => this.secret; set => this.secret = value; }
 
         /// <summary>
         /// L'url de redirection une fois l'authentifiaction terminée.
         /// </summary>
-        public string RedirectUrl => this.redirectUrl;
+        public string RedirectUrl { get => this.redirectUrl; set => this.redirectUrl = value; }
 
         /// <summary>
         /// L'url du logo de l'application (optionnel)
         /// </summary>
-        public string? LogoUrl => this.logoUrl;
+        public string? LogoUrl { get => this.logoUrl; set => this.logoUrl = value; }
 
         /// <summary>
         /// Crée une application existante avec SSO.
         /// </summary>
+        /// <param name="id">L'identifiant de l'application.</param>
         /// <param name="apiKey">La clé d'API.</param>
         /// <param name="secret">Le code secret utilisé comme signature.</param>
         /// <param name="name">Le nom de l'application.</param>
@@ -41,6 +42,7 @@ namespace GalliumPlus.WebApi.Core.Applications
         /// <param name="allowUsers">Autorise ou non les utilisateur à se connecter via l'application.</param>
         /// <param name="logoUrl">L'URL du logo de l'application.</param>
         public SsoClient(
+            int id,
             string apiKey,
             string secret,
             string name,
@@ -51,7 +53,7 @@ namespace GalliumPlus.WebApi.Core.Applications
             bool allowUsers,
             string? logoUrl
         )
-        : base(apiKey, name, isEnabled, granted, revoked, allowUsers)
+        : base(id, apiKey, name, isEnabled, granted, revoked, allowUsers)
         {
             this.secret = secret;
             this.redirectUrl = redirectUrl;
@@ -70,12 +72,13 @@ namespace GalliumPlus.WebApi.Core.Applications
         public SsoClient(
             string name,
             string redirectUrl,
+            bool isEnabled = true,
             Permissions granted = Permissions.NONE,
             Permissions revoked = Permissions.NONE,
             bool allowUsers = false,
             string? logoUrl = null
         )
-        : base(name, granted, revoked, allowUsers)
+        : base(name, isEnabled, granted, revoked, allowUsers)
         {
             this.redirectUrl = redirectUrl;
             this.logoUrl = logoUrl;

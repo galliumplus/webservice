@@ -17,7 +17,7 @@
             false
         );
 
-        private readonly Client client = new Client("Test client", Permissions.NONE);
+        private readonly Client client = new Client("Test client");
 
         private readonly TimeSpan timeMargin = TimeSpan.FromMilliseconds(500);
 

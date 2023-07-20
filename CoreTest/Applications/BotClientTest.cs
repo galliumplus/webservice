@@ -11,6 +11,7 @@ namespace CoreTest.Applications
             string expectedSecret = secret.Regenerate();
 
             BotClient bot = new(
+                id: 123,
                 apiKey: "bot-api-key",
                 secret,
                 name: "Bot",
@@ -18,6 +19,7 @@ namespace CoreTest.Applications
                 permissions: Permissions.RESET_MEMBERSHIPS
             );
 
+            Assert.Equal(123, bot.Id);
             Assert.Equal("bot-api-key", bot.ApiKey);
             Assert.True(bot.Secret.Match(expectedSecret));
             Assert.Equal("Bot", bot.Name);
@@ -32,7 +34,8 @@ namespace CoreTest.Applications
         {
             BotClient bot = new(
                 name: "Bot",
-                permissions: Permissions.RESET_MEMBERSHIPS
+                permissions: Permissions.RESET_MEMBERSHIPS,
+                isEnabled: true
             );
 
             Assert.Matches(ClientTest.RE_API_KEY, bot.ApiKey);
@@ -48,7 +51,8 @@ namespace CoreTest.Applications
         {
             BotClient bot = new(
                 name: "Bot",
-                permissions: Permissions.RESET_MEMBERSHIPS
+                permissions: Permissions.RESET_MEMBERSHIPS,
+                isEnabled: true
             );
 
             string previousSecret = bot.Secret.Regenerate();

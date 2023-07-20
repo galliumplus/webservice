@@ -42,7 +42,8 @@ namespace GalliumPlus.WebApi.Controllers
             {
                 try
                 {
-                    Session session = this.sessionDao.Create(Session.LogIn(app, user));
+                    Session session = Session.LogIn(app, user);
+                    this.sessionDao.Create(session);
                     return Json(this.mapper.FromModel(session));
                 }
                 catch (DuplicateItemException) { }
@@ -60,7 +61,8 @@ namespace GalliumPlus.WebApi.Controllers
             {
                 try
                 {
-                    Session session = this.sessionDao.Create(Session.LogIn(bot));
+                    Session session = Session.LogIn(bot);
+                    this.sessionDao.Create(session);
                     return Json(this.mapper.FromModel(session));
                 }
                 catch (DuplicateItemException) { }
@@ -72,7 +74,7 @@ namespace GalliumPlus.WebApi.Controllers
         [Authorize(AuthenticationSchemes = "Bearer")]
         public IActionResult LogOut()
         {
-            this.sessionDao.Delete(this.Session!.Token);
+            this.sessionDao.Delete(this.Session!);
             return Ok();
         }
     }

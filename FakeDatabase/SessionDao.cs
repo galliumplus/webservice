@@ -1,4 +1,5 @@
-﻿using GalliumPlus.WebApi.Core.Applications;
+﻿using GalliumPlus.WebApi.Core;
+using GalliumPlus.WebApi.Core.Applications;
 using GalliumPlus.WebApi.Core.Data;
 using GalliumPlus.WebApi.Core.Users;
 
@@ -11,13 +12,15 @@ namespace GalliumPlus.WebApi.Data.FakeDatabase
 
         public IUserDao Users => users;
 
+        public IClientDao Clients => clients;
+
         public SessionDao(IUserDao users, IClientDao clients)
         {
             this.users = users;
             this.clients = clients;
 
             User lomens = this.Users.Read("lomens");
-            Client testApp = this.clients.Read("test-api-key-normal");
+            Client testApp = this.clients.Read(0);
             this.Create(
                 new Session(
                     "12345678901234567890",
@@ -38,6 +41,25 @@ namespace GalliumPlus.WebApi.Data.FakeDatabase
                     testApp
                 )
             );
+        }
+
+        new public void Create(Session session)
+        {
+            if (!Items.TryAdd(session.Token, session))
+            {
+                throw new DuplicateItemException();
+            }
+        }
+
+        public void UpdateLastUse(Session session)
+        {
+            if (!Items.ContainsKey(session.Token)) throw new ItemNotFoundException();
+            Items[session.Token] = session;
+        }
+
+        public void Delete(Session session)
+        {
+            this.Delete(session.Token);
         }
 
         protected override string GetKey(Session item) => item.Token;

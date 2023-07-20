@@ -8,7 +8,8 @@
         [Fact]
         public void ConstructorExisting()
         {
-            Client client = new Client(
+            Client client = new(
+                id: 123,
                 apiKey: "test-api-key",
                 name: "App",
                 isEnabled: false,
@@ -17,6 +18,7 @@
                 allowUsers: true
             );
 
+            Assert.Equal(123, client.Id);
             Assert.Equal("test-api-key", client.ApiKey);
             Assert.Equal("App", client.Name);
             Assert.False(client.IsEnabled);
@@ -28,7 +30,7 @@
         [Fact]
         public void ConstructorNew()
         {
-            Client client = new Client(
+            Client client = new(
                 name: "App",
                 revoked: Permissions.MANAGE_USERS
             );
@@ -44,7 +46,8 @@
         [Fact]
         public void AllowUserLogin()
         {
-            Client client1 = new Client(
+            Client client1 = new(
+                id: 123,
                 apiKey: "test-api-key",
                 name: "App",
                 isEnabled: true,
@@ -52,7 +55,8 @@
                 revoked: Permissions.NONE,
                 allowUsers: true
             );
-            Client client2 = new Client(
+            Client client2 = new(
+                id: 123,
                 apiKey: "test-api-key",
                 name: "App",
                 isEnabled: false,
@@ -60,7 +64,8 @@
                 revoked: Permissions.NONE,
                 allowUsers: true
             );
-            Client client3 = new Client(
+            Client client3 = new(
+                id: 123,
                 apiKey: "test-api-key",
                 name: "App",
                 isEnabled: true,
@@ -68,7 +73,8 @@
                 revoked: Permissions.NONE,
                 allowUsers: false
             );
-            Client client4 = new Client(
+            Client client4 = new(
+                id: 123,
                 apiKey: "test-api-key",
                 name: "App",
                 isEnabled: false,

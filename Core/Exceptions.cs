@@ -11,7 +11,7 @@ namespace GalliumPlus.WebApi.Core
     }
 
     /// <summary>
-    /// Erreur indiquant que la ressource demandée n'existe pas.
+    /// Erreur indiquant qu'une ressource n'existe pas.
     /// </summary>
     public class ItemNotFoundException : Exception
     {
@@ -36,9 +36,6 @@ namespace GalliumPlus.WebApi.Core
 
         public Permissions Required { get => this.required; }
 
-        /// <summary>
-        /// Instancie l'exception.
-        /// </summary>
         /// <param name="required">Les permissions requises pour effectuer l'action.</param>
         public PermissionDeniedException(Permissions required) : base()
         {

@@ -10,17 +10,17 @@ namespace GalliumPlus.WebApi.Middleware.Authentication
 {
     public class KeyAndSecretAuthenticationHandler : AuthenticationHandler<AuthenticationSchemeOptions>
     {
-        private IBotClientDao bots;
+        private IClientDao clients;
 
         public KeyAndSecretAuthenticationHandler(
             IOptionsMonitor<AuthenticationSchemeOptions> options,
             ILoggerFactory logger,
             UrlEncoder encoder,
             ISystemClock clock,
-            IBotClientDao bots)
+            IClientDao clients)
         : base(options, logger, encoder, clock)
         {
-            this.bots = bots;
+            this.clients = clients;
         }
 
         private bool TryParseHeader(out string secret)
@@ -62,7 +62,7 @@ namespace GalliumPlus.WebApi.Middleware.Authentication
             BotClient bot;
             try
             {
-                bot = bots.Read(apiKey);
+                bot = clients.FindBotByApiKey(apiKey);
             }
             catch (ItemNotFoundException)
             {

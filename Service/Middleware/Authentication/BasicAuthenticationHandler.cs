@@ -108,7 +108,7 @@ namespace GalliumPlus.WebApi.Middleware.Authentication
             try
             {
                 user = users.Read(credentials.Username);
-                app = clients.Read(apiKey);
+                app = clients.FindByApiKey(apiKey);
             }
             catch (ItemNotFoundException)
             {

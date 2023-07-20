@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using GalliumPlus.WebApi.Middleware.ErrorHandling;
+using System.Text.Json;
 #if FAKE_DB
 using GalliumPlus.WebApi.Data.FakeDatabase;
 #endif
@@ -31,7 +32,6 @@ builder.Services
 
 #if FAKE_DB
 // ajout en singleton, sinon les données ne sont pas persistées d'une requête à l'autre
-builder.Services.AddSingleton<IBotClientDao, BotClientDao>();
 builder.Services.AddSingleton<ICategoryDao, CategoryDao>();
 builder.Services.AddSingleton<IClientDao, ClientDao>();
 builder.Services.AddSingleton<IProductDao, ProductDao>();
@@ -47,7 +47,7 @@ builder.Services.Configure<JsonOptions>(options =>
     // accepte les virgules en fin de liste / d'objet
     options.JsonSerializerOptions.AllowTrailingCommas = true;
     // garde les noms de propriétés tels quels
-    options.JsonSerializerOptions.PropertyNamingPolicy = null;
+    options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
     // sérialise les énumérations sous forme de texte
     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
