@@ -2,7 +2,6 @@
 using GalliumPlus.WebApi.Core.Applications;
 using GalliumPlus.WebApi.Core.Data;
 using GalliumPlus.WebApi.Core.Users;
-using System;
 
 namespace GalliumPlus.WebApi.Data.FakeDatabase
 {

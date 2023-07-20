@@ -4,7 +4,6 @@ using GalliumPlus.WebApi.Core.Users;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Options;
 using System.Net.Http.Headers;
-using System.Text;
 using System.Text.Encodings.Web;
 
 #pragma warning disable CS1998 // Cette méthode async n'a pas d'opérateur 'await' et elle s'exécutera de façon synchrone

@@ -40,4 +40,3 @@ namespace GalliumPlus.WebApi.Dto
         }
     }
 }
- 

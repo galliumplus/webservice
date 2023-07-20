@@ -1,10 +1,4 @@
 ﻿using GalliumPlus.WebApi.Core.Application;
-using GalliumPlus.WebApi.Core.Applications;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CoreTest.Applications
 {

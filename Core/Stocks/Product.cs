@@ -1,7 +1,4 @@
-﻿using System.ComponentModel;
-using System.Text.Json.Serialization;
-
-namespace GalliumPlus.WebApi.Core.Stocks
+﻿namespace GalliumPlus.WebApi.Core.Stocks
 {
     /// <summary>
     /// Un produit.
@@ -45,7 +42,7 @@ namespace GalliumPlus.WebApi.Core.Stocks
         /// Disponibilité du produit.
         /// </summary>
         public Availability Availability => this.availability;
-        
+
         /// <summary>
         /// Catégorie du produit.
         /// </summary>

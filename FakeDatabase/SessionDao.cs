@@ -1,5 +1,4 @@
-﻿using GalliumPlus.WebApi.Core;
-using GalliumPlus.WebApi.Core.Applications;
+﻿using GalliumPlus.WebApi.Core.Applications;
 using GalliumPlus.WebApi.Core.Data;
 using GalliumPlus.WebApi.Core.Users;
 
@@ -16,7 +15,7 @@ namespace GalliumPlus.WebApi.Data.FakeDatabase
         {
             this.users = users;
             this.clients = clients;
- 
+
             User lomens = this.Users.Read("lomens");
             Client testApp = this.clients.Read("test-api-key-normal");
             this.Create(

@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc.Filters;
-using GalliumPlus.WebApi.Core.Users;
-using Microsoft.AspNetCore.Mvc.Abstractions;
+﻿using GalliumPlus.WebApi.Core.Users;
 using GalliumPlus.WebApi.Middleware.ErrorHandling;
+using Microsoft.AspNetCore.Mvc.Abstractions;
+using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace GalliumPlus.WebApi.Middleware.Authorization
 {

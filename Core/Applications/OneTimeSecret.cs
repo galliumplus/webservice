@@ -1,5 +1,4 @@
 ﻿using GalliumPlus.WebApi.Core.Random;
-using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -25,7 +24,7 @@ namespace GalliumPlus.WebApi.Core.Application
         {
             this.hash = hash;
         }
-        
+
         /// <summary>
         /// Crée un nouveau code secret. Avant d'être utilisé, il doit être (re)généré une fois.
         /// </summary>

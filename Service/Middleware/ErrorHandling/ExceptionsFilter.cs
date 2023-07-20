@@ -1,7 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc.Filters;
+﻿using GalliumPlus.WebApi.Core;
 using Microsoft.AspNetCore.Mvc;
-using GalliumPlus.WebApi.Core;
-using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace GalliumPlus.WebApi.Middleware.ErrorHandling
 {

@@ -1,7 +1,6 @@
 ﻿using GalliumPlus.WebApi.Core;
 using GalliumPlus.WebApi.Core.Data;
 using GalliumPlus.WebApi.Core.Stocks;
-using GalliumPlus.WebApi.Core.Users;
 using System.ComponentModel.DataAnnotations;
 
 namespace GalliumPlus.WebApi.Dto

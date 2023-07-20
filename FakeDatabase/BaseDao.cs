@@ -65,7 +65,7 @@ namespace GalliumPlus.WebApi.Data.FakeDatabase
             }
 
             if (!items.ContainsKey(key)) throw new ItemNotFoundException();
-            
+
             SetKey(item, key);
             items[key] = item;
             return item;

@@ -59,7 +59,7 @@ namespace GalliumPlus.WebApi.Middleware.Authentication
             {
                 Credentials result = await JsonSerializer
                     .DeserializeAsync<Credentials>(Request.Body);
-                
+
                 if (result.Username == null || result.Password == null)
                 {
                     return null;
@@ -95,7 +95,7 @@ namespace GalliumPlus.WebApi.Middleware.Authentication
                 {
                     return AuthenticateResult.Fail("Missing header, Invalid body format");
                 }
-                
+
             }
 
             if (!ApiKey.Find(out string? apiKey, Request.Headers))

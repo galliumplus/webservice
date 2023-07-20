@@ -1,9 +1,7 @@
 ﻿using GalliumPlus.WebApi.Core;
 using GalliumPlus.WebApi.Core.Applications;
-using GalliumPlus.WebApi.Core.Data;
 using GalliumPlus.WebApi.Core.Users;
 using Microsoft.AspNetCore.Mvc;
-using System.Text.Json;
 
 namespace GalliumPlus.WebApi.Controllers
 {

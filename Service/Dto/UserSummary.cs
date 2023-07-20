@@ -28,7 +28,8 @@ namespace GalliumPlus.WebApi.Dto
         {
             public override UserSummary FromModel(User user)
             {
-                return new UserSummary {
+                return new UserSummary
+                {
                     Id = user.Id,
                     Name = user.Name,
                     Role = user.Role.Id,

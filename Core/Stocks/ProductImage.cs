@@ -1,6 +1,4 @@
 ﻿using ImageMagick;
-using System;
-using System.Collections.Generic;
 namespace GalliumPlus.WebApi.Core.Stocks
 {
     /// <summary>

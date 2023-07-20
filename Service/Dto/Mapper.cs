@@ -1,6 +1,4 @@
-﻿using GalliumPlus.WebApi.Core.Data;
-
-namespace GalliumPlus.WebApi.Dto
+﻿namespace GalliumPlus.WebApi.Dto
 {
     public abstract class Mapper<TModel, TDto, TDao>
     {
