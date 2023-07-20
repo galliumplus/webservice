@@ -38,13 +38,29 @@ namespace GalliumPlus.WebApi.Controllers
                );
             }
 
-            Permissions sessionPerms = app.Filter(user.Role.Permissions);
+            for (int tries = 10; tries > 0; tries--)
+            {
+                try
+                {
+                    Session session = this.sessionDao.Create(Session.LogIn(app, user));
+                    return Json(this.mapper.FromModel(session));
+                }
+                catch (DuplicateItemException) { }
+            }
+            return StatusCode(StatusCodes.Status503ServiceUnavailable);
+        }
+
+        [HttpPost("connect")]
+        [Authorize(AuthenticationSchemes = "KeyAndSecret")]
+        public IActionResult Connect()
+        {
+            Client bot = this.Client!;
 
             for (int tries = 10; tries > 0; tries--)
             {
                 try
                 {
-                    Session session = this.sessionDao.Create(Session.LogIn(user, sessionPerms));
+                    Session session = this.sessionDao.Create(Session.LogIn(bot));
                     return Json(this.mapper.FromModel(session));
                 }
                 catch (DuplicateItemException) { }

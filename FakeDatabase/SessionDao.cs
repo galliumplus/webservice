@@ -1,4 +1,5 @@
 ﻿using GalliumPlus.WebApi.Core;
+using GalliumPlus.WebApi.Core.Applications;
 using GalliumPlus.WebApi.Core.Data;
 using GalliumPlus.WebApi.Core.Users;
 
@@ -7,21 +8,24 @@ namespace GalliumPlus.WebApi.Data.FakeDatabase
     public class SessionDao : BaseDao<string, Session>, ISessionDao
     {
         private IUserDao users;
+        private IClientDao clients;
 
         public IUserDao Users => users;
 
-        public SessionDao(IUserDao users)
+        public SessionDao(IUserDao users, IClientDao clients)
         {
             this.users = users;
+            this.clients = clients;
  
             User lomens = this.Users.Read("lomens");
+            Client testApp = this.clients.Read("test-api-key-normal");
             this.Create(
                 new Session(
                     "12345678901234567890",
                     DateTime.UtcNow,
                     new DateTime(2099, 12, 31),
                     lomens,
-                    lomens.Role.Permissions
+                    testApp
                 )
             );
 
@@ -32,7 +36,7 @@ namespace GalliumPlus.WebApi.Data.FakeDatabase
                     DateTime.UtcNow,
                     new DateTime(2099, 12, 31),
                     eb069420,
-                    eb069420.Role.Permissions
+                    testApp
                 )
             );
         }

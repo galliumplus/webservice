@@ -1,5 +1,5 @@
-﻿using GalliumPlus.WebApi.Core.Random;
-using System.ComponentModel;
+﻿using GalliumPlus.WebApi.Core.Applications;
+using GalliumPlus.WebApi.Core.Random;
 
 namespace GalliumPlus.WebApi.Core.Users
 {
@@ -8,8 +8,8 @@ namespace GalliumPlus.WebApi.Core.Users
         private string token;
         private DateTime lastUse;
         private DateTime expiration;
-        private User user;
-        private Permissions permissions;
+        private User? user;
+        private Client client;
 
         /// <summary>
         /// La durée maximum d'une session (24 heures).
@@ -53,14 +53,19 @@ namespace GalliumPlus.WebApi.Core.Users
         public TimeSpan ExpiresIn => this.expiration.Subtract(Now);
 
         /// <summary>
-        /// L'utilisateur qui a ouvert cette session.
+        /// L'utilisateur qui a ouvert cette session, ou <see langword="null"/> si c'est un bot.
         /// </summary>
-        public User User => this.user;
+        public User? User => this.user;
+
+        /// <summary>
+        /// L'application depuis laquelle cette session a été ouverte.
+        /// </summary>
+        public Client Client => this.client;
 
         /// <summary>
         /// Les permissions accordées pour cette session.
         /// </summary>
-        public Permissions Permissions => this.permissions;
+        public Permissions Permissions => this.client.Filter(this.user?.Role.Permissions ?? Permissions.NONE);
 
         /// <summary>
         /// Indique si la session a expiré ou non, en prenant en compte l'inactivité.
@@ -73,14 +78,14 @@ namespace GalliumPlus.WebApi.Core.Users
         /// <param name="token">Le jeton identifiant le session.</param>
         /// <param name="lastUse">La dernière utilisation de la session.</param>
         /// <param name="expiration">Le moment auquel la session expirera.</param>
-        /// <param name="user">L'utilisateur qui a ouvert cette session.</param>
-        public Session(string token, DateTime lastUse, DateTime expiration, User user, Permissions permissions)
+        /// <param name="user">L'utilisateur qui a ouvert cette session, ou null si c'est une session de bot.</param>
+        public Session(string token, DateTime lastUse, DateTime expiration, User? user, Client client)
         {
             this.token = token;
             this.lastUse = lastUse;
             this.expiration = expiration;
             this.user = user;
-            this.permissions = permissions;
+            this.client = client;
         }
 
         /// <summary>
@@ -90,11 +95,11 @@ namespace GalliumPlus.WebApi.Core.Users
         /// <param name="user">L'utilisateur pour qui ouvrir la session.</param>
         /// <param name="permissions">Les permissions à donner à l'utilisateur durant cette session.</param>
         /// <returns></returns>
-        public static Session LogIn(User user, Permissions permissions)
+        public static Session LogIn(Client client, User? user = null)
         {
             var rtg = new RandomTextGenerator(new BasicRandomProvider());
             string token = rtg.AlphaNumericString(20);
-            return new(token, Now, Now.Add(LIFETIME), user, permissions);
+            return new(token, Now, Now.Add(LIFETIME), user, client);
         }
 
         /// <summary>

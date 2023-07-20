@@ -1,4 +1,5 @@
-﻿using GalliumPlus.WebApi.Core.Applications;
+﻿using GalliumPlus.WebApi.Core.Application;
+using GalliumPlus.WebApi.Core.Applications;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,16 +13,19 @@ namespace CoreTest.Applications
         [Fact]
         public void ConstructorExisting()
         {
+            OneTimeSecret secret = new();
+            string expectedSecret = secret.Regenerate();
+
             BotClient bot = new(
                 apiKey: "bot-api-key",
-                secret: "bot-secret-token",
+                secret,
                 name: "Bot",
                 isEnabled: true,
                 permissions: Permissions.RESET_MEMBERSHIPS
             );
 
             Assert.Equal("bot-api-key", bot.ApiKey);
-            Assert.Equal("bot-secret-token", bot.Secret);
+            Assert.True(bot.Secret.Match(expectedSecret));
             Assert.Equal("Bot", bot.Name);
             Assert.True(bot.IsEnabled);
             Assert.Equal(Permissions.RESET_MEMBERSHIPS, bot.Granted);
@@ -38,7 +42,6 @@ namespace CoreTest.Applications
             );
 
             Assert.Matches(ClientTest.RE_API_KEY, bot.ApiKey);
-            Assert.Matches(ClientTest.RE_SECRET, bot.Secret);
             Assert.Equal("Bot", bot.Name);
             Assert.True(bot.IsEnabled);
             Assert.Equal(Permissions.RESET_MEMBERSHIPS, bot.Granted);
@@ -54,12 +57,11 @@ namespace CoreTest.Applications
                 permissions: Permissions.RESET_MEMBERSHIPS
             );
 
-            string previousSecret = bot.Secret;
+            string previousSecret = bot.Secret.Regenerate();
 
-            bot.RegenerateSecret();
+            string newSecret = bot.Secret.Regenerate();
 
-            Assert.NotEqual(previousSecret, bot.Secret);
-            Assert.Matches(ClientTest.RE_SECRET, bot.Secret);
+            Assert.NotEqual(previousSecret, newSecret);
         }
     }
 }

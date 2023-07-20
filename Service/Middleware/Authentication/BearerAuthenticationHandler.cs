@@ -76,6 +76,7 @@ namespace GalliumPlus.WebApi.Middleware.Authentication
 
             Context.Items.Add("Session", session);
             Context.Items.Add("User", session.User);
+            Context.Items.Add("Client", session.Client);
 
             return AuthenticateResult.Success(new EmptyTicket(Scheme));
         }

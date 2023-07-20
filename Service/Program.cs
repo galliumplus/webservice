@@ -32,6 +32,7 @@ builder.Services
 
 #if FAKE_DB
 // ajout en singleton, sinon les données ne sont pas persistées d'une requête à l'autre
+builder.Services.AddSingleton<IBotClientDao, BotClientDao>();
 builder.Services.AddSingleton<ICategoryDao, CategoryDao>();
 builder.Services.AddSingleton<IClientDao, ClientDao>();
 builder.Services.AddSingleton<IProductDao, ProductDao>();
@@ -103,7 +104,8 @@ builder.Services.AddServerInfo();
 builder.Services
     .AddAuthentication(defaultScheme: "Bearer")
     .AddBearer()
-    .AddBasic();
+    .AddBasic()
+    .AddKeyAndSecret();
 
 var app = builder.Build();
 
