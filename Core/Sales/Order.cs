@@ -74,7 +74,7 @@ namespace GalliumPlus.WebApi.Core.Sales
                 productDao.WithdrawFromStock(item.Product.Id, item.Quantity);
             }
         }
-         
+        
         private double TotalPrice()
         {
             double result = 0;

@@ -13,6 +13,7 @@ class TestBase(TestCase, ABC):
         super().__init__(*args, **kwargs)
         self.base_url = "https://localhost:5443/api/"
         self.requests_options = {"verify": False}
+        self.count_requests = True
 
     @classmethod
     def request_count(cls):
@@ -40,10 +41,17 @@ class TestBase(TestCase, ABC):
         if "auth" in self.requests_options:
             del self.requests_options["auth"]
 
+    def stop_counting_requests(self):
+        self.counting_requests = False
+
+    def resume_counting_requests(self):
+        self.counting_requests = True
+
     def __send(self, requests_method, *args, **kwargs):
-        TestBase.__request_count += 1
         r = requests_method(*args, **kwargs)
-        TestBase.__total_time += r.elapsed.total_seconds()
+        if self.count_requests:
+            TestBase.__request_count += 1
+            TestBase.__total_time += r.elapsed.total_seconds()
         return r
 
     def head(self, url):

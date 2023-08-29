@@ -29,7 +29,7 @@ namespace GalliumPlus.WebApi.Core.Sales
             this.depositId = depositId;
         }
 
-        public override string Pay(double amount)
+        protected override string ProcessPayment(double amount)
         {
             double currentDeposit;
             try
@@ -57,7 +57,7 @@ namespace GalliumPlus.WebApi.Core.Sales
 
             return String.Format(
                 currencyFormat.Value,
-                "Le paiement par acompte a bienété effectué (il reste {0:C}).",
+                "Le paiement par acompte a bien été effectué (il reste {0:C}).",
                 newDeposit
             );
         }

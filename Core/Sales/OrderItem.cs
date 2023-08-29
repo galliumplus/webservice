@@ -47,6 +47,11 @@ namespace GalliumPlus.WebApi.Core.Sales
         /// <param name="quantity">La quantité de ce produit.</param>
         public OrderItem(Product product, int quantity)
         {
+            if (quantity <= 0)
+            {
+                throw new InvalidItemException("La quantité d'un produit doit être supérieure à zéro.");
+            }
+
             this.product = product;
             this.quantity = quantity;
         }

@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace GalliumPlus.WebApi.Core.Sales
 {
-    public class PaymentByPaypal : PaymentMethod
+    public class PaymentByCreditCard : PaymentMethod
     {
-        public override string Pay(double amount) => "OK";
+        protected override string ProcessPayment(double _) => "OK";
     }
 }

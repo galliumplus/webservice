@@ -20,11 +20,6 @@ namespace GalliumPlus.WebApi.Dto
 
             public override OrderItem ToModel(OrderItemSummary dto, IProductDao dao)
             {
-                if (dto.Quantity!.Value <= 0)
-                {
-                    throw new InvalidItemException("La quantité d'un produit doit être supérieure à zéro.");
-                }
-
                 return new OrderItem(dao.Read(dto.Product!.Value), dto.Quantity!.Value);
             }
         }

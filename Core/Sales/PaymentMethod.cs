@@ -16,6 +16,16 @@ namespace GalliumPlus.WebApi.Core.Sales
         /// <param name="amount">Le montant à payer.</param>
         /// <exception cref="CantSellException"></exception>
         /// <returns>Une phrase indiquant que l'opération à bien été effectuée.</returns>
-        public abstract string Pay(double amount);
+        public string Pay(double amount)
+        {
+            if (amount < 0)
+            {
+                throw new ArgumentOutOfRangeException("La somme à payer ne peut pas être négative");
+            }
+
+            return this.ProcessPayment(amount);
+        }
+
+        protected abstract string ProcessPayment(double amount);
     }
 }
