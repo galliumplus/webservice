@@ -12,7 +12,7 @@ namespace GalliumPlus.WebApi.Core.Users
         private Role role;
         private string year;
         private double deposit;
-        private bool formerMember;
+        private bool isMember;
         private PasswordInformation? password;
 
         /// <summary>
@@ -51,7 +51,7 @@ namespace GalliumPlus.WebApi.Core.Users
         /// <summary>
         /// <see langword="true"/> si l'utilisateur n'est plus adhérent.
         /// </summary>
-        public bool FormerMember { get => this.formerMember; set => this.formerMember = value; }
+        public bool IsMember { get => this.isMember; set => this.isMember = value; }
 
         /// <summary>
         /// Crée un utilisateur sans informations sur son mot de passe.
@@ -61,21 +61,21 @@ namespace GalliumPlus.WebApi.Core.Users
         /// <param name="roleId">L'identifiant du rôle de l'utilisateur.</param>
         /// <param name="year">La promotion de l'utilisateur.</param>
         /// <param name="deposit">L'acompte de l'utilisateur.</param>
-        /// <param name="formerMember"> <see langword="true"/> si l'utilisateur n'est plus adhérent.</param>
+        /// <param name="isMember"> <see langword="true"/> si l'utilisateur est adhérent.</param>
         public User(
             string id,
             string name,
             Role role,
             string year,
             double deposit,
-            bool formerMember)
+            bool isMember)
         {
             this.id = id;
             this.name = name;
             this.role = role;
             this.year = year;
             this.deposit = deposit;
-            this.formerMember = formerMember;
+            this.isMember = isMember;
             this.password = null;
         }
 
@@ -87,7 +87,7 @@ namespace GalliumPlus.WebApi.Core.Users
         /// <param name="roleId">L'identifiant du rôle de l'utilisateur.</param>
         /// <param name="year">La promotion de l'utilisateur.</param>
         /// <param name="deposit">L'acompte de l'utilisateur.</param>
-        /// <param name="formerMember"> <see langword="true"/> si l'utilisateur n'est plus adhérent.</param>
+        /// <param name="isMember"> <see langword="true"/> si l'utilisateur est adhérent.</param>
         /// <param name="password">Le mot de passe de l'utilisateur.</param>
         public User(
             string id,
@@ -95,9 +95,9 @@ namespace GalliumPlus.WebApi.Core.Users
             Role role,
             string year,
             double deposit,
-            bool formerMember,
+            bool isMember,
             PasswordInformation password)
-        : this(id, name, role, year, deposit, formerMember)
+        : this(id, name, role, year, deposit, isMember)
         {
             this.password = password;
         }

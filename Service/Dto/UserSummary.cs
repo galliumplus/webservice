@@ -34,7 +34,7 @@ namespace GalliumPlus.WebApi.Dto
                     Role = user.Role.Id,
                     Year = user.Year,
                     Deposit = user.Deposit,
-                    FormerMember = user.FormerMember
+                    FormerMember = user.IsMember
                 };
             }
 
