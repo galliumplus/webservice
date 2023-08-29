@@ -58,6 +58,15 @@ namespace GalliumPlus.WebApi.Middleware
                 );
                 context.ExceptionHandled = true;
             }
+            else if (context.Exception is CantSellException notSold)
+            {
+                context.Result = new ErrorResult(
+                    "CANT_SELL",
+                    notSold.Message,
+                    400
+                );
+                context.ExceptionHandled = true;
+            }
         }
 
         public static void ConfigureInvalidModelStateResponseFactory(ApiBehaviorOptions options)

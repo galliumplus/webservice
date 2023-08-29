@@ -1,6 +1,5 @@
 ﻿using ImageMagick;
-using System;
-using System.Collections.Generic;
+
 namespace GalliumPlus.WebApi.Core.Stocks
 {
     /// <summary>
@@ -69,13 +68,15 @@ namespace GalliumPlus.WebApi.Core.Stocks
                 image = new MagickImage(imageData);
             }
 
-            image.BackgroundColor = MagickColor.FromRgba(0, 0, 0, 0); // transparent
+            // image redimensionnée en 400x400 avec un fond transparent autour
+            image.BackgroundColor = MagickColor.FromRgba(0, 0, 0, 0);
             image.Thumbnail(400, 400);
             image.Extent(400, 400, Gravity.Center);
             image.Format = MagickFormat.Png;
 
             using MemoryStream output = new();
             await image.WriteAsync(output);
+            Console.WriteLine(output.Length);
             return new ProductImage(output.GetBuffer());
         }
 

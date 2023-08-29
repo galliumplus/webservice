@@ -44,7 +44,7 @@ namespace GalliumPlus.WebApi.Core.Users
         public string Year { get => this.year; set => this.year = value; }
 
         /// <summary>
-        /// L'acompte de l'utilisateur.
+        /// L'acompte de l'utilisateur en euros.
         /// </summary>
         public double Deposit { get => this.deposit; set => this.deposit = value; }
 
@@ -60,7 +60,7 @@ namespace GalliumPlus.WebApi.Core.Users
         /// <param name="name">Le prénom et nom de l'utilisateur.</param>
         /// <param name="roleId">L'identifiant du rôle de l'utilisateur.</param>
         /// <param name="year">La promotion de l'utilisateur.</param>
-        /// <param name="deposit">L'acompte de l'utilisateur.</param>
+        /// <param name="deposit">L'acompte de l'utilisateur en euros.</param>
         /// <param name="isMember"> <see langword="true"/> si l'utilisateur est adhérent.</param>
         public User(
             string id,
@@ -86,7 +86,7 @@ namespace GalliumPlus.WebApi.Core.Users
         /// <param name="name">Le prénom et nom de l'utilisateur.</param>
         /// <param name="roleId">L'identifiant du rôle de l'utilisateur.</param>
         /// <param name="year">La promotion de l'utilisateur.</param>
-        /// <param name="deposit">L'acompte de l'utilisateur.</param>
+        /// <param name="deposit">L'acompte de l'utilisateur en euros.</param>
         /// <param name="isMember"> <see langword="true"/> si l'utilisateur est adhérent.</param>
         /// <param name="password">Le mot de passe de l'utilisateur.</param>
         public User(

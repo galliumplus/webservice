@@ -10,6 +10,13 @@ namespace GalliumPlus.WebApi.Core.Data
         public ICategoryDao Categories { get; }
 
         /// <summary>
+        /// Enlève <paramref name="amount"/> produits du stock.
+        /// </summary>
+        /// <param name="id">L'identifiant du produit.</param>
+        /// <param name="amount">La quantité à enlever.</param>
+        public void WithdrawFromStock(int id, int amount);
+
+        /// <summary>
         /// Récupère l'image du produit.
         /// </summary>
         /// <param name="id">L'identifiant du produit.</param>

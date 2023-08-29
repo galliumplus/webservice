@@ -32,12 +32,12 @@ namespace GalliumPlus.WebApi.Core.Stocks
         public int Stock { get => this.stock; set => this.stock = value; }
 
         /// <summary>
-        /// Prix non-adhérent.
+        /// Le prix non-adhérent en euros.
         /// </summary>
         public double NonMemberPrice { get => this.nonMemberPrice; set => this.nonMemberPrice = value; }
 
         /// <summary>
-        /// Prix adhérent.
+        /// Le prix adhérent en euros.
         /// </summary>
         public double MemberPrice { get => this.memberPrice; set => this.memberPrice = value; }
 
