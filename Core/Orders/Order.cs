@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Schema;
 
-namespace GalliumPlus.WebApi.Core.Order
+namespace GalliumPlus.WebApi.Core.Orders
 {
     /// <summary>
     /// Représente une vente.
@@ -79,7 +79,7 @@ namespace GalliumPlus.WebApi.Core.Order
         {
             double result = 0;
 
-            bool memberDiscount = this.customer != null && !this.customer.FormerMember;
+            bool memberDiscount = this.customer != null && this.customer.IsMember;
 
             foreach (OrderItem item in this.items)
             {

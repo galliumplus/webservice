@@ -1,7 +1,8 @@
 ﻿using GalliumPlus.WebApi.Core.Data;
+using GalliumPlus.WebApi.Core.Orders;
 using GalliumPlus.WebApi.Core.Users;
 
-namespace GalliumPlus.WebApi.Core.Order
+namespace GalliumPlus.WebApi.Core.Orders
 {
     public class PaymentMethodFactory
     {

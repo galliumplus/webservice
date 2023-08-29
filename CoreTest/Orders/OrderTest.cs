@@ -1,4 +1,4 @@
-﻿using GalliumPlus.WebApi.Core.Order;
+﻿using GalliumPlus.WebApi.Core.Orders;
 
 namespace CoreTest.Orders
 {
@@ -45,7 +45,7 @@ namespace CoreTest.Orders
             Product product = products.Read(0);
 
             User customer = users.Read("lomens");
-            customer.FormerMember = true;
+            customer.IsMember = false;
             customer.Deposit = product.MemberPrice;
             users.Update("lomens", customer);
 
@@ -59,7 +59,7 @@ namespace CoreTest.Orders
 
             Assert.Throws<CantSellException>(() => order.ProcessPaymentAndUpdateStock(products));
 
-            customer.FormerMember = false;
+            customer.IsMember = true;
             users.Update("lomens", customer);
 
             order.ProcessPaymentAndUpdateStock(products);
@@ -75,7 +75,7 @@ namespace CoreTest.Orders
             Product product2 = products.Read(1);
 
             User customer = users.Read("lomens");
-            customer.FormerMember = false;
+            customer.IsMember = true;
             customer.Deposit = 6000;
             users.Update("lomens", customer);
 

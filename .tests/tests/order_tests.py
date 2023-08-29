@@ -250,12 +250,12 @@ class OrderTests(TestBase):
 
     def revoke_membership(self, user_id):
         user = self.get(f"users/{user_id}").json()
-        user["FormerMember"] = True
+        user["IsMember"] = False
         user["Role"] = user["Role"]["Id"]
         response = self.put(f"users/{user_id}", user)
 
     def grant_membership(self, user_id):
         user = self.get(f"users/{user_id}").json()
-        user["FormerMember"] = False
+        user["IsMember"] = True
         user["Role"] = user["Role"]["Id"]
         response = self.put(f"users/{user_id}", user)

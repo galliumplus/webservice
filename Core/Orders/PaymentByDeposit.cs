@@ -3,7 +3,7 @@ using GalliumPlus.WebApi.Core.Users;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 
-namespace GalliumPlus.WebApi.Core.Order
+namespace GalliumPlus.WebApi.Core.Orders
 {
     public class PaymentByDeposit : PaymentMethod
     {
