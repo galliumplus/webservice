@@ -15,7 +15,7 @@
             Assert.Equal(profRole, user.Role);
             Assert.Equal("Prof", user.Year);
             Assert.Equal(21.30, user.Deposit);
-            Assert.False(user.FormerMember);
+            Assert.False(user.IsMember);
         }
 
         [Fact]
@@ -28,7 +28,7 @@
             Assert.Equal(profRole, user.Role);
             Assert.Equal("Prof", user.Year);
             Assert.Equal(21.30, user.Deposit);
-            Assert.False(user.FormerMember);
+            Assert.False(user.IsMember);
             Assert.Equal(password, user.Password);
         }
     }
