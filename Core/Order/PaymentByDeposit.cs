@@ -3,7 +3,7 @@ using GalliumPlus.WebApi.Core.Users;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 
-namespace GalliumPlus.WebApi.Core.Sales
+namespace GalliumPlus.WebApi.Core.Order
 {
     public class PaymentByDeposit : PaymentMethod
     {
@@ -41,11 +41,11 @@ namespace GalliumPlus.WebApi.Core.Sales
                 throw new CantSellException("Cet utilisateur n'existe pas.");
             }
 
-            double newDeposit = currentDeposit - amount;            
+            double newDeposit = currentDeposit - amount;
             if (newDeposit < 0)
             {
                 throw new CantSellException(
-                    String.Format(
+                    string.Format(
                         currencyFormat.Value,
                         "Il n'y a pas assez d'argent sur l'acompte ({0:C} au lieu de {1:C}).",
                         currentDeposit, amount
@@ -55,7 +55,7 @@ namespace GalliumPlus.WebApi.Core.Sales
 
             this.userDao.UpdateDeposit(this.depositId, newDeposit);
 
-            return String.Format(
+            return string.Format(
                 currencyFormat.Value,
                 "Le paiement par acompte a bien été effectué (il reste {0:C}).",
                 newDeposit

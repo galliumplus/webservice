@@ -1,7 +1,7 @@
 ﻿using GalliumPlus.WebApi.Core.Data;
 using GalliumPlus.WebApi.Core.Users;
 
-namespace GalliumPlus.WebApi.Core.Sales
+namespace GalliumPlus.WebApi.Core.Order
 {
     public class PaymentMethodFactory
     {
@@ -20,7 +20,8 @@ namespace GalliumPlus.WebApi.Core.Sales
                     return new PaymentByCreditCard();
 
                 case "DEPOSIT":
-                    if (customer == null || customer == "@anonymousmember") {
+                    if (customer == null || customer == "@anonymousmember")
+                    {
                         throw new InvalidItemException(
                             "L'identifiant de l'adhérent est obligatoire pour les paiments par acompte."
                         );

@@ -1,6 +1,7 @@
-﻿using GalliumPlus.WebApi.Core.Users;
+﻿using GalliumPlus.WebApi.Core.Order;
+using GalliumPlus.WebApi.Core.Users;
 
-namespace CoreTest.Sales
+namespace CoreTest.Orders
 {
     public class PaymentMethodTest
     {

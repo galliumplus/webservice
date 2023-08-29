@@ -1,6 +1,6 @@
 ﻿using GalliumPlus.WebApi.Core.Stocks;
 
-namespace GalliumPlus.WebApi.Core.Sales
+namespace GalliumPlus.WebApi.Core.Order
 {
     /// <summary>
     /// Un produit en une certaine quantité.

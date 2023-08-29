@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Schema;
 
-namespace GalliumPlus.WebApi.Core.Sales
+namespace GalliumPlus.WebApi.Core.Order
 {
     /// <summary>
     /// Représente une vente.
@@ -74,12 +74,12 @@ namespace GalliumPlus.WebApi.Core.Sales
                 productDao.WithdrawFromStock(item.Product.Id, item.Quantity);
             }
         }
-        
+
         private double TotalPrice()
         {
             double result = 0;
 
-            bool memberDiscount = (this.customer != null) && (!this.customer.FormerMember);
+            bool memberDiscount = this.customer != null && !this.customer.FormerMember;
 
             foreach (OrderItem item in this.items)
             {

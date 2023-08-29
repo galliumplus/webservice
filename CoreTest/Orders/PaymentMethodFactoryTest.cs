@@ -1,4 +1,6 @@
-﻿namespace CoreTest.Sales
+﻿using GalliumPlus.WebApi.Core.Order;
+
+namespace CoreTest.Orders
 {
     public class PaymentMethodFactoryTest
     {

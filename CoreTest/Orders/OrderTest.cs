@@ -1,4 +1,6 @@
-﻿namespace CoreTest.Sales
+﻿using GalliumPlus.WebApi.Core.Order;
+
+namespace CoreTest.Orders
 {
     public class OrderTest
     {
@@ -25,7 +27,7 @@
 
             Order order = new(
                 new PaymentByPaypal(),
-                new List<OrderItem> { 
+                new List<OrderItem> {
                     new OrderItem(product1, product1.Stock / 2),
                     new OrderItem(product2, product2.Stock * 2),
                 }
@@ -96,7 +98,7 @@
             int stock1After = products.Read(0).Stock;
             int stock2After = products.Read(1).Stock;
 
-            double expectedPrice = product1.MemberPrice + (product2.MemberPrice * 2);
+            double expectedPrice = product1.MemberPrice + product2.MemberPrice * 2;
             Assert.Equal(depositAfter, depositBefore - expectedPrice);
             Assert.Equal(stock1After, stock1Before - 1);
             Assert.Equal(stock2After, stock2Before - 2);

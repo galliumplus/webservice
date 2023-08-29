@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GalliumPlus.WebApi.Core.Sales
+namespace GalliumPlus.WebApi.Core.Order
 {
     public abstract class PaymentMethod
     {
