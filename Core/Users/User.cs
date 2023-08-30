@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using GalliumPlus.WebApi.Core.Exceptions;
 
 namespace GalliumPlus.WebApi.Core.Users
 {

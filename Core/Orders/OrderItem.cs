@@ -1,4 +1,5 @@
 ﻿using GalliumPlus.WebApi.Core.Stocks;
+using GalliumPlus.WebApi.Core.Exceptions;
 
 namespace GalliumPlus.WebApi.Core.Orders
 {
