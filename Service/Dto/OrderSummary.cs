@@ -64,7 +64,7 @@ namespace GalliumPlus.WebApi.Dto
             private static User BuildAnonymousMember()
             {
                 return new User(
-                    Order.ANONYMOUS_MEMBER_ID,
+                    "anonymous",
                     "Anonyme",
                     new Role(-1, "Membre anonyme", Permissions.NONE),
                     "Anonyme",
