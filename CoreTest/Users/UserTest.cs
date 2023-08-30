@@ -56,35 +56,18 @@ namespace CoreTest.Users
 
             foreach (string id in validIdList)
             {
-                bool exceptionWasThrown = false;
-                
                 try
                 {
                     user.Id = id;
                 }
-                catch (InvalidItemException _)
+                catch (InvalidItemException)
                 {
-                    exceptionWasThrown = true;
+                    Assert.Fail($"{id} est censé etre accepté par le setter de User.Id");
                 }
-
-                Assert.False(exceptionWasThrown);
             }
 
             foreach (string id in unvalidIdList)
-            {
-                bool exceptionWasThrown = false;
-
-                try
-                {
-                    user.Id = id;
-                }
-                catch (InvalidItemException _)
-                {
-                    exceptionWasThrown = true;
-                }
-                
-                Assert.True(exceptionWasThrown);
-            }
+                Assert.Throws<InvalidItemException>(() => user.Id = id);
 
         }
 

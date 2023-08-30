@@ -74,6 +74,7 @@ namespace GalliumPlus.WebApi.Core.Users
         /// <param name="deposit">L'acompte de l'utilisateur en euros.</param>
         /// <param name="isMember"> <see langword="true"/> si l'utilisateur est adhérent.</param>
         /// <exception cref="InvalidItemException">Renvoie une erreur si User.Id contient des caractères speciaux</exception>
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         public User(
             string id,
             string name,
@@ -90,6 +91,7 @@ namespace GalliumPlus.WebApi.Core.Users
             this.isMember = isMember;
             this.password = null;
         }
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
         /// <summary>
         /// Crée un utilisateur avec les informations de mot de passe.
