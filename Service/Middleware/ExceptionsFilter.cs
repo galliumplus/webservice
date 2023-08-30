@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc;
 using GalliumPlus.WebApi.Core;
+using GalliumPlus.WebApi.Core.Exceptions;
 using System.Text.Json.Serialization;
 
 namespace GalliumPlus.WebApi.Middleware
@@ -15,30 +16,11 @@ namespace GalliumPlus.WebApi.Middleware
 
         public void OnException(ExceptionContext context)
         {
-            if (context.Exception is ItemNotFoundException)
+            if (context.Exception is ItemNotFoundException itemNotFoundException)
             {
                 context.Result = new ErrorResult(
-                    "ITEM_NOT_FOUND",
-                    "La ressource demandée n'existe pas.",
-                    404
-                );
-                context.ExceptionHandled = true;
-            }
-            else if (context.Exception is InvalidItemException invalidItem)
-            {
-                context.Result = new ErrorResult(
-                    "INVALID_ITEM",
-                    invalidItem.Message,
-                    400
-                );
-                context.ExceptionHandled = true;
-            }
-            else if (context.Exception is DuplicateItemException)
-            {
-                context.Result = new ErrorResult(
-                    "DUPLICATE_ITEM",
-                    "Cette ressource existe déjà.",
-                    400
+                    itemNotFoundException,
+                    StatusCodes.Status404NotFound
                 );
                 context.ExceptionHandled = true;
             }
@@ -51,19 +33,18 @@ namespace GalliumPlus.WebApi.Middleware
                 };
 
                 context.Result = new ErrorResult(
-                    "PERMISSION_DENIED",
+                    permissionDenied.ErrorCode,
                     $"Vous n'avez pas la permission {messageAction}.",
                     StatusCodes.Status403Forbidden,
                     new { RequiredPermissions = permissionDenied.Required }
                 );
                 context.ExceptionHandled = true;
             }
-            else if (context.Exception is CantSellException notSold)
+            else if (context.Exception is GalliumException galliumException)
             {
                 context.Result = new ErrorResult(
-                    "CANT_SELL",
-                    notSold.Message,
-                    400
+                    galliumException,
+                    StatusCodes.Status400BadRequest
                 );
                 context.ExceptionHandled = true;
             }

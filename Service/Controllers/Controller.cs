@@ -1,6 +1,7 @@
 ﻿using GalliumPlus.WebApi.Core;
 using GalliumPlus.WebApi.Core.Data;
 using GalliumPlus.WebApi.Core.Users;
+using GalliumPlus.WebApi.Core.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 
