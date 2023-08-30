@@ -31,12 +31,12 @@ class RoleTests(TestBase):
         self.expect(roles).to.be.a(list)._and._not.empty()
 
         role = roles[0]
-        self.expect(role).to.have.an_item("Id").of.type(int)
-        self.expect(role).to.have.an_item("Name").of.type(str)
-        self.expect(role).to.have.an_item("Permissions").of.type(int)
+        self.expect(role).to.have.an_item("id").of.type(int)
+        self.expect(role).to.have.an_item("name").of.type(str)
+        self.expect(role).to.have.an_item("permissions").of.type(int)
 
     def test_role_get_one(self):
-        existing_id = self.get("roles").json()[0]["Id"]
+        existing_id = self.get("roles").json()[0]["id"]
         invalid_id = 12345
 
         # Test avec un rôle existant
@@ -46,9 +46,9 @@ class RoleTests(TestBase):
 
         role = response.json()
         self.expect(role).to.be.a(dict)
-        self.expect(role).to.have.an_item("Id").of.type(int)
-        self.expect(role).to.have.an_item("Name").of.type(str)
-        self.expect(role).to.have.an_item("Permissions").of.type(int)
+        self.expect(role).to.have.an_item("id").of.type(int)
+        self.expect(role).to.have.an_item("name").of.type(str)
+        self.expect(role).to.have.an_item("permissions").of.type(int)
 
         # Test avec un rôle inexistant
 
@@ -67,53 +67,53 @@ class RoleTests(TestBase):
             | Permissions.READ_LOGS
         )
 
-        valid_role = {"Name": "Vice-Trésorier", "Permissions": permissions}
+        valid_role = {"name": "Vice-Trésorier", "permissions": permissions}
 
         response = self.post("roles", valid_role)
         self.expect(response.status_code).to.be.equal_to(201)
         location = self.expect(response.headers).to.have.an_item("Location").value
 
         created_role = response.json()
-        self.expect(created_role).to.have.an_item("Id")
-        self.expect(created_role["Name"]).to.be.equal_to("Vice-Trésorier")
-        self.expect(created_role["Permissions"]).to.be.equal_to(permissions)
+        self.expect(created_role).to.have.an_item("id")
+        self.expect(created_role["name"]).to.be.equal_to("Vice-Trésorier")
+        self.expect(created_role["permissions"]).to.be.equal_to(permissions)
 
         response = self.get(location)
         self.expect(response.status_code).to.be.equal_to(200)
         created_role = response.json()
-        self.expect(created_role["Name"]).to.be.equal_to("Vice-Trésorier")
-        self.expect(created_role["Permissions"]).to.be.equal_to(permissions)
+        self.expect(created_role["name"]).to.be.equal_to("Vice-Trésorier")
+        self.expect(created_role["permissions"]).to.be.equal_to(permissions)
 
         new_role_count = len(self.get("roles").json())
         self.expect(new_role_count).to.be.equal_to(previous_role_count + 1)
 
         # Informations manquantes
 
-        invalid_role = {"Name": "Vice-Trésorier"}
+        invalid_role = {"name": "Vice-Trésorier"}
         response = self.post("roles", invalid_role)
         self.expect(response.status_code).to.be.equal_to(400)
-        self.expect(response.json()).to.have.an_item("Code").that._is.equal_to(
+        self.expect(response.json()).to.have.an_item("code").that._is.equal_to(
             "INVALID_ITEM"
         )
 
         # Informations non valides
 
-        invalid_role = {"Name": "", "Permissions": -1}
+        invalid_role = {"name": "", "permissions": -1}
         response = self.post("roles", invalid_role)
         self.expect(response.status_code).to.be.equal_to(400)
-        self.expect(response.json()).to.have.an_item("Code").that._is.equal_to(
+        self.expect(response.json()).to.have.an_item("code").that._is.equal_to(
             "INVALID_ITEM"
         )
 
     def test_role_edit(self):
-        valid_role = {"Name": "Trésorier", "Permissions": 0}
+        valid_role = {"name": "Trésorier", "permissions": 0}
 
         response = self.put("roles/0", valid_role)
         self.expect(response.status_code).to.be.equal_to(200)
 
         edited_role = self.get("roles/0").json()
-        self.expect(edited_role["Name"]).to.be.equal_to("Trésorier")
-        self.expect(edited_role["Permissions"]).to.be.equal_to(0)
+        self.expect(edited_role["name"]).to.be.equal_to("Trésorier")
+        self.expect(edited_role["permissions"]).to.be.equal_to(0)
 
         # Role qui n'existe pas
 
@@ -122,24 +122,24 @@ class RoleTests(TestBase):
 
         # Informations manquantes
 
-        invalid_role = {"Name": "Vice-Trésorier"}
+        invalid_role = {"name": "Vice-Trésorier"}
         response = self.put("roles/0", invalid_role)
         self.expect(response.status_code).to.be.equal_to(400)
-        self.expect(response.json()).to.have.an_item("Code").that._is.equal_to(
+        self.expect(response.json()).to.have.an_item("code").that._is.equal_to(
             "INVALID_ITEM"
         )
 
         # Informations non valides
 
-        invalid_role = {"Name": "", "Permissions": -1}
+        invalid_role = {"name": "", "permissions": -1}
         response = self.put("roles/0", invalid_role)
         self.expect(response.status_code).to.be.equal_to(400)
-        self.expect(response.json()).to.have.an_item("Code").that._is.equal_to(
+        self.expect(response.json()).to.have.an_item("code").that._is.equal_to(
             "INVALID_ITEM"
         )
 
     def test_role_delete(self):
-        role = {"Name": "Responsable Communication", "Permissions": 0}
+        role = {"name": "Responsable Communication", "permissions": 0}
         location = self.post("roles", role).headers["Location"]
 
         # On supprimme le rôle
@@ -176,11 +176,11 @@ class RoleTests(TestBase):
 
         response = self.get("roles")
         self.expect(response.status_code).to.be.equal_to(403)
-        response = self.post("roles", {"Name": "/", "Permissions": 0})
+        response = self.post("roles", {"name": "/", "permissions": 0})
         self.expect(response.status_code).to.be.equal_to(403)
         response = self.get("roles/0")
         self.expect(response.status_code).to.be.equal_to(403)
-        response = self.put("roles/0", {"Name": "/", "Permissions": 0})
+        response = self.put("roles/0", {"name": "/", "permissions": 0})
         self.expect(response.status_code).to.be.equal_to(403)
         response = self.delete("roles/0")
         self.expect(response.status_code).to.be.equal_to(403)

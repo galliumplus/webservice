@@ -55,7 +55,7 @@ class Launcher:
                 ping_client.close()
                 break
             except ConnectionRefusedError:
-                if server.poll():
+                if auto and server.poll():
                     print(f"{cls.ANSI_RED_BOLD}Failed to start server.{cls.ANSI_RESET}")
                     sys.exit(1)
                 else:
