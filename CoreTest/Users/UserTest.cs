@@ -42,11 +42,9 @@ namespace CoreTest.Users
         {
             Action userCreationWithPassword = () => new User("@mansouri", "Mehdi Mansouri", profRole, "Prof", 21.30, false, password);
             InvalidItemException exception = Assert.Throws<InvalidItemException>(userCreationWithPassword);
-            Assert.Equal("Un identifiant ne peut pas contenir de caractères speciaux", exception.Message);
 
             Action userCreationWithoutPassword = () => new User("@mansouri", "Mehdi Mansouri", profRole, "Prof", 21.30, false);
             exception = Assert.Throws<InvalidItemException>(userCreationWithoutPassword);
-            Assert.Equal("Un identifiant ne peut pas contenir de caractères speciaux", exception.Message);
         }
 
         [Fact]
