@@ -13,4 +13,4 @@ from tests.access_tests import AccessTests
 
 
 if __name__ == "__main__":
-    Launcher.launch("0.2.1")
+    Launcher.launch("0.4.0")
