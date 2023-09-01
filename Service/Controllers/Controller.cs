@@ -94,7 +94,7 @@ namespace GalliumPlus.WebApi.Controllers
         [NonAction]
         public void RequirePermissions(Permissions required)
         {
-            if (!this.User!.Role.Permissions.Includes(required))
+            if (!this.Session!.Permissions.Includes(required))
             {
                 throw new PermissionDeniedException(required);
             }

@@ -23,6 +23,34 @@ namespace GalliumPlus.WebApi.Data.FakeDatabase
             );
 
             this.Create(
+                new Client(
+                    id: 0,
+                    name: "Tests (restricted)",
+                    apiKey: "test-api-key-restricted",
+                    isEnabled: true,
+                    granted: Permissions.NONE,
+                    revoked: Permissions.NOT_MANAGE_CATEGORIES
+                           | Permissions.NOT_MANAGE_DEPOSITS
+                           | Permissions.NOT_MANAGE_PRODUCTS
+                           | Permissions.NOT_MANAGE_ROLES
+                           | Permissions.NOT_MANAGE_USERS,
+                    allowUsers: true
+                )
+            );
+
+            this.Create(
+                new Client(
+                    id: 0,
+                    name: "Tests (minimum)",
+                    apiKey: "test-api-key-minimum",
+                    isEnabled: true,
+                    granted: Permissions.SEE_PRODUCTS_AND_CATEGORIES,
+                    revoked: Permissions.NONE,
+                    allowUsers: true
+                )
+            );
+
+            this.Create(
                 new BotClient(
                     id: 0,
                     name: "Tests (normal)",

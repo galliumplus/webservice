@@ -35,35 +35,41 @@ class TestBase(TestCase, ABC):
         if "auth" in self.requests_options:
             del self.requests_options["auth"]
 
-    def head(self, url):
+    def head(self, url, **options):
         TestBase.__request_count += 1
-        return requests.head(self.prepend_base_url(url), **self.requests_options)
+        return requests.head(
+            self.prepend_base_url(url), **(self.requests_options | options)
+        )
 
-    def get(self, url, **params):
+    def get(self, url, **options):
         TestBase.__request_count += 1
-        return requests.get(self.prepend_base_url(url), **self.requests_options)
+        return requests.get(
+            self.prepend_base_url(url), **(self.requests_options | options)
+        )
 
-    def post(self, url, json):
+    def post(self, url, json=None, **options):
         TestBase.__request_count += 1
         return requests.post(
-            self.prepend_base_url(url), json=json, **self.requests_options
+            self.prepend_base_url(url), json=json, **(self.requests_options | options)
         )
 
-    def put(self, url, json):
+    def put(self, url, json=None, **options):
         TestBase.__request_count += 1
         return requests.put(
-            self.prepend_base_url(url), json=json, **self.requests_options
+            self.prepend_base_url(url), json=json, **(self.requests_options | options)
         )
 
-    def patch(self, url, json):
+    def patch(self, url, json=None, **options):
         TestBase.__request_count += 1
         return requests.patch(
-            self.prepend_base_url(url), json=json, **self.requests_options
+            self.prepend_base_url(url), json=json, **(self.requests_options | options)
         )
 
-    def delete(self, url):
+    def delete(self, url, **options):
         TestBase.__request_count += 1
-        return requests.delete(self.prepend_base_url(url), **self.requests_options)
+        return requests.delete(
+            self.prepend_base_url(url), **(self.requests_options | options)
+        )
 
     def expect(self, value):
         TestBase.__request_count += 1

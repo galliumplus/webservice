@@ -8,6 +8,7 @@ from tests.category_tests import CategoryTests
 from tests.product_tests import ProductTests
 from tests.role_tests import RoleTests
 from tests.user_tests import UserTests
+from tests.access_tests import AccessTests
 
 
 if __name__ == "__main__":

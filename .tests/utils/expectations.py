@@ -2,6 +2,8 @@
 BDD-style assertions for unittest
 """
 
+import re
+
 
 class Expectations:
     __property = property
@@ -112,6 +114,17 @@ class Expectations:
         else:
             self.test_case.assertIn(key, self.value)
             return Expectations(self.test_case, self.value[key])
+
+    def match(self, regex):
+        if self.negation:
+            assertion = self.test_case.assertFalse
+        else:
+            assertion = self.test_case.assertTrue
+
+        if isinstance(regex, re.Pattern):
+            assertion(regex.fullmatch(self.value))
+        else:
+            assertion(re.fullmatch(regex, self.value))
 
     # MODIFIERS
 

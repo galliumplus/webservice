@@ -34,10 +34,10 @@ namespace GalliumPlus.WebApi.Middleware.Authorization
             // OK, aucune permission demandée
             if (required == Permissions.NONE) return;
 
-            User user = (User)context.HttpContext.Items["User"]!;
+            Session session = (Session)context.HttpContext.Items["Session"]!;
 
             // OK, l'utilisateur a toutes les permissions nécéssaires
-            if (user.Role.Permissions.Includes(required)) return;
+            if (session.Permissions.Includes(required)) return;
 
             string messageAction = context.HttpContext.Request.Method switch
             {
