@@ -1,10 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.AspNetCore.Mvc;
-using GalliumPlus.WebApi.Core;
+﻿using GalliumPlus.WebApi.Core;
 using GalliumPlus.WebApi.Core.Exceptions;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using System.Text.Json.Serialization;
 
-namespace GalliumPlus.WebApi.Middleware
+namespace GalliumPlus.WebApi.Middleware.ErrorHandling
 {
     /// <summary>
     /// Gestion des erreurs propres au code métier.
@@ -12,7 +12,7 @@ namespace GalliumPlus.WebApi.Middleware
     public class ExceptionsFilter : IExceptionFilter, IOrderedFilter
     {
         // priorité haute, on veut qu'il s'applique juste après le contrôleur
-        public int Order => 1_000_000; 
+        public int Order => 1_000_000;
 
         public void OnException(ExceptionContext context)
         {

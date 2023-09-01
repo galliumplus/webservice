@@ -54,40 +54,49 @@ class TestBase(TestCase, ABC):
             TestBase.__total_time += r.elapsed.total_seconds()
         return r
 
-    def head(self, url):
+    def head(self, url, **options):
         return self.__send(
-            requests.head, self.prepend_base_url(url), **self.requests_options
+            requests.head,
+            self.prepend_base_url(url),
+            **(self.requests_options | options)
         )
 
-    def get(self, url, **params):
+    def get(self, url, **options):
         return self.__send(
-            requests.get, self.prepend_base_url(url), **self.requests_options
+            requests.get,
+            self.prepend_base_url(url),
+            **(self.requests_options | options)
         )
 
-    def post(self, url, json):
+    def post(self, url, json=None, **options):
         return self.__send(
             requests.post,
             self.prepend_base_url(url),
             json=json,
-            **self.requests_options
+            **(self.requests_options | options)
         )
 
-    def put(self, url, json):
+    def put(self, url, json=None, **options):
         return self.__send(
-            requests.put, self.prepend_base_url(url), json=json, **self.requests_options
+            requests.put,
+            self.prepend_base_url(url),
+            json=json,
+            **(self.requests_options | options)
         )
 
-    def patch(self, url, json):
+    def patch(self, url, json=None, **options):
         return self.__send(
             requests.patch,
             self.prepend_base_url(url),
             json=json,
-            **self.requests_options
+            **(self.requests_options | options)
         )
 
-    def delete(self, url):
+    def delete(self, url, **options):
         return self.__send(
-            requests.delete, self.prepend_base_url(url), **self.requests_options
+            requests.delete,
+            self.prepend_base_url(url),
+            **(self.requests_options | options)
         )
 
     def expect(self, value):

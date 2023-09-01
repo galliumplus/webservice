@@ -16,7 +16,7 @@
         /// <summary>
         /// Le nom affiché de la catégorie.
         /// </summary>
-        public string Name { get => this.name; set => this.name = value; }
+        public string Name => this.name;
 
         /// <summary>
         /// Crée une catégorie.

@@ -7,13 +7,15 @@ namespace GalliumPlus.WebApi.Dto
     {
         public string Token { get; }
         public DateTime Expiration { get; }
-        public UserDetails User { get; }
+        public UserDetails? User { get; }
+        public uint Permissions { get; }
 
-        public LoggedIn(string token, DateTime expiration, UserDetails user)
+        public LoggedIn(string token, DateTime expiration, UserDetails? user, uint permissions)
         {
             this.Token = token;
             this.Expiration = expiration;
             this.User = user;
+            this.Permissions = permissions;
         }
 
         public class Mapper : Mapper<Session, LoggedIn, ISessionDao>
@@ -22,10 +24,12 @@ namespace GalliumPlus.WebApi.Dto
 
             public override LoggedIn FromModel(Session model)
             {
+
                 return new(
                     model.Token,
                     model.Expiration,
-                    this.userMapper.FromModel(model.User)
+                    model.User is null ? null : this.userMapper.FromModel(model.User),
+                    (uint)model.Permissions
                 );
             }
 
@@ -36,4 +40,3 @@ namespace GalliumPlus.WebApi.Dto
         }
     }
 }
- 

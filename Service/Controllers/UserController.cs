@@ -1,4 +1,6 @@
-﻿using GalliumPlus.WebApi.Core.Data;
+﻿using GalliumPlus.WebApi.Core;
+using GalliumPlus.WebApi.Core.Data;
+using GalliumPlus.WebApi.Core.Exceptions;
 using GalliumPlus.WebApi.Core.Users;
 using GalliumPlus.WebApi.Dto;
 using GalliumPlus.WebApi.Middleware.Authorization;
@@ -42,7 +44,14 @@ namespace GalliumPlus.WebApi.Controllers
         [HttpGet("@me", Order = -1)]
         public IActionResult GetSelf()
         {
-            return Json(this.detailsMapper.FromModel(this.User!));
+            if (this.User is User user)
+            {
+                return Json(this.detailsMapper.FromModel(user));
+            }
+            else
+            {
+                throw new ItemNotFoundException();
+            }
         }
 
         [HttpPost]
@@ -61,14 +70,6 @@ namespace GalliumPlus.WebApi.Controllers
             return Ok();
         }
 
-        [HttpPut("@me", Order = -1)]
-        [RequiresPermissions(Permissions.MANAGE_USERS)]
-        public IActionResult Put(UserSummary updatedUser)
-        {
-            this.userDao.Update(this.User!.Id, this.summaryMapper.ToModel(updatedUser, this.userDao));
-            return Ok();
-        }
-
         [HttpDelete("{id}")]
         [RequiresPermissions(Permissions.MANAGE_USERS)]
         public IActionResult Delete(string id)
@@ -77,27 +78,11 @@ namespace GalliumPlus.WebApi.Controllers
             return Ok();
         }
 
-        [HttpDelete("@me", Order = -1)]
-        [RequiresPermissions(Permissions.MANAGE_USERS)]
-        public IActionResult Delete()
-        {
-            this.userDao.Delete(this.User!.Id);
-            return Ok();
-        }
-
         [HttpPut("{id}/deposit")]
         [RequiresPermissions(Permissions.MANAGE_DEPOSITS)]
         public IActionResult PutDeposit(string id, [FromBody] double updatedDeposit)
         {
             this.userDao.UpdateDeposit(id, updatedDeposit);
-            return Ok();
-        }
-
-        [HttpPut("@me/deposit", Order = -1)]
-        [RequiresPermissions(Permissions.MANAGE_DEPOSITS)]
-        public IActionResult PutDeposit([FromBody] double updatedDeposit)
-        {
-            this.userDao.UpdateDeposit(this.User!.Id, updatedDeposit);
             return Ok();
         }
     }

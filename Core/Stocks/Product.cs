@@ -1,7 +1,4 @@
-﻿using System.ComponentModel;
-using System.Text.Json.Serialization;
-
-namespace GalliumPlus.WebApi.Core.Stocks
+﻿namespace GalliumPlus.WebApi.Core.Stocks
 {
     /// <summary>
     /// Un produit.
@@ -24,7 +21,7 @@ namespace GalliumPlus.WebApi.Core.Stocks
         /// <summary>
         /// Le nom affiché du produit.
         /// </summary>
-        public string Name { get => this.name; set => this.name = value; }
+        public string Name => this.name;
 
         /// <summary>
         /// La quantité restante en stock.
@@ -34,22 +31,22 @@ namespace GalliumPlus.WebApi.Core.Stocks
         /// <summary>
         /// Le prix non-adhérent en euros.
         /// </summary>
-        public double NonMemberPrice { get => this.nonMemberPrice; set => this.nonMemberPrice = value; }
+        public double NonMemberPrice => this.nonMemberPrice;
 
         /// <summary>
         /// Le prix adhérent en euros.
         /// </summary>
-        public double MemberPrice { get => this.memberPrice; set => this.memberPrice = value; }
+        public double MemberPrice => this.memberPrice;
 
         /// <summary>
         /// Disponibilité du produit.
         /// </summary>
-        public Availability Availability { get => this.availability; set => this.availability = value; }
+        public Availability Availability => this.availability;
 
         /// <summary>
         /// Catégorie du produit.
         /// </summary>
-        public Category Category { get => this.category; set => this.category = value; }
+        public Category Category => this.category;
 
         /// <summary>
         /// Indique si le produit est disponible ou non.

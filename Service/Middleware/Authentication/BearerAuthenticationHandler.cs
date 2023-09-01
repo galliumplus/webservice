@@ -4,7 +4,6 @@ using GalliumPlus.WebApi.Core.Users;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Options;
 using System.Net.Http.Headers;
-using System.Text;
 using System.Text.Encodings.Web;
 
 #pragma warning disable CS1998 // Cette méthode async n'a pas d'opérateur 'await' et elle s'exécutera de façon synchrone
@@ -69,8 +68,15 @@ namespace GalliumPlus.WebApi.Middleware.Authentication
                 return AuthenticateResult.Fail("Session not found");
             }
 
+            if (!session.Refresh())
+            {
+                return AuthenticateResult.Fail("Session expired");
+            }
+            sessions.UpdateLastUse(session);
+
             Context.Items.Add("Session", session);
             Context.Items.Add("User", session.User);
+            Context.Items.Add("Client", session.Client);
 
             return AuthenticateResult.Success(new EmptyTicket(Scheme));
         }

@@ -1,10 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.AspNetCore.Mvc;
-using GalliumPlus.WebApi.Core;
-using System.Text.Json.Serialization;
-using GalliumPlus.WebApi.Core.Users;
+﻿using GalliumPlus.WebApi.Core.Users;
+using GalliumPlus.WebApi.Middleware.ErrorHandling;
 using Microsoft.AspNetCore.Mvc.Abstractions;
-using System.Diagnostics.CodeAnalysis;
+using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace GalliumPlus.WebApi.Middleware.Authorization
 {
@@ -37,10 +34,10 @@ namespace GalliumPlus.WebApi.Middleware.Authorization
             // OK, aucune permission demandée
             if (required == Permissions.NONE) return;
 
-            User user = (User)context.HttpContext.Items["User"]!;
+            Session session = (Session)context.HttpContext.Items["Session"]!;
 
             // OK, l'utilisateur a toutes les permissions nécéssaires
-            if (user.Role.Permissions.Includes(required)) return;
+            if (session.Permissions.Includes(required)) return;
 
             string messageAction = context.HttpContext.Request.Method switch
             {

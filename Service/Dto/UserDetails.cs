@@ -1,6 +1,5 @@
 ﻿using GalliumPlus.WebApi.Core.Data;
 using GalliumPlus.WebApi.Core.Users;
-using System.Text.Json.Serialization;
 
 namespace GalliumPlus.WebApi.Dto
 {

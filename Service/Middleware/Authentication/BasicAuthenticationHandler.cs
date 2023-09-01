@@ -1,33 +1,33 @@
-﻿using GalliumPlus.WebApi.Core.Data;
+﻿using GalliumPlus.WebApi.Core;
+using GalliumPlus.WebApi.Core.Applications;
 using GalliumPlus.WebApi.Core.Exceptions;
+using GalliumPlus.WebApi.Core.Data;
 using GalliumPlus.WebApi.Core.Users;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Options;
-using System.Collections;
-using System.Diagnostics.CodeAnalysis;
 using System.Net.Http.Headers;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
-
-#pragma warning disable CS1998 // Cette méthode async n'a pas d'opérateur 'await' et elle s'exécutera de façon synchrone
 
 namespace GalliumPlus.WebApi.Middleware.Authentication
 {
     public class BasicAuthenticationHandler : AuthenticationHandler<AuthenticationSchemeOptions>
     {
         private IUserDao users;
+        private IClientDao clients;
 
         public BasicAuthenticationHandler(
             IOptionsMonitor<AuthenticationSchemeOptions> options,
             ILoggerFactory logger,
             UrlEncoder encoder,
             ISystemClock clock,
-            IUserDao user)
+            IUserDao users,
+            IClientDao clients)
         : base(options, logger, encoder, clock)
         {
-            this.users = user;
+            this.users = users;
+            this.clients = clients;
         }
 
         private readonly record struct Credentials(string Username, string Password);
@@ -60,7 +60,7 @@ namespace GalliumPlus.WebApi.Middleware.Authentication
             {
                 Credentials result = await JsonSerializer
                     .DeserializeAsync<Credentials>(Request.Body);
-                
+
                 if (result.Username == null || result.Password == null)
                 {
                     return null;
@@ -96,25 +96,33 @@ namespace GalliumPlus.WebApi.Middleware.Authentication
                 {
                     return AuthenticateResult.Fail("Missing header, Invalid body format");
                 }
-                
+
+            }
+
+            if (!ApiKey.Find(out string? apiKey, Request.Headers))
+            {
+                return AuthenticateResult.Fail("Missing API key");
             }
 
             User user;
+            Client app;
             try
             {
                 user = users.Read(credentials.Username);
+                app = clients.FindByApiKey(apiKey);
             }
             catch (ItemNotFoundException)
             {
-                return AuthenticateResult.Fail("User not found");
+                return AuthenticateResult.Fail("Invalid API key / user not found");
             }
 
-            if (!user.Password!.Value.Match(credentials.Password))
+            if (!user.Password!.Match(credentials.Password))
             {
                 return AuthenticateResult.Fail("Passwords don't match");
             }
 
             Context.Items.Add("User", user);
+            Context.Items.Add("Client", app);
 
             return AuthenticateResult.Success(new EmptyTicket(Scheme));
         }

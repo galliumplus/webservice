@@ -1,9 +1,10 @@
-﻿using System.Security.Cryptography;
+﻿using GalliumPlus.WebApi.Core.Random;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace GalliumPlus.WebApi.Core.Users
 {
-    public struct PasswordInformation
+    public class PasswordInformation
     {
         private byte[] hash;
         private string salt;
@@ -32,7 +33,8 @@ namespace GalliumPlus.WebApi.Core.Users
 
         public static PasswordInformation FromPassword(string password)
         {
-            string salt = new RandomTextGenerator().AlphaNumericString(32);
+            var rtg = new RandomTextGenerator(new CryptoRandomProvider());
+            string salt = rtg.AlphaNumericString(32);
             return new PasswordInformation(SaltAndHash(password, salt), salt);
         }
     }

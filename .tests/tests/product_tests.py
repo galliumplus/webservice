@@ -18,17 +18,17 @@ class ProductTests(TestBase):
         self.expect(products).to.be.a(list)._and._not.empty()
 
         product = products[0]
-        self.expect(product).to.have.an_item("Id").of.type(int)
-        self.expect(product).to.have.an_item("Name").of.type(str)
-        self.expect(product).to.have.an_item("Stock").of.type(int)
-        self.expect(product).to.have.an_item("NonMemberPrice").that._is.a_number()
-        self.expect(product).to.have.an_item("MemberPrice").that._is.a_number()
-        self.expect(product).to.have.an_item("Availability").of.type(str)
-        self.expect(product).to.have.an_item("Category").of.type(int)
+        self.expect(product).to.have.an_item("id").of.type(int)
+        self.expect(product).to.have.an_item("name").of.type(str)
+        self.expect(product).to.have.an_item("stock").of.type(int)
+        self.expect(product).to.have.an_item("nonMemberPrice").that._is.a_number()
+        self.expect(product).to.have.an_item("memberPrice").that._is.a_number()
+        self.expect(product).to.have.an_item("availability").of.type(str)
+        self.expect(product).to.have.an_item("category").of.type(int)
 
     def test_product_get_one(self):
         products = self.get("products").json()
-        existing_id = products[0]["Id"]
+        existing_id = products[0]["id"]
         invalid_id = 12345
 
         # Test avec un produit existant
@@ -39,19 +39,19 @@ class ProductTests(TestBase):
         product = response.json()
         self.expect(product).to.be.a(dict)
 
-        self.expect(product).to.have.an_item("Id").of.type(int)
-        self.expect(product).to.have.an_item("Name").of.type(str)
-        self.expect(product).to.have.an_item("Stock").of.type(int)
-        self.expect(product).to.have.an_item("NonMemberPrice").that._is.a_number()
-        self.expect(product).to.have.an_item("MemberPrice").that._is.a_number()
-        self.expect(product).to.have.an_item("Availability").of.type(str)
-        self.expect(product).to.have.an_item("Available").of.type(bool)
+        self.expect(product).to.have.an_item("id").of.type(int)
+        self.expect(product).to.have.an_item("name").of.type(str)
+        self.expect(product).to.have.an_item("stock").of.type(int)
+        self.expect(product).to.have.an_item("nonMemberPrice").that._is.a_number()
+        self.expect(product).to.have.an_item("memberPrice").that._is.a_number()
+        self.expect(product).to.have.an_item("availability").of.type(str)
+        self.expect(product).to.have.an_item("available").of.type(bool)
 
         category = (
-            self.expect(product).to.have.an_item("Category").that._is.a(dict).value
+            self.expect(product).to.have.an_item("category").that._is.a(dict).value
         )
-        self.expect(category).to.have.an_item("Id").of.type(int)
-        self.expect(category).to.have.an_item("Name").of.type(str)
+        self.expect(category).to.have.an_item("id").of.type(int)
+        self.expect(category).to.have.an_item("name").of.type(str)
 
         # Test avec un produit inexistant
 
@@ -62,18 +62,18 @@ class ProductTests(TestBase):
         previous_product_count = len(self.get("products").json())
         categories = self.get("categories").json()
         (existing_category,) = (
-            category["Id"] for category in categories if category["Name"] == "Boissons"
+            category["id"] for category in categories if category["name"] == "Boissons"
         )
 
         # Test avec un produit valide
 
         valid_product = {
-            "Name": "Schweppes Agrumes",
-            "Stock": 16,
-            "NonMemberPrice": 1.00,
-            "MemberPrice": 0.80,
-            "Availability": "AUTO",
-            "Category": existing_category,
+            "name": "Schweppes Agrumes",
+            "stock": 16,
+            "nonMemberPrice": 1.00,
+            "memberPrice": 0.80,
+            "availability": "AUTO",
+            "category": existing_category,
         }
 
         response = self.post("products", valid_product)
@@ -84,87 +84,87 @@ class ProductTests(TestBase):
         created_product = self.get(location).json()
 
         self.expect(new_product_count).to.be.equal_to(previous_product_count + 1)
-        self.expect(created_product["Name"]).to.be.equal_to("Schweppes Agrumes")
-        self.expect(created_product["Category"]["Name"]).to.be.equal_to("Boissons")
+        self.expect(created_product["name"]).to.be.equal_to("Schweppes Agrumes")
+        self.expect(created_product["category"]["name"]).to.be.equal_to("Boissons")
 
         # Tests avec des produits non valides
 
         # categorie inexistante
 
         invalid_product = {
-            "Name": "Schweppes Agrumes",
-            "Stock": 16,
-            "NonMemberPrice": 1.00,
-            "MemberPrice": 0.80,
-            "Availability": "AUTO",
-            "Category": 12345,
+            "name": "Schweppes Agrumes",
+            "stock": 16,
+            "nonMemberPrice": 1.00,
+            "memberPrice": 0.80,
+            "availability": "AUTO",
+            "category": 12345,
         }
         response = self.post("products", invalid_product)
         self.expect(response.status_code).to.be.equal_to(400)
-        self.expect(response.json()).to.have.an_item("Code").that._is.equal_to(
+        self.expect(response.json()).to.have.an_item("code").that._is.equal_to(
             "INVALID_ITEM"
         )
 
         # Informations manquantes
 
         invalid_product = {
-            "Name": "Schweppes Agrumes",
-            "Stock": 16,
-            "MemberPrice": 0.80,
-            "Category": existing_category,
+            "name": "Schweppes Agrumes",
+            "stock": 16,
+            "memberPrice": 0.80,
+            "category": existing_category,
         }
         response = self.post("products", invalid_product)
         self.expect(response.status_code).to.be.equal_to(400)
-        self.expect(response.json()).to.have.an_item("Code").that._is.equal_to(
+        self.expect(response.json()).to.have.an_item("code").that._is.equal_to(
             "INVALID_ITEM"
         )
 
         # Mauvais types de données
 
         invalid_product = {
-            "Name": "Schweppes Agrumes",
-            "Stock": "Beaucoup",
-            "NonMemberPrice": 1.00,
-            "MemberPrice": "80 centimes",
-            "Availability": 3,
-            "Category": existing_category,
+            "name": "Schweppes Agrumes",
+            "stock": "Beaucoup",
+            "nonMemberPrice": 1.00,
+            "memberPrice": "80 centimes",
+            "availability": 3,
+            "category": existing_category,
         }
         response = self.post("products", invalid_product)
         self.expect(response.status_code).to.be.equal_to(400)
-        self.expect(response.json()).to.have.an_item("Code").that._is.equal_to(
+        self.expect(response.json()).to.have.an_item("code").that._is.equal_to(
             "INVALID_ITEM"
         )
 
         # Disponibilité invalide
 
         invalid_product = {
-            "Name": "Schweppes Agrumes",
-            "Stock": 16,
-            "NonMemberPrice": 1.00,
-            "MemberPrice": 0.80,
-            "Availability": "NON",
-            "Category": existing_category,
+            "name": "Schweppes Agrumes",
+            "stock": 16,
+            "nonMemberPrice": 1.00,
+            "memberPrice": 0.80,
+            "availability": "NON",
+            "category": existing_category,
         }
         response = self.post("products", invalid_product)
         self.expect(response.status_code).to.be.equal_to(400)
-        self.expect(response.json()).to.have.an_item("Code").that._is.equal_to(
+        self.expect(response.json()).to.have.an_item("code").that._is.equal_to(
             "INVALID_ITEM"
         )
 
     def test_product_edit(self):
         (category,) = (
-            category["Id"]
+            category["id"]
             for category in self.get("categories").json()
-            if category["Name"] == "Snacks"
+            if category["name"] == "Snacks"
         )
 
         product = {
-            "Name": "Malabar",
-            "Stock": 400,
-            "NonMemberPrice": 0.30,
-            "MemberPrice": 0.20,
-            "Availability": "AUTO",
-            "Category": category,
+            "name": "Malabar",
+            "stock": 400,
+            "nonMemberPrice": 0.30,
+            "memberPrice": 0.20,
+            "availability": "AUTO",
+            "category": category,
         }
         location = self.post("products", product).headers["Location"]
 
@@ -176,9 +176,9 @@ class ProductTests(TestBase):
         self.expect(response.status_code).to.be.equal_to(200)
 
         modified_product = self.get(location).json()
-        self.expect(modified_product["Stock"]).to.be.equal_to(399)
-        self.expect(modified_product["NonMemberPrice"]).to.be.equal_to(0.20)
-        self.expect(modified_product["MemberPrice"]).to.be.equal_to(0.10)
+        self.expect(modified_product["stock"]).to.be.equal_to(399)
+        self.expect(modified_product["nonMemberPrice"]).to.be.equal_to(0.20)
+        self.expect(modified_product["memberPrice"]).to.be.equal_to(0.10)
 
         # Tests avec des produits non valides
 
@@ -188,69 +188,69 @@ class ProductTests(TestBase):
         invalid_product.update(Category=12356)
         response = self.put(location, invalid_product)
         self.expect(response.status_code).to.be.equal_to(400)
-        self.expect(response.json()).to.have.an_item("Code").that._is.equal_to(
+        self.expect(response.json()).to.have.an_item("code").that._is.equal_to(
             "INVALID_ITEM"
         )
 
         # Informations manquantes
 
         invalid_product = {
-            "Name": "Malabar",
-            "Stock": 400,
-            "Availability": "AUTO",
-            "Category": category,
+            "name": "Malabar",
+            "stock": 400,
+            "availability": "AUTO",
+            "category": category,
         }
         response = self.put(location, invalid_product)
         self.expect(response.status_code).to.be.equal_to(400)
-        self.expect(response.json()).to.have.an_item("Code").that._is.equal_to(
+        self.expect(response.json()).to.have.an_item("code").that._is.equal_to(
             "INVALID_ITEM"
         )
 
         # Mauvais types de données
 
         invalid_product = {
-            "Name": "Malabar",
-            "Stock": 400,
-            "NonMemberPrice": 0.30,
-            "MemberPrice": "Beaucoup trop cher",
-            "Availability": "AUTO",
-            "Category": "Bonbons",
+            "name": "Malabar",
+            "stock": 400,
+            "nonMemberPrice": 0.30,
+            "memberPrice": "Beaucoup trop cher",
+            "availability": "AUTO",
+            "category": "Bonbons",
         }
         response = self.put(location, invalid_product)
         self.expect(response.status_code).to.be.equal_to(400)
-        self.expect(response.json()).to.have.an_item("Code").that._is.equal_to(
+        self.expect(response.json()).to.have.an_item("code").that._is.equal_to(
             "INVALID_ITEM"
         )
 
         # Disponibilité invalide
 
         invalid_product = {
-            "Name": "Malabar",
-            "Stock": 400,
-            "NonMemberPrice": 0.30,
-            "MemberPrice": 0.20,
-            "Availability": "PERIME",
-            "Category": category,
+            "name": "Malabar",
+            "stock": 400,
+            "nonMemberPrice": 0.30,
+            "memberPrice": 0.20,
+            "availability": "PERIME",
+            "category": category,
         }
         response = self.put(location, invalid_product)
         self.expect(response.status_code).to.be.equal_to(400)
-        self.expect(response.json()).to.have.an_item("Code").that._is.equal_to(
+        self.expect(response.json()).to.have.an_item("code").that._is.equal_to(
             "INVALID_ITEM"
         )
 
     def test_product_delete(self):
         (category,) = (
-            category["Id"]
+            category["id"]
             for category in self.get("categories").json()
-            if category["Name"] == "Boissons"
+            if category["name"] == "Boissons"
         )
         product = {
-            "Name": "Schweppes Agrumes",
-            "Stock": 16,
-            "NonMemberPrice": 1.00,
-            "MemberPrice": 0.80,
-            "Availability": "AUTO",
-            "Category": category,
+            "name": "Schweppes Agrumes",
+            "stock": 16,
+            "nonMemberPrice": 1.00,
+            "memberPrice": 0.80,
+            "availability": "AUTO",
+            "category": category,
         }
         location = self.post("products", product).headers["Location"]
 
@@ -290,17 +290,17 @@ class ProductTests(TestBase):
 
     def test_product_no_permission(self):
         (category,) = (
-            category["Id"]
+            category["id"]
             for category in self.get("categories").json()
-            if category["Name"] == "Boissons"
+            if category["name"] == "Boissons"
         )
         product = {
-            "Name": "Schweppes Agrumes",
-            "Stock": 16,
-            "NonMemberPrice": 1.00,
-            "MemberPrice": 0.80,
-            "Availability": "AUTO",
-            "Category": category,
+            "name": "Schweppes Agrumes",
+            "stock": 16,
+            "nonMemberPrice": 1.00,
+            "memberPrice": 0.80,
+            "availability": "AUTO",
+            "category": category,
         }
 
         self.set_authentification(BearerAuth("12345678901234567890"))

@@ -2,9 +2,11 @@ using GalliumPlus.WebApi.Core.Data;
 using GalliumPlus.WebApi.Middleware;
 using GalliumPlus.WebApi.Middleware.Authentication;
 using GalliumPlus.WebApi.Middleware.Authorization;
+using GalliumPlus.WebApi.Middleware.ErrorHandling;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
+using System.Text.Json;
 #if FAKE_DB
 using GalliumPlus.WebApi.Data.FakeDatabase;
 #endif
@@ -31,6 +33,7 @@ builder.Services
 #if FAKE_DB
 // ajout en singleton, sinon les données ne sont pas persistées d'une requête à l'autre
 builder.Services.AddSingleton<ICategoryDao, CategoryDao>();
+builder.Services.AddSingleton<IClientDao, ClientDao>();
 builder.Services.AddSingleton<IProductDao, ProductDao>();
 builder.Services.AddSingleton<IRoleDao, RoleDao>();
 builder.Services.AddSingleton<ISessionDao, SessionDao>();
@@ -44,7 +47,7 @@ builder.Services.Configure<JsonOptions>(options =>
     // accepte les virgules en fin de liste / d'objet
     options.JsonSerializerOptions.AllowTrailingCommas = true;
     // garde les noms de propriétés tels quels
-    options.JsonSerializerOptions.PropertyNamingPolicy = null;
+    options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
     // sérialise les énumérations sous forme de texte
     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
@@ -100,7 +103,8 @@ builder.Services.AddServerInfo();
 builder.Services
     .AddAuthentication(defaultScheme: "Bearer")
     .AddBearer()
-    .AddBasic();
+    .AddBasic()
+    .AddKeyAndSecret();
 
 var app = builder.Build();
 
@@ -110,7 +114,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
-ServerInfo.Current.SetVersion(0, 3, 2, "alpha");
+ServerInfo.Current.SetVersion(0, 4, 0, "alpha");
 Console.WriteLine(ServerInfo.Current);
 
 app.Run();
