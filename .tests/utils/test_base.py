@@ -68,7 +68,7 @@ class TestBase(TestCase, ABC):
             **(self.requests_options | options)
         )
 
-    def post(self, url, json, **options):
+    def post(self, url, json=None, **options):
         return self.__send(
             requests.post,
             self.prepend_base_url(url),
@@ -76,7 +76,7 @@ class TestBase(TestCase, ABC):
             **(self.requests_options | options)
         )
 
-    def put(self, url, json, **options):
+    def put(self, url, json=None, **options):
         return self.__send(
             requests.put,
             self.prepend_base_url(url),
@@ -84,7 +84,7 @@ class TestBase(TestCase, ABC):
             **(self.requests_options | options)
         )
 
-    def patch(self, url, json, **options):
+    def patch(self, url, json=None, **options):
         return self.__send(
             requests.patch,
             self.prepend_base_url(url),

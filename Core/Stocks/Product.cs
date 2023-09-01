@@ -26,7 +26,7 @@
         /// <summary>
         /// La quantité restante en stock.
         /// </summary>
-        public int Stock => this.stock;
+        public int Stock { get => this.stock; set => this.stock = value; }
 
         /// <summary>
         /// Le prix non-adhérent en euros.

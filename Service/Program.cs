@@ -2,9 +2,11 @@ using GalliumPlus.WebApi.Core.Data;
 using GalliumPlus.WebApi.Middleware;
 using GalliumPlus.WebApi.Middleware.Authentication;
 using GalliumPlus.WebApi.Middleware.Authorization;
+using GalliumPlus.WebApi.Middleware.ErrorHandling;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
+using System.Text.Json;
 #if FAKE_DB
 using GalliumPlus.WebApi.Data.FakeDatabase;
 #endif

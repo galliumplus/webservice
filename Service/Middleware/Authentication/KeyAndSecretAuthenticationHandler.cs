@@ -1,6 +1,7 @@
 ﻿using GalliumPlus.WebApi.Core;
 using GalliumPlus.WebApi.Core.Applications;
 using GalliumPlus.WebApi.Core.Data;
+using GalliumPlus.WebApi.Core.Exceptions;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Options;
 using System.Net.Http.Headers;

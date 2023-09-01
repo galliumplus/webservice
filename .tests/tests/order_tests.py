@@ -13,11 +13,11 @@ class OrderTests(TestBase):
         self.unset_authentification()
 
     def test_buy_nothing(self):
-        empty_order = {"Items": [], "PaymentMethod": "CASH"}
+        empty_order = {"items": [], "paymentMethod": "CASH"}
 
         response = self.post("orders", empty_order)
         self.expect(response.status_code).to.be.equal_to(400)
-        self.expect(response.json()).to.have.an_item("Code").that._is.equal_to(
+        self.expect(response.json()).to.have.an_item("code").that._is.equal_to(
             "CANT_SELL"
         )
 
@@ -42,12 +42,12 @@ class OrderTests(TestBase):
 
     def buy_not_deposit(self, payment_method, customer=None):
         valid_order = {
-            "Items": [{"Product": 0, "Quantity": 2}, {"Product": 1, "Quantity": 3}],
-            "PaymentMethod": payment_method,
+            "items": [{"product": 0, "quantity": 2}, {"product": 1, "quantity": 3}],
+            "paymentMethod": payment_method,
         }
 
         if customer is not None:
-            valid_order["Customer"] = customer
+            valid_order["customer"] = customer
 
         response = self.post("orders", valid_order)
         self.expect(response.status_code).to.be.equal_to(200)
@@ -60,8 +60,8 @@ class OrderTests(TestBase):
         # id adhérent manquant
 
         order = {
-            "Items": [{"Product": 0, "Quantity": 2}, {"Product": 1, "Quantity": 3}],
-            "PaymentMethod": "DEPOSIT",
+            "items": [{"product": 0, "quantity": 2}, {"product": 1, "quantity": 3}],
+            "paymentMethod": "DEPOSIT",
         }
 
         response = self.post("orders", order)
@@ -69,21 +69,21 @@ class OrderTests(TestBase):
 
         # adhérent anonyme
 
-        order.update(Customer="@anonymousmember")
+        order.update(customer="@anonymousmember")
 
         response = self.post("orders", order)
         self.expect(response.status_code).to.be.equal_to(400)
 
         # adhérent inexistant
 
-        order.update(Customer="jj000000")
+        order.update(customer="jj000000")
 
         response = self.post("orders", order)
         self.expect(response.status_code).to.be.equal_to(400)
 
         # l'id doit être explicite
 
-        order.update(Customer="@me")
+        order.update(customer="@me")
 
         response = self.post("orders", order)
         self.expect(response.status_code).to.be.equal_to(400)
@@ -95,9 +95,9 @@ class OrderTests(TestBase):
         self.grant_membership("lomens")
 
         order = {
-            "Items": [{"Product": 0, "Quantity": 2}, {"Product": 1, "Quantity": 3}],
-            "PaymentMethod": "DEPOSIT",
-            "Customer": "lomens",
+            "items": [{"product": 0, "quantity": 2}, {"product": 1, "quantity": 3}],
+            "paymentMethod": "DEPOSIT",
+            "customer": "lomens",
         }
 
         response = self.post("orders", order)
@@ -106,8 +106,8 @@ class OrderTests(TestBase):
         self.expect(self.stock(0)).to.be.equal_to(18)
         self.expect(self.stock(1)).to.be.equal_to(17)
 
-        product_0_price = self.get("products/0").json()["MemberPrice"]
-        product_1_price = self.get("products/1").json()["MemberPrice"]
+        product_0_price = self.get("products/0").json()["memberPrice"]
+        product_1_price = self.get("products/1").json()["memberPrice"]
         expected_price = product_0_price * 2 + product_1_price * 3
         self.expect(self.deposit("lomens")).to.be.equal_to(20 - expected_price)
 
@@ -118,9 +118,9 @@ class OrderTests(TestBase):
         self.revoke_membership("lomens")
 
         order = {
-            "Items": [{"Product": 0, "Quantity": 2}, {"Product": 1, "Quantity": 3}],
-            "PaymentMethod": "DEPOSIT",
-            "Customer": "lomens",
+            "items": [{"product": 0, "quantity": 2}, {"product": 1, "quantity": 3}],
+            "paymentMethod": "DEPOSIT",
+            "customer": "lomens",
         }
 
         response = self.post("orders", order)
@@ -129,8 +129,8 @@ class OrderTests(TestBase):
         self.expect(self.stock(0)).to.be.equal_to(18)
         self.expect(self.stock(1)).to.be.equal_to(17)
 
-        product_0_price = self.get("products/0").json()["NonMemberPrice"]
-        product_1_price = self.get("products/1").json()["NonMemberPrice"]
+        product_0_price = self.get("products/0").json()["nonMemberPrice"]
+        product_1_price = self.get("products/1").json()["nonMemberPrice"]
         expected_price = product_0_price * 2 + product_1_price * 3
         self.expect(self.deposit("lomens")).to.be.equal_to(20 - expected_price)
 
@@ -140,8 +140,8 @@ class OrderTests(TestBase):
         self.set_stock(0, 6)
 
         order = {
-            "Items": [{"Product": 0, "Quantity": 3}],
-            "PaymentMethod": "CASH",
+            "items": [{"product": 0, "quantity": 3}],
+            "paymentMethod": "CASH",
         }
 
         response = self.post("orders", order)
@@ -151,7 +151,7 @@ class OrderTests(TestBase):
 
         self.set_stock(0, 6)
 
-        order["Items"][0]["Quantity"] = 6
+        order["items"][0]["quantity"] = 6
 
         response = self.post("orders", order)
         self.expect(response.status_code).to.be.equal_to(200)
@@ -160,21 +160,21 @@ class OrderTests(TestBase):
 
         self.set_stock(0, 6)
 
-        order["Items"][0]["Quantity"] = 9
+        order["items"][0]["quantity"] = 9
 
         response = self.post("orders", order)
         self.expect(response.status_code).to.be.equal_to(400)
 
         # quantité nulle
 
-        order["Items"][0]["Quantity"] = 0
+        order["items"][0]["quantity"] = 0
 
         response = self.post("orders", order)
         self.expect(response.status_code).to.be.equal_to(400)
 
         # quantité négative
 
-        order["Items"][0]["Quantity"] = -5
+        order["items"][0]["quantity"] = -5
 
         response = self.post("orders", order)
         self.expect(response.status_code).to.be.equal_to(400)
@@ -183,11 +183,11 @@ class OrderTests(TestBase):
         self.set_stock(0, 100)
 
         order = {
-            "Items": [{"Product": 0, "Quantity": 3}],
-            "PaymentMethod": "DEPOSIT",
-            "Customer": "lomens",
+            "items": [{"product": 0, "quantity": 3}],
+            "paymentMethod": "DEPOSIT",
+            "customer": "lomens",
         }
-        product_price = self.get("products/0").json()["MemberPrice"]
+        product_price = self.get("products/0").json()["memberPrice"]
         order_total_price = product_price * 3
 
         self.grant_membership("lomens")
@@ -223,9 +223,9 @@ class OrderTests(TestBase):
         self.set_authentification(BearerAuth("12345678901234567890"))
 
         order = {
-            "Items": [{"Product": 0, "Quantity": 2}, {"Product": 1, "Quantity": 3}],
-            "PaymentMethod": "DEPOSIT",
-            "Customer": "lomens",
+            "items": [{"product": 0, "quantity": 2}, {"product": 1, "quantity": 3}],
+            "paymentMethod": "DEPOSIT",
+            "customer": "lomens",
         }
 
         response = self.post("orders", order)
@@ -233,29 +233,29 @@ class OrderTests(TestBase):
 
     def stock(self, product_id):
         product = self.get(f"products/{product_id}").json()
-        return product["Stock"]
+        return product["stock"]
 
     def set_stock(self, product_id, quantity):
         product = self.get(f"products/{product_id}").json()
-        product["Stock"] = quantity
-        product["Category"] = product["Category"]["Id"]
+        product["stock"] = quantity
+        product["category"] = product["category"]["id"]
         response = self.put(f"products/{product_id}", product)
 
     def deposit(self, user_id):
         user = self.get(f"users/{user_id}").json()
-        return user["Deposit"]
+        return user["deposit"]
 
     def set_deposit(self, user_id, amount):
         self.put(f"users/{user_id}/deposit", amount)
 
     def revoke_membership(self, user_id):
         user = self.get(f"users/{user_id}").json()
-        user["IsMember"] = False
-        user["Role"] = user["Role"]["Id"]
+        user["isMember"] = False
+        user["role"] = user["role"]["id"]
         response = self.put(f"users/{user_id}", user)
 
     def grant_membership(self, user_id):
         user = self.get(f"users/{user_id}").json()
-        user["IsMember"] = True
-        user["Role"] = user["Role"]["Id"]
+        user["isMember"] = True
+        user["role"] = user["role"]["id"]
         response = self.put(f"users/{user_id}", user)
