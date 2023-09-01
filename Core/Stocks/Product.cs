@@ -29,12 +29,12 @@
         public int Stock => this.stock;
 
         /// <summary>
-        /// Prix non-adhérent.
+        /// Le prix non-adhérent en euros.
         /// </summary>
         public double NonMemberPrice => this.nonMemberPrice;
 
         /// <summary>
-        /// Prix adhérent.
+        /// Le prix adhérent en euros.
         /// </summary>
         public double MemberPrice => this.memberPrice;
 

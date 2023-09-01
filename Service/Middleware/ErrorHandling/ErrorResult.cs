@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using GalliumPlus.WebApi.Core.Exceptions;
+using Microsoft.AspNetCore.Mvc;
 using System.Text.Json.Serialization;
 
 namespace GalliumPlus.WebApi.Middleware.ErrorHandling
@@ -34,7 +35,7 @@ namespace GalliumPlus.WebApi.Middleware.ErrorHandling
         /// <param name="errorCode">Le code de l'erreur (voir <see cref="Error.Code"/>)</param>
         /// <param name="errorMessage">Le message d'erreur (voir <see cref="Error.Message"/>)</param>
         /// <param name="statusCode">Le statut HTTP de la réponse.</param>
-        /// <param name="data">Données additionnelles pour le déboguage</param>
+        /// <param name="errorData">Données additionnelles pour le déboguage</param>
         /// <returns></returns>
         public ErrorResult(
             string errorCode,
@@ -45,6 +46,17 @@ namespace GalliumPlus.WebApi.Middleware.ErrorHandling
         {
             Value = new Error { Code = errorCode, Message = errorMessage, DebugInfo = errorData };
             StatusCode = statusCode;
+        }
+
+        /// <summary>
+        /// Construit une réponse d'erreur à partir d'une GalliumException.
+        /// </summary>
+        /// <param name="exception">GalliumException sur laquelle l'erreur est basée</param>
+        /// <param name="statusCode">Le statut HTTP de la réponse.</param>
+        public ErrorResult(GalliumException exception, int statusCode) : base(null)
+        {
+            this.Value = new Error { Code = exception.ErrorCode, Message = exception.Message };
+            this.StatusCode = statusCode;
         }
     }
 }

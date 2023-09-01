@@ -1,6 +1,7 @@
 ﻿using GalliumPlus.WebApi.Core;
 using GalliumPlus.WebApi.Core.Data;
 using GalliumPlus.WebApi.Core.Users;
+using GalliumPlus.WebApi.Core.Exceptions;
 
 namespace GalliumPlus.WebApi.Data.FakeDatabase
 {
@@ -57,9 +58,15 @@ namespace GalliumPlus.WebApi.Data.FakeDatabase
             }
         }
 
+        public double ReadDeposit(string id)
+        {
+            return this.Read(id).Deposit;
+        }
+
         public void UpdateDeposit(string id, double deposit)
         {
             User user = this.Read(id);
+            if (deposit < 0) throw new InvalidItemException("L'acompte ne peut pas être négatif.");
             user.Deposit = deposit;
             Update(id, user);
         }
@@ -69,6 +76,11 @@ namespace GalliumPlus.WebApi.Data.FakeDatabase
         protected override void SetKey(User item, string key)
         {
             throw new InvalidOperationException("Can't set the user ID automatically");
+        }
+
+        protected override bool CheckConstraints(User item)
+        {
+            return item.Deposit > 0;
         }
     }
 }

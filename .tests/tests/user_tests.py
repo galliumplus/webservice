@@ -23,7 +23,7 @@ class UserTests(TestBase):
         self.expect(user).to.have.an_item("role").of.type(int)
         self.expect(user).to.have.an_item("year").of.type(str)
         self.expect(user).to.have.an_item("deposit").that._is.a_number()
-        self.expect(user).to.have.an_item("formerMember").of.type(bool)
+        self.expect(user).to.have.an_item("isMember").of.type(bool)
 
     def test_user_get_one(self):
         users = self.get("users").json()
@@ -42,7 +42,7 @@ class UserTests(TestBase):
         self.expect(user).to.have.an_item("name").of.type(str)
         self.expect(user).to.have.an_item("year").of.type(str)
         self.expect(user).to.have.an_item("deposit").that._is.a_number()
-        self.expect(user).to.have.an_item("formerMember").of.type(bool)
+        self.expect(user).to.have.an_item("isMember").of.type(bool)
 
         role = self.expect(user).to.have.an_item("role").that._is.a(dict).value
         self.expect(role).to.have.an_item("id").of.type(int)
@@ -68,7 +68,7 @@ class UserTests(TestBase):
         self.expect(user).to.have.an_item("name").of.type(str)
         self.expect(user).to.have.an_item("year").of.type(str)
         self.expect(user).to.have.an_item("deposit").that._is.a_number()
-        self.expect(user).to.have.an_item("formerMember").of.type(bool)
+        self.expect(user).to.have.an_item("isMember").of.type(bool)
 
         role = self.expect(user).to.have.an_item("role").that._is.a(dict).value
         self.expect(role).to.have.an_item("id").of.type(int)
@@ -88,7 +88,7 @@ class UserTests(TestBase):
             "role": existing_role["id"],
             "year": "2A",
             "deposit": 7001.01,
-            "formerMember": False,
+            "isMember": False,
         }
 
         response = self.post("users", valid_user)
@@ -111,7 +111,7 @@ class UserTests(TestBase):
             "role": 123,
             "year": "2A",
             "deposit": 7001.01,
-            "formerMember": False,
+            "isMember": False,
         }
         response = self.post("users", invalid_user)
         self.expect(response.status_code).to.be.equal_to(400)
@@ -125,7 +125,7 @@ class UserTests(TestBase):
             "id": "ar113926",
             "name": "Aimeric ROURA",
             "year": "2A",
-            "formerMember": False,
+            "isMember": False,
         }
         response = self.post("users", invalid_user)
         self.expect(response.status_code).to.be.equal_to(400)
@@ -141,7 +141,7 @@ class UserTests(TestBase):
             "role": "Président",
             "year": 2,
             "deposit": 7001.01,
-            "formerMember": "yes",
+            "isMember": "yes",
         }
         response = self.post("users", invalid_user)
         self.expect(response.status_code).to.be.equal_to(400)
@@ -157,7 +157,7 @@ class UserTests(TestBase):
             "role": existing_role["id"],
             "year": "2A",
             "deposit": 7001.01,
-            "formerMember": False,
+            "isMember": False,
         }
         response = self.post("users", invalid_user)
         self.expect(response.status_code).to.be.equal_to(400)
@@ -174,20 +174,20 @@ class UserTests(TestBase):
             "role": role["id"],
             "year": "2A",
             "deposit": 7001.01,
-            "formerMember": False,
+            "isMember": False,
         }
         other_user_id = self.get("users").json()[0]["id"]
 
         # Test avec un utilisateur valide
 
-        user.update(Name="Joe JIGABOO", FormerMember=True)
+        user.update(Name="Joe JIGABOO", IsMember=True)
 
         response = self.put(f"users/{user_id}", user)
         self.expect(response.status_code).to.be.equal_to(200)
 
         modified_user = self.get(f"/users/{user_id}").json()
         self.expect(modified_user["name"]).to.be.equal_to("Joe JIGABOO")
-        self.expect(modified_user["formerMember"]).to.be.true()
+        self.expect(modified_user["isMember"]).to.be.true()
 
         # Test en changeant l'ID
 
@@ -221,7 +221,7 @@ class UserTests(TestBase):
         invalid_user = {
             "name": "Aimeric ROURA",
             "year": "2A",
-            "formerMember": False,
+            "isMember": False,
         }
         response = self.put("users/jj000000", invalid_user)
         self.expect(response.status_code).to.be.equal_to(400)
@@ -237,7 +237,7 @@ class UserTests(TestBase):
             "role": "Président",
             "year": 2,
             "deposit": 7001.01,
-            "formerMember": "yes",
+            "isMember": "yes",
         }
         response = self.put("users/jj000000", invalid_user)
         self.expect(response.status_code).to.be.equal_to(400)
@@ -265,7 +265,7 @@ class UserTests(TestBase):
             "role": role["id"],
             "year": "2A",
             "deposit": 7001.01,
-            "formerMember": False,
+            "isMember": False,
         }
         self.post("users", user)
 
@@ -313,7 +313,7 @@ class UserTests(TestBase):
             "role": role["id"],
             "year": "2A",
             "deposit": 7001.01,
-            "formerMember": False,
+            "isMember": False,
         }
 
         self.set_authentification(BearerAuth("12345678901234567890"))

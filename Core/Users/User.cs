@@ -1,3 +1,6 @@
+using System.Text.Json.Serialization;
+using GalliumPlus.WebApi.Core.Exceptions;
+
 namespace GalliumPlus.WebApi.Core.Users
 {
     /// <summary>
@@ -10,13 +13,24 @@ namespace GalliumPlus.WebApi.Core.Users
         private Role role;
         private string year;
         private double deposit;
-        private bool formerMember;
+        private bool isMember;
         private PasswordInformation? password;
 
         /// <summary>
         /// L'identifiant IUT (ou identifiant spécial) de l'utilisateur.
         /// </summary>
-        public string Id { get => this.id; set => this.id = value; }
+        /// <exception cref="InvalidItemException">Le setter renvoie une erreur si la valeur contient des caractères speciaux</exception>
+        public string Id 
+        { 
+            get => this.id; 
+            set 
+            {
+                if (value.Any(c => !char.IsLetterOrDigit(c)))
+                    throw new InvalidItemException("Un identifiant ne peut pas contenir de caractères speciaux");
+                else
+                    this.id = value;
+            } 
+        }
 
         /// <summary>
         /// Le prénom et nom de l'utilisateur.
@@ -42,40 +56,43 @@ namespace GalliumPlus.WebApi.Core.Users
         public string Year { get => this.year; set => this.year = value; }
 
         /// <summary>
-        /// L'acompte de l'utilisateur.
+        /// L'acompte de l'utilisateur en euros.
         /// </summary>
         public double Deposit { get => this.deposit; set => this.deposit = value; }
 
         /// <summary>
         /// <see langword="true"/> si l'utilisateur n'est plus adhérent.
         /// </summary>
-        public bool FormerMember { get => this.formerMember; set => this.formerMember = value; }
+        public bool IsMember { get => this.isMember; set => this.isMember = value; }
 
         /// <summary>
         /// Crée un utilisateur sans informations sur son mot de passe.
         /// </summary>
         /// <param name="id">L'identifiant IUT (ou identifiant spécial) de l'utilisateur.</param>
         /// <param name="name">Le prénom et nom de l'utilisateur.</param>
-        /// <param name="roleId">L'identifiant du rôle de l'utilisateur.</param>
+        /// <param name="role">Le rôle de l'utilisateur.</param>
         /// <param name="year">La promotion de l'utilisateur.</param>
-        /// <param name="deposit">L'acompte de l'utilisateur.</param>
-        /// <param name="formerMember"> <see langword="true"/> si l'utilisateur n'est plus adhérent.</param>
+        /// <param name="deposit">L'acompte de l'utilisateur en euros.</param>
+        /// <param name="isMember"> <see langword="true"/> si l'utilisateur est adhérent.</param>
+        /// <exception cref="InvalidItemException">Renvoie une erreur si User.Id contient des caractères speciaux</exception>
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         public User(
             string id,
             string name,
             Role role,
             string year,
             double deposit,
-            bool formerMember)
+            bool isMember)
         {
-            this.id = id;
+            this.Id = id;
             this.name = name;
             this.role = role;
             this.year = year;
             this.deposit = deposit;
-            this.formerMember = formerMember;
+            this.isMember = isMember;
             this.password = null;
         }
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
         /// <summary>
         /// Crée un utilisateur avec les informations de mot de passe.
@@ -84,18 +101,19 @@ namespace GalliumPlus.WebApi.Core.Users
         /// <param name="name">Le prénom et nom de l'utilisateur.</param>
         /// <param name="roleId">L'identifiant du rôle de l'utilisateur.</param>
         /// <param name="year">La promotion de l'utilisateur.</param>
-        /// <param name="deposit">L'acompte de l'utilisateur.</param>
-        /// <param name="formerMember"> <see langword="true"/> si l'utilisateur n'est plus adhérent.</param>
+        /// <param name="deposit">L'acompte de l'utilisateur en euros.</param>
+        /// <param name="isMember"> <see langword="true"/> si l'utilisateur est adhérent.</param>
         /// <param name="password">Le mot de passe de l'utilisateur.</param>
+        /// <exception cref="InvalidItemException">Renvoie une erreur si User.Id contient des caractères speciaux</exception>
         public User(
             string id,
             string name,
             Role role,
             string year,
             double deposit,
-            bool formerMember,
+            bool isMember,
             PasswordInformation password)
-        : this(id, name, role, year, deposit, formerMember)
+        : this(id, name, role, year, deposit, isMember)
         {
             this.password = password;
         }

@@ -1,5 +1,5 @@
-﻿using GalliumPlus.WebApi.Core;
-using GalliumPlus.WebApi.Core.Data;
+﻿using GalliumPlus.WebApi.Core.Data;
+using GalliumPlus.WebApi.Core.Exceptions;
 using GalliumPlus.WebApi.Core.Users;
 using System.ComponentModel.DataAnnotations;
 
@@ -12,7 +12,7 @@ namespace GalliumPlus.WebApi.Dto
         [Required] public int? Role { get; set; }
         [Required] public string Year { get; set; }
         [Required] public double? Deposit { get; set; }
-        [Required] public bool? FormerMember { get; set; }
+        [Required] public bool? IsMember { get; set; }
 
         public UserSummary()
         {
@@ -21,7 +21,7 @@ namespace GalliumPlus.WebApi.Dto
             this.Role = null;
             this.Year = String.Empty;
             this.Deposit = null;
-            this.FormerMember = null;
+            this.IsMember = null;
         }
 
         public class Mapper : Mapper<User, UserSummary, IUserDao>
@@ -35,7 +35,7 @@ namespace GalliumPlus.WebApi.Dto
                     Role = user.Role.Id,
                     Year = user.Year,
                     Deposit = user.Deposit,
-                    FormerMember = user.FormerMember
+                    IsMember = user.IsMember
                 };
             }
 
@@ -57,7 +57,7 @@ namespace GalliumPlus.WebApi.Dto
                     role,
                     summary.Year!,
                     summary.Deposit!.Value,
-                    summary.FormerMember!.Value
+                    summary.IsMember!.Value
                 );
             }
         }

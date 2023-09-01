@@ -1,6 +1,8 @@
 ﻿using GalliumPlus.WebApi.Core;
+using GalliumPlus.WebApi.Core.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using System.Text.Json.Serialization;
 
 namespace GalliumPlus.WebApi.Middleware.ErrorHandling
 {
@@ -14,30 +16,11 @@ namespace GalliumPlus.WebApi.Middleware.ErrorHandling
 
         public void OnException(ExceptionContext context)
         {
-            if (context.Exception is ItemNotFoundException)
+            if (context.Exception is ItemNotFoundException itemNotFoundException)
             {
                 context.Result = new ErrorResult(
-                    "ITEM_NOT_FOUND",
-                    "La ressource demandée n'existe pas.",
+                    itemNotFoundException,
                     StatusCodes.Status404NotFound
-                );
-                context.ExceptionHandled = true;
-            }
-            else if (context.Exception is InvalidItemException invalidItem)
-            {
-                context.Result = new ErrorResult(
-                    "INVALID_ITEM",
-                    invalidItem.Message,
-                    StatusCodes.Status400BadRequest
-                );
-                context.ExceptionHandled = true;
-            }
-            else if (context.Exception is DuplicateItemException)
-            {
-                context.Result = new ErrorResult(
-                    "DUPLICATE_ITEM",
-                    "Cette ressource existe déjà.",
-                    StatusCodes.Status400BadRequest
                 );
                 context.ExceptionHandled = true;
             }
@@ -50,10 +33,18 @@ namespace GalliumPlus.WebApi.Middleware.ErrorHandling
                 };
 
                 context.Result = new ErrorResult(
-                    "PERMISSION_DENIED",
+                    permissionDenied.ErrorCode,
                     $"Vous n'avez pas la permission {messageAction}.",
                     StatusCodes.Status403Forbidden,
                     new { RequiredPermissions = permissionDenied.Required }
+                );
+                context.ExceptionHandled = true;
+            }
+            else if (context.Exception is GalliumException galliumException)
+            {
+                context.Result = new ErrorResult(
+                    galliumException,
+                    StatusCodes.Status400BadRequest
                 );
                 context.ExceptionHandled = true;
             }

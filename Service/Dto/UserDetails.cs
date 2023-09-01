@@ -10,16 +10,16 @@ namespace GalliumPlus.WebApi.Dto
         public RoleDetails Role { get; }
         public string Year { get; }
         public double Deposit { get; }
-        public bool FormerMember { get; }
+        public bool IsMember { get; }
 
-        public UserDetails(string id, string name, RoleDetails role, string year, double deposit, bool formerMember)
+        public UserDetails(string id, string name, RoleDetails role, string year, double deposit, bool isMember)
         {
             Id = id;
             Name = name;
             Role = role;
             Year = year;
             Deposit = deposit;
-            FormerMember = formerMember;
+            IsMember = isMember;
         }
 
         public class Mapper : Mapper<User, UserDetails, IUserDao>
@@ -34,7 +34,7 @@ namespace GalliumPlus.WebApi.Dto
                     roleMapper.FromModel(user.Role),
                     user.Year,
                     user.Deposit,
-                    user.FormerMember
+                    user.IsMember
                 );
             }
 
@@ -46,7 +46,7 @@ namespace GalliumPlus.WebApi.Dto
                     roleMapper.ToModel(details.Role, dao.Roles),
                     details.Year,
                     details.Deposit,
-                    details.FormerMember
+                    details.IsMember
                 );
             }
         }

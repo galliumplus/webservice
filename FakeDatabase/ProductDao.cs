@@ -1,6 +1,7 @@
 ﻿using GalliumPlus.WebApi.Core;
 using GalliumPlus.WebApi.Core.Data;
 using GalliumPlus.WebApi.Core.Stocks;
+using GalliumPlus.WebApi.Core.Exceptions;
 using System.Reflection;
 
 namespace GalliumPlus.WebApi.Data.FakeDatabase
@@ -52,6 +53,14 @@ namespace GalliumPlus.WebApi.Data.FakeDatabase
         {
             base.Delete(key);
             this.images.Remove(key);
+        }
+
+        public void WithdrawFromStock(int id, int amount)
+        {
+            lock (this.Items)
+            {
+                this.Read(id).Stock -= amount;
+            }
         }
 
         public ProductImage ReadImage(int id)
