@@ -8,16 +8,16 @@
         /// <summary>
         /// Le produit est toujours considéré comme disponible.
         /// </summary>
-        ALWAYS,
+        ALWAYS = 0,
 
         /// <summary>
         /// Le produit est disponible si il en reste en stock.
         /// </summary>
-        AUTO,
+        AUTO = 1,
 
         /// <summary>
         /// Le produit est toujours considéré comme indisponible.
         /// </summary>
-        NEVER,
+        NEVER = 2,
     }
 }
