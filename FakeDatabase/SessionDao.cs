@@ -65,7 +65,7 @@ namespace GalliumPlus.WebApi.Data.FakeDatabase
 
         protected override string GetKey(Session item) => item.Token;
 
-        protected override void SetKey(Session item, string key)
+        protected override void SetKey(ref Session item, string key)
         {
             throw new InvalidOperationException("A session token is read-only");
         }

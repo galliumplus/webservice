@@ -73,7 +73,7 @@ namespace GalliumPlus.WebApi.Data.FakeDatabase
 
         protected override string GetKey(User item) => item.Id;
 
-        protected override void SetKey(User item, string key)
+        protected override void SetKey(ref User item, string key)
         {
             throw new InvalidOperationException("Can't set the user ID automatically");
         }

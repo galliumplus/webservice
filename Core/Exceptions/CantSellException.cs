@@ -11,7 +11,7 @@ namespace GalliumPlus.WebApi.Core.Exceptions
     /// </summary>
     public class CantSellException : GalliumException
     {
-        public override string ErrorCode => "CANT_SELL";
+        public override ErrorCode ErrorCode => ErrorCode.CANT_SELL;
         public CantSellException(string message) : base(message) { }
     }
 }

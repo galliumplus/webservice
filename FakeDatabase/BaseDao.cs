@@ -75,7 +75,7 @@ namespace GalliumPlus.WebApi.Data.FakeDatabase
 
                 if (!items.ContainsKey(key)) throw new ItemNotFoundException();
 
-                SetKey(item, key);
+                SetKey(ref item, key);
                 items[key] = item;
                 return item;
             }
@@ -83,7 +83,7 @@ namespace GalliumPlus.WebApi.Data.FakeDatabase
 
         abstract protected TKey GetKey(TItem item);
 
-        protected abstract void SetKey(TItem item, TKey key);
+        protected abstract void SetKey(ref TItem item, TKey key);
 
         virtual protected bool CheckConstraints(TItem item) => true;
     }

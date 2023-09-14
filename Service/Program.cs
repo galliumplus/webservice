@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using System.Text.Json;
+using GalliumPlus.WebApi;
 #if FAKE_DB
 using GalliumPlus.WebApi.Data.FakeDatabase;
 #endif
@@ -52,26 +53,16 @@ builder.Services.Configure<JsonOptions>(options =>
     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
 
+var galliumOptions = builder.Configuration.GetSection("Gallium").Get<GalliumOptions>();
+
 // configuration HTTP/HTTPS
 builder.WebHost.ConfigureKestrel(opt =>
 {
-    if (!Int32.TryParse(Environment.GetEnvironmentVariable("GALLIUM_HTTP"), out int httpPort))
-    {
-        // default HTTP port
-        httpPort = 5080;
-    }
-
-    if (!Int32.TryParse(Environment.GetEnvironmentVariable("GALLIUM_HTTPS"), out int httpsPort))
-    {
-        // default HTTPS port
-        httpsPort = 5443;
-    }
-
     Action<ListenOptions> httpsConfiguration = options =>
     {
-        if (Environment.GetEnvironmentVariable("GALLIUM_CERTIFICATE_FILE") is string certififcate)
+        if (galliumOptions.CertificateFile is string certififcate)
         {
-            if (Environment.GetEnvironmentVariable("GALLIUM_CERTIFICATE_PASSWORD") is string password)
+            if (galliumOptions.CertificatePassword is string password)
             {
                 options.UseHttps(certififcate, password);
             }
@@ -86,15 +77,15 @@ builder.WebHost.ConfigureKestrel(opt =>
         }
     };
 
-    if (Environment.GetEnvironmentVariable("GALLIUM_LISTEN_ANY_IP") is string)
+    if (galliumOptions.ListenAnyIp)
     {
-        opt.ListenAnyIP(httpPort);
-        opt.ListenAnyIP(httpsPort, httpsConfiguration);
+        opt.ListenAnyIP(galliumOptions.HttpPort);
+        opt.ListenAnyIP(galliumOptions.HttpsPort, httpsConfiguration);
     }
     else
     {
-        opt.ListenLocalhost(httpPort);
-        opt.ListenLocalhost(httpsPort, httpsConfiguration);
+        opt.ListenLocalhost(galliumOptions.HttpPort);
+        opt.ListenLocalhost(galliumOptions.HttpsPort, httpsConfiguration);
     }
 });
 
@@ -108,7 +99,7 @@ builder.Services
 
 var app = builder.Build();
 
-app.UseHttpsRedirection();
+if (galliumOptions.ForceHttps) app.UseHttpsRedirection();
 app.UseServerInfo();
 app.UseAuthentication();
 app.UseAuthorization();

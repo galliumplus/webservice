@@ -34,6 +34,6 @@ namespace GalliumPlus.WebApi.Data.FakeDatabase
         }
 
         protected override int GetKey(Role item) => item.Id;
-        protected override void SetKey(Role item, int key) => item.Id = key;
+        protected override void SetKey(ref Role item, int key) => item.Id = key;
     }
 }

@@ -6,7 +6,7 @@
 
         public override TItem Create(TItem item)
         {
-            SetKey(item, nextInsertKey);
+            SetKey(ref item, nextInsertKey);
             nextInsertKey++;
             return base.Create(item);
         }

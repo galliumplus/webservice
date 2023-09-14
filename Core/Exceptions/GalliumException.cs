@@ -11,12 +11,13 @@ namespace GalliumPlus.WebApi.Core.Exceptions
         /// <summary>
         /// Code de l'erreur levée 
         /// </summary>
-        public abstract string ErrorCode { get; }
+        public abstract ErrorCode ErrorCode { get; }
 
         /// <summary>
         /// Constructeur par défaut
         /// </summary>
         public GalliumException() : base() { }
+
         /// <summary>
         /// Constructeur d'une GalliumException avec un message
         /// </summary>

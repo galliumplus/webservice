@@ -11,8 +11,8 @@ namespace GalliumPlus.WebApi.Core.Exceptions
     /// </summary>
     public class InvalidItemException : GalliumException
     {
-        public override string ErrorCode => "INVALID_ITEM";
-        public InvalidItemException(string message) : base(message) { }
+        public override ErrorCode ErrorCode => ErrorCode.INVALID_ITEM;
 
+        public InvalidItemException(string message) : base(message) { }
     }
 }

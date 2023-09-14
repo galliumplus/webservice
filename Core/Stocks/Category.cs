@@ -11,7 +11,7 @@
         /// <summary>
         /// L'identifiant de la catégorie.
         /// </summary>
-        public int Id { get => this.id; set => this.id = value; }
+        public int Id => this.id;
 
         /// <summary>
         /// Le nom affiché de la catégorie.
@@ -28,5 +28,7 @@
             this.id = id;
             this.name = name;
         }
+
+        public Category WithId(int id) => new(id, this.name);
     }
 }

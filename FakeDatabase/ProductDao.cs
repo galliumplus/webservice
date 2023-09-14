@@ -47,7 +47,7 @@ namespace GalliumPlus.WebApi.Data.FakeDatabase
 
         protected override int GetKey(Product item) => item.Id;
 
-        protected override void SetKey(Product item, int key) => item.Id = key;
+        protected override void SetKey(ref Product item, int key) => item.Id = key;
 
         public override void Delete(int key)
         {
