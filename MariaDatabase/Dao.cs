@@ -13,11 +13,11 @@ namespace GalliumPlus.WebApi.Data.MariaDb
 
         protected MySqlConnection Connect() => this.connector.Connect();
 
-        protected object? SelectLastInsertId(MySqlConnection connection)
+        protected ulong SelectLastInsertId(MySqlConnection connection)
         {
             var selectIdCommand = connection.CreateCommand();
             selectIdCommand.CommandText = "SELECT LAST_INSERT_ID()";
-            return selectIdCommand.ExecuteScalar();
+            return (ulong)selectIdCommand.ExecuteScalar()!;
         }
 
         protected IEnumerable<T> ReadResults<T>(MySqlDataReader reader, Func<MySqlDataReader, T> hydration)

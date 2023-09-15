@@ -1,5 +1,4 @@
-﻿using GalliumPlus.WebApi.Core.Application;
-using GalliumPlus.WebApi.Core.Users;
+﻿using GalliumPlus.WebApi.Core.Users;
 
 namespace GalliumPlus.WebApi.Core.Applications
 {
@@ -15,6 +14,8 @@ namespace GalliumPlus.WebApi.Core.Applications
         /// </summary>
         public OneTimeSecret Secret => this.secret;
 
+        public override bool AllowUserLogin => false;
+
         /// <summary>
         /// Crée un bot existant.
         /// </summary>
@@ -25,7 +26,7 @@ namespace GalliumPlus.WebApi.Core.Applications
         /// <param name="isEnabled">Si l'application est active ou non.</param>
         /// <param name="permissions">Les permissions accordées au bot.</param>
         public BotClient(int id, string apiKey, OneTimeSecret secret, string name, bool isEnabled, Permissions permissions)
-        : base(id, apiKey, name, isEnabled, permissions, Permissions.NONE, false)
+        : base(id, apiKey, name, isEnabled, permissions, Permissions.NONE)
         {
             this.secret = secret;
         }
@@ -36,7 +37,7 @@ namespace GalliumPlus.WebApi.Core.Applications
         /// <param name="name">Le nom du bot.</param>
         /// <param name="permissions">Les permissions accordées au bot.</param>
         public BotClient(string name, bool isEnabled, Permissions permissions)
-        : base(name, isEnabled, granted: permissions, allowUsers: false)
+        : base(name, isEnabled, granted: permissions)
         {
             this.secret = new OneTimeSecret();
         }

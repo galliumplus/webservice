@@ -14,11 +14,12 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{EB470CC0-FED5-477D-9FEF-318DA01EAA81}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
+		.gitignore = .gitignore
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MariaDatabase", "MariaDatabase\MariaDatabase.csproj", "{7AA2D0A8-2279-46F4-A795-7CAC8F0899D0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MariaDatabase", "MariaDatabase\MariaDatabase.csproj", "{7AA2D0A8-2279-46F4-A795-7CAC8F0899D0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MariaDbTests", "MariaDbTests\MariaDbTests.csproj", "{00CB800C-8163-43C2-B284-20EEBE4D68C9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MariaDbTests", "MariaDbTests\MariaDbTests.csproj", "{00CB800C-8163-43C2-B284-20EEBE4D68C9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

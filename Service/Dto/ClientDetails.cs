@@ -111,7 +111,7 @@ namespace GalliumPlus.WebApi.Dto
                             isEnabled: dto.IsEnabled!.Value,
                             granted: (Permissions)dto.PermissionsGranted!.Value,
                             revoked: (Permissions)(dto.PermissionsRevoked ?? throw MissingField("permissionsRevoked", "SsoClient")),
-                            allowUsers: dto.AllowUsers ?? throw MissingField("allowUsers", "SsoClient"),
+                            usesApi: dto.AllowUsers ?? throw MissingField("allowUsers", "SsoClient"),
                             redirectUrl: dto.RedirectUrl ?? throw MissingField("redirectUrl", "SsoClient"),
                             logoUrl: dto.LogoUrl
                         );

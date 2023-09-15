@@ -1,6 +1,7 @@
 ﻿using GalliumPlus.WebApi.Core.Data;
 using GalliumPlus.WebApi.Core.Exceptions;
 using GalliumPlus.WebApi.Core.Stocks;
+using MySqlConnector;
 
 namespace GalliumPlus.WebApi.Data.MariaDb
 {
@@ -18,14 +19,7 @@ namespace GalliumPlus.WebApi.Data.MariaDb
 
             insertCommand.ExecuteNonQuery();
 
-            if (this.SelectLastInsertId(connection) is ulong id)
-            {
-                return item.WithId((int)id);
-            }
-            else
-            {
-                return item;
-            }
+            return item.WithId((int)this.SelectLastInsertId(connection));
         }
 
         public void Delete(int key)
@@ -44,6 +38,14 @@ namespace GalliumPlus.WebApi.Data.MariaDb
             }
         }
 
+        private static Category Hydrate(MySqlDataReader row)
+        {
+            return new Category(
+                row.GetInt32("id"),
+                row.GetString("name")
+            );
+        }
+
         public IEnumerable<Category> Read()
         {
             using var connection = this.Connect();
@@ -53,10 +55,7 @@ namespace GalliumPlus.WebApi.Data.MariaDb
             
             var results = readCommand.ExecuteReader();
 
-            return this.ReadResults(results, row => new Category(
-                row.GetInt32("id"),
-                row.GetString("name")
-            ));
+            return this.ReadResults(results, Hydrate);
         }
 
         public Category Read(int key)
@@ -74,10 +73,7 @@ namespace GalliumPlus.WebApi.Data.MariaDb
                 throw new ItemNotFoundException("catégorie", true);
             }
 
-            return new Category(
-                result.GetInt32("id"),
-                result.GetString("name")
-            );
+            return Hydrate(result);
         }
 
         public Category Update(int key, Category item)

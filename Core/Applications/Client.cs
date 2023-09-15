@@ -14,7 +14,6 @@ namespace GalliumPlus.WebApi.Core.Applications
         private Permissions granted;
         private Permissions revoked;
         private bool isEnabled;
-        private bool allowUsers;
 
         /// <summary>
         /// L'identifiant de l'application.
@@ -47,14 +46,9 @@ namespace GalliumPlus.WebApi.Core.Applications
         public bool IsEnabled { get => this.isEnabled; set => this.isEnabled = value; }
 
         /// <summary>
-        /// Indique si les utilisateurs peuvent se connecter via l'application.
-        /// </summary>
-        public bool AllowUsers { get => this.allowUsers; set => this.allowUsers = value; }
-
-        /// <summary>
         /// Indique si des utilisateurs peuvent se connecter via l'application.
         /// </summary>
-        public bool AllowUserLogin => this.AllowUsers && this.IsEnabled;
+        public virtual bool AllowUserLogin => this.IsEnabled;
 
         /// <summary>
         /// Crée une application existante.
@@ -65,15 +59,13 @@ namespace GalliumPlus.WebApi.Core.Applications
         /// <param name="isEnabled">Si l'application est active ou non.</param>
         /// <param name="granted">Les permissions accordées à tous les utilisateurs.</param>
         /// <param name="revoked">Les permissions refusées à tous les utilisateurs.</param>
-        /// <param name="allowUsers">Autorise ou non les utilisateurs à se connecter via l'application.</param>
         public Client(
             int id,
             string apiKey,
             string name,
             bool isEnabled,
             Permissions granted,
-            Permissions revoked,
-            bool allowUsers
+            Permissions revoked
         )
         {
             this.id = id;
@@ -82,7 +74,6 @@ namespace GalliumPlus.WebApi.Core.Applications
             this.granted = granted;
             this.revoked = revoked;
             this.isEnabled = isEnabled;
-            this.allowUsers = allowUsers;
         }
 
         /// <summary>
@@ -92,13 +83,11 @@ namespace GalliumPlus.WebApi.Core.Applications
         /// <param name="isEnabled">Si l'application est active ou non.</param>
         /// <param name="granted">Les permissions accordées à tous les utilisateurs.</param>
         /// <param name="revoked">Les permissions refusées à tous les utilisateurs.</param>
-        /// <param name="allowUsers">Autorise ou non les utilisateurs à se connecter via l'application.</param>
         public Client(
             string name,
             bool isEnabled = true,
             Permissions granted = Permissions.NONE,
-            Permissions revoked = Permissions.NONE,
-            bool allowUsers = true
+            Permissions revoked = Permissions.NONE
         )
         {
             var rtg = new RandomTextGenerator(new BasicRandomProvider());
@@ -108,7 +97,6 @@ namespace GalliumPlus.WebApi.Core.Applications
             this.granted = granted;
             this.revoked = revoked;
             this.isEnabled = isEnabled;
-            this.allowUsers = allowUsers;
         }
 
         /// <summary>

@@ -2,7 +2,7 @@
 using System.Security.Cryptography;
 using System.Text;
 
-namespace GalliumPlus.WebApi.Core.Application
+namespace GalliumPlus.WebApi.Core.Applications
 {
     /// <summary>
     /// Code secret qui ne peut être vu que lorsqu'il est regénéré.
