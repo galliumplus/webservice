@@ -1,4 +1,6 @@
-﻿namespace GalliumPlus.WebApi.Core.Stocks
+﻿using GalliumPlus.WebApi.Core.Exceptions;
+
+namespace GalliumPlus.WebApi.Core.Stocks
 {
     /// <summary>
     /// Un produit.
@@ -8,8 +10,8 @@
         private int id;
         private string name;
         private int stock;
-        private double nonMemberPrice;
-        private double memberPrice;
+        private decimal nonMemberPrice;
+        private decimal memberPrice;
         private Availability availability;
         private Category category;
 
@@ -31,12 +33,12 @@
         /// <summary>
         /// Le prix non-adhérent en euros.
         /// </summary>
-        public double NonMemberPrice => this.nonMemberPrice;
+        public decimal NonMemberPrice => this.nonMemberPrice;
 
         /// <summary>
         /// Le prix adhérent en euros.
         /// </summary>
-        public double MemberPrice => this.memberPrice;
+        public decimal MemberPrice => this.memberPrice;
 
         /// <summary>
         /// Disponibilité du produit.
@@ -61,6 +63,20 @@
             _ => false,
         };
 
+        private static decimal CheckPrice(decimal price)
+        {
+            decimal cents = price * 100;
+            if (cents < 0)
+            {
+                throw new InvalidItemException("Un prix ne peux pas être négatif.");
+            }
+            if (cents % 1 != 0)
+            {
+                throw new InvalidItemException("Un prix ne peu pas avoir des fractions de centimes.");
+            }
+            return price;
+        }
+
         /// <summary>
         /// Crée un produit.
         /// </summary>
@@ -75,19 +91,18 @@
             int id,
             string name,
             int stock,
-            double nonMemberPrice,
-            double memberPrice,
+            decimal nonMemberPrice,
+            decimal memberPrice,
             Availability availability,
             Category category)
         {
             this.id = id;
             this.name = name;
             this.stock = stock;
-            this.nonMemberPrice = nonMemberPrice;
-            this.memberPrice = memberPrice;
+            this.nonMemberPrice = CheckPrice(nonMemberPrice);
+            this.memberPrice = CheckPrice(memberPrice);
             this.availability = availability;
             this.category = category;
         }
-
     }
 }

@@ -8,6 +8,6 @@ namespace GalliumPlus.WebApi.Core.Orders
 {
     public class PaymentByPaypal : PaymentMethod
     {
-        protected override string ProcessPayment(double amount) => "OK";
+        protected override string ProcessPayment(decimal _) => "OK";
     }
 }

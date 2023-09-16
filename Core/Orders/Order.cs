@@ -76,9 +76,9 @@ namespace GalliumPlus.WebApi.Core.Orders
             }
         }
 
-        private double TotalPrice()
+        private decimal TotalPrice()
         {
-            double result = 0;
+            decimal result = 0;
 
             bool memberDiscount = this.customer != null && this.customer.IsMember;
 

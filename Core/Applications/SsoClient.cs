@@ -32,7 +32,7 @@ namespace GalliumPlus.WebApi.Core.Applications
         /// <summary>
         /// Si l'application a besoin d'utiliser l'API.
         /// </summary>
-        public bool UsesApi => this.usesApi;
+        public bool UsesApi { get => this.usesApi; set => this.usesApi = value; }
 
         public override bool AllowUserLogin => false;
 

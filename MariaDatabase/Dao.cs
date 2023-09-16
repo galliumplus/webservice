@@ -6,6 +6,8 @@ namespace GalliumPlus.WebApi.Data.MariaDb
     {
         private DatabaseConnector connector;
 
+        public DatabaseConnector Connector => this.connector;
+
         public Dao(DatabaseConnector connector)
         {
             this.connector = connector;

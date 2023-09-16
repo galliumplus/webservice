@@ -17,7 +17,7 @@ namespace GalliumPlus.WebApi.Core.Orders
         /// <param name="amount">Le montant à payer.</param>
         /// <exception cref="CantSellException"></exception>
         /// <returns>Une phrase indiquant que l'opération à bien été effectuée.</returns>
-        public string Pay(double amount)
+        public string Pay(decimal amount)
         {
             if (amount < 0)
             {
@@ -27,6 +27,6 @@ namespace GalliumPlus.WebApi.Core.Orders
             return this.ProcessPayment(amount);
         }
 
-        protected abstract string ProcessPayment(double amount);
+        protected abstract string ProcessPayment(decimal amount);
     }
 }

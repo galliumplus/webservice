@@ -30,9 +30,9 @@ namespace GalliumPlus.WebApi.Core.Orders
             this.depositId = depositId;
         }
 
-        protected override string ProcessPayment(double amount)
+        protected override string ProcessPayment(decimal amount)
         {
-            double currentDeposit;
+            decimal currentDeposit;
             try
             {
                 currentDeposit = this.userDao.ReadDeposit(this.depositId);
@@ -42,7 +42,7 @@ namespace GalliumPlus.WebApi.Core.Orders
                 throw new CantSellException("Cet utilisateur n'existe pas.");
             }
 
-            double newDeposit = currentDeposit - amount;
+            decimal newDeposit = currentDeposit - amount;
             if (newDeposit < 0)
             {
                 throw new CantSellException(

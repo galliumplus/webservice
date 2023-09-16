@@ -24,22 +24,22 @@ namespace GalliumPlus.WebApi.Core.Orders
         /// <summary>
         /// Le prix unitaire non-adhérent, en euros.
         /// </summary>
-        public double NonMemberUnitPrice => this.product.NonMemberPrice;
+        public decimal NonMemberUnitPrice => this.product.NonMemberPrice;
 
         /// <summary>
         /// Le prix unitaire adhérent, en euros.
         /// </summary>
-        public double MemberUnitPrice => this.product.MemberPrice;
+        public decimal MemberUnitPrice => this.product.MemberPrice;
 
         /// <summary>
         /// Le prix total non-adhérent, en euros.
         /// </summary>
-        public double NonMemberTotalPrice => this.NonMemberUnitPrice * this.quantity;
+        public decimal NonMemberTotalPrice => this.NonMemberUnitPrice * this.quantity;
 
         /// <summary>
         /// Le prix total adhérent, en euros.
         /// </summary>
-        public double MemberTotalPrice => this.MemberUnitPrice * this.quantity;
+        public decimal MemberTotalPrice => this.MemberUnitPrice * this.quantity;
 
         /// <summary>
         /// Crée un item de vente.
