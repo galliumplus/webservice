@@ -64,7 +64,7 @@ namespace GalliumPlus.WebApi.Middleware.ErrorHandling
                 }
 
                 return new ErrorResult(
-                    "INVALID_ITEM",
+                    ErrorCode.INVALID_ITEM,
                     "Le format de cette ressource est invalide.",
                     400,
                     new { ModelStateErrors = modelStateErrors }

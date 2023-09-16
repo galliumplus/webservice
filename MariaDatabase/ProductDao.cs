@@ -45,7 +45,7 @@ namespace GalliumPlus.WebApi.Data.MariaDb
 
             if (affectedRows != 1)
             {
-                throw new ItemNotFoundException("produit", false);
+                throw new ItemNotFoundException("Ce produit");
             }
         }
 
@@ -98,7 +98,7 @@ namespace GalliumPlus.WebApi.Data.MariaDb
 
             if (!result.Read())
             {
-                throw new ItemNotFoundException("produit", false);
+                throw new ItemNotFoundException("Ce produit");
             }
 
             return Hydrate(result);
@@ -125,7 +125,7 @@ namespace GalliumPlus.WebApi.Data.MariaDb
 
             if (affectedRows != 1)
             {
-                throw new ItemNotFoundException("produit", false);
+                throw new ItemNotFoundException("Ce produit");
             }
 
             item.Id = key;
@@ -146,7 +146,7 @@ namespace GalliumPlus.WebApi.Data.MariaDb
 
             if (affectedRows != 1)
             {
-                throw new ItemNotFoundException("produit", false);
+                throw new ItemNotFoundException("Ce produit");
             }
         }
 
@@ -162,7 +162,7 @@ namespace GalliumPlus.WebApi.Data.MariaDb
 
             if (!result.Read())
             {
-                throw new ItemNotFoundException("image de produit", true);
+                throw new ItemNotFoundException("L'image de ce produit");
             }
 
             int size = result.GetInt32("imageSize");
@@ -204,7 +204,7 @@ namespace GalliumPlus.WebApi.Data.MariaDb
 
                 if (affectedRows != 1)
                 {
-                    throw new ItemNotFoundException("produit", false);
+                    throw new ItemNotFoundException("Ce produit");
                 }
             }
             catch(MySqlException err)
@@ -212,7 +212,7 @@ namespace GalliumPlus.WebApi.Data.MariaDb
                 // violation de clé étrangère
                 if (err.ErrorCode == MySqlErrorCode.NoReferencedRow2)
                 {
-                    throw new ItemNotFoundException("produit", false);
+                    throw new ItemNotFoundException("Ce produit");
                 }
                 else
                 {
@@ -233,7 +233,7 @@ namespace GalliumPlus.WebApi.Data.MariaDb
 
             if (affectedRows != 1)
             {
-                throw new ItemNotFoundException("image de produit", true);
+                throw new ItemNotFoundException("L'image de ce produit");
             }
         }
     }

@@ -17,17 +17,17 @@ namespace GalliumPlus.WebApi.Core.Exceptions
         /// Crée une nouvelle <see cref="ItemNotFoundException"/> indiquant
         /// précisément quel type de ressource est manquante.
         /// </summary>
-        /// <param name="itemKind">Le type de resource en minuscules.</param>
+        /// <param name="itemKind">Le type de ressource, précédé par un déterminant démonstratif.</param>
         /// <param name="femaleGendered">
         /// Mettre à faux pour les noms masculins et à vrai pour les noms
         /// féminins.
         /// </param>
-        public ItemNotFoundException(string itemKind, bool femaleGendered)
-        : base($"{(femaleGendered ? "Cette" : "Ce")} {itemKind} n'existe pas.") { }
+        public ItemNotFoundException(string itemKind)
+        : base($"{itemKind} n'existe pas.") { }
 
         /// <summary>
         /// Crée une nouvelle <see cref="ItemNotFoundException"/> générique.
         /// </summary>
-        public ItemNotFoundException() : this("ressource", true) { }
+        public ItemNotFoundException() : this("Cette ressource") { }
     }
 }

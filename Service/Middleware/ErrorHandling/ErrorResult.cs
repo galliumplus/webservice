@@ -38,13 +38,13 @@ namespace GalliumPlus.WebApi.Middleware.ErrorHandling
         /// <param name="errorData">Données additionnelles pour le déboguage</param>
         /// <returns></returns>
         public ErrorResult(
-            string errorCode,
+            ErrorCode errorCode,
             string errorMessage,
             int statusCode,
             object? errorData = null)
         : base(null)
         {
-            Value = new Error { Code = errorCode, Message = errorMessage, DebugInfo = errorData };
+            Value = new Error { Code = errorCode.ToString(), Message = errorMessage, DebugInfo = errorData };
             StatusCode = statusCode;
         }
 
@@ -55,7 +55,7 @@ namespace GalliumPlus.WebApi.Middleware.ErrorHandling
         /// <param name="statusCode">Le statut HTTP de la réponse.</param>
         public ErrorResult(GalliumException exception, int statusCode) : base(null)
         {
-            this.Value = new Error { Code = exception.ErrorCode, Message = exception.Message };
+            this.Value = new Error { Code = exception.ErrorCode.ToString(), Message = exception.Message };
             this.StatusCode = statusCode;
         }
     }

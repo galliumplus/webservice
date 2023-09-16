@@ -67,7 +67,7 @@ namespace GalliumPlus.WebApi.Data.MariaDb
 
             if (affectedRows != 1)
             {
-                throw new ItemNotFoundException("application", true);
+                throw new ItemNotFoundException("Cette application");
             }
         }
 
@@ -131,7 +131,7 @@ namespace GalliumPlus.WebApi.Data.MariaDb
 
             if (!result.Read())
             {
-                throw new ItemNotFoundException("bot", false);
+                throw new ItemNotFoundException("Ce bot");
             }
 
             byte[] hashedSecret = new byte[32];
@@ -166,7 +166,7 @@ namespace GalliumPlus.WebApi.Data.MariaDb
 
             if (!result.Read())
             {
-                throw new ItemNotFoundException("application", true);
+                throw new ItemNotFoundException("Cette application");
             }
 
             return Hydrate(result);
@@ -209,7 +209,7 @@ namespace GalliumPlus.WebApi.Data.MariaDb
 
             if (!result.Read())
             {
-                throw new ItemNotFoundException("application", true);
+                throw new ItemNotFoundException("Cette application");
             }
 
             return Hydrate(result);
@@ -230,7 +230,7 @@ namespace GalliumPlus.WebApi.Data.MariaDb
 
                 if (childAffectedRows != 1)
                 {
-                    throw new ItemNotFoundException("bot", false);
+                    throw new ItemNotFoundException("Ce bot");
                 }
             }
             else if (item is SsoClient sso)
@@ -249,7 +249,7 @@ namespace GalliumPlus.WebApi.Data.MariaDb
 
                 if (childAffectedRows != 1)
                 {
-                    throw new ItemNotFoundException("application", true);
+                    throw new ItemNotFoundException("Cette application");
                 }
             }
 
@@ -268,7 +268,7 @@ namespace GalliumPlus.WebApi.Data.MariaDb
 
             if (affectedRows != 1)
             {
-                throw new ItemNotFoundException("application", true);
+                throw new ItemNotFoundException("Cette application");
             }
 
             item.Id = key;
