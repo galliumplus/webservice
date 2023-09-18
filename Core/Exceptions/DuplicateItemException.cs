@@ -12,6 +12,9 @@ namespace GalliumPlus.WebApi.Core.Exceptions
     public class DuplicateItemException : GalliumException
     {
         public override ErrorCode ErrorCode => ErrorCode.DUPLICATE_ITEM;
+
+        public DuplicateItemException(string message): base(message) { }
+
         public DuplicateItemException() : base("Cette ressource existe déjà.") { }
     }
 }

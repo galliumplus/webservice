@@ -10,6 +10,8 @@ using System.Text.Json;
 using GalliumPlus.WebApi;
 #if FAKE_DB
 using GalliumPlus.WebApi.Data.FakeDatabase;
+#else
+using GalliumPlus.WebApi.Data.MariaDb;
 #endif
 
 var builder = WebApplication.CreateBuilder(args);

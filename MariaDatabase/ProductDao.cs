@@ -16,18 +16,18 @@ namespace GalliumPlus.WebApi.Data.MariaDb
         {
             using var connection = this.Connect();
 
-            var insertCommand = connection.CreateCommand();
-            insertCommand.CommandText
+            var command = connection.CreateCommand();
+            command.CommandText
                 = "INSERT INTO `Product`(`name`, `stock`, `nonMemberPrice`, `memberPrice`, `availability`, `category`) "
                 + "VALUES (@name, @stock, @nonMemberPrice, @memberPrice, @availability, @category)";
-            insertCommand.Parameters.AddWithValue("@name", item.Name);
-            insertCommand.Parameters.AddWithValue("@stock", item.Stock);
-            insertCommand.Parameters.AddWithValue("@nonMemberPrice", item.NonMemberPrice);
-            insertCommand.Parameters.AddWithValue("@memberPrice", item.MemberPrice);
-            insertCommand.Parameters.AddWithValue("@availability", (int)item.Availability);
-            insertCommand.Parameters.AddWithValue("@category", item.Category.Id);
+            command.Parameters.AddWithValue("@name", item.Name);
+            command.Parameters.AddWithValue("@stock", item.Stock);
+            command.Parameters.AddWithValue("@nonMemberPrice", item.NonMemberPrice);
+            command.Parameters.AddWithValue("@memberPrice", item.MemberPrice);
+            command.Parameters.AddWithValue("@availability", (int)item.Availability);
+            command.Parameters.AddWithValue("@category", item.Category.Id);
 
-            insertCommand.ExecuteNonQuery();
+            command.ExecuteNonQuery();
 
             item.Id = (int)this.SelectLastInsertId(connection);
             return item;
@@ -37,11 +37,11 @@ namespace GalliumPlus.WebApi.Data.MariaDb
         {
             using var connection = this.Connect();
 
-            var deleteCommand = connection.CreateCommand();
-            deleteCommand.CommandText = "DELETE FROM `Product` WHERE `id` = @id";
-            deleteCommand.Parameters.AddWithValue("@id", key);
+            var command = connection.CreateCommand();
+            command.CommandText = "DELETE FROM `Product` WHERE `id` = @id";
+            command.Parameters.AddWithValue("@id", key);
 
-            int affectedRows = deleteCommand.ExecuteNonQuery();
+            int affectedRows = command.ExecuteNonQuery();
 
             if (affectedRows != 1)
             {
@@ -214,10 +214,7 @@ namespace GalliumPlus.WebApi.Data.MariaDb
                 {
                     throw new ItemNotFoundException("Ce produit");
                 }
-                else
-                {
-                    throw;
-                }
+                else throw;
             }
         }
 
@@ -225,11 +222,11 @@ namespace GalliumPlus.WebApi.Data.MariaDb
         {
             using var connection = this.Connect();
 
-            var deleteCommand = connection.CreateCommand();
-            deleteCommand.CommandText = "DELETE FROM `ProductImage` WHERE `id` = @id";
-            deleteCommand.Parameters.AddWithValue("@id", id);
+            var command = connection.CreateCommand();
+            command.CommandText = "DELETE FROM `ProductImage` WHERE `id` = @id";
+            command.Parameters.AddWithValue("@id", id);
 
-            int affectedRows = deleteCommand.ExecuteNonQuery();
+            int affectedRows = command.ExecuteNonQuery();
 
             if (affectedRows != 1)
             {

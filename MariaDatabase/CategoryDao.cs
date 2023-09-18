@@ -13,11 +13,11 @@ namespace GalliumPlus.WebApi.Data.MariaDb
         {
             using var connection = this.Connect();
 
-            var insertCommand = connection.CreateCommand();
-            insertCommand.CommandText = "INSERT INTO `Category`(`name`) VALUES (@name)";
-            insertCommand.Parameters.AddWithValue("@name", item.Name);
+            var command = connection.CreateCommand();
+            command.CommandText = "INSERT INTO `Category`(`name`) VALUES (@name)";
+            command.Parameters.AddWithValue("@name", item.Name);
 
-            insertCommand.ExecuteNonQuery();
+            command.ExecuteNonQuery();
 
             return item.WithId((int)this.SelectLastInsertId(connection));
         }
@@ -26,11 +26,11 @@ namespace GalliumPlus.WebApi.Data.MariaDb
         {
             using var connection = this.Connect();
 
-            var deleteCommand = connection.CreateCommand();
-            deleteCommand.CommandText = "DELETE FROM `Category` WHERE `id` = @id";
-            deleteCommand.Parameters.AddWithValue("@id", key);
+            var command = connection.CreateCommand();
+            command.CommandText = "DELETE FROM `Category` WHERE `id` = @id";
+            command.Parameters.AddWithValue("@id", key);
 
-            int affectedRows = deleteCommand.ExecuteNonQuery();
+            int affectedRows = command.ExecuteNonQuery();
 
             if (affectedRows != 1)
             {

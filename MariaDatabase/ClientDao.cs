@@ -59,11 +59,11 @@ namespace GalliumPlus.WebApi.Data.MariaDb
         {
             using var connection = this.Connect();
 
-            var deleteCommand = connection.CreateCommand();
-            deleteCommand.CommandText = "DELETE FROM `Client` WHERE `id` = @id";
-            deleteCommand.Parameters.AddWithValue("@id", key);
+            var command = connection.CreateCommand();
+            command.CommandText = "DELETE FROM `Client` WHERE `id` = @id";
+            command.Parameters.AddWithValue("@id", key);
 
-            int affectedRows = deleteCommand.ExecuteNonQuery();
+            int affectedRows = command.ExecuteNonQuery();
 
             if (affectedRows != 1)
             {
@@ -71,7 +71,7 @@ namespace GalliumPlus.WebApi.Data.MariaDb
             }
         }
 
-        private Client Hydrate(MySqlDataReader row)
+        internal static Client Hydrate(MySqlDataReader row)
         {
             if (!row.IsDBNull("botId"))
             {

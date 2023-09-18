@@ -61,7 +61,7 @@ namespace GalliumPlus.WebApi.Middleware.Authentication
             Session session;
             try
             {
-                session = sessions.Read(token);
+                session = sessions.ReadSummary(token);
             }
             catch (ItemNotFoundException)
             {

@@ -35,7 +35,14 @@ namespace GalliumPlus.WebApi.Core.Orders
             decimal currentDeposit;
             try
             {
-                currentDeposit = this.userDao.ReadDeposit(this.depositId);
+                if (this.userDao.ReadDeposit(this.depositId) is decimal deposit)
+                {
+                    currentDeposit = deposit;
+                }
+                else
+                {
+                    throw new CantSellException("Cet utilisateur n'a pas d'acompte.");
+                }
             }
             catch (ItemNotFoundException)
             {

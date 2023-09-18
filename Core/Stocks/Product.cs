@@ -63,20 +63,6 @@ namespace GalliumPlus.WebApi.Core.Stocks
             _ => false,
         };
 
-        private static decimal CheckPrice(decimal price)
-        {
-            decimal cents = price * 100;
-            if (cents < 0)
-            {
-                throw new InvalidItemException("Un prix ne peux pas être négatif.");
-            }
-            if (cents % 1 != 0)
-            {
-                throw new InvalidItemException("Un prix ne peu pas avoir des fractions de centimes.");
-            }
-            return price;
-        }
-
         /// <summary>
         /// Crée un produit.
         /// </summary>
@@ -99,8 +85,8 @@ namespace GalliumPlus.WebApi.Core.Stocks
             this.id = id;
             this.name = name;
             this.stock = stock;
-            this.nonMemberPrice = CheckPrice(nonMemberPrice);
-            this.memberPrice = CheckPrice(memberPrice);
+            this.nonMemberPrice = MonetaryValue.CheckNonNegative(nonMemberPrice, "Un prix");
+            this.memberPrice = MonetaryValue.CheckNonNegative(memberPrice, "Un prix");
             this.availability = availability;
             this.category = category;
         }
