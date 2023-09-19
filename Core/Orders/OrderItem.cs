@@ -42,6 +42,9 @@ namespace GalliumPlus.WebApi.Core.Orders
         /// </summary>
         public decimal MemberTotalPrice => this.MemberUnitPrice * this.quantity;
 
+        /// <summary>
+        /// Une représentation humaine du produit.
+        /// </summary>
         public string Description
         {
             get

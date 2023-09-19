@@ -1,5 +1,8 @@
 ﻿namespace GalliumPlus.WebApi.Core.History
 {
+    /// <summary>
+    /// Représente une entrée de l'historique.
+    /// </summary>
     public class HistoryAction
     {
         private HistoryActionKind actionKind;

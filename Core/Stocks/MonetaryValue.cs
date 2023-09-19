@@ -2,8 +2,20 @@
 
 namespace GalliumPlus.WebApi.Core.Stocks
 {
-    public class MonetaryValue
+    /// <summary>
+    /// Classe d'aide à la validation des valeurs monétaires.
+    /// </summary>
+    public static class MonetaryValue
     {
+        /// <summary>
+        /// Vérifie qu'un nombre décimal n'as pas plus de deux chiffres après la virgules.
+        /// </summary>
+        /// <param name="euros">La valeur à vérifier.</param>
+        /// <param name="description">
+        /// Une description de la valeur à véridfier, utilisée pour générer des messages d'erreurs plus précis.
+        /// </param>
+        /// <returns></returns>
+        /// <exception cref="InvalidItemException"></exception>
         public static decimal Check(decimal euros, string description = "Une valeur en Euros")
         {
             decimal cents = euros * 100;

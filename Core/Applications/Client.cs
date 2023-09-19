@@ -4,7 +4,7 @@ using GalliumPlus.WebApi.Core.Users;
 namespace GalliumPlus.WebApi.Core.Applications
 {
     /// <summary>
-    /// Réprésente une application depuis laquelle l'utilisateur utilise l'API.
+    /// Réprésente une application depuis laquelle l'API est utilisée.
     /// </summary>
     public class Client
     {

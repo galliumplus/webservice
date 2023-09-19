@@ -9,16 +9,28 @@ namespace GalliumPlus.WebApi.Core.Orders
     /// </summary>
     public class Order
     {
+        /// <summary>
+        /// Le nom d'utilisateur spécial indiquant un adhérent anonyme.
+        /// </summary>
         public const string ANONYMOUS_MEMBER_ID = "@anonymousmember";
 
         private PaymentMethod paymentMethod;
         private List<OrderItem> items;
         private User? customer;
 
+        /// <summary>
+        /// La méthode de paiement utilisée pour cette commande.
+        /// </summary>
         public PaymentMethod PaymentMethod => this.paymentMethod;
 
+        /// <summary>
+        /// Le client qui a passé cette commande.
+        /// </summary>
         public User? Customer => this.customer;
 
+        /// <summary>
+        /// Une représentation humaine de la liste des produits achetés.
+        /// </summary>
         public string ItemsDescription => String.Join(", ", this.items.Select(item => item.Description));
 
         /// <summary>

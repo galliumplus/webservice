@@ -22,6 +22,9 @@ namespace GalliumPlus.WebApi.Core.Orders
 
         protected abstract string ProcessPayment(decimal amount);
 
+        /// <summary>
+        /// Le nom de la méthode de paiement.
+        /// </summary>
         public abstract string Description { get; }
     }
 }
