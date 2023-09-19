@@ -22,6 +22,12 @@ namespace GalliumPlus.WebApi.Core.Orders
         private List<OrderItem> items;
         private User? customer;
 
+        public PaymentMethod PaymentMethod => this.paymentMethod;
+
+        public User? Customer => this.customer;
+
+        public string ItemsDescription => String.Join(", ", this.items.Select(item => item.Description));
+
         /// <summary>
         /// Crée une vente.
         /// </summary>
@@ -76,7 +82,7 @@ namespace GalliumPlus.WebApi.Core.Orders
             }
         }
 
-        private decimal TotalPrice()
+        public decimal TotalPrice()
         {
             decimal result = 0;
 

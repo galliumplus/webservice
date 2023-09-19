@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace GalliumPlus.WebApi.Core.Stocks
 {
-    internal class MonetaryValue
+    public class MonetaryValue
     {
-        internal static decimal Check(decimal euros, string description = "Une valeur en Euros")
+        public static decimal Check(decimal euros, string description = "Une valeur en Euros")
         {
             decimal cents = euros * 100;
             if (cents % 1 != 0)
@@ -19,7 +19,7 @@ namespace GalliumPlus.WebApi.Core.Stocks
             return euros;
         }
 
-        internal static decimal CheckNonNegative(decimal euros, string description)
+        public static decimal CheckNonNegative(decimal euros, string description)
         {
             if (euros < 0)
             {

@@ -1,6 +1,8 @@
 ﻿using GalliumPlus.WebApi.Core;
 using GalliumPlus.WebApi.Core.Data;
 using GalliumPlus.WebApi.Core.Exceptions;
+using GalliumPlus.WebApi.Core.History;
+using GalliumPlus.WebApi.Core.Stocks;
 using GalliumPlus.WebApi.Core.Users;
 using GalliumPlus.WebApi.Dto;
 using GalliumPlus.WebApi.Middleware.Authorization;
@@ -16,12 +18,15 @@ namespace GalliumPlus.WebApi.Controllers
     public class UserController : Controller
     {
         private IUserDao userDao;
+        private IHistoryDao historyDao;
         private UserSummary.Mapper summaryMapper = new();
         private UserDetails.Mapper detailsMapper = new();
 
-        public UserController(IUserDao userDao)
+        public UserController(IUserDao userDao, IHistoryDao historyDao)
         {
             this.userDao = userDao;
+            this.historyDao = historyDao;
+
         }
 
         [HttpGet]
@@ -59,6 +64,15 @@ namespace GalliumPlus.WebApi.Controllers
         public IActionResult Post(UserSummary newUser)
         {
             User user = this.userDao.Create(this.summaryMapper.ToModel(newUser, this.userDao));
+
+            HistoryAction action = new(
+                HistoryActionKind.EDIT_USERS_OR_ROLES,
+                $"Ajout de l'utilisateur {user.Id}",
+                this.User!.Id,
+                user.Id
+            );
+            this.historyDao.AddEntry(action);
+
             return Created("user", user.Id, this.detailsMapper.FromModel(user));
         }
 
@@ -67,6 +81,19 @@ namespace GalliumPlus.WebApi.Controllers
         public IActionResult Put(string id, UserSummary updatedUser)
         {
             this.userDao.Update(id, this.summaryMapper.ToModel(updatedUser, this.userDao));
+
+            if (updatedUser.Id != id)
+            {
+                this.historyDao.UpdateUserId(id, updatedUser.Id);
+            }
+            HistoryAction action = new(
+                HistoryActionKind.EDIT_USERS_OR_ROLES,
+                $"Modification de l'utilisateur {updatedUser.Id}",
+                this.User!.Id,
+                updatedUser.Id
+            );
+            this.historyDao.AddEntry(action);
+
             return Ok();
         }
 
@@ -74,15 +101,41 @@ namespace GalliumPlus.WebApi.Controllers
         [RequiresPermissions(Permissions.MANAGE_USERS)]
         public IActionResult Delete(string id)
         {
+            User userToDelete = this.userDao.Read(id);
+
+            if (userToDelete.MayBeDeleted)
+            {
+                throw new PermissionDeniedException(Permissions.NONE);
+            }
+
             this.userDao.Delete(id);
+
+            HistoryAction action = new(
+                HistoryActionKind.EDIT_USERS_OR_ROLES,
+                $"Supression de l'utilisateur {userToDelete.Id}",
+                this.User!.Id,
+                userToDelete.Id
+            );
+            this.historyDao.AddEntry(action);
+
             return Ok();
         }
 
         [HttpPut("{id}/deposit")]
         [RequiresPermissions(Permissions.MANAGE_DEPOSITS)]
-        public IActionResult PutDeposit(string id, [FromBody] double updatedDeposit)
+        public IActionResult PutDeposit(string id, [FromBody] decimal updatedDeposit)
         {
-            this.userDao.UpdateDeposit(id, updatedDeposit);
+            this.userDao.UpdateDeposit(id, MonetaryValue.CheckNonNegative(updatedDeposit, "Un acompte"));
+
+            HistoryAction action = new(
+                HistoryActionKind.EDIT_USERS_OR_ROLES,
+                $"Ajout/retrait sur l'acompte de l'utilisateur {id}",
+                this.User!.Id,
+                id,
+                updatedDeposit
+            );
+            this.historyDao.AddEntry(action);
+
             return Ok();
         }
     }

@@ -1,7 +1,7 @@
-﻿using GalliumPlus.WebApi.Core;
-using GalliumPlus.WebApi.Core.Applications;
+﻿using GalliumPlus.WebApi.Core.Applications;
 using GalliumPlus.WebApi.Core.Data;
 using GalliumPlus.WebApi.Core.Exceptions;
+using GalliumPlus.WebApi.Core.History;
 using GalliumPlus.WebApi.Core.Users;
 using GalliumPlus.WebApi.Dto;
 using GalliumPlus.WebApi.Middleware.ErrorHandling;
@@ -15,11 +15,13 @@ namespace GalliumPlus.WebApi.Controllers
     public class AccessController : Controller
     {
         private ISessionDao sessionDao;
+        private IHistoryDao historyDao;
         private LoggedIn.Mapper mapper = new();
 
-        public AccessController(ISessionDao sessionDao)
+        public AccessController(ISessionDao sessionDao, IHistoryDao historyDao)
         {
             this.sessionDao = sessionDao;
+            this.historyDao = historyDao;
         }
 
         [HttpPost("login")]
@@ -32,10 +34,10 @@ namespace GalliumPlus.WebApi.Controllers
             if (!app.AllowUserLogin)
             {
                 return new ErrorResult(
-                   "LOGIN_DENIED",
-                   $"Vous ne pouvez pas vous connecter via {app.Name}.",
+                   ErrorCode.PERMISSION_DENIED,
+                   $"Vous ne pouvez pas vous connecter directement à {app.Name}.",
                    StatusCodes.Status403Forbidden,
-                   new { AppEnabled = app.IsEnabled, UserLoginAllowed = app.AllowUsers }
+                   new { AppEnabled = app.IsEnabled, UserLoginAllowed = app.AllowUserLogin }
                );
             }
 
@@ -45,6 +47,14 @@ namespace GalliumPlus.WebApi.Controllers
                 {
                     Session session = Session.LogIn(app, user);
                     this.sessionDao.Create(session);
+                    
+                    HistoryAction action = new(
+                        HistoryActionKind.LOG_IN,
+                        $"Connexion à {app.Name}",
+                        user.Id
+                    );
+                    this.historyDao.AddEntry(action);
+
                     return Json(this.mapper.FromModel(session));
                 }
                 catch (DuplicateItemException) { }
@@ -64,6 +74,13 @@ namespace GalliumPlus.WebApi.Controllers
                 {
                     Session session = Session.LogIn(bot);
                     this.sessionDao.Create(session);
+
+                    HistoryAction action = new(
+                        HistoryActionKind.LOG_IN,
+                        $"Connexion de {bot.Name}"
+                    );
+                    this.historyDao.AddEntry(action);
+
                     return Json(this.mapper.FromModel(session));
                 }
                 catch (DuplicateItemException) { }

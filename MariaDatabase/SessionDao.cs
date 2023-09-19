@@ -3,7 +3,6 @@ using GalliumPlus.WebApi.Core.Data;
 using GalliumPlus.WebApi.Core.Exceptions;
 using GalliumPlus.WebApi.Core.Users;
 using MySqlConnector;
-using System.Reflection.Metadata.Ecma335;
 
 namespace GalliumPlus.WebApi.Data.MariaDb
 {

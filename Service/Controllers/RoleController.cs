@@ -1,4 +1,5 @@
 ﻿using GalliumPlus.WebApi.Core.Data;
+using GalliumPlus.WebApi.Core.History;
 using GalliumPlus.WebApi.Core.Users;
 using GalliumPlus.WebApi.Dto;
 using GalliumPlus.WebApi.Middleware.Authorization;
@@ -13,11 +14,14 @@ namespace GalliumPlus.WebApi.Controllers
     public class RoleController : Controller
     {
         private IRoleDao roleDao;
+        private IHistoryDao historyDao;
         private RoleDetails.Mapper mapper = new();
 
-        public RoleController(IRoleDao roleDao)
+        public RoleController(IRoleDao roleDao, IHistoryDao historyDao)
         {
             this.roleDao = roleDao;
+            this.historyDao = historyDao;
+
         }
 
         [HttpGet]
@@ -39,6 +43,14 @@ namespace GalliumPlus.WebApi.Controllers
         public IActionResult Post(RoleDetails newRole)
         {
             Role role = this.roleDao.Create(mapper.ToModel(newRole, this.roleDao));
+
+            HistoryAction action = new(
+                HistoryActionKind.EDIT_USERS_OR_ROLES,
+                $"Ajout du rôle {role.Name}",
+                this.User!.Id
+            );
+            this.historyDao.AddEntry(action);
+
             return Created("role", role.Id, mapper.FromModel(role));
         }
 
@@ -47,6 +59,14 @@ namespace GalliumPlus.WebApi.Controllers
         public IActionResult Put(int id, RoleDetails updatedRole)
         {
             this.roleDao.Update(id, mapper.ToModel(updatedRole, this.roleDao));
+
+            HistoryAction action = new(
+                HistoryActionKind.EDIT_USERS_OR_ROLES,
+                $"Modification du rôle {updatedRole.Name}",
+                this.User!.Id
+            );
+            this.historyDao.AddEntry(action);
+
             return Ok();
         }
 
@@ -54,7 +74,16 @@ namespace GalliumPlus.WebApi.Controllers
         [RequiresPermissions(Permissions.MANAGE_ROLES)]
         public IActionResult Delete(int id)
         {
+            string roleName = this.roleDao.Read(id).Name;
             this.roleDao.Delete(id);
+
+            HistoryAction action = new(
+                HistoryActionKind.EDIT_USERS_OR_ROLES,
+                $"Suppression du rôle {roleName}",
+                this.User!.Id
+            );
+            this.historyDao.AddEntry(action);
+
             return Ok();
         }
     }

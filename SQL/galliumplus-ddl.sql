@@ -94,8 +94,9 @@ CREATE TABLE `HistoryAction` (
     `text` VARCHAR(120) NOT NULL,
     `time` DATETIME NOT NULL,
     `kind` INTEGER NOT NULL,
-    `actor` INTEGER NOT NULL,
-    `target` INTEGER NOT NULL,
+    `actor` INTEGER,
+    `target` INTEGER,
+    `numericValue` DECIMAL(6,2),
     PRIMARY KEY (`id`)
 );
 
@@ -107,9 +108,9 @@ CREATE TABLE `HistoryActionKind` (
 
 CREATE TABLE `HistoryUser` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `displayName` VARCHAR(120) NOT NULL,
-    `activeUser` INTEGER,
-    PRIMARY KEY (`id`)
+    `userId` VARCHAR(20) NOT NULL CHARACTER SET ascii COLLATE ascii_bin,
+    PRIMARY KEY (`id`),
+    UNIQUE (`userId`)
 );
 
 ALTER TABLE `User`          ADD FOREIGN KEY (`role`)         REFERENCES `Role`(`id`)           ON UPDATE CASCADE  ON DELETE RESTRICT;

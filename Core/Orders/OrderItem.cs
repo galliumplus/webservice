@@ -1,5 +1,6 @@
 ﻿using GalliumPlus.WebApi.Core.Stocks;
 using GalliumPlus.WebApi.Core.Exceptions;
+using System.Text;
 
 namespace GalliumPlus.WebApi.Core.Orders
 {
@@ -40,6 +41,17 @@ namespace GalliumPlus.WebApi.Core.Orders
         /// Le prix total adhérent, en euros.
         /// </summary>
         public decimal MemberTotalPrice => this.MemberUnitPrice * this.quantity;
+
+        public string Description {
+            get {
+                StringBuilder sb = new(this.product.Name);
+                if (this.quantity > 1)
+                {
+                    sb.AppendFormat(" ×{0}", this.quantity);
+                }
+                return sb.ToString();
+            }
+        }
 
         /// <summary>
         /// Crée un item de vente.

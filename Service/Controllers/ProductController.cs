@@ -1,4 +1,5 @@
 ﻿using GalliumPlus.WebApi.Core.Data;
+using GalliumPlus.WebApi.Core.History;
 using GalliumPlus.WebApi.Core.Stocks;
 using GalliumPlus.WebApi.Core.Users;
 using GalliumPlus.WebApi.Dto;
@@ -15,12 +16,15 @@ namespace GalliumPlus.WebApi.Controllers
     public class ProductController : Controller
     {
         private IProductDao productDao;
+        private IHistoryDao historyDao;
         private ProductSummary.Mapper summaryMapper = new();
         private ProductDetails.Mapper detailsMapper = new();
 
-        public ProductController(IProductDao productDao)
+        public ProductController(IProductDao productDao, IHistoryDao historyDao)
         {
             this.productDao = productDao;
+            this.historyDao = historyDao;
+
         }
 
         [HttpGet]
@@ -46,45 +50,87 @@ namespace GalliumPlus.WebApi.Controllers
         }
 
         [HttpPost]
-        [RequiresPermissions(Permissions.MANAGE_CATEGORIES)]
+        [RequiresPermissions(Permissions.MANAGE_PRODUCTS)]
         public IActionResult Post(ProductSummary newProduct)
         {
             Product product = this.productDao.Create(this.summaryMapper.ToModel(newProduct, this.productDao));
+
+            HistoryAction action = new(
+                HistoryActionKind.EDIT_PRODUCT_OR_CATEGORIES,
+                $"Ajout du produit {product.Name}",
+                this.User!.Id
+            );
+            this.historyDao.AddEntry(action);
+
             return Created("product", product.Id, this.summaryMapper.FromModel(product));
         }
 
         [HttpPut("{id}")]
-        [RequiresPermissions(Permissions.MANAGE_CATEGORIES)]
+        [RequiresPermissions(Permissions.MANAGE_PRODUCTS)]
         public IActionResult Put(int id, ProductSummary updatedProduct)
         {
             this.productDao.Update(id, this.summaryMapper.ToModel(updatedProduct, this.productDao));
+
+            HistoryAction action = new(
+                HistoryActionKind.EDIT_PRODUCT_OR_CATEGORIES,
+                $"Modification du produit {updatedProduct.Name}",
+                this.User!.Id
+            );
+            this.historyDao.AddEntry(action);
+
             return Ok();
         }
 
         [HttpPut("{id}/image")]
         [ConsumesProductImages]
-        [RequiresPermissions(Permissions.MANAGE_CATEGORIES)]
+        [RequiresPermissions(Permissions.MANAGE_PRODUCTS)]
         public async Task<IActionResult> PutImage(int id, [FromBody] byte[] image)
         {
-            Console.WriteLine(Request.ContentType);
             ProductImage normalisedImage = await ProductImage.FromAnyImage(image, Request.ContentType ?? "");
             this.productDao.SetImage(id, normalisedImage);
+
+            string productName = this.productDao.Read(id).Name;
+            HistoryAction action = new(
+                HistoryActionKind.EDIT_PRODUCT_OR_CATEGORIES,
+                $"Modification de l'image du produit {productName}",
+                this.User!.Id
+            );
+            this.historyDao.AddEntry(action);
+
             return Ok();
         }
 
         [HttpDelete("{id}")]
-        [RequiresPermissions(Permissions.MANAGE_CATEGORIES)]
+        [RequiresPermissions(Permissions.MANAGE_PRODUCTS)]
         public IActionResult Delete(int id)
         {
+            string productName = this.productDao.Read(id).Name;
             this.productDao.Delete(id);
+
+            HistoryAction action = new(
+                HistoryActionKind.EDIT_PRODUCT_OR_CATEGORIES,
+                $"Suppression du produit {productName}",
+                this.User!.Id
+            );
+            this.historyDao.AddEntry(action);
+
             return Ok();
         }
 
         [HttpDelete("{id}/image")]
-        [RequiresPermissions(Permissions.MANAGE_CATEGORIES)]
+        [RequiresPermissions(Permissions.MANAGE_PRODUCTS)]
         public IActionResult DeleteImage(int id)
         {
+            string productName = this.productDao.Read(id).Name;
             this.productDao.UnsetImage(id);
+
+            HistoryAction action = new(
+                HistoryActionKind.EDIT_PRODUCT_OR_CATEGORIES,
+                $"Suppression de l'image du produit {productName}",
+                this.User!.Id
+            );
+            this.historyDao.AddEntry(action);
+
             return Ok();
         }
     }

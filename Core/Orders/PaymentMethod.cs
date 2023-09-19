@@ -28,5 +28,7 @@ namespace GalliumPlus.WebApi.Core.Orders
         }
 
         protected abstract string ProcessPayment(decimal amount);
+
+        public abstract string Description { get; }
     }
 }
