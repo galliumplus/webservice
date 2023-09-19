@@ -1,13 +1,7 @@
 ﻿using GalliumPlus.WebApi.Core.Data;
 using GalliumPlus.WebApi.Core.Exceptions;
-using GalliumPlus.WebApi.Core.Stocks;
 using GalliumPlus.WebApi.Core.Users;
 using MySqlConnector;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GalliumPlus.WebApi.Data.MariaDb
 {

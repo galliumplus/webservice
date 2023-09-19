@@ -1,5 +1,4 @@
 ﻿using MySqlConnector;
-using System.Xml.Serialization;
 
 namespace GalliumPlus.WebApi.Data.MariaDb
 {

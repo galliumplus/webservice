@@ -48,7 +48,7 @@ namespace GalliumPlus.WebApi.Dto
                     {
                         customer = userDao.Read(dto.Customer);
                     }
-                    catch(ItemNotFoundException)
+                    catch (ItemNotFoundException)
                     {
                         throw new InvalidItemException($"L'utilisateur « {dto.Customer} » n'existe pas");
                     }

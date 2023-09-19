@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using GalliumPlus.WebApi.Core.Exceptions;
+﻿using GalliumPlus.WebApi.Core.Exceptions;
 
 namespace CoreTest.Orders
 {

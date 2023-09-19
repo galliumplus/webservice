@@ -1,5 +1,4 @@
-﻿using GalliumPlus.WebApi.Core;
-using GalliumPlus.WebApi.Core.Data;
+﻿using GalliumPlus.WebApi.Core.Data;
 using GalliumPlus.WebApi.Core.Orders;
 using System.ComponentModel.DataAnnotations;
 

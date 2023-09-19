@@ -1,12 +1,10 @@
 ﻿using GalliumPlus.WebApi.Core.Data;
 using GalliumPlus.WebApi.Core.History;
 using GalliumPlus.WebApi.Core.Orders;
-using GalliumPlus.WebApi.Core.Stocks;
 using GalliumPlus.WebApi.Core.Users;
 using GalliumPlus.WebApi.Dto;
 using GalliumPlus.WebApi.Middleware.Authorization;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GalliumPlus.WebApi.Controllers

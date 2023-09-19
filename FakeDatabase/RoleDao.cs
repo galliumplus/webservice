@@ -1,5 +1,4 @@
 ﻿using GalliumPlus.WebApi.Core.Data;
-using GalliumPlus.WebApi.Core.Orders;
 using GalliumPlus.WebApi.Core.Users;
 
 namespace GalliumPlus.WebApi.Data.FakeDatabase

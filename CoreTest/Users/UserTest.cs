@@ -1,5 +1,4 @@
-﻿using System;
-using GalliumPlus.WebApi.Core.Exceptions;
+﻿using GalliumPlus.WebApi.Core.Exceptions;
 
 namespace CoreTest.Users
 {

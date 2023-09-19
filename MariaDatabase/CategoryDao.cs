@@ -52,7 +52,7 @@ namespace GalliumPlus.WebApi.Data.MariaDb
 
             var readCommand = connection.CreateCommand();
             readCommand.CommandText = "SELECT `id`, `name` FROM `Category`";
-            
+
             var results = readCommand.ExecuteReader();
 
             return this.ReadResults(results, Hydrate);

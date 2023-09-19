@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace GalliumPlus.WebApi.Core.Exceptions
+﻿namespace GalliumPlus.WebApi.Core.Exceptions
 {
     /// <summary>
     /// Erreur indiquant qu'une resource n'existe pas.

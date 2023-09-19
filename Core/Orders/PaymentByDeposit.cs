@@ -1,7 +1,5 @@
 ﻿using GalliumPlus.WebApi.Core.Data;
 using GalliumPlus.WebApi.Core.Exceptions;
-using GalliumPlus.WebApi.Core.Users;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 
 namespace GalliumPlus.WebApi.Core.Orders

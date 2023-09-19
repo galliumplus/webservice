@@ -25,7 +25,7 @@ namespace GalliumPlus.WebApi.Data.MariaDb
         protected IEnumerable<T> ReadResults<T>(MySqlDataReader reader, Func<MySqlDataReader, T> hydration)
         {
             List<T> results = new();
-            while(reader.Read())
+            while (reader.Read())
             {
                 results.Add(hydration(reader));
             }

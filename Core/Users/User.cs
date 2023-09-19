@@ -1,4 +1,3 @@
-using System.Text.Json.Serialization;
 using GalliumPlus.WebApi.Core.Exceptions;
 using GalliumPlus.WebApi.Core.Stocks;
 

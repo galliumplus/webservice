@@ -47,7 +47,7 @@ namespace GalliumPlus.WebApi.Controllers
                 {
                     Session session = Session.LogIn(app, user);
                     this.sessionDao.Create(session);
-                    
+
                     HistoryAction action = new(
                         HistoryActionKind.LOG_IN,
                         $"Connexion à {app.Name}",

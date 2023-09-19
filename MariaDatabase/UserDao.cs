@@ -34,7 +34,7 @@ namespace GalliumPlus.WebApi.Data.MariaDb
             {
                 command.ExecuteNonQuery();
             }
-            catch(MySqlException error)
+            catch (MySqlException error)
             {
                 if (error.ErrorCode == MySqlErrorCode.DuplicateKeyEntry)
                 {
@@ -80,7 +80,7 @@ namespace GalliumPlus.WebApi.Data.MariaDb
                 identity,
                 role,
                 row.IsDBNull("deposit") ? null : row.GetDecimal("deposit"),
-                row.GetBoolean("isMember")                
+                row.GetBoolean("isMember")
             );
         }
 

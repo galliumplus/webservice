@@ -2,7 +2,6 @@
 using GalliumPlus.WebApi.Core.Exceptions;
 using GalliumPlus.WebApi.Core.Stocks;
 using MySqlConnector;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace GalliumPlus.WebApi.Data.MariaDb
 {
@@ -75,7 +74,7 @@ namespace GalliumPlus.WebApi.Data.MariaDb
                 + "`stock`, `nonMemberPrice`, `memberPrice`, `availability`, "
                 + "`Category`.`id` as `categoryId`, `Category`.`name` as `categoryName` "
                 + "FROM `Product` INNER JOIN `Category` ON `Category`.`id` = `Product`.`category`";
-            
+
             var results = readCommand.ExecuteReader();
 
             return this.ReadResults(results, Hydrate);
@@ -207,7 +206,7 @@ namespace GalliumPlus.WebApi.Data.MariaDb
                     throw new ItemNotFoundException("Ce produit");
                 }
             }
-            catch(MySqlException err)
+            catch (MySqlException err)
             {
                 // violation de clé étrangère
                 if (err.ErrorCode == MySqlErrorCode.NoReferencedRow2)

@@ -1,6 +1,4 @@
 ﻿using GalliumPlus.WebApi.Core.Exceptions;
-using GalliumPlus.WebApi.Core.Orders;
-using GalliumPlus.WebApi.Core.Users;
 
 namespace CoreTest.Orders
 {

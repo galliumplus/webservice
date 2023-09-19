@@ -1,6 +1,4 @@
-﻿using GalliumPlus.WebApi.Core.Exceptions;
-
-namespace GalliumPlus.WebApi.Core.Stocks
+﻿namespace GalliumPlus.WebApi.Core.Stocks
 {
     /// <summary>
     /// Un produit.

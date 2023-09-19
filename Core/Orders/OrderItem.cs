@@ -1,5 +1,5 @@
-﻿using GalliumPlus.WebApi.Core.Stocks;
-using GalliumPlus.WebApi.Core.Exceptions;
+﻿using GalliumPlus.WebApi.Core.Exceptions;
+using GalliumPlus.WebApi.Core.Stocks;
 using System.Text;
 
 namespace GalliumPlus.WebApi.Core.Orders
@@ -42,8 +42,10 @@ namespace GalliumPlus.WebApi.Core.Orders
         /// </summary>
         public decimal MemberTotalPrice => this.MemberUnitPrice * this.quantity;
 
-        public string Description {
-            get {
+        public string Description
+        {
+            get
+            {
                 StringBuilder sb = new(this.product.Name);
                 if (this.quantity > 1)
                 {
