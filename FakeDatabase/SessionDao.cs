@@ -68,5 +68,7 @@ namespace GalliumPlus.WebApi.Data.FakeDatabase
         {
             throw new InvalidOperationException("A session token is read-only");
         }
+
+        public Session ReadSummary(string token) => this.Read(token);
     }
 }

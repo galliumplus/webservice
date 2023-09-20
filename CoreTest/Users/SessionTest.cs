@@ -10,10 +10,9 @@
 
         private readonly User user = new User(
             "mmansouri",
-            "Mehdi Mansouri",
+            new UserIdentity("Mehdi", "Mansouri", "mehdi.mansouri@iut-dijon.u-bourgogne.fr", "PROF"),
             new Role(0, "Adhérent", Permissions.NONE),
-            "Prof",
-            21.30,
+            21.30m,
             false
         );
 

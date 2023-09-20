@@ -42,6 +42,8 @@ namespace GalliumPlus.WebApi.Data.MariaDb
                 }
                 else throw;
             }
+
+            return item;
         }
 
         public void Delete(string key)

@@ -24,7 +24,7 @@
             Assert.True(bot.IsEnabled);
             Assert.Equal(Permissions.RESET_MEMBERSHIPS, bot.Granted);
             Assert.Equal(Permissions.NONE, bot.Revoked);
-            Assert.False(bot.AllowUsers);
+            Assert.False(bot.AllowUserLogin);
         }
 
         [Fact]
@@ -41,7 +41,7 @@
             Assert.True(bot.IsEnabled);
             Assert.Equal(Permissions.RESET_MEMBERSHIPS, bot.Granted);
             Assert.Equal(Permissions.NONE, bot.Revoked);
-            Assert.False(bot.AllowUsers);
+            Assert.False(bot.AllowUserLogin);
         }
 
         [Fact]

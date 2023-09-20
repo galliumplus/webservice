@@ -16,8 +16,7 @@ namespace GalliumPlus.WebApi.Data.FakeDatabase
                     apiKey: "test-api-key-normal",
                     isEnabled: true,
                     granted: Permissions.NONE,
-                    revoked: Permissions.NONE,
-                    allowUsers: true
+                    revoked: Permissions.NONE
                 )
             );
 
@@ -32,8 +31,7 @@ namespace GalliumPlus.WebApi.Data.FakeDatabase
                            | Permissions.NOT_MANAGE_DEPOSITS
                            | Permissions.NOT_MANAGE_PRODUCTS
                            | Permissions.NOT_MANAGE_ROLES
-                           | Permissions.NOT_MANAGE_USERS,
-                    allowUsers: true
+                           | Permissions.NOT_MANAGE_USERS
                 )
             );
 
@@ -44,8 +42,7 @@ namespace GalliumPlus.WebApi.Data.FakeDatabase
                     apiKey: "test-api-key-minimum",
                     isEnabled: true,
                     granted: Permissions.SEE_PRODUCTS_AND_CATEGORIES,
-                    revoked: Permissions.NONE,
-                    allowUsers: true
+                    revoked: Permissions.NONE
                 )
             );
 

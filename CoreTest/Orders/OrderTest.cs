@@ -88,17 +88,17 @@ namespace CoreTest.Orders
                 customer
             );
 
-            double depositBefore = users.ReadDeposit("lomens");
+            decimal? depositBefore = users.ReadDeposit("lomens");
             int stock1Before = products.Read(0).Stock;
             int stock2Before = products.Read(1).Stock;
 
             order.ProcessPaymentAndUpdateStock(products);
 
-            double depositAfter = users.ReadDeposit("lomens");
+            decimal? depositAfter = users.ReadDeposit("lomens");
             int stock1After = products.Read(0).Stock;
             int stock2After = products.Read(1).Stock;
 
-            double expectedPrice = product1.MemberPrice + product2.MemberPrice * 2;
+            decimal? expectedPrice = product1.MemberPrice + product2.MemberPrice * 2;
             Assert.Equal(depositAfter, depositBefore - expectedPrice);
             Assert.Equal(stock1After, stock1Before - 1);
             Assert.Equal(stock2After, stock2Before - 2);

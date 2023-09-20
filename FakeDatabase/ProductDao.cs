@@ -26,19 +26,19 @@ namespace GalliumPlus.WebApi.Data.FakeDatabase
             int createdId;
 
             createdId = this.Create(new Product(
-                0, "Coca Cherry", 27, 1.00, 0.80,
+                0, "Coca Cherry", 27, 1.00m, 0.80m,
                 Availability.AUTO, categoryDao.Read(0)
             )).Id;
             this.images.Add(createdId, defaultImage);
 
             createdId = this.Create(new Product(
-                0, "KitKat", 14, 0.80, 0.60,
+                0, "KitKat", 14, 0.80m, 0.60m,
                 Availability.AUTO, categoryDao.Read(1)
             )).Id;
             this.images.Add(createdId, defaultImage);
 
             createdId = this.Create(new Product(
-                0, "Pablo", 1, 999.99, 500.00,
+                0, "Pablo", 1, 999.99m, 500.00m,
                 Availability.ALWAYS, categoryDao.Read(2)
             )).Id;
             this.images.Add(createdId, defaultImage);

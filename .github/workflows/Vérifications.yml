@@ -18,7 +18,7 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet build --no-restore /warnaserror -c Test
+      run: dotnet build --no-restore /warnaserror -c Release
   
   unit-tests:
     runs-on: ubuntu-latest

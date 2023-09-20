@@ -41,6 +41,13 @@ builder.Services.AddSingleton<IProductDao, ProductDao>();
 builder.Services.AddSingleton<IRoleDao, RoleDao>();
 builder.Services.AddSingleton<ISessionDao, SessionDao>();
 builder.Services.AddSingleton<IUserDao, UserDao>();
+#else
+builder.Services.AddScoped<ICategoryDao, CategoryDao>();
+builder.Services.AddScoped<IClientDao, ClientDao>();
+builder.Services.AddScoped<IProductDao, ProductDao>();
+builder.Services.AddScoped<IRoleDao, RoleDao>();
+builder.Services.AddScoped<ISessionDao, SessionDao>();
+builder.Services.AddScoped<IUserDao, UserDao>();
 #endif
 
 builder.Services.Configure<JsonOptions>(options =>
