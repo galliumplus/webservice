@@ -10,6 +10,16 @@
         private string? actor, target;
         private decimal? numericValue;
 
+        public HistoryActionKind ActionKind => this.actionKind;
+
+        public string Text => this.text;
+
+        public string? Actor => this.actor;
+
+        public string? Target => this.target;
+
+        public decimal? NumericValue => this.numericValue;
+
         public HistoryAction(
             HistoryActionKind actionKind,
             string text,
