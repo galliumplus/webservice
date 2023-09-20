@@ -65,10 +65,9 @@ namespace GalliumPlus.WebApi.Dto
             {
                 return new User(
                     "anonymous",
-                    "Anonyme",
+                    new UserIdentity("Anonyme", "", "", ""),
                     new Role(-1, "Membre anonyme", Permissions.NONE),
-                    "Anonyme",
-                    0.00,
+                    0.00m,
                     false
                 );
             }

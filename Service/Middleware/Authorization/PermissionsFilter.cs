@@ -1,4 +1,5 @@
-﻿using GalliumPlus.WebApi.Core.Users;
+﻿using GalliumPlus.WebApi.Core.Exceptions;
+using GalliumPlus.WebApi.Core.Users;
 using GalliumPlus.WebApi.Middleware.ErrorHandling;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -46,7 +47,7 @@ namespace GalliumPlus.WebApi.Middleware.Authorization
             };
 
             context.Result = new ErrorResult(
-                "PERMISSION_DENIED",
+                ErrorCode.PERMISSION_DENIED,
                 $"Vous n'avez pas la permission {messageAction}.",
                 StatusCodes.Status403Forbidden,
                 new { RequiredPermissions = required }

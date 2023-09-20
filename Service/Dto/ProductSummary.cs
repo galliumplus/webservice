@@ -10,8 +10,8 @@ namespace GalliumPlus.WebApi.Dto
         public int Id { get; set; }
         [Required] public string Name { get; set; }
         [Required] public int? Stock { get; set; }
-        [Required] public double? NonMemberPrice { get; set; }
-        [Required] public double? MemberPrice { get; set; }
+        [Required] public decimal? NonMemberPrice { get; set; }
+        [Required] public decimal? MemberPrice { get; set; }
         [Required] public Availability? Availability { get; set; }
         [Required] public int? Category { get; set; }
 
