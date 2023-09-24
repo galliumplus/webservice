@@ -8,7 +8,7 @@ namespace CoreTest.Orders
         public void Tests()
         {
             var products = new ProductDao(new CategoryDao());
-            Product product = products.Read(0);
+            Product product = products.Read(1);
 
             Assert.Throws<InvalidItemException>(() => new OrderItem(product, 0));
 

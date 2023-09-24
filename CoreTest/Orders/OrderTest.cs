@@ -22,8 +22,8 @@ namespace CoreTest.Orders
         {
             var products = new ProductDao(new CategoryDao());
 
-            Product product1 = products.Read(0);
-            Product product2 = products.Read(1);
+            Product product1 = products.Read(1);
+            Product product2 = products.Read(2);
 
             Order order = new(
                 new PaymentByPaypal(),
@@ -42,7 +42,7 @@ namespace CoreTest.Orders
             var products = new ProductDao(new CategoryDao());
             var users = new UserDao(new RoleDao());
 
-            Product product = products.Read(0);
+            Product product = products.Read(1);
 
             User customer = users.Read("lomens");
             customer.IsMember = false;
@@ -71,8 +71,8 @@ namespace CoreTest.Orders
             var products = new ProductDao(new CategoryDao());
             var users = new UserDao(new RoleDao());
 
-            Product product1 = products.Read(0);
-            Product product2 = products.Read(1);
+            Product product1 = products.Read(1);
+            Product product2 = products.Read(2);
 
             User customer = users.Read("lomens");
             customer.IsMember = true;
@@ -89,14 +89,14 @@ namespace CoreTest.Orders
             );
 
             decimal? depositBefore = users.ReadDeposit("lomens");
-            int stock1Before = products.Read(0).Stock;
-            int stock2Before = products.Read(1).Stock;
+            int stock1Before = products.Read(1).Stock;
+            int stock2Before = products.Read(2).Stock;
 
             order.ProcessPaymentAndUpdateStock(products);
 
             decimal? depositAfter = users.ReadDeposit("lomens");
-            int stock1After = products.Read(0).Stock;
-            int stock2After = products.Read(1).Stock;
+            int stock1After = products.Read(1).Stock;
+            int stock2After = products.Read(2).Stock;
 
             decimal? expectedPrice = product1.MemberPrice + product2.MemberPrice * 2;
             Assert.Equal(depositAfter, depositBefore - expectedPrice);
