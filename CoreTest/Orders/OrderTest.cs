@@ -1,5 +1,4 @@
 ﻿using GalliumPlus.WebApi.Core.Exceptions;
-using GalliumPlus.WebApi.Core.Orders;
 
 namespace CoreTest.Orders
 {
@@ -23,8 +22,8 @@ namespace CoreTest.Orders
         {
             var products = new ProductDao(new CategoryDao());
 
-            Product product1 = products.Read(0);
-            Product product2 = products.Read(1);
+            Product product1 = products.Read(1);
+            Product product2 = products.Read(2);
 
             Order order = new(
                 new PaymentByPaypal(),
@@ -43,7 +42,7 @@ namespace CoreTest.Orders
             var products = new ProductDao(new CategoryDao());
             var users = new UserDao(new RoleDao());
 
-            Product product = products.Read(0);
+            Product product = products.Read(1);
 
             User customer = users.Read("lomens");
             customer.IsMember = false;
@@ -72,8 +71,8 @@ namespace CoreTest.Orders
             var products = new ProductDao(new CategoryDao());
             var users = new UserDao(new RoleDao());
 
-            Product product1 = products.Read(0);
-            Product product2 = products.Read(1);
+            Product product1 = products.Read(1);
+            Product product2 = products.Read(2);
 
             User customer = users.Read("lomens");
             customer.IsMember = true;
@@ -89,17 +88,17 @@ namespace CoreTest.Orders
                 customer
             );
 
-            double depositBefore = users.ReadDeposit("lomens");
-            int stock1Before = products.Read(0).Stock;
-            int stock2Before = products.Read(1).Stock;
+            decimal? depositBefore = users.ReadDeposit("lomens");
+            int stock1Before = products.Read(1).Stock;
+            int stock2Before = products.Read(2).Stock;
 
             order.ProcessPaymentAndUpdateStock(products);
 
-            double depositAfter = users.ReadDeposit("lomens");
-            int stock1After = products.Read(0).Stock;
-            int stock2After = products.Read(1).Stock;
+            decimal? depositAfter = users.ReadDeposit("lomens");
+            int stock1After = products.Read(1).Stock;
+            int stock2After = products.Read(2).Stock;
 
-            double expectedPrice = product1.MemberPrice + product2.MemberPrice * 2;
+            decimal? expectedPrice = product1.MemberPrice + product2.MemberPrice * 2;
             Assert.Equal(depositAfter, depositBefore - expectedPrice);
             Assert.Equal(stock1After, stock1Before - 1);
             Assert.Equal(stock2After, stock2Before - 2);

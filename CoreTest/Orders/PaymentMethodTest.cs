@@ -1,6 +1,4 @@
 ﻿using GalliumPlus.WebApi.Core.Exceptions;
-using GalliumPlus.WebApi.Core.Orders;
-using GalliumPlus.WebApi.Core.Users;
 
 namespace CoreTest.Orders
 {
@@ -41,29 +39,29 @@ namespace CoreTest.Orders
 
             // Free
 
-            double before = users.ReadDeposit("lomens");
+            decimal? before = users.ReadDeposit("lomens");
             withRealCustomer.Pay(0);
-            double after = users.ReadDeposit("lomens");
+            decimal? after = users.ReadDeposit("lomens");
             Assert.Equal(before, after);
 
             // Enough deposit
 
             users.UpdateDeposit("lomens", 10);
-            withRealCustomer.Pay(6.80);
+            withRealCustomer.Pay(6.80m);
             after = users.ReadDeposit("lomens");
-            Assert.Equal(3.20, after);
+            Assert.Equal(3.20m, after);
 
             // Not enough deposit
 
             users.UpdateDeposit("lomens", 10);
-            Assert.Throws<CantSellException>(() => withRealCustomer.Pay(24.20));
+            Assert.Throws<CantSellException>(() => withRealCustomer.Pay(24.20m));
             after = users.ReadDeposit("lomens");
             Assert.Equal(10, after);
 
             // Negative payment
 
             users.UpdateDeposit("lomens", 10);
-            Assert.Throws<ArgumentOutOfRangeException>(() => withRealCustomer.Pay(-6.80));
+            Assert.Throws<ArgumentOutOfRangeException>(() => withRealCustomer.Pay(-6.80m));
             after = users.ReadDeposit("lomens");
             Assert.Equal(10, after);
 

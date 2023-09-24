@@ -1,4 +1,5 @@
 ﻿using GalliumPlus.WebApi.Core.Data;
+using GalliumPlus.WebApi.Core.History;
 using GalliumPlus.WebApi.Core.Stocks;
 using GalliumPlus.WebApi.Core.Users;
 using GalliumPlus.WebApi.Dto;
@@ -14,11 +15,14 @@ namespace GalliumPlus.WebApi.Controllers
     public class CategoryController : Controller
     {
         private ICategoryDao categoryDao;
+        private IHistoryDao historyDao;
         private CategoryDetails.Mapper mapper = new();
 
-        public CategoryController(ICategoryDao categoryDao)
+        public CategoryController(ICategoryDao categoryDao, IHistoryDao historyDao)
         {
             this.categoryDao = categoryDao;
+            this.historyDao = historyDao;
+
         }
 
         [HttpGet]
@@ -40,6 +44,14 @@ namespace GalliumPlus.WebApi.Controllers
         public IActionResult Post(CategoryDetails newCategory)
         {
             Category category = this.categoryDao.Create(this.mapper.ToModel(newCategory, this.categoryDao));
+
+            HistoryAction action = new(
+                HistoryActionKind.EDIT_PRODUCT_OR_CATEGORIES,
+                $"Ajout de la catégorie {category.Name}",
+                this.User!.Id
+            );
+            this.historyDao.AddEntry(action);
+
             return Created("category", category.Id, this.mapper.FromModel(category));
         }
 
@@ -48,6 +60,14 @@ namespace GalliumPlus.WebApi.Controllers
         public IActionResult Put(int id, CategoryDetails updatedCategory)
         {
             this.categoryDao.Update(id, this.mapper.ToModel(updatedCategory, this.categoryDao));
+
+            HistoryAction action = new(
+                HistoryActionKind.EDIT_PRODUCT_OR_CATEGORIES,
+                $"Modification de la catégorie {updatedCategory.Name}",
+                this.User!.Id
+            );
+            this.historyDao.AddEntry(action);
+
             return Ok();
         }
 
@@ -55,7 +75,16 @@ namespace GalliumPlus.WebApi.Controllers
         [RequiresPermissions(Permissions.MANAGE_CATEGORIES)]
         public IActionResult Delete(int id)
         {
+            string categoryName = this.categoryDao.Read(id).Name;
             this.categoryDao.Delete(id);
+
+            HistoryAction action = new(
+                HistoryActionKind.EDIT_PRODUCT_OR_CATEGORIES,
+                $"Suppression de la catégorie {categoryName}",
+                this.User!.Id
+            );
+            this.historyDao.AddEntry(action);
+
             return Ok();
         }
     }

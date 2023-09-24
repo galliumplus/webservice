@@ -12,6 +12,7 @@ class Expectations:
         self.test_case = test_case
         self.value = value
         self.negation = False
+        self.nullable = False
 
     def __check_measurable(self):
         if not (
@@ -73,10 +74,17 @@ class Expectations:
 
     def a_number(self):
         is_a_number = isinstance(self.value, int) or isinstance(self.value, float)
+        is_a_number_or_none = is_a_number or self.value is None
         if self.negation:
-            self.test_case.assertFalse(is_a_number, f"{self.value} is a number")
+            if self.nullable:
+                self.test_case.assertFalse(is_a_number_or_none, f"{self.value} is None")
+            else:
+                self.test_case.assertFalse(is_a_number, f"{self.value} is a number")
         else:
-            self.test_case.assertTrue(is_a_number, f"{self.value} isn't a number")
+            if self.nullable:
+                self.test_case.assertFalse(self.value is None, f"{self.value} is None")
+            else:
+                self.test_case.assertTrue(is_a_number, f"{self.value} isn't a number")
 
     def equal_to(self, other):
         if self.negation:
@@ -135,6 +143,11 @@ class Expectations:
 
     not_ = _not
     no = _not
+
+    @__property
+    def none_or(self):
+        self.nullable = True
+        return self
 
     # CHAINS
 

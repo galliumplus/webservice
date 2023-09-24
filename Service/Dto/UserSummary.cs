@@ -8,16 +8,20 @@ namespace GalliumPlus.WebApi.Dto
     public class UserSummary
     {
         [Required] public string Id { get; set; }
-        [Required] public string Name { get; set; }
+        [Required] public string FirstName { get; set; }
+        [Required] public string LastName { get; set; }
+        [Required] public string Email { get; set; }
         [Required] public int? Role { get; set; }
         [Required] public string Year { get; set; }
-        [Required] public double? Deposit { get; set; }
+        public decimal? Deposit { get; set; }
         [Required] public bool? IsMember { get; set; }
 
         public UserSummary()
         {
             this.Id = String.Empty;
-            this.Name = String.Empty;
+            this.FirstName = String.Empty;
+            this.LastName = String.Empty;
+            this.Email = String.Empty;
             this.Role = null;
             this.Year = String.Empty;
             this.Deposit = null;
@@ -31,9 +35,11 @@ namespace GalliumPlus.WebApi.Dto
                 return new UserSummary
                 {
                     Id = user.Id,
-                    Name = user.Name,
+                    FirstName = user.Identity.FirstName,
+                    LastName = user.Identity.LastName,
+                    Email = user.Identity.Email,
                     Role = user.Role.Id,
-                    Year = user.Year,
+                    Year = user.Identity.Year,
                     Deposit = user.Deposit,
                     IsMember = user.IsMember
                 };
@@ -53,9 +59,8 @@ namespace GalliumPlus.WebApi.Dto
 
                 return new User(
                     summary.Id!,
-                    summary.Name!,
+                    new UserIdentity(summary.FirstName!, summary.LastName!, summary.Email!, summary.Year!),
                     role,
-                    summary.Year!,
                     summary.Deposit!.Value,
                     summary.IsMember!.Value
                 );

@@ -1,6 +1,4 @@
-﻿using GalliumPlus.WebApi.Core.Application;
-
-namespace CoreTest.Applications
+﻿namespace CoreTest.Applications
 {
     public class BotClientTest
     {
@@ -26,7 +24,7 @@ namespace CoreTest.Applications
             Assert.True(bot.IsEnabled);
             Assert.Equal(Permissions.RESET_MEMBERSHIPS, bot.Granted);
             Assert.Equal(Permissions.NONE, bot.Revoked);
-            Assert.False(bot.AllowUsers);
+            Assert.False(bot.AllowUserLogin);
         }
 
         [Fact]
@@ -43,7 +41,7 @@ namespace CoreTest.Applications
             Assert.True(bot.IsEnabled);
             Assert.Equal(Permissions.RESET_MEMBERSHIPS, bot.Granted);
             Assert.Equal(Permissions.NONE, bot.Revoked);
-            Assert.False(bot.AllowUsers);
+            Assert.False(bot.AllowUserLogin);
         }
 
         [Fact]

@@ -14,8 +14,7 @@
                 name: "App",
                 isEnabled: false,
                 granted: Permissions.SEE_PRODUCTS_AND_CATEGORIES,
-                revoked: Permissions.MANAGE_USERS,
-                allowUsers: true
+                revoked: Permissions.MANAGE_USERS
             );
 
             Assert.Equal(123, client.Id);
@@ -24,7 +23,7 @@
             Assert.False(client.IsEnabled);
             Assert.Equal(Permissions.SEE_PRODUCTS_AND_CATEGORIES, client.Granted);
             Assert.Equal(Permissions.MANAGE_USERS, client.Revoked);
-            Assert.True(client.AllowUsers);
+            Assert.False(client.AllowUserLogin);
         }
 
         [Fact]
@@ -40,7 +39,7 @@
             Assert.True(client.IsEnabled);
             Assert.Equal(Permissions.NONE, client.Granted);
             Assert.Equal(Permissions.MANAGE_USERS, client.Revoked);
-            Assert.True(client.AllowUsers);
+            Assert.True(client.AllowUserLogin);
         }
 
         [Fact]
@@ -52,8 +51,7 @@
                 name: "App",
                 isEnabled: true,
                 granted: Permissions.NONE,
-                revoked: Permissions.NONE,
-                allowUsers: true
+                revoked: Permissions.NONE
             );
             Client client2 = new(
                 id: 123,
@@ -61,8 +59,7 @@
                 name: "App",
                 isEnabled: false,
                 granted: Permissions.NONE,
-                revoked: Permissions.NONE,
-                allowUsers: true
+                revoked: Permissions.NONE
             );
             Client client3 = new(
                 id: 123,
@@ -70,8 +67,7 @@
                 name: "App",
                 isEnabled: true,
                 granted: Permissions.NONE,
-                revoked: Permissions.NONE,
-                allowUsers: false
+                revoked: Permissions.NONE
             );
             Client client4 = new(
                 id: 123,
@@ -79,8 +75,7 @@
                 name: "App",
                 isEnabled: false,
                 granted: Permissions.NONE,
-                revoked: Permissions.NONE,
-                allowUsers: false
+                revoked: Permissions.NONE
             );
 
             Assert.True(client1.AllowUserLogin);

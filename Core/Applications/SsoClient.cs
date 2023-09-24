@@ -12,6 +12,7 @@ namespace GalliumPlus.WebApi.Core.Applications
         private string secret;
         private string redirectUrl;
         private string? logoUrl;
+        private bool usesApi;
 
         /// <summary>
         /// Le code secret utilisé pour signer les jeton d'authentification
@@ -29,6 +30,13 @@ namespace GalliumPlus.WebApi.Core.Applications
         public string? LogoUrl { get => this.logoUrl; set => this.logoUrl = value; }
 
         /// <summary>
+        /// Si l'application a besoin d'utiliser l'API.
+        /// </summary>
+        public bool UsesApi { get => this.usesApi; set => this.usesApi = value; }
+
+        public override bool AllowUserLogin => false;
+
+        /// <summary>
         /// Crée une application existante avec SSO.
         /// </summary>
         /// <param name="id">L'identifiant de l'application.</param>
@@ -39,7 +47,7 @@ namespace GalliumPlus.WebApi.Core.Applications
         /// <param name="redirectUrl">L'URL de redirection après authentification.</param>
         /// <param name="granted">Les permissions accordées à tous les utilisateurs.</param>
         /// <param name="revoked">Les permissions refusées à tous les utilisateurs.</param>
-        /// <param name="allowUsers">Autorise ou non les utilisateur à se connecter via l'application.</param>
+        /// <param name="usesApi">Indique si l'application a besion d'une connexion à l'API.</param>
         /// <param name="logoUrl">L'URL du logo de l'application.</param>
         public SsoClient(
             int id,
@@ -50,14 +58,15 @@ namespace GalliumPlus.WebApi.Core.Applications
             string redirectUrl,
             Permissions granted,
             Permissions revoked,
-            bool allowUsers,
+            bool usesApi,
             string? logoUrl
         )
-        : base(id, apiKey, name, isEnabled, granted, revoked, allowUsers)
+        : base(id, apiKey, name, isEnabled, granted, revoked)
         {
             this.secret = secret;
             this.redirectUrl = redirectUrl;
             this.logoUrl = logoUrl;
+            this.usesApi = usesApi;
         }
 
         /// <summary>
@@ -67,7 +76,7 @@ namespace GalliumPlus.WebApi.Core.Applications
         /// <param name="redirectUrl">L'URL de redirection après authentification.</param>
         /// <param name="granted">Les permissions accordées à tous les utilisateurs.</param>
         /// <param name="revoked">Les permissions refusées à tous les utilisateurs.</param>
-        /// <param name="allowUsers">Autorise ou non les utilisateur à se connecter via l'application.</param>
+        /// <param name="usesApi">Indique si l'application a besion d'une connexion à l'API.</param>
         /// <param name="logoUrl">L'URL du logo de l'application.</param>
         public SsoClient(
             string name,
@@ -75,13 +84,14 @@ namespace GalliumPlus.WebApi.Core.Applications
             bool isEnabled = true,
             Permissions granted = Permissions.NONE,
             Permissions revoked = Permissions.NONE,
-            bool allowUsers = false,
+            bool usesApi = false,
             string? logoUrl = null
         )
-        : base(name, isEnabled, granted, revoked, allowUsers)
+        : base(name, isEnabled, granted, revoked)
         {
             this.redirectUrl = redirectUrl;
             this.logoUrl = logoUrl;
+            this.usesApi = usesApi;
 
             this.secret = "";
             this.RegenerateSecret();

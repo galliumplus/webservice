@@ -7,8 +7,12 @@ using Microsoft.AspNetCore.Mvc;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using System.Text.Json;
+using GalliumPlus.WebApi;
+using GalliumPlus.WebApi.Core.Users;
 #if FAKE_DB
 using GalliumPlus.WebApi.Data.FakeDatabase;
+#else
+using GalliumPlus.WebApi.Data.MariaDb;
 #endif
 
 var builder = WebApplication.CreateBuilder(args);
@@ -30,14 +34,35 @@ builder.Services
         options.SuppressMapClientErrors = true;
     });
 
+GalliumOptions galliumOptions = builder.Configuration.GetSection("Gallium").Get<GalliumOptions>() ?? new GalliumOptions();
+
 #if FAKE_DB
 // ajout en singleton, sinon les données ne sont pas persistées d'une requête à l'autre
 builder.Services.AddSingleton<ICategoryDao, CategoryDao>();
 builder.Services.AddSingleton<IClientDao, ClientDao>();
+builder.Services.AddSingleton<IHistoryDao, HistoryDao>();
 builder.Services.AddSingleton<IProductDao, ProductDao>();
 builder.Services.AddSingleton<IRoleDao, RoleDao>();
 builder.Services.AddSingleton<ISessionDao, SessionDao>();
 builder.Services.AddSingleton<IUserDao, UserDao>();
+#else
+builder.Services.AddScoped<ICategoryDao, CategoryDao>();
+builder.Services.AddScoped<IClientDao, ClientDao>();
+builder.Services.AddScoped<IHistoryDao, HistoryDao>();
+builder.Services.AddScoped<IProductDao, ProductDao>();
+builder.Services.AddScoped<IRoleDao, RoleDao>();
+builder.Services.AddScoped<ISessionDao, SessionDao>();
+builder.Services.AddScoped<IUserDao, UserDao>();
+
+builder.Services.AddSingleton(
+    new DatabaseConnector(
+        galliumOptions.MariaDb.Host,
+        galliumOptions.MariaDb.UserId,
+        galliumOptions.MariaDb.Password,
+        galliumOptions.MariaDb.Schema,
+        galliumOptions.MariaDb.Port
+    )
+);
 #endif
 
 builder.Services.Configure<JsonOptions>(options =>
@@ -55,23 +80,11 @@ builder.Services.Configure<JsonOptions>(options =>
 // configuration HTTP/HTTPS
 builder.WebHost.ConfigureKestrel(opt =>
 {
-    if (!Int32.TryParse(Environment.GetEnvironmentVariable("GALLIUM_HTTP"), out int httpPort))
-    {
-        // default HTTP port
-        httpPort = 5080;
-    }
-
-    if (!Int32.TryParse(Environment.GetEnvironmentVariable("GALLIUM_HTTPS"), out int httpsPort))
-    {
-        // default HTTPS port
-        httpsPort = 5443;
-    }
-
     Action<ListenOptions> httpsConfiguration = options =>
     {
-        if (Environment.GetEnvironmentVariable("GALLIUM_CERTIFICATE_FILE") is string certififcate)
+        if (galliumOptions.CertificateFile is string certififcate)
         {
-            if (Environment.GetEnvironmentVariable("GALLIUM_CERTIFICATE_PASSWORD") is string password)
+            if (galliumOptions.CertificatePassword is string password)
             {
                 options.UseHttps(certififcate, password);
             }
@@ -86,15 +99,15 @@ builder.WebHost.ConfigureKestrel(opt =>
         }
     };
 
-    if (Environment.GetEnvironmentVariable("GALLIUM_LISTEN_ANY_IP") is string)
+    if (galliumOptions.ListenAnyIp)
     {
-        opt.ListenAnyIP(httpPort);
-        opt.ListenAnyIP(httpsPort, httpsConfiguration);
+        opt.ListenAnyIP(galliumOptions.HttpPort);
+        opt.ListenAnyIP(galliumOptions.HttpsPort, httpsConfiguration);
     }
     else
     {
-        opt.ListenLocalhost(httpPort);
-        opt.ListenLocalhost(httpsPort, httpsConfiguration);
+        opt.ListenLocalhost(galliumOptions.HttpPort);
+        opt.ListenLocalhost(galliumOptions.HttpsPort, httpsConfiguration);
     }
 });
 
@@ -108,13 +121,13 @@ builder.Services
 
 var app = builder.Build();
 
-app.UseHttpsRedirection();
+if (galliumOptions.ForceHttps) app.UseHttpsRedirection();
 app.UseServerInfo();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
-ServerInfo.Current.SetVersion(0, 4, 0, "alpha");
+ServerInfo.Current.SetVersion(0, 5, 0, "alpha");
 Console.WriteLine(ServerInfo.Current);
 
 app.Run();

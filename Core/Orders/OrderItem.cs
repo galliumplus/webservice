@@ -1,5 +1,6 @@
-﻿using GalliumPlus.WebApi.Core.Stocks;
-using GalliumPlus.WebApi.Core.Exceptions;
+﻿using GalliumPlus.WebApi.Core.Exceptions;
+using GalliumPlus.WebApi.Core.Stocks;
+using System.Text;
 
 namespace GalliumPlus.WebApi.Core.Orders
 {
@@ -24,22 +25,38 @@ namespace GalliumPlus.WebApi.Core.Orders
         /// <summary>
         /// Le prix unitaire non-adhérent, en euros.
         /// </summary>
-        public double NonMemberUnitPrice => this.product.NonMemberPrice;
+        public decimal NonMemberUnitPrice => this.product.NonMemberPrice;
 
         /// <summary>
         /// Le prix unitaire adhérent, en euros.
         /// </summary>
-        public double MemberUnitPrice => this.product.MemberPrice;
+        public decimal MemberUnitPrice => this.product.MemberPrice;
 
         /// <summary>
         /// Le prix total non-adhérent, en euros.
         /// </summary>
-        public double NonMemberTotalPrice => this.NonMemberUnitPrice * this.quantity;
+        public decimal NonMemberTotalPrice => this.NonMemberUnitPrice * this.quantity;
 
         /// <summary>
         /// Le prix total adhérent, en euros.
         /// </summary>
-        public double MemberTotalPrice => this.MemberUnitPrice * this.quantity;
+        public decimal MemberTotalPrice => this.MemberUnitPrice * this.quantity;
+
+        /// <summary>
+        /// Une représentation humaine du produit (Nom ×Qté)
+        /// </summary>
+        public string Description
+        {
+            get
+            {
+                StringBuilder sb = new(this.product.Name);
+                if (this.quantity > 1)
+                {
+                    sb.AppendFormat(" × {0}", this.quantity);
+                }
+                return sb.ToString();
+            }
+        }
 
         /// <summary>
         /// Crée un item de vente.

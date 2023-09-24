@@ -1,10 +1,8 @@
-﻿using GalliumPlus.WebApi.Core;
-using GalliumPlus.WebApi.Core.Applications;
+﻿using GalliumPlus.WebApi.Core.Applications;
 using GalliumPlus.WebApi.Core.Data;
 using GalliumPlus.WebApi.Core.Exceptions;
 using GalliumPlus.WebApi.Core.Users;
 using System.ComponentModel.DataAnnotations;
-using System.Reflection;
 using System.Text.Json.Serialization;
 
 namespace GalliumPlus.WebApi.Dto
@@ -24,7 +22,7 @@ namespace GalliumPlus.WebApi.Dto
         public uint? PermissionsRevoked { get; set; }
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public bool? AllowUsers { get; set; }
+        public bool? UsesApi { get; set; }
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string? RedirectUrl { get; set; }
@@ -58,13 +56,13 @@ namespace GalliumPlus.WebApi.Dto
                 else
                 {
                     dto.PermissionsRevoked = (uint)model.Revoked;
-                    dto.AllowUsers = model.AllowUsers;
 
                     if (model is SsoClient ssoClient)
                     {
                         dto.Type = ClientType.SSO_CLIENT;
                         dto.RedirectUrl = ssoClient.RedirectUrl;
                         dto.LogoUrl = ssoClient.LogoUrl;
+                        dto.UsesApi = ssoClient.UsesApi;
                     }
                     else
                     {
@@ -75,27 +73,26 @@ namespace GalliumPlus.WebApi.Dto
                 return dto;
             }
 
-            private Exception MissingField(string fieldName, string type)
+            private static Exception MissingField()
             {
-                return new InvalidItemException($"Le format de la resource est invalide. (Le champ {fieldName} est requis pour créer un {type})");
+                return new InvalidItemException($"Les informations sur l'application sont incomplètes.");
             }
 
             public override Client ToModel(ClientDetails dto, IClientDao dao)
             {
                 if (!dto.Type.HasValue)
                 {
-                    throw MissingField("type", "nouveau client");
+                    throw MissingField();
                 }
 
-                switch (dto.Type!.Value)
+                switch (dto.Type.Value)
                 {
                     case ClientType.CLIENT:
                         return new Client(
                             name: dto.Name,
                             isEnabled: dto.IsEnabled!.Value,
                             granted: (Permissions)dto.PermissionsGranted!.Value,
-                            revoked: (Permissions)(dto.PermissionsRevoked ?? throw MissingField("permissionsRevoked", "Client")),
-                            allowUsers: dto.AllowUsers ?? throw MissingField("allowUsers", "Client")
+                            revoked: (Permissions)(dto.PermissionsRevoked ?? throw MissingField())
                         );
 
                     case ClientType.BOT_CLIENT:
@@ -110,9 +107,9 @@ namespace GalliumPlus.WebApi.Dto
                             name: dto.Name,
                             isEnabled: dto.IsEnabled!.Value,
                             granted: (Permissions)dto.PermissionsGranted!.Value,
-                            revoked: (Permissions)(dto.PermissionsRevoked ?? throw MissingField("permissionsRevoked", "SsoClient")),
-                            allowUsers: dto.AllowUsers ?? throw MissingField("allowUsers", "SsoClient"),
-                            redirectUrl: dto.RedirectUrl ?? throw MissingField("redirectUrl", "SsoClient"),
+                            revoked: (Permissions)(dto.PermissionsRevoked ?? throw MissingField()),
+                            usesApi: dto.UsesApi ?? throw MissingField(),
+                            redirectUrl: dto.RedirectUrl ?? throw MissingField(),
                             logoUrl: dto.LogoUrl
                         );
 
@@ -129,12 +126,12 @@ namespace GalliumPlus.WebApi.Dto
 
                 if (original is not BotClient)
                 {
-                    original.Revoked = (Permissions)(patch.PermissionsRevoked ?? throw MissingField("permissionsRevoked", "Client/SsoClient"));
-                    original.AllowUsers = patch.AllowUsers ?? throw MissingField("allowUsers", "Client/SsoClient");
+                    original.Revoked = (Permissions)(patch.PermissionsRevoked ?? throw MissingField());
 
                     if (original is SsoClient originalSso)
                     {
-                        originalSso.RedirectUrl = patch.RedirectUrl ?? throw MissingField("redirectUrl", "SsoClient");
+                        originalSso.RedirectUrl = patch.RedirectUrl ?? throw MissingField();
+                        originalSso.UsesApi = patch.UsesApi ?? throw MissingField();
                         originalSso.LogoUrl = patch.LogoUrl;
                     }
                 }

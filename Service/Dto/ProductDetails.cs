@@ -8,8 +8,8 @@ namespace GalliumPlus.WebApi.Dto
         public int Id { get; set; }
         public string Name { get; set; }
         public int Stock { get; set; }
-        public double NonMemberPrice { get; set; }
-        public double MemberPrice { get; set; }
+        public decimal NonMemberPrice { get; set; }
+        public decimal MemberPrice { get; set; }
         public Availability Availability { get; set; }
         public bool Available { get; set; }
         public CategoryDetails Category { get; set; }
@@ -18,8 +18,8 @@ namespace GalliumPlus.WebApi.Dto
             int id,
             string name,
             int stock,
-            double nonMemberPrice,
-            double memberPrice,
+            decimal nonMemberPrice,
+            decimal memberPrice,
             Availability availability,
             bool available,
             CategoryDetails category)

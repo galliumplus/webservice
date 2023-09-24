@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using GalliumPlus.WebApi.Core.Exceptions;
+﻿using GalliumPlus.WebApi.Core.Exceptions;
 
 namespace GalliumPlus.WebApi.Core.Orders
 {
@@ -17,7 +10,7 @@ namespace GalliumPlus.WebApi.Core.Orders
         /// <param name="amount">Le montant à payer.</param>
         /// <exception cref="CantSellException"></exception>
         /// <returns>Une phrase indiquant que l'opération à bien été effectuée.</returns>
-        public string Pay(double amount)
+        public string Pay(decimal amount)
         {
             if (amount < 0)
             {
@@ -27,6 +20,11 @@ namespace GalliumPlus.WebApi.Core.Orders
             return this.ProcessPayment(amount);
         }
 
-        protected abstract string ProcessPayment(double amount);
+        protected abstract string ProcessPayment(decimal amount);
+
+        /// <summary>
+        /// Le nom de la méthode de paiement.
+        /// </summary>
+        public abstract string Description { get; }
     }
 }

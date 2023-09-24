@@ -8,8 +8,8 @@
         private int id;
         private string name;
         private int stock;
-        private double nonMemberPrice;
-        private double memberPrice;
+        private decimal nonMemberPrice;
+        private decimal memberPrice;
         private Availability availability;
         private Category category;
 
@@ -31,12 +31,12 @@
         /// <summary>
         /// Le prix non-adhérent en euros.
         /// </summary>
-        public double NonMemberPrice => this.nonMemberPrice;
+        public decimal NonMemberPrice => this.nonMemberPrice;
 
         /// <summary>
         /// Le prix adhérent en euros.
         /// </summary>
-        public double MemberPrice => this.memberPrice;
+        public decimal MemberPrice => this.memberPrice;
 
         /// <summary>
         /// Disponibilité du produit.
@@ -75,19 +75,18 @@
             int id,
             string name,
             int stock,
-            double nonMemberPrice,
-            double memberPrice,
+            decimal nonMemberPrice,
+            decimal memberPrice,
             Availability availability,
             Category category)
         {
             this.id = id;
             this.name = name;
             this.stock = stock;
-            this.nonMemberPrice = nonMemberPrice;
-            this.memberPrice = memberPrice;
+            this.nonMemberPrice = MonetaryValue.CheckNonNegative(nonMemberPrice, "Un prix");
+            this.memberPrice = MonetaryValue.CheckNonNegative(memberPrice, "Un prix");
             this.availability = availability;
             this.category = category;
         }
-
     }
 }

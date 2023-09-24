@@ -1,7 +1,5 @@
 ﻿using GalliumPlus.WebApi.Core.Data;
 using GalliumPlus.WebApi.Core.Exceptions;
-using GalliumPlus.WebApi.Core.Users;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 
 namespace GalliumPlus.WebApi.Core.Orders
@@ -19,6 +17,8 @@ namespace GalliumPlus.WebApi.Core.Orders
         /// </summary>
         public string UserId => this.depositId;
 
+        public override string Description => $"acompte ({this.depositId})";
+
         /// <summary>
         /// Crée un mode de paiement par acompte.
         /// </summary>
@@ -30,19 +30,26 @@ namespace GalliumPlus.WebApi.Core.Orders
             this.depositId = depositId;
         }
 
-        protected override string ProcessPayment(double amount)
+        protected override string ProcessPayment(decimal amount)
         {
-            double currentDeposit;
+            decimal currentDeposit;
             try
             {
-                currentDeposit = this.userDao.ReadDeposit(this.depositId);
+                if (this.userDao.ReadDeposit(this.depositId) is decimal deposit)
+                {
+                    currentDeposit = deposit;
+                }
+                else
+                {
+                    throw new CantSellException("Cet utilisateur n'a pas d'acompte.");
+                }
             }
             catch (ItemNotFoundException)
             {
                 throw new CantSellException("Cet utilisateur n'existe pas.");
             }
 
-            double newDeposit = currentDeposit - amount;
+            decimal newDeposit = currentDeposit - amount;
             if (newDeposit < 0)
             {
                 throw new CantSellException(

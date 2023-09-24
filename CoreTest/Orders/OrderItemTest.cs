@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using GalliumPlus.WebApi.Core.Exceptions;
+﻿using GalliumPlus.WebApi.Core.Exceptions;
 
 namespace CoreTest.Orders
 {
@@ -13,7 +8,7 @@ namespace CoreTest.Orders
         public void Tests()
         {
             var products = new ProductDao(new CategoryDao());
-            Product product = products.Read(0);
+            Product product = products.Read(1);
 
             Assert.Throws<InvalidItemException>(() => new OrderItem(product, 0));
 

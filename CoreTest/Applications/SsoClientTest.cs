@@ -14,7 +14,7 @@
                 redirectUrl: "https://etiq-dijon.fr/",
                 granted: Permissions.NONE,
                 revoked: Permissions.ALL,
-                allowUsers: true,
+                usesApi: true,
                 logoUrl: "https://etiq-dijon.fr/assets/images/logo.png"
             );
 
@@ -26,7 +26,7 @@
             Assert.Equal("https://etiq-dijon.fr/", client.RedirectUrl);
             Assert.Equal(Permissions.NONE, client.Granted);
             Assert.Equal(Permissions.ALL, client.Revoked);
-            Assert.True(client.AllowUsers);
+            Assert.True(client.UsesApi);
             Assert.Equal("https://etiq-dijon.fr/assets/images/logo.png", client.LogoUrl);
         }
 
@@ -46,7 +46,7 @@
             Assert.Equal("https://etiq-dijon.fr/", client.RedirectUrl);
             Assert.Equal(Permissions.NONE, client.Granted);
             Assert.Equal(Permissions.ALL, client.Revoked);
-            Assert.False(client.AllowUsers);
+            Assert.False(client.UsesApi);
             Assert.Null(client.LogoUrl);
         }
 

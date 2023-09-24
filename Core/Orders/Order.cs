@@ -1,13 +1,6 @@
 ﻿using GalliumPlus.WebApi.Core.Data;
 using GalliumPlus.WebApi.Core.Exceptions;
 using GalliumPlus.WebApi.Core.Users;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http.Headers;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Schema;
 
 namespace GalliumPlus.WebApi.Core.Orders
 {
@@ -16,11 +9,29 @@ namespace GalliumPlus.WebApi.Core.Orders
     /// </summary>
     public class Order
     {
+        /// <summary>
+        /// Le nom d'utilisateur spécial indiquant un adhérent anonyme.
+        /// </summary>
         public const string ANONYMOUS_MEMBER_ID = "@anonymousmember";
 
         private PaymentMethod paymentMethod;
         private List<OrderItem> items;
         private User? customer;
+
+        /// <summary>
+        /// La méthode de paiement utilisée pour cette commande.
+        /// </summary>
+        public PaymentMethod PaymentMethod => this.paymentMethod;
+
+        /// <summary>
+        /// Le client qui a passé cette commande.
+        /// </summary>
+        public User? Customer => this.customer;
+
+        /// <summary>
+        /// Une représentation humaine de la liste des produits achetés.
+        /// </summary>
+        public string ItemsDescription => String.Join(", ", this.items.Select(item => item.Description));
 
         /// <summary>
         /// Crée une vente.
@@ -76,9 +87,9 @@ namespace GalliumPlus.WebApi.Core.Orders
             }
         }
 
-        private double TotalPrice()
+        public decimal TotalPrice()
         {
-            double result = 0;
+            decimal result = 0;
 
             bool memberDiscount = this.customer != null && this.customer.IsMember;
 

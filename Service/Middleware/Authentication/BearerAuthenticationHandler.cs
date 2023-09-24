@@ -70,6 +70,7 @@ namespace GalliumPlus.WebApi.Middleware.Authentication
 
             if (!session.Refresh())
             {
+                sessions.Delete(session);
                 return AuthenticateResult.Fail("Session expired");
             }
             sessions.UpdateLastUse(session);

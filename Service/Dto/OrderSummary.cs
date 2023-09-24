@@ -48,7 +48,7 @@ namespace GalliumPlus.WebApi.Dto
                     {
                         customer = userDao.Read(dto.Customer);
                     }
-                    catch(ItemNotFoundException)
+                    catch (ItemNotFoundException)
                     {
                         throw new InvalidItemException($"L'utilisateur « {dto.Customer} » n'existe pas");
                     }
@@ -64,11 +64,10 @@ namespace GalliumPlus.WebApi.Dto
             private static User BuildAnonymousMember()
             {
                 return new User(
-                    "anonymous",
-                    "Anonyme",
+                    "anonymousmember00000000000", // pas possible d'être rentré en BDD
+                    new UserIdentity("Anonyme", "", "", ""),
                     new Role(-1, "Membre anonyme", Permissions.NONE),
-                    "Anonyme",
-                    0.00,
+                    0.00m,
                     false
                 );
             }

@@ -1,4 +1,5 @@
 from random import randint
+from decimal import Decimal, getcontext as decimal_context
 
 from utils.test_base import TestBase
 from utils.auth import BearerAuth
@@ -22,8 +23,8 @@ class OrderTests(TestBase):
         )
 
     def test_buy_not_deposit(self):
-        self.set_stock(0, 50)
         self.set_stock(1, 50)
+        self.set_stock(2, 50)
 
         self.buy_not_deposit("CASH")
         self.buy_not_deposit("CREDIT_CARD")
@@ -36,13 +37,13 @@ class OrderTests(TestBase):
         self.buy_not_deposit("PAYPAL", "lomens")
 
         # 9x2 achetés
-        self.expect(self.stock(0)).to.be.equal_to(32)
+        self.expect(self.stock(1)).to.be.equal_to(32)
         # 9x3 achetés
-        self.expect(self.stock(1)).to.be.equal_to(23)
+        self.expect(self.stock(2)).to.be.equal_to(23)
 
     def buy_not_deposit(self, payment_method, customer=None):
         valid_order = {
-            "items": [{"product": 0, "quantity": 2}, {"product": 1, "quantity": 3}],
+            "items": [{"product": 1, "quantity": 2}, {"product": 2, "quantity": 3}],
             "paymentMethod": payment_method,
         }
 
@@ -53,14 +54,14 @@ class OrderTests(TestBase):
         self.expect(response.status_code).to.be.equal_to(200)
 
     def test_buy_deposit_invalid(self):
-        self.set_stock(0, 50)
         self.set_stock(1, 50)
+        self.set_stock(2, 50)
         self.set_deposit("lomens", 20)
 
         # id adhérent manquant
 
         order = {
-            "items": [{"product": 0, "quantity": 2}, {"product": 1, "quantity": 3}],
+            "items": [{"product": 1, "quantity": 2}, {"product": 2, "quantity": 3}],
             "paymentMethod": "DEPOSIT",
         }
 
@@ -89,13 +90,13 @@ class OrderTests(TestBase):
         self.expect(response.status_code).to.be.equal_to(400)
 
     def test_buy_deposit_member(self):
-        self.set_stock(0, 20)
         self.set_stock(1, 20)
+        self.set_stock(2, 20)
         self.set_deposit("lomens", 20)
         self.grant_membership("lomens")
 
         order = {
-            "items": [{"product": 0, "quantity": 2}, {"product": 1, "quantity": 3}],
+            "items": [{"product": 1, "quantity": 2}, {"product": 2, "quantity": 3}],
             "paymentMethod": "DEPOSIT",
             "customer": "lomens",
         }
@@ -103,22 +104,22 @@ class OrderTests(TestBase):
         response = self.post("orders", order)
         self.expect(response.status_code).to.be.equal_to(200)
 
-        self.expect(self.stock(0)).to.be.equal_to(18)
-        self.expect(self.stock(1)).to.be.equal_to(17)
+        self.expect(self.stock(1)).to.be.equal_to(18)
+        self.expect(self.stock(2)).to.be.equal_to(17)
 
-        product_0_price = self.get("products/0").json()["memberPrice"]
-        product_1_price = self.get("products/1").json()["memberPrice"]
+        product_0_price = self.get("products/1").json()["memberPrice"]
+        product_1_price = self.get("products/2").json()["memberPrice"]
         expected_price = product_0_price * 2 + product_1_price * 3
         self.expect(self.deposit("lomens")).to.be.equal_to(20 - expected_price)
 
     def test_buy_deposit_non_member(self):
-        self.set_stock(0, 20)
         self.set_stock(1, 20)
+        self.set_stock(2, 20)
         self.set_deposit("lomens", 20)
         self.revoke_membership("lomens")
 
         order = {
-            "items": [{"product": 0, "quantity": 2}, {"product": 1, "quantity": 3}],
+            "items": [{"product": 1, "quantity": 2}, {"product": 2, "quantity": 3}],
             "paymentMethod": "DEPOSIT",
             "customer": "lomens",
         }
@@ -126,21 +127,21 @@ class OrderTests(TestBase):
         response = self.post("orders", order)
         self.expect(response.status_code).to.be.equal_to(200)
 
-        self.expect(self.stock(0)).to.be.equal_to(18)
-        self.expect(self.stock(1)).to.be.equal_to(17)
+        self.expect(self.stock(1)).to.be.equal_to(18)
+        self.expect(self.stock(2)).to.be.equal_to(17)
 
-        product_0_price = self.get("products/0").json()["nonMemberPrice"]
-        product_1_price = self.get("products/1").json()["nonMemberPrice"]
+        product_0_price = self.get("products/1").json()["nonMemberPrice"]
+        product_1_price = self.get("products/2").json()["nonMemberPrice"]
         expected_price = product_0_price * 2 + product_1_price * 3
         self.expect(self.deposit("lomens")).to.be.equal_to(20 - expected_price)
 
     def test_buy_quantity(self):
         # quantité < stock
 
-        self.set_stock(0, 6)
+        self.set_stock(1, 6)
 
         order = {
-            "items": [{"product": 0, "quantity": 3}],
+            "items": [{"product": 1, "quantity": 3}],
             "paymentMethod": "CASH",
         }
 
@@ -149,7 +150,7 @@ class OrderTests(TestBase):
 
         # quantité = stock
 
-        self.set_stock(0, 6)
+        self.set_stock(1, 6)
 
         order["items"][0]["quantity"] = 6
 
@@ -158,7 +159,7 @@ class OrderTests(TestBase):
 
         # quantité > stock
 
-        self.set_stock(0, 6)
+        self.set_stock(1, 6)
 
         order["items"][0]["quantity"] = 9
 
@@ -180,14 +181,14 @@ class OrderTests(TestBase):
         self.expect(response.status_code).to.be.equal_to(400)
 
     def test_buy_deposit_amount(self):
-        self.set_stock(0, 100)
+        self.set_stock(1, 100)
 
         order = {
-            "items": [{"product": 0, "quantity": 3}],
+            "items": [{"product": 1, "quantity": 3}],
             "paymentMethod": "DEPOSIT",
             "customer": "lomens",
         }
-        product_price = self.get("products/0").json()["memberPrice"]
+        product_price = Decimal(self.get("products/1").json()["memberPrice"])
         order_total_price = product_price * 3
 
         self.grant_membership("lomens")
@@ -201,7 +202,7 @@ class OrderTests(TestBase):
 
         # crédit = prix
 
-        self.set_deposit("lomens", order_total_price * 2)
+        self.set_deposit("lomens", order_total_price)
 
         response = self.post("orders", order)
         self.expect(response.status_code).to.be.equal_to(200)
@@ -223,7 +224,7 @@ class OrderTests(TestBase):
         self.set_authentification(BearerAuth("12345678901234567890"))
 
         order = {
-            "items": [{"product": 0, "quantity": 2}, {"product": 1, "quantity": 3}],
+            "items": [{"product": 1, "quantity": 2}, {"product": 2, "quantity": 3}],
             "paymentMethod": "DEPOSIT",
             "customer": "lomens",
         }

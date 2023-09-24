@@ -1,5 +1,4 @@
-﻿using GalliumPlus.WebApi.Core;
-using GalliumPlus.WebApi.Core.Applications;
+﻿using GalliumPlus.WebApi.Core.Applications;
 using GalliumPlus.WebApi.Core.Data;
 using GalliumPlus.WebApi.Core.Exceptions;
 using GalliumPlus.WebApi.Core.Users;
@@ -21,7 +20,7 @@ namespace GalliumPlus.WebApi.Data.FakeDatabase
             this.clients = clients;
 
             User lomens = this.Users.Read("lomens");
-            Client testApp = this.clients.Read(0);
+            Client testApp = this.clients.Read(1);
             this.Create(
                 new Session(
                     "12345678901234567890",
@@ -65,9 +64,11 @@ namespace GalliumPlus.WebApi.Data.FakeDatabase
 
         protected override string GetKey(Session item) => item.Token;
 
-        protected override void SetKey(Session item, string key)
+        protected override void SetKey(ref Session item, string key)
         {
             throw new InvalidOperationException("A session token is read-only");
         }
+
+        //public Session Read(string token) => this.Read(token);
     }
 }

@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-
-namespace GalliumPlus.WebApi.Middleware
+﻿namespace GalliumPlus.WebApi.Middleware
 {
     public class ServerInfoMiddleware : IMiddleware
     {

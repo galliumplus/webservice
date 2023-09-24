@@ -1,7 +1,6 @@
-﻿using GalliumPlus.WebApi.Core;
-using GalliumPlus.WebApi.Core.Data;
-using GalliumPlus.WebApi.Core.Stocks;
+﻿using GalliumPlus.WebApi.Core.Data;
 using GalliumPlus.WebApi.Core.Exceptions;
+using GalliumPlus.WebApi.Core.Stocks;
 using System.Reflection;
 
 namespace GalliumPlus.WebApi.Data.FakeDatabase
@@ -27,27 +26,27 @@ namespace GalliumPlus.WebApi.Data.FakeDatabase
             int createdId;
 
             createdId = this.Create(new Product(
-                0, "Coca Cherry", 27, 1.00, 0.80,
-                Availability.AUTO, categoryDao.Read(0)
-            )).Id;
-            this.images.Add(createdId, defaultImage);
-
-            createdId = this.Create(new Product(
-                0, "KitKat", 14, 0.80, 0.60,
+                0, "Coca Cherry", 27, 1.00m, 0.80m,
                 Availability.AUTO, categoryDao.Read(1)
             )).Id;
             this.images.Add(createdId, defaultImage);
 
             createdId = this.Create(new Product(
-                0, "Pablo", 1, 999.99, 500.00,
-                Availability.ALWAYS, categoryDao.Read(2)
+                0, "KitKat", 14, 0.80m, 0.60m,
+                Availability.AUTO, categoryDao.Read(2)
+            )).Id;
+            this.images.Add(createdId, defaultImage);
+
+            createdId = this.Create(new Product(
+                0, "Pablo", 1, 999.99m, 500.00m,
+                Availability.ALWAYS, categoryDao.Read(3)
             )).Id;
             this.images.Add(createdId, defaultImage);
         }
 
         protected override int GetKey(Product item) => item.Id;
 
-        protected override void SetKey(Product item, int key) => item.Id = key;
+        protected override void SetKey(ref Product item, int key) => item.Id = key;
 
         public override void Delete(int key)
         {

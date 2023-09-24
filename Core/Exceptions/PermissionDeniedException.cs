@@ -1,9 +1,4 @@
 ﻿using GalliumPlus.WebApi.Core.Users;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GalliumPlus.WebApi.Core.Exceptions
 {
@@ -20,7 +15,7 @@ namespace GalliumPlus.WebApi.Core.Exceptions
         /// </summary>
         public Permissions Required { get => required; }
 
-        public override string ErrorCode => "PERMISSION_DENIED";
+        public override ErrorCode ErrorCode => ErrorCode.PERMISSION_DENIED;
         /// <summary>
         /// Instancie l'exception.
         /// </summary>

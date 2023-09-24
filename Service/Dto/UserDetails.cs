@@ -6,16 +6,20 @@ namespace GalliumPlus.WebApi.Dto
     public class UserDetails
     {
         public string Id { get; }
-        public string Name { get; }
+        public string FirstName { get; }
+        public string LastName { get; }
+        public string Email { get; }
         public RoleDetails Role { get; }
         public string Year { get; }
-        public double Deposit { get; }
+        public decimal? Deposit { get; }
         public bool IsMember { get; }
 
-        public UserDetails(string id, string name, RoleDetails role, string year, double deposit, bool isMember)
+        public UserDetails(string id, string firstName, string lastName, string email, RoleDetails role, string year, decimal? deposit, bool isMember)
         {
             Id = id;
-            Name = name;
+            FirstName = firstName;
+            LastName = lastName;
+            Email = email;
             Role = role;
             Year = year;
             Deposit = deposit;
@@ -30,9 +34,11 @@ namespace GalliumPlus.WebApi.Dto
             {
                 return new UserDetails(
                     user.Id,
-                    user.Name,
+                    user.Identity.FirstName,
+                    user.Identity.LastName,
+                    user.Identity.Email,
                     roleMapper.FromModel(user.Role),
-                    user.Year,
+                    user.Identity.Year,
                     user.Deposit,
                     user.IsMember
                 );
@@ -42,9 +48,13 @@ namespace GalliumPlus.WebApi.Dto
             {
                 return new User(
                     details.Id,
-                    details.Name,
+                    new UserIdentity(
+                        details.FirstName,
+                        details.LastName,
+                        details.Email,
+                        details.Year
+                    ),
                     roleMapper.ToModel(details.Role, dao.Roles),
-                    details.Year,
                     details.Deposit,
                     details.IsMember
                 );

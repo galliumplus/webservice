@@ -1,5 +1,4 @@
 ﻿using GalliumPlus.WebApi.Core.Data;
-using GalliumPlus.WebApi.Core.Orders;
 using GalliumPlus.WebApi.Core.Users;
 
 namespace GalliumPlus.WebApi.Data.FakeDatabase
@@ -34,6 +33,6 @@ namespace GalliumPlus.WebApi.Data.FakeDatabase
         }
 
         protected override int GetKey(Role item) => item.Id;
-        protected override void SetKey(Role item, int key) => item.Id = key;
+        protected override void SetKey(ref Role item, int key) => item.Id = key;
     }
 }

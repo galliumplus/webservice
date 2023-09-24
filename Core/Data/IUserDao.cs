@@ -17,7 +17,7 @@ namespace GalliumPlus.WebApi.Core.Data
         /// <exception cref="ItemNotFoundException"></exception>
         /// <exception cref="InvalidItemException"></exception>
         /// <returns>L'acompte en euros.</returns>
-        public double ReadDeposit(string id);
+        public decimal? ReadDeposit(string id);
 
         /// <summary>
         /// Mets à jour l'acompte d'un utilisateur.
@@ -26,6 +26,6 @@ namespace GalliumPlus.WebApi.Core.Data
         /// <param name="deposit">Le nouvel acompte.</param>
         /// <exception cref="ItemNotFoundException"></exception>
         /// <exception cref="InvalidItemException"></exception>
-        public void UpdateDeposit(string id, double deposit);
+        public void UpdateDeposit(string id, decimal? deposit);
     }
 }

@@ -24,6 +24,10 @@
 		<ProjectReference Include="..\FakeDatabase\FakeDatabase.csproj" />
 	</ItemGroup>
 
+	<ItemGroup Condition="($(Configuration) == 'Debug') Or ($(Configuration) == 'Release')">
+		<ProjectReference Include="..\MariaDb\MariaDb.csproj" />
+	</ItemGroup>
+
 	<Target Name="Date" BeforeTargets="BeforeBuild">
 		<WriteLinesToFile File="$(IntermediateOutputPath)builtins.cs" Lines="static partial class Builtins { public static readonly long CompileTime = $([System.DateTime]::Now.Ticks) %3B }" Overwrite="true" />
 		<ItemGroup>
