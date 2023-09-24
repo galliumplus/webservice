@@ -20,7 +20,7 @@ namespace GalliumPlus.WebApi.Data.FakeDatabase
             this.clients = clients;
 
             User lomens = this.Users.Read("lomens");
-            Client testApp = this.clients.Read(0);
+            Client testApp = this.clients.Read(1);
             this.Create(
                 new Session(
                     "12345678901234567890",
@@ -69,6 +69,6 @@ namespace GalliumPlus.WebApi.Data.FakeDatabase
             throw new InvalidOperationException("A session token is read-only");
         }
 
-        public Session ReadSummary(string token) => this.Read(token);
+        //public Session Read(string token) => this.Read(token);
     }
 }

@@ -35,11 +35,13 @@ namespace GalliumPlus.WebApi.Controllers
 
             string result = order.ProcessPaymentAndUpdateStock(productDao);
 
+            string? customerId = null;
+            if (order.Customer != null && order.Customer.Id != "anonymousmember00000000000") customerId = order.Customer.Id;
             HistoryAction action = new(
                 HistoryActionKind.PURCHASE,
                 $"Achat par {order.PaymentMethod.Description} de : {order.ItemsDescription}",
                 this.User!.Id,
-                order.Customer?.Id,
+                customerId,
                 order.TotalPrice()
             );
             this.historyDao.AddEntry(action);

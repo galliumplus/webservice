@@ -56,7 +56,7 @@ namespace GalliumPlus.WebApi.Data.MariaDb
             var readCommand = connection.CreateCommand();
             readCommand.CommandText = "SELECT `id`, `name`, `permissions` FROM `Role`";
 
-            var results = readCommand.ExecuteReader();
+            using var results = readCommand.ExecuteReader();
 
             return this.ReadResults(results, Hydrate);
         }
@@ -69,7 +69,7 @@ namespace GalliumPlus.WebApi.Data.MariaDb
             readCommand.CommandText = "SELECT `id`, `name`, `Permissions` FROM `Role` WHERE `id` = @id";
             readCommand.Parameters.AddWithValue("@id", key);
 
-            var result = readCommand.ExecuteReader();
+            using var result = readCommand.ExecuteReader();
 
             if (!result.Read())
             {

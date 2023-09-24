@@ -19,7 +19,9 @@ class UserTests(TestBase):
 
         user = users[0]
         self.expect(user).to.have.an_item("id").of.type(str)
-        self.expect(user).to.have.an_item("name").of.type(str)
+        self.expect(user).to.have.an_item("firstName").of.type(str)
+        self.expect(user).to.have.an_item("lastName").of.type(str)
+        self.expect(user).to.have.an_item("email").of.type(str)
         self.expect(user).to.have.an_item("role").of.type(int)
         self.expect(user).to.have.an_item("year").of.type(str)
         self.expect(user).to.have.an_item("deposit").that._is.a_number()
@@ -39,7 +41,9 @@ class UserTests(TestBase):
         self.expect(user).to.be.a(dict)
 
         self.expect(user).to.have.an_item("id").of.type(str)
-        self.expect(user).to.have.an_item("name").of.type(str)
+        self.expect(user).to.have.an_item("firstName").of.type(str)
+        self.expect(user).to.have.an_item("lastName").of.type(str)
+        self.expect(user).to.have.an_item("email").of.type(str)
         self.expect(user).to.have.an_item("year").of.type(str)
         self.expect(user).to.have.an_item("deposit").that._is.a_number()
         self.expect(user).to.have.an_item("isMember").of.type(bool)
@@ -65,7 +69,9 @@ class UserTests(TestBase):
         self.expect(user).to.be.a(dict)
 
         self.expect(user).to.have.an_item("id").of.type(str)
-        self.expect(user).to.have.an_item("name").of.type(str)
+        self.expect(user).to.have.an_item("firstName").of.type(str)
+        self.expect(user).to.have.an_item("lastName").of.type(str)
+        self.expect(user).to.have.an_item("email").of.type(str)
         self.expect(user).to.have.an_item("year").of.type(str)
         self.expect(user).to.have.an_item("deposit").that._is.a_number()
         self.expect(user).to.have.an_item("isMember").of.type(bool)
@@ -84,7 +90,9 @@ class UserTests(TestBase):
 
         valid_user = {
             "id": "ar113926",
-            "name": "Aimeric ROURA",
+            "firstName": "Aimeric",
+            "lastName": "ROURA",
+            "email": "caca@gmail.com",
             "role": existing_role["id"],
             "year": "2A",
             "deposit": 7001.01,
@@ -98,7 +106,7 @@ class UserTests(TestBase):
         created_user = self.get("users/ar113926").json()
 
         self.expect(new_user_count).to.be.equal_to(previous_user_count + 1)
-        self.expect(created_user["name"]).to.be.equal_to("Aimeric ROURA")
+        self.expect(created_user["firstName"]).to.be.equal_to("Aimeric")
         self.expect(created_user["role"]["name"]).to.be.equal_to(existing_role["name"])
 
         # Tests avec des utilisateurs non valides
@@ -106,8 +114,10 @@ class UserTests(TestBase):
         # Role inexistant
 
         invalid_user = {
-            "id": "ar113926",
-            "name": "Aimeric ROURA",
+            "id": "ar123456",
+            "firstName": "Aimeric",
+            "lastName": "ROURA",
+            "email": "caca@gmail.com",
             "role": 123,
             "year": "2A",
             "deposit": 7001.01,
@@ -122,8 +132,10 @@ class UserTests(TestBase):
         # Informations manquantes
 
         invalid_user = {
-            "id": "ar113926",
-            "name": "Aimeric ROURA",
+            "id": "ar123456",
+            "firstName": "Aimeric",
+            "lastName": "ROURA",
+            "email": "caca@gmail.com",
             "year": "2A",
             "isMember": False,
         }
@@ -136,8 +148,10 @@ class UserTests(TestBase):
         # Mauvais types de données
 
         invalid_user = {
-            "id": "ar113926",
-            "name": "Aimeric ROURA",
+            "id": "ar123456",
+            "firstName": "Aimeric",
+            "lastName": "ROURA",
+            "email": "caca@gmail.com",
             "role": "Président",
             "year": 2,
             "deposit": 7001.01,
@@ -153,7 +167,9 @@ class UserTests(TestBase):
 
         invalid_user = {
             "id": "ar113926",
-            "name": "Aimeric ROURA",
+            "firstName": "Aimeric",
+            "lastName": "ROURA",
+            "email": "caca@gmail.com",
             "role": existing_role["id"],
             "year": "2A",
             "deposit": 7001.01,
@@ -167,31 +183,35 @@ class UserTests(TestBase):
 
     def test_user_edit(self):
         role = self.get("roles").json()[0]
-        user_id = "ar113926"
+        user_id = "ar113945"
         user = {
             "id": user_id,
-            "name": "Aimeric ROURA",
+            "firstName": "Aimeric",
+            "lastName": "ROURA",
+            "email": "caca@gmail.com",
             "role": role["id"],
             "year": "2A",
             "deposit": 7001.01,
             "isMember": False,
         }
+        self.post("users", user)
+
         other_user_id = self.get("users").json()[0]["id"]
 
         # Test avec un utilisateur valide
 
-        user.update(Name="Joe JIGABOO", IsMember=True)
+        user.update(firstName="Joe", lastName="JIGABOO", isMember=True)
 
         response = self.put(f"users/{user_id}", user)
         self.expect(response.status_code).to.be.equal_to(200)
 
         modified_user = self.get(f"/users/{user_id}").json()
-        self.expect(modified_user["name"]).to.be.equal_to("Joe JIGABOO")
+        self.expect(modified_user["lastName"]).to.be.equal_to("JIGABOO")
         self.expect(modified_user["isMember"]).to.be.true()
 
         # Test en changeant l'ID
 
-        user.update(Id="jj000000")
+        user.update(id="jj000000")
 
         response = self.put(f"users/{user_id}", user)
         self.expect(response.status_code).to.be.equal_to(200)
@@ -202,14 +222,14 @@ class UserTests(TestBase):
         new_id = self.get(f"/users/jj000000")
         self.expect(new_id.status_code).to.be.equal_to(200)
         modified_user = new_id.json()
-        self.expect(modified_user["name"]).to.be.equal_to("Joe JIGABOO")
+        self.expect(modified_user["firstName"]).to.be.equal_to("Joe")
 
         # Tests avec des utilisateurs non valides
 
         # Role inexistant
 
         invalid_user = user.copy()
-        invalid_user.update(Role=123)
+        invalid_user.update(role=123)
         response = self.put("users/jj000000", invalid_user)
         self.expect(response.status_code).to.be.equal_to(400)
         self.expect(response.json()).to.have.an_item("code").that._is.equal_to(
@@ -219,7 +239,9 @@ class UserTests(TestBase):
         # Informations manquantes
 
         invalid_user = {
-            "name": "Aimeric ROURA",
+            "firstName": "Aimeric",
+            "lastName": "ROURA",
+            "email": "caca@gmail.com",
             "year": "2A",
             "isMember": False,
         }
@@ -232,8 +254,10 @@ class UserTests(TestBase):
         # Mauvais types de données
 
         invalid_user = {
-            "id": "ar113926",
-            "name": "Aimeric ROURA",
+            "id": user_id,
+            "firstName": "Aimeric",
+            "lastName": "ROURA",
+            "email": "caca@gmail.com",
             "role": "Président",
             "year": 2,
             "deposit": 7001.01,
@@ -248,7 +272,7 @@ class UserTests(TestBase):
         # Existe déjà
 
         invalid_user = user.copy()
-        invalid_user.update(Id=other_user_id)
+        invalid_user.update(id=other_user_id)
         response = self.put("users/jj000000", invalid_user)
         self.expect(response.status_code).to.be.equal_to(400)
         self.expect(response.json()).to.have.an_item("code").that._is.equal_to(
@@ -257,11 +281,40 @@ class UserTests(TestBase):
         response = self.get("users/jj000000")
         self.expect(response.status_code).to.be.equal_to(200)
 
+    def test_user_edit_deposit(self):
+        userId = self.get("users").json()[0]["id"]
+
+        # Valeur OK
+
+        response = self.put(f"users/{userId}/deposit", 4.87)
+        self.expect(response.status_code).to.be.equal_to(200)
+
+        deposit = self.get(f"users/{userId}").json()["deposit"]
+        self.expect(deposit).to.be.equal_to(4.87)
+
+        # Fraction de centimes 😱
+
+        response = self.put(f"users/{userId}/deposit", 4.873)
+        self.expect(response.status_code).to.be.equal_to(400)
+
+        deposit = self.get(f"users/{userId}").json()["deposit"]
+        self.expect(deposit).to.be.equal_to(4.87)
+
+        # Acompte négatif 😡
+
+        response = self.put(f"users/{userId}/deposit", -4.87)
+        self.expect(response.status_code).to.be.equal_to(400)
+
+        deposit = self.get(f"users/{userId}").json()["deposit"]
+        self.expect(deposit).to.be.equal_to(4.87)
+
     def test_user_delete(self):
         role = self.get("roles").json()[0]
         user = {
             "id": "ar113926",
-            "name": "Aimeric ROURA",
+            "firstName": "Aimeric",
+            "lastName": "ROURA",
+            "email": "caca@gmail.com",
             "role": role["id"],
             "year": "2A",
             "deposit": 7001.01,
@@ -309,7 +362,9 @@ class UserTests(TestBase):
         role = self.get("roles").json()[0]
         user = {
             "id": "ar113926",
-            "name": "Aimeric ROURA",
+            "firstName": "Aimeric",
+            "lastName": "ROURA",
+            "email": "caca@gmail.com",
             "role": role["id"],
             "year": "2A",
             "deposit": 7001.01,

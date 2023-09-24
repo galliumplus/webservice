@@ -1,6 +1,10 @@
 ﻿using GalliumPlus.WebApi.Core.Data;
+using GalliumPlus.WebApi.Core.Exceptions;
 using GalliumPlus.WebApi.Core.History;
+using GalliumPlus.WebApi.Core.Users;
 using MySqlConnector;
+using System.Data;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
 namespace GalliumPlus.WebApi.Data.MariaDb
@@ -24,32 +28,68 @@ namespace GalliumPlus.WebApi.Data.MariaDb
             command.Parameters.AddWithValue("@text", action.Text);
             command.Parameters.AddWithValue("@time", DateTime.UtcNow);
             command.Parameters.AddWithValue("@kind", (int)action.ActionKind);
-            command.Parameters.AddWithValue("@actor", action.Actor);
-            command.Parameters.AddWithValue("@target", action.Target);
+            command.Parameters.AddWithValue("@actor", actorId);
+            command.Parameters.AddWithValue("@target", targetId);
             command.Parameters.AddWithValue("@numericValue", action.NumericValue);
 
             command.ExecuteNonQuery();
         }
 
-        private int EnsureUserIsInHistory(string userId, MySqlConnection connection)
+        private bool FindHistoryUserId(string userId, MySqlConnection connection, out int id)
         {
             var selectCommand = connection.CreateCommand();
             selectCommand.CommandText = "SELECT `id` FROM `HistoryUser` WHERE `userId` = @userId";
             selectCommand.Parameters.AddWithValue("@userId", userId);
 
-            if (selectCommand.ExecuteScalar() is long id)
+            if (selectCommand.ExecuteScalar() is int foundId)
             {
-                return (int)id;
+                id = foundId;
+                return true;
             }
             else
             {
-                var insertCommand = connection.CreateCommand();
-                insertCommand.CommandText = "INSERT INTO `HistoryUser`(`userId`) VALUES (@userId)";
-                insertCommand.Parameters.AddWithValue("@userId", userId);
+                id = -1;
+                return false;
+            }
+        }
 
-                insertCommand.ExecuteNonQuery();
+        private int EnsureUserIsInHistory(string userId, MySqlConnection connection)
+        {
+            try
+            {
+                if (FindHistoryUserId(userId, connection, out int id))
+                {
+                    return id;
+                }
+                else
+                {
+                    var insertCommand = connection.CreateCommand();
+                    insertCommand.CommandText = "INSERT INTO `HistoryUser`(`userId`) VALUES (@userId)";
+                    insertCommand.Parameters.AddWithValue("@userId", userId);
 
-                return (int)this.SelectLastInsertId(connection);
+                    insertCommand.ExecuteNonQuery();
+
+                    return (int)this.SelectLastInsertId(connection);
+                }
+            }
+            catch (MySqlException error)
+            {
+                if (error.ErrorCode == MySqlErrorCode.DuplicateKeyEntry
+                    && FindHistoryUserId(userId, connection, out int id))
+                {
+                    return id;
+                }
+                else throw;
+            }
+        }
+
+        public void CheckUserNotInHistory(string userId)
+        {
+            using var connection = this.Connect();
+
+            if (FindHistoryUserId(userId, connection, out int _))
+            {
+                throw new DuplicateItemException("Un autre utilisateur avec cet identifiant existe déjà dans l'historique.");
             }
         }
 
@@ -61,8 +101,19 @@ namespace GalliumPlus.WebApi.Data.MariaDb
             command.CommandText = "UPDATE `HistoryUser` SET `userId` = @newId WHERE `userId` = @oldId";
             command.Parameters.AddWithValue("@oldId", oldId);
             command.Parameters.AddWithValue("@newId", newId);
-
-            command.ExecuteNonQuery();
+            
+            try
+            {
+                command.ExecuteNonQuery();
+            }
+            catch (MySqlException error)
+            {
+                if (error.ErrorCode == MySqlErrorCode.DuplicateKeyEntry)
+                {
+                    throw new DuplicateItemException("Un autre utilisateur avec cet identifiant existe déjà dans l'historique.");
+                }
+                else throw;
+            }
         }
     }
 }

@@ -1,6 +1,7 @@
 import unittest
 import urllib3
 import requests
+import decimal
 
 from utils.launcher import Launcher
 
@@ -13,4 +14,5 @@ from tests.access_tests import AccessTests
 
 
 if __name__ == "__main__":
-    Launcher.launch("0.4.0")
+    decimal.DefaultContext.prec = 2
+    Launcher.launch("0.5.0")

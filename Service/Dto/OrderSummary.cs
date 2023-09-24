@@ -64,7 +64,7 @@ namespace GalliumPlus.WebApi.Dto
             private static User BuildAnonymousMember()
             {
                 return new User(
-                    "anonymous",
+                    "anonymousmember00000000000", // pas possible d'être rentré en BDD
                     new UserIdentity("Anonyme", "", "", ""),
                     new Role(-1, "Membre anonyme", Permissions.NONE),
                     0.00m,

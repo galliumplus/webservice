@@ -77,12 +77,16 @@ namespace GalliumPlus.WebApi.Data.MariaDb
                 (Permissions)row.GetInt32("permissions")
             );
 
+            byte[] passwordBytes = new byte[32];
+            row.GetBytes("password", 0, passwordBytes, 0, 32);
+
             return new User(
                 row.GetString("userId"),
                 identity,
                 role,
                 row.IsDBNull("deposit") ? null : row.GetDecimal("deposit"),
-                row.GetBoolean("isMember")
+                row.GetBoolean("isMember"),
+                new PasswordInformation(passwordBytes, row.GetString("salt"))
             );
         }
 
@@ -93,13 +97,12 @@ namespace GalliumPlus.WebApi.Data.MariaDb
             var command = connection.CreateCommand();
             command.CommandText
                 = "SELECT `userId`, `firstName`, `lastName`, `email`, `year`, `deposit`, `isMember`, "
-                + "`Role`.`id` as `roleId`, `name` as `roleName`, `permissions` "
+                + "`password`, `salt`, `Role`.`id` as `roleId`, `name` as `roleName`, `permissions` "
                 + "FROM `User` INNER JOIN `Role` ON `User`.`role` = `Role`.`id`";
 
-            var results = command.ExecuteReader();
+            using var results = command.ExecuteReader();
 
             return this.ReadResults(results, Hydrate);
-
         }
 
         public User Read(string key)
@@ -109,11 +112,30 @@ namespace GalliumPlus.WebApi.Data.MariaDb
             var command = connection.CreateCommand();
             command.CommandText
                 = "SELECT `userId`, `firstName`, `lastName`, `email`, `year`, `deposit`, `isMember`, "
-                + "`Role`.`id` as `roleId`, `name` as `roleName`, `permissions` "
+                + "`password`, `salt`, `Role`.`id` as `roleId`, `name` as `roleName`, `permissions` "
                 + "FROM `User` INNER JOIN `Role` ON `User`.`role` = `Role`.`id` WHERE `userId` = @id";
             command.Parameters.AddWithValue("@id", key);
 
-            var result = command.ExecuteReader();
+            using var result = command.ExecuteReader();
+
+            if (!result.Read())
+            {
+                throw new ItemNotFoundException("Cet utilisateur");
+            }
+
+            return Hydrate(result);
+        }
+
+        internal static User Read(int numId, MySqlConnection connection)
+        {
+            var command = connection.CreateCommand();
+            command.CommandText
+                = "SELECT `userId`, `firstName`, `lastName`, `email`, `year`, `deposit`, `isMember`, "
+                + "`password`, `salt`, `Role`.`id` as `roleId`, `name` as `roleName`, `permissions` "
+                + "FROM `User` INNER JOIN `Role` ON `User`.`role` = `Role`.`id` WHERE `User`.`id` = @id";
+            command.Parameters.AddWithValue("@id", numId);
+
+            using var result = command.ExecuteReader();
 
             if (!result.Read())
             {
@@ -131,7 +153,7 @@ namespace GalliumPlus.WebApi.Data.MariaDb
             command.CommandText = "SELECT `deposit` FROM `User` WHERE `userId` = @id";
             command.Parameters.AddWithValue("@id", id);
 
-            var result = command.ExecuteReader();
+            using var result = command.ExecuteReader();
 
             if (!result.Read())
             {
@@ -154,8 +176,8 @@ namespace GalliumPlus.WebApi.Data.MariaDb
 
             var command = connection.CreateCommand();
             command.CommandText
-                = "UPDATE `User` SET `userId` = @newUserId, `firstName` = @firstName, `lastName` = @lastName,"
-                + "`email` = @email, `role` = @role, `year` = @year, `deposit` = @deposit, `isMember` = @isMember"
+                = "UPDATE `User` SET `userId` = @newUserId, `firstName` = @firstName, `lastName` = @lastName, "
+                + "`email` = @email, `role` = @role, `year` = @year, `deposit` = @deposit, `isMember` = @isMember "
                 + "WHERE `userId` = @oldUserId";
             command.Parameters.AddWithValue("@newUserId", item.Id);
             command.Parameters.AddWithValue("@firstName", item.Identity.FirstName);

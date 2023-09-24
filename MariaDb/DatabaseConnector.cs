@@ -1,4 +1,5 @@
-﻿using MySqlConnector;
+﻿using GalliumPlus.WebApi.Core.Exceptions;
+using MySqlConnector;
 
 namespace GalliumPlus.WebApi.Data.MariaDb
 {
@@ -23,9 +24,16 @@ namespace GalliumPlus.WebApi.Data.MariaDb
 
         internal MySqlConnection Connect()
         {
-            var connection = new MySqlConnection(this.connectionString);
-            connection.Open();
-            return connection;
+            try
+            {
+                var connection = new MySqlConnection(this.connectionString);
+                connection.Open();
+                return connection;
+            }
+            catch (MySqlException error)
+            {
+                throw new ServiceUnavailableException($"La base de données est indisponible ({error.Message}).");
+            }
         }
     }
 }

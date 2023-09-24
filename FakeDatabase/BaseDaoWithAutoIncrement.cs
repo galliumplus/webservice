@@ -2,7 +2,7 @@
 {
     public abstract class BaseDaoWithAutoIncrement<TItem> : BaseDao<int, TItem>
     {
-        private int nextInsertKey = 0;
+        private int nextInsertKey = 1;
 
         public override TItem Create(TItem item)
         {

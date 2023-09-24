@@ -108,10 +108,10 @@ class RoleTests(TestBase):
     def test_role_edit(self):
         valid_role = {"name": "Trésorier", "permissions": 0}
 
-        response = self.put("roles/0", valid_role)
+        response = self.put("roles/1", valid_role)
         self.expect(response.status_code).to.be.equal_to(200)
 
-        edited_role = self.get("roles/0").json()
+        edited_role = self.get("roles/1").json()
         self.expect(edited_role["name"]).to.be.equal_to("Trésorier")
         self.expect(edited_role["permissions"]).to.be.equal_to(0)
 
@@ -123,7 +123,7 @@ class RoleTests(TestBase):
         # Informations manquantes
 
         invalid_role = {"name": "Vice-Trésorier"}
-        response = self.put("roles/0", invalid_role)
+        response = self.put("roles/1", invalid_role)
         self.expect(response.status_code).to.be.equal_to(400)
         self.expect(response.json()).to.have.an_item("code").that._is.equal_to(
             "INVALID_ITEM"
@@ -132,7 +132,7 @@ class RoleTests(TestBase):
         # Informations non valides
 
         invalid_role = {"name": "", "permissions": -1}
-        response = self.put("roles/0", invalid_role)
+        response = self.put("roles/1", invalid_role)
         self.expect(response.status_code).to.be.equal_to(400)
         self.expect(response.json()).to.have.an_item("code").that._is.equal_to(
             "INVALID_ITEM"
@@ -164,11 +164,11 @@ class RoleTests(TestBase):
         self.expect(response.status_code).to.be.equal_to(401)
         response = self.post("roles", {})
         self.expect(response.status_code).to.be.equal_to(401)
-        response = self.get("roles/0")
+        response = self.get("roles/1")
         self.expect(response.status_code).to.be.equal_to(401)
-        response = self.put("roles/0", {})
+        response = self.put("roles/1", {})
         self.expect(response.status_code).to.be.equal_to(401)
-        response = self.delete("roles/0")
+        response = self.delete("roles/1")
         self.expect(response.status_code).to.be.equal_to(401)
 
     def test_role_no_permission(self):
@@ -178,9 +178,9 @@ class RoleTests(TestBase):
         self.expect(response.status_code).to.be.equal_to(403)
         response = self.post("roles", {"name": "/", "permissions": 0})
         self.expect(response.status_code).to.be.equal_to(403)
-        response = self.get("roles/0")
+        response = self.get("roles/1")
         self.expect(response.status_code).to.be.equal_to(403)
-        response = self.put("roles/0", {"name": "/", "permissions": 0})
+        response = self.put("roles/1", {"name": "/", "permissions": 0})
         self.expect(response.status_code).to.be.equal_to(403)
-        response = self.delete("roles/0")
+        response = self.delete("roles/1")
         self.expect(response.status_code).to.be.equal_to(403)

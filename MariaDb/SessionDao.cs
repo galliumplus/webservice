@@ -19,14 +19,24 @@ namespace GalliumPlus.WebApi.Data.MariaDb
             using var connection = this.Connect();
 
             var command = connection.CreateCommand();
-            command.CommandText
-                = "INSERT INTO `Session`(`token`, `lastUse`, `expiration`, `user`, `client`) "
-                + "VALUES (@token, @lastUse, @expiration, @user, @client)";
+            if (item.User is null)
+            {
+                command.CommandText
+                    = "INSERT INTO `Session`(`token`, `lastUse`, `expiration`, `user`, `client`) "
+                    + "VALUES (@token, @lastUse, @expiration, NULL, @client)";
+            }
+            else
+            {
+                command.CommandText
+                    = "INSERT INTO `Session`(`token`, `lastUse`, `expiration`, `user`, `client`) "
+                    + "VALUES (@token, @lastUse, @expiration,"
+                    + "(SELECT `id` FROM `User` WHERE `userId` = @user), @client)";
+                command.Parameters.AddWithValue("@user", item.User.Id);
+            }
             command.Parameters.AddWithValue("@token", item.Token);
             command.Parameters.AddWithValue("@lastUse", item.LastUse);
             command.Parameters.AddWithValue("@expiration", item.Expiration);
-            command.Parameters.AddWithValue("@user", item.User);
-            command.Parameters.AddWithValue("@token", item.Token);
+            command.Parameters.AddWithValue("@client", item.Client.Id);
 
             try
             {
@@ -58,45 +68,35 @@ namespace GalliumPlus.WebApi.Data.MariaDb
             }
         }
 
-        public Session ReadSummary(string token)
+        public Session Read(string token)
         {
             using var connection = this.Connect();
 
             var command = connection.CreateCommand();
             command.CommandText
-                = "SELECT `lastUse`, `expiration`, `userId`, `permissions`, "
-                + "`granted`, `revoked`, `isEnabled`, `Client`.`name` as `clientName` "
-                + "FROM `Session` INNER JOIN `User` ON `Session`.`user` = `User`.`id` "
-                + "INNER JOIN `Role` ON `User`.`role` = `Role`.`id` "
-                + "INNER JOIN `Client` ON `Session`.`client` = `Client`.`id`"
-                + "WHERE `token` = @token";
+                = "SELECT `lastUse`, `expiration`, `user`, `client` "
+                + "FROM `Session` WHERE `token` = @token";
             command.Parameters.AddWithValue("@token", token);
 
-            var result = command.ExecuteReader();
-
-            if (!result.Read())
+            DateTime lastUse, expiration;
+            int userId, clientId;
+            using (var result = command.ExecuteReader())
             {
-                throw new ItemNotFoundException("Cette session");
+                if (!result.Read())
+                {
+                    throw new ItemNotFoundException("Cette session");
+                }
+
+                lastUse = result.GetDateTime("lastUse");
+                expiration = result.GetDateTime("expiration");
+                userId = result.GetInt32("user");
+                clientId = result.GetInt32("client");
             }
 
             return new Session(
-                token,
-                result.GetDateTime("lastUse"),
-                result.GetDateTime("expiration"),
-                new User(
-                    result.GetString("userId"),
-                    new UserIdentity("", "", "", ""),
-                    new Role(-1, "Unknown", (Permissions)result.GetInt32("permissions")),
-                    null,
-                    false
-                ),
-                new Client(
-                    -1, "",
-                    result.GetString("clientName"),
-                    result.GetBoolean("isEnabled"),
-                    (Permissions)result.GetInt32("granted"),
-                    (Permissions)result.GetInt32("revoked")
-                )
+                token, lastUse, expiration,
+                UserDao.Read(userId, connection),
+                ClientDao.Read(clientId, connection)
             );
         }
 

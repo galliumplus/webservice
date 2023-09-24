@@ -30,9 +30,10 @@ namespace GalliumPlus.WebApi.Data.MariaDb
             if (item is BotClient bot)
             {
                 var childInsertCommand = connection.CreateCommand();
-                childInsertCommand.CommandText = "INSERT INTO `BotClient`(`id`, `secret`) VALUES (@id, @secret)";
+                childInsertCommand.CommandText = "INSERT INTO `BotClient`(`id`, `secret`, `salt`) VALUES (@id, @secret, @salt)";
                 childInsertCommand.Parameters.AddWithValue("@id", id);
-                childInsertCommand.Parameters.AddWithValue("@secret", bot.Secret.Hashed);
+                childInsertCommand.Parameters.AddWithValue("@secret", bot.Secret.Hash);
+                childInsertCommand.Parameters.AddWithValue("@salt", bot.Secret.Salt);
 
                 childInsertCommand.ExecuteNonQuery();
             }
@@ -81,7 +82,7 @@ namespace GalliumPlus.WebApi.Data.MariaDb
                 return new BotClient(
                     row.GetInt32("id"),
                     row.GetString("apiKey"),
-                    new OneTimeSecret(hashedSecret),
+                    new OneTimeSecret(hashedSecret, row.GetString("salt")),
                     row.GetString("name"),
                     row.GetBoolean("isEnabled"),
                     (Permissions)row.GetInt32("granted")
@@ -122,12 +123,12 @@ namespace GalliumPlus.WebApi.Data.MariaDb
             var findCommand = connection.CreateCommand();
             findCommand.CommandText
                 = "SELECT `apiKey`, `name`, `granted`, `isEnabled`, "
-                + "`BotClient`.`id` as `id`, `secret` "
+                + "`BotClient`.`id` as `id`, `secret`, `salt` "
                 + "FROM `Client` NATURAL JOIN `BotClient` "
                 + "WHERE `apiKey` = @apiKey";
             findCommand.Parameters.AddWithValue("@apiKey", apiKey);
 
-            var result = findCommand.ExecuteReader();
+            using var result = findCommand.ExecuteReader();
 
             if (!result.Read())
             {
@@ -140,7 +141,7 @@ namespace GalliumPlus.WebApi.Data.MariaDb
             return new BotClient(
                 result.GetInt32("id"),
                 result.GetString("apiKey"),
-                new OneTimeSecret(hashedSecret),
+                new OneTimeSecret(hashedSecret, result.GetString("salt")),
                 result.GetString("name"),
                 result.GetBoolean("isEnabled"),
                 (Permissions)result.GetInt32("granted")
@@ -154,7 +155,7 @@ namespace GalliumPlus.WebApi.Data.MariaDb
             var findCommand = connection.CreateCommand();
             findCommand.CommandText
                 = "SELECT `Client`.`id` as `id`, `apiKey`, `name`, `granted`, `revoked`, `isEnabled`, "
-                + "`BotClient`.`id` as `botId`, `BotClient`.`secret` as `botSecret`, "
+                + "`BotClient`.`id` as `botId`, `BotClient`.`secret` as `botSecret`, `salt`, "
                 + "`ssoclient`.`id` as `ssoId`, `SsoClient`.`secret` as `ssoSecret`, "
                 + "`redirectUrl`, `logoUrl`, `usesApi` "
                 + "FROM `Client` LEFT JOIN `BotClient` ON `BotClient`.`id` = `Client`.`id` "
@@ -162,7 +163,7 @@ namespace GalliumPlus.WebApi.Data.MariaDb
                 + "WHERE `apiKey` = @apiKey";
             findCommand.Parameters.AddWithValue("@apiKey", apiKey);
 
-            var result = findCommand.ExecuteReader();
+            using var result = findCommand.ExecuteReader();
 
             if (!result.Read())
             {
@@ -179,13 +180,13 @@ namespace GalliumPlus.WebApi.Data.MariaDb
             var readCommand = connection.CreateCommand();
             readCommand.CommandText
                 = "SELECT `Client`.`id` as `id`, `apiKey`, `name`, `granted`, `revoked`, `isEnabled`, "
-                + "`BotClient`.`id` as `botId`, `BotClient`.`secret` as `botSecret`, "
+                + "`BotClient`.`id` as `botId`, `BotClient`.`secret` as `botSecret`, `salt`, "
                 + "`ssoclient`.`id` as `ssoId`, `SsoClient`.`secret` as `ssoSecret`, "
                 + "`redirectUrl`, `logoUrl`, `usesApi` "
                 + "FROM `Client` LEFT JOIN `BotClient` ON `BotClient`.`id` = `Client`.`id` "
                 + "LEFT JOIN `SsoClient` ON `SsoClient`.`id` = `Client`.`id`";
 
-            var results = readCommand.ExecuteReader();
+            using var results = readCommand.ExecuteReader();
 
             return this.ReadResults(results, Hydrate);
         }
@@ -193,7 +194,11 @@ namespace GalliumPlus.WebApi.Data.MariaDb
         public Client Read(int key)
         {
             using var connection = this.Connect();
+            return Read(key, connection);
+        }
 
+        internal static Client Read(int id, MySqlConnection connection)
+        {
             var readCommand = connection.CreateCommand();
             readCommand.CommandText
                 = "SELECT `Client`.`id` as `id`, `apiKey`, `name`, `granted`, `revoked`, `isEnabled`, "
@@ -203,9 +208,9 @@ namespace GalliumPlus.WebApi.Data.MariaDb
                 + "FROM `Client` LEFT JOIN `BotClient` ON `BotClient`.`id` = `Client`.`id` "
                 + "LEFT JOIN `SsoClient` ON `SsoClient`.`id` = `Client`.`id` "
                 + "WHERE `Client`.`id` = @id";
-            readCommand.Parameters.AddWithValue("@id", key);
+            readCommand.Parameters.AddWithValue("@id", id);
 
-            var result = readCommand.ExecuteReader();
+            using var result = readCommand.ExecuteReader();
 
             if (!result.Read())
             {
@@ -222,9 +227,10 @@ namespace GalliumPlus.WebApi.Data.MariaDb
             if (item is BotClient bot)
             {
                 var childUpdateCommand = connection.CreateCommand();
-                childUpdateCommand.CommandText = "UPDATE `BotClient` SET `secret` = @secret WHERE `id` = @id";
+                childUpdateCommand.CommandText = "UPDATE `BotClient` SET `secret` = @secret, `salt` = @salt WHERE `id` = @id";
                 childUpdateCommand.Parameters.AddWithValue("@id", key);
-                childUpdateCommand.Parameters.AddWithValue("@secret", bot.Secret.Hashed);
+                childUpdateCommand.Parameters.AddWithValue("@secret", bot.Secret.Hash);
+                childUpdateCommand.Parameters.AddWithValue("@salt", bot.Secret.Salt);
 
                 int childAffectedRows = childUpdateCommand.ExecuteNonQuery();
 

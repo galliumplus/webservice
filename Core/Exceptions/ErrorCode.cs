@@ -6,6 +6,7 @@
         DUPLICATE_ITEM,
         INVALID_ITEM,
         ITEM_NOT_FOUND,
-        PERMISSION_DENIED
+        PERMISSION_DENIED,
+        SERVICE_UNAVAILABLE,
     }
 }

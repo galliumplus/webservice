@@ -18,7 +18,7 @@ namespace GalliumPlus.WebApi.Data.FakeDatabase
                 new User(
                     "lomens",
                     new UserIdentity("Nicolas", "RESIN", "nicolas.resin@iut-dijon.u-bourgogne.fr", "PROF"),
-                    this.roles.Read(0), 20, false,
+                    this.roles.Read(1), 20, false,
                     PasswordInformation.FromPassword("motdepasse")
                 )
             );
@@ -26,7 +26,7 @@ namespace GalliumPlus.WebApi.Data.FakeDatabase
                 new User(
                     "mf187870", 
                     new UserIdentity("Matéo", "FAVARD", "mateo.favard@iut-dijon.u-bourgogne.fr", "3A"),
-                    this.roles.Read(1), 1_000_000_000, false,
+                    this.roles.Read(2), 1_000_000_000, false,
                     PasswordInformation.FromPassword("motdepasse")
                 )
             );
@@ -34,7 +34,7 @@ namespace GalliumPlus.WebApi.Data.FakeDatabase
                 new User(
                     "eb069420",
                     new UserIdentity("Evan", "BEUGNOT", "evan.beugnot@iut-dijon.u-bourgogne.fr", "2A"),
-                    this.roles.Read(2), 1_000_000_000, false,
+                    this.roles.Read(3), 1_000_000_000, false,
                     PasswordInformation.FromPassword("motdepasse")
                 )
             );
@@ -46,6 +46,7 @@ namespace GalliumPlus.WebApi.Data.FakeDatabase
             {
                 if (GetKey(item) == key)
                 {
+                    if (!this.Items.ContainsKey(key)) throw new ItemNotFoundException();
                     this.Items[key] = item;
                     return item;
                 }

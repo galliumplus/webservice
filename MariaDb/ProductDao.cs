@@ -75,7 +75,7 @@ namespace GalliumPlus.WebApi.Data.MariaDb
                 + "`Category`.`id` as `categoryId`, `Category`.`name` as `categoryName` "
                 + "FROM `Product` INNER JOIN `Category` ON `Category`.`id` = `Product`.`category`";
 
-            var results = readCommand.ExecuteReader();
+            using var results = readCommand.ExecuteReader();
 
             return this.ReadResults(results, Hydrate);
         }
@@ -93,7 +93,7 @@ namespace GalliumPlus.WebApi.Data.MariaDb
                 + "WHERE `Product`.`id` = @id";
             readCommand.Parameters.AddWithValue("@id", key);
 
-            var result = readCommand.ExecuteReader();
+            using var result = readCommand.ExecuteReader();
 
             if (!result.Read())
             {
@@ -157,7 +157,7 @@ namespace GalliumPlus.WebApi.Data.MariaDb
             readCommand.CommandText = "SELECT `imageSize`, `image` FROM `ProductImage` WHERE `id` = @id";
             readCommand.Parameters.AddWithValue("@id", id);
 
-            var result = readCommand.ExecuteReader();
+            using var result = readCommand.ExecuteReader();
 
             if (!result.Read())
             {

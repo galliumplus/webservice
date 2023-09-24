@@ -1,4 +1,5 @@
 ﻿using GalliumPlus.WebApi.Core.History;
+using GalliumPlus.WebApi.Core.Exceptions;
 
 namespace GalliumPlus.WebApi.Core.Data
 {
@@ -8,6 +9,13 @@ namespace GalliumPlus.WebApi.Core.Data
         /// Ajoute une action à l'historique.
         /// </summary>
         void AddEntry(HistoryAction action);
+
+        /// <summary>
+        /// Lève une <see cref="DuplicateItemException"/> si un identifiant
+        /// utilisateur est déja présent dans l'historique.
+        /// </summary>
+        /// <param name="userId">L'identifiant utilisateur à vérifier.</param>
+        void CheckUserNotInHistory(string userId);
 
         /// <summary>
         /// Mets à jour un utilisateur dans l'historique.

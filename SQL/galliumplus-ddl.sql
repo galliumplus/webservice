@@ -17,6 +17,7 @@ CREATE TABLE `User` (
     `deposit` DECIMAL(6,2),
     `isMember` BOOLEAN NOT NULL,
     `password` BINARY(32) NOT NULL DEFAULT '\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0',
+    `salt` CHAR(32) NOT NULL DEFAULT '',
     `registration` DATETIME NOT NULL,
     PRIMARY KEY (`id`),
     UNIQUE (`userId`)
@@ -53,7 +54,8 @@ CREATE TABLE `Client` (
 
 CREATE TABLE `BotClient` (
     `id` INTEGER NOT NULL,
-    `secret` CHAR(30) NOT NULL,
+    `secret` BINARY(32) NOT NULL DEFAULT '\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0',
+    `salt` CHAR(32) NOT NULL DEFAULT '',
     PRIMARY KEY (`id`)
 );
 
@@ -108,20 +110,21 @@ CREATE TABLE `HistoryActionKind` (
 
 CREATE TABLE `HistoryUser` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `userId` VARCHAR(20) NOT NULL CHARACTER SET ascii COLLATE ascii_bin,
+    `userId` VARCHAR(21) NOT NULL CHARACTER SET ascii COLLATE ascii_bin,
     PRIMARY KEY (`id`),
     UNIQUE (`userId`)
 );
 
-ALTER TABLE `User`          ADD FOREIGN KEY (`role`)         REFERENCES `Role`(`id`)           ON UPDATE CASCADE  ON DELETE RESTRICT;
-ALTER TABLE `Session`       ADD FOREIGN KEY (`user`)         REFERENCES `User`(`id`)           ON UPDATE CASCADE  ON DELETE CASCADE;
-ALTER TABLE `Session`       ADD FOREIGN KEY (`client`)       REFERENCES `Client`(`id`)         ON UPDATE CASCADE  ON DELETE CASCADE;
-ALTER TABLE `BotClient`     ADD FOREIGN KEY (`id`)           REFERENCES `Client`(`id`)         ON UPDATE CASCADE  ON DELETE CASCADE;
-ALTER TABLE `SsoClient`     ADD FOREIGN KEY (`id`)           REFERENCES `Client`(`id`)         ON UPDATE CASCADE  ON DELETE CASCADE;
-ALTER TABLE `Product`       ADD FOREIGN KEY (`availability`) REFERENCES `Availability`(`enum`) ON UPDATE RESTRICT ON DELETE RESTRICT;
-ALTER TABLE `Product`       ADD FOREIGN KEY (`category`)     REFERENCES `Category`(`id`)       ON UPDATE CASCADE  ON DELETE RESTRICT;
-ALTER TABLE `HistoryAction` ADD FOREIGN KEY (`actor`)        REFERENCES `HistoryUser`(`id`)    ON UPDATE RESTRICT ON DELETE RESTRICT;
-ALTER TABLE `HistoryAction` ADD FOREIGN KEY (`target`)       REFERENCES `HistoryUser`(`id`)    ON UPDATE RESTRICT ON DELETE RESTRICT;  
-ALTER TABLE `HistoryUser`   ADD FOREIGN KEY (`activeUser`)   REFERENCES `User`(`id`)           ON UPDATE RESTRICT ON DELETE RESTRICT;
+ALTER TABLE `User`          ADD FOREIGN KEY (`role`)         REFERENCES `Role`(`id`)                ON UPDATE CASCADE  ON DELETE RESTRICT;
+ALTER TABLE `Session`       ADD FOREIGN KEY (`user`)         REFERENCES `User`(`id`)                ON UPDATE CASCADE  ON DELETE CASCADE;
+ALTER TABLE `Session`       ADD FOREIGN KEY (`client`)       REFERENCES `Client`(`id`)              ON UPDATE CASCADE  ON DELETE CASCADE;
+ALTER TABLE `BotClient`     ADD FOREIGN KEY (`id`)           REFERENCES `Client`(`id`)              ON UPDATE CASCADE  ON DELETE CASCADE;
+ALTER TABLE `SsoClient`     ADD FOREIGN KEY (`id`)           REFERENCES `Client`(`id`)              ON UPDATE CASCADE  ON DELETE CASCADE;
+ALTER TABLE `Product`       ADD FOREIGN KEY (`availability`) REFERENCES `Availability`(`enum`)      ON UPDATE RESTRICT ON DELETE RESTRICT;
+ALTER TABLE `Product`       ADD FOREIGN KEY (`category`)     REFERENCES `Category`(`id`)            ON UPDATE CASCADE  ON DELETE RESTRICT;
+ALTER TABLE `HistoryAction` ADD FOREIGN KEY (`actor`)        REFERENCES `HistoryUser`(`id`)         ON UPDATE RESTRICT ON DELETE RESTRICT;
+ALTER TABLE `HistoryAction` ADD FOREIGN KEY (`target`)       REFERENCES `HistoryUser`(`id`)         ON UPDATE RESTRICT ON DELETE RESTRICT;  
+ALTER TABLE `HistoryAction` ADD FOREIGN KEY (`kind`)         REFERENCES `HistoryActionKind`(`enum`) ON UPDATE RESTRICT ON DELETE RESTRICT;
+ALTER TABLE `HistoryUser`   ADD FOREIGN KEY (`activeUser`)   REFERENCES `User`(`id`)                ON UPDATE RESTRICT ON DELETE RESTRICT;
 
 SET FOREIGN_KEY_CHECKS = 1;

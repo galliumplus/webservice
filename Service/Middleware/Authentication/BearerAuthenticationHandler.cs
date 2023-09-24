@@ -61,7 +61,7 @@ namespace GalliumPlus.WebApi.Middleware.Authentication
             Session session;
             try
             {
-                session = sessions.ReadSummary(token);
+                session = sessions.Read(token);
             }
             catch (ItemNotFoundException)
             {
@@ -70,6 +70,7 @@ namespace GalliumPlus.WebApi.Middleware.Authentication
 
             if (!session.Refresh())
             {
+                sessions.Delete(session);
                 return AuthenticateResult.Fail("Session expired");
             }
             sessions.UpdateLastUse(session);

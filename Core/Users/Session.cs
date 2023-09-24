@@ -17,7 +17,7 @@ namespace GalliumPlus.WebApi.Core.Users
         public static readonly TimeSpan LIFETIME = TimeSpan.FromHours(24);
 
         /// <summary>
-        /// La durée d'une session sans activité (30 minutes).
+        /// La durée maximum d'une session sans activité (30 minutes).
         /// </summary>
         public static readonly TimeSpan INACTIVITY_TIMEOUT = TimeSpan.FromMinutes(30);
 

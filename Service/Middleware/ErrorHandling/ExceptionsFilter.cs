@@ -14,15 +14,7 @@ namespace GalliumPlus.WebApi.Middleware.ErrorHandling
 
         public void OnException(ExceptionContext context)
         {
-            if (context.Exception is ItemNotFoundException itemNotFoundException)
-            {
-                context.Result = new ErrorResult(
-                    itemNotFoundException,
-                    StatusCodes.Status404NotFound
-                );
-                context.ExceptionHandled = true;
-            }
-            else if (context.Exception is PermissionDeniedException permissionDenied)
+            if (context.Exception is PermissionDeniedException permissionDenied)
             {
                 string messageAction = context.HttpContext.Request.Method switch
                 {
@@ -42,10 +34,21 @@ namespace GalliumPlus.WebApi.Middleware.ErrorHandling
             {
                 context.Result = new ErrorResult(
                     galliumException,
-                    StatusCodes.Status400BadRequest
+                    ErrorCodeToStatusCode(galliumException.ErrorCode)
                 );
                 context.ExceptionHandled = true;
             }
+        }
+
+        private static int ErrorCodeToStatusCode(ErrorCode errorCode)
+        {
+            return errorCode switch
+            {
+                ErrorCode.ITEM_NOT_FOUND => StatusCodes.Status404NotFound,
+                ErrorCode.PERMISSION_DENIED => StatusCodes.Status403Forbidden,
+                ErrorCode.SERVICE_UNAVAILABLE => StatusCodes.Status503ServiceUnavailable,
+                _ => StatusCodes.Status400BadRequest
+            };
         }
 
         public static void ConfigureInvalidModelStateResponseFactory(ApiBehaviorOptions options)

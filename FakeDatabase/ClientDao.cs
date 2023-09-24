@@ -24,7 +24,7 @@ namespace GalliumPlus.WebApi.Data.FakeDatabase
                 new Client(
                     id: 0,
                     name: "Tests (restricted)",
-                    apiKey: "test-api-key-restricted",
+                    apiKey: "test-api-key-restric",
                     isEnabled: true,
                     granted: Permissions.NONE,
                     revoked: Permissions.NOT_MANAGE_CATEGORIES
@@ -49,7 +49,7 @@ namespace GalliumPlus.WebApi.Data.FakeDatabase
             this.Create(
                 new BotClient(
                     id: 0,
-                    name: "Tests (normal)",
+                    name: "Tests (bot)",
                     apiKey: "test-api-key-bot",
                     isEnabled: true,
                     permissions: Permissions.NONE,

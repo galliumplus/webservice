@@ -1,4 +1,5 @@
 ﻿using GalliumPlus.WebApi.Core.Random;
+using GalliumPlus.WebApi.Core.Users;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -9,20 +10,21 @@ namespace GalliumPlus.WebApi.Core.Applications
     /// </summary>
     public class OneTimeSecret
     {
-        private byte[] hash;
+        private PasswordInformation innerPassword;
 
-        /// <summary>
-        /// Le hash SHA-256 du code secret.
-        /// </summary>
-        public byte[] Hashed => this.hash;
+        public byte[] Hash => this.innerPassword.Hash;
+
+        public string Salt => this.innerPassword.Salt;
+
+        public bool Match(string otherSecret) => this.innerPassword.Match(otherSecret);
 
         /// <summary>
         /// Crée un code depuis des données existantes.
         /// </summary>
         /// <param name="hash">Le hash de code secret.</param>
-        public OneTimeSecret(byte[] hash)
+        public OneTimeSecret(byte[] hash, string salt)
         {
-            this.hash = hash;
+            this.innerPassword = new(hash, salt);
         }
 
         /// <summary>
@@ -30,34 +32,7 @@ namespace GalliumPlus.WebApi.Core.Applications
         /// </summary>
         public OneTimeSecret()
         {
-            this.hash = new byte[32];
-        }
-
-        private static byte[] Hash(string secret)
-        {
-            byte[] encodedSecret = Encoding.UTF8.GetBytes(secret);
-            using SHA256 sha256 = SHA256.Create();
-            return sha256.ComputeHash(encodedSecret);
-        }
-
-        /// <summary>
-        /// Teste si un autre code secret correspond à celui-ci.
-        /// </summary>
-        /// <param name="secret">L'autre code secret en clair.</param>
-        /// <returns><see langword="true"/> si les deux codes correspondent.</returns>
-        public bool Match(string secret)
-        {
-            return hash.SequenceEqual(Hash(secret));
-        }
-
-        /// <summary>
-        /// Teste si un autre code secret correspond à celui-ci.
-        /// </summary>
-        /// <param name="secret">L'autre code secret.</param>
-        /// <returns><see langword="true"/> si les deux codes correspondent.</returns>
-        public bool Match(OneTimeSecret secret)
-        {
-            return hash.SequenceEqual(secret.Hashed);
+            this.innerPassword = PasswordInformation.FromPassword("");
         }
 
         /// <summary>
@@ -68,7 +43,7 @@ namespace GalliumPlus.WebApi.Core.Applications
         {
             var rtg = new RandomTextGenerator(new CryptoRandomProvider());
             string newSecret = rtg.SecretKey();
-            this.hash = Hash(newSecret);
+            this.innerPassword = PasswordInformation.FromPassword(newSecret);
             return newSecret;
         }
     }

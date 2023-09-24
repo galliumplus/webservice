@@ -62,6 +62,8 @@ namespace GalliumPlus.WebApi.Controllers
         [RequiresPermissions(Permissions.MANAGE_USERS)]
         public IActionResult Post(UserSummary newUser)
         {
+            this.historyDao.CheckUserNotInHistory(newUser.Id);
+
             User user = this.userDao.Create(this.summaryMapper.ToModel(newUser, this.userDao));
 
             HistoryAction action = new(
@@ -79,6 +81,11 @@ namespace GalliumPlus.WebApi.Controllers
         [RequiresPermissions(Permissions.MANAGE_USERS)]
         public IActionResult Put(string id, UserSummary updatedUser)
         {
+            if (updatedUser.Id != id)
+            {
+                this.historyDao.CheckUserNotInHistory(updatedUser.Id);
+            }
+
             this.userDao.Update(id, this.summaryMapper.ToModel(updatedUser, this.userDao));
 
             if (updatedUser.Id != id)

@@ -8,6 +8,7 @@ using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using System.Text.Json;
 using GalliumPlus.WebApi;
+using GalliumPlus.WebApi.Core.Users;
 #if FAKE_DB
 using GalliumPlus.WebApi.Data.FakeDatabase;
 #else
@@ -33,10 +34,13 @@ builder.Services
         options.SuppressMapClientErrors = true;
     });
 
+GalliumOptions galliumOptions = builder.Configuration.GetSection("Gallium").Get<GalliumOptions>() ?? new GalliumOptions();
+
 #if FAKE_DB
 // ajout en singleton, sinon les données ne sont pas persistées d'une requête à l'autre
 builder.Services.AddSingleton<ICategoryDao, CategoryDao>();
 builder.Services.AddSingleton<IClientDao, ClientDao>();
+builder.Services.AddSingleton<IHistoryDao, HistoryDao>();
 builder.Services.AddSingleton<IProductDao, ProductDao>();
 builder.Services.AddSingleton<IRoleDao, RoleDao>();
 builder.Services.AddSingleton<ISessionDao, SessionDao>();
@@ -44,10 +48,21 @@ builder.Services.AddSingleton<IUserDao, UserDao>();
 #else
 builder.Services.AddScoped<ICategoryDao, CategoryDao>();
 builder.Services.AddScoped<IClientDao, ClientDao>();
+builder.Services.AddScoped<IHistoryDao, HistoryDao>();
 builder.Services.AddScoped<IProductDao, ProductDao>();
 builder.Services.AddScoped<IRoleDao, RoleDao>();
 builder.Services.AddScoped<ISessionDao, SessionDao>();
 builder.Services.AddScoped<IUserDao, UserDao>();
+
+builder.Services.AddSingleton(
+    new DatabaseConnector(
+        galliumOptions.MariaDb.Host,
+        galliumOptions.MariaDb.UserId,
+        galliumOptions.MariaDb.Password,
+        galliumOptions.MariaDb.Schema,
+        galliumOptions.MariaDb.Port
+    )
+);
 #endif
 
 builder.Services.Configure<JsonOptions>(options =>
@@ -61,8 +76,6 @@ builder.Services.Configure<JsonOptions>(options =>
     // sérialise les énumérations sous forme de texte
     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
-
-var galliumOptions = builder.Configuration.GetSection("Gallium").Get<GalliumOptions>();
 
 // configuration HTTP/HTTPS
 builder.WebHost.ConfigureKestrel(opt =>
@@ -114,7 +127,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
-ServerInfo.Current.SetVersion(0, 4, 0, "alpha");
+ServerInfo.Current.SetVersion(0, 5, 0, "alpha");
 Console.WriteLine(ServerInfo.Current);
 
 app.Run();

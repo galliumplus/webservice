@@ -87,7 +87,7 @@ class AccessTests(TestBase):
         president_token = self.expect(president_session).to.have.an_item("token").value
         president_token_auth = BearerAuth(president_token)
 
-        member_read_response = self.get("products/0", auth=member_token_auth)
+        member_read_response = self.get("products/1", auth=member_token_auth)
         self.expect(member_read_response.status_code).to.be.equal_to(403)
 
         member_edit_response = self.post(
@@ -95,7 +95,7 @@ class AccessTests(TestBase):
         )
         self.expect(member_edit_response.status_code).to.be.equal_to(403)
 
-        president_read_response = self.get("products/0", auth=president_token_auth)
+        president_read_response = self.get("products/1", auth=president_token_auth)
         self.expect(president_read_response.status_code).to.be.equal_to(200)
 
         president_edit_response = self.post(
@@ -106,7 +106,7 @@ class AccessTests(TestBase):
     def test_login_permissions_restricted(self):
         member_auth = BasicAuth("lomens", "motdepasse")
         president_auth = BasicAuth("eb069420", "motdepasse")
-        key = "test-api-key-restricted"
+        key = "test-api-key-restric"
 
         member_response = self.post(
             "login", auth=member_auth, headers={"X-Api-Key": key}
@@ -140,7 +140,7 @@ class AccessTests(TestBase):
         president_token = self.expect(president_session).to.have.an_item("token").value
         president_token_auth = BearerAuth(president_token)
 
-        member_read_response = self.get("products/0", auth=member_token_auth)
+        member_read_response = self.get("products/1", auth=member_token_auth)
         self.expect(member_read_response.status_code).to.be.equal_to(403)
 
         member_edit_response = self.post(
@@ -148,7 +148,7 @@ class AccessTests(TestBase):
         )
         self.expect(member_edit_response.status_code).to.be.equal_to(403)
 
-        president_read_response = self.get("products/0", auth=president_token_auth)
+        president_read_response = self.get("products/1", auth=president_token_auth)
         self.expect(president_read_response.status_code).to.be.equal_to(200)
 
         president_edit_response = self.post(
@@ -194,7 +194,7 @@ class AccessTests(TestBase):
         president_token = self.expect(president_session).to.have.an_item("token").value
         president_token_auth = BearerAuth(president_token)
 
-        member_read_response = self.get("products/0", auth=member_token_auth)
+        member_read_response = self.get("products/1", auth=member_token_auth)
         # allowed by api key
         self.expect(member_read_response.status_code).to.be.equal_to(200)
 
@@ -203,7 +203,7 @@ class AccessTests(TestBase):
         )
         self.expect(member_edit_response.status_code).to.be.equal_to(403)
 
-        president_read_response = self.get("products/0", auth=president_token_auth)
+        president_read_response = self.get("products/1", auth=president_token_auth)
         self.expect(president_read_response.status_code).to.be.equal_to(200)
 
         president_edit_response = self.post(

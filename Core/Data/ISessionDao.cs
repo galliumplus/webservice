@@ -26,7 +26,7 @@ namespace GalliumPlus.WebApi.Core.Data
         /// <param name="token">Le jeton de la session à récupérer.</param>
         /// <returns>La session correspondante.</returns>
         /// <exception cref="ItemNotFoundException"></exception>
-        public Session ReadSummary(string token);
+        public Session Read(string token);
 
         /// <summary>
         /// Mets à jour l'heure d'accès d'une session.

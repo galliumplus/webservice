@@ -52,7 +52,7 @@ namespace GalliumPlus.WebApi.Core.Orders
                 StringBuilder sb = new(this.product.Name);
                 if (this.quantity > 1)
                 {
-                    sb.AppendFormat(" ×{0}", this.quantity);
+                    sb.AppendFormat(" × {0}", this.quantity);
                 }
                 return sb.ToString();
             }
