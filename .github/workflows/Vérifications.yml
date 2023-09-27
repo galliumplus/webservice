@@ -19,6 +19,8 @@ jobs:
       run: dotnet restore
     - name: Build
       run: dotnet build --no-restore /warnaserror -c Release
+    - name: Test ping etiq-dijon.fr
+      run: ping -c 10 etiq-dijon.fr
   
   unit-tests:
     runs-on: ubuntu-latest
