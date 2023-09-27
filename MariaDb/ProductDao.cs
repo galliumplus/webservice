@@ -1,6 +1,7 @@
 ﻿using GalliumPlus.WebApi.Core.Data;
 using GalliumPlus.WebApi.Core.Exceptions;
 using GalliumPlus.WebApi.Core.Stocks;
+using KiwiQuery;
 using MySqlConnector;
 
 namespace GalliumPlus.WebApi.Data.MariaDb
@@ -76,6 +77,16 @@ namespace GalliumPlus.WebApi.Data.MariaDb
                 + "FROM `Product` INNER JOIN `Category` ON `Category`.`id` = `Product`.`category`";
 
             using var results = readCommand.ExecuteReader();
+
+            Schema db = new(connection, Mode.MySql);
+            var product = db.Table("Product");
+            var category = db.Table("Category");
+
+            db.Select(product.Column("id").As("productId"), product.Column("name").As("productName"))
+              .And(category.Column("id").As("categoryId"), category.Column("name").As("categoryName"))
+              .And("stock", "nonMemberPrice", "memberPrice", "availability")
+              .From(product).Join(category, "id", product, "category")
+              .Fetch();
 
             return this.ReadResults(results, Hydrate);
         }

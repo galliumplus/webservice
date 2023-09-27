@@ -1,6 +1,7 @@
 ﻿using GalliumPlus.WebApi.Core.Data;
 using GalliumPlus.WebApi.Core.Exceptions;
 using GalliumPlus.WebApi.Core.Stocks;
+using KiwiQuery;
 using MySqlConnector;
 
 namespace GalliumPlus.WebApi.Data.MariaDb
@@ -12,14 +13,11 @@ namespace GalliumPlus.WebApi.Data.MariaDb
         public Category Create(Category item)
         {
             using var connection = this.Connect();
+            Schema db = new(connection, Mode.MySql);
+            
+            int id = db.InsertInto("Category").Value("name", item.Name).Apply();
 
-            var command = connection.CreateCommand();
-            command.CommandText = "INSERT INTO `Category`(`name`) VALUES (@name)";
-            command.Parameters.AddWithValue("@name", item.Name);
-
-            command.ExecuteNonQuery();
-
-            return item.WithId((int)this.SelectLastInsertId(connection));
+            return item.WithId(id);
         }
 
         public void Delete(int key)
