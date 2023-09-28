@@ -18,14 +18,15 @@ namespace GalliumPlus.WebApi.Controllers
     {
         private IUserDao userDao;
         private IHistoryDao historyDao;
-        private UserSummary.Mapper summaryMapper = new();
-        private UserDetails.Mapper detailsMapper = new();
+        private UserSummary.Mapper summaryMapper;
+        private UserDetails.Mapper detailsMapper;
 
         public UserController(IUserDao userDao, IHistoryDao historyDao)
         {
             this.userDao = userDao;
             this.historyDao = historyDao;
-
+            this.summaryMapper = new(userDao.Roles);
+            this.detailsMapper = new();
         }
 
         [HttpGet]
@@ -64,7 +65,7 @@ namespace GalliumPlus.WebApi.Controllers
         {
             this.historyDao.CheckUserNotInHistory(newUser.Id);
 
-            User user = this.userDao.Create(this.summaryMapper.ToModel(newUser, this.userDao));
+            User user = this.userDao.Create(this.summaryMapper.ToModel(newUser));
 
             HistoryAction action = new(
                 HistoryActionKind.EDIT_USERS_OR_ROLES,
@@ -86,7 +87,7 @@ namespace GalliumPlus.WebApi.Controllers
                 this.historyDao.CheckUserNotInHistory(updatedUser.Id);
             }
 
-            this.userDao.Update(id, this.summaryMapper.ToModel(updatedUser, this.userDao));
+            this.userDao.Update(id, this.summaryMapper.ToModel(updatedUser));
 
             if (updatedUser.Id != id)
             {
