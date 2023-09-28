@@ -18,7 +18,7 @@ namespace GalliumPlus.WebApi.Dto
             this.Permissions = permissions;
         }
 
-        public class Mapper : Mapper<Session, LoggedIn, ISessionDao>
+        public class Mapper : Mapper<Session, LoggedIn>
         {
             private UserDetails.Mapper userMapper = new();
 
@@ -33,7 +33,7 @@ namespace GalliumPlus.WebApi.Dto
                 );
             }
 
-            public override Session ToModel(LoggedIn dto, ISessionDao dao)
+            public override Session ToModel(LoggedIn dto)
             {
                 throw new InvalidOperationException("LoggedIn objects are read-only");
             }

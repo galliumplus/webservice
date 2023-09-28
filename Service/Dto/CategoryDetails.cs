@@ -15,14 +15,14 @@ namespace GalliumPlus.WebApi.Dto
             this.Name = String.Empty;
         }
 
-        public class Mapper : Mapper<Category, CategoryDetails, ICategoryDao>
+        public class Mapper : Mapper<Category, CategoryDetails>
         {
             public override CategoryDetails FromModel(Category model)
             {
                 return new CategoryDetails { Id = model.Id, Name = model.Name };
             }
 
-            public override Category ToModel(CategoryDetails dto, ICategoryDao dao)
+            public override Category ToModel(CategoryDetails dto)
             {
                 return new Category(dto.Id, dto.Name);
             }

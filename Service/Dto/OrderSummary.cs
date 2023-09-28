@@ -18,9 +18,16 @@ namespace GalliumPlus.WebApi.Dto
             Items = null;
         }
 
-        public class Mapper : Mapper<Order, OrderSummary, (IProductDao, IUserDao)>
+        public class Mapper : Mapper<Order, OrderSummary>
         {
-            private OrderItemSummary.Mapper saleItemMapper = new();
+            private OrderItemSummary.Mapper orderItemMapper;
+            private IUserDao userDao;
+
+            public Mapper(IUserDao userDao, IProductDao productDao)
+            {
+                this.userDao = userDao;
+                this.orderItemMapper = new(productDao);
+            }
 
             public override OrderSummary FromModel(Order model)
             {
@@ -28,10 +35,9 @@ namespace GalliumPlus.WebApi.Dto
                 throw new NotImplementedException();
             }
 
-            public override Order ToModel(OrderSummary dto, (IProductDao, IUserDao) daos)
+            public override Order ToModel(OrderSummary dto)
             {
-                (IProductDao productDao, IUserDao userDao) = daos;
-                PaymentMethodFactory factory = new(daos.Item2);
+                PaymentMethodFactory factory = new(this.userDao);
 
                 User? customer;
                 if (dto.Customer == null)
@@ -46,7 +52,7 @@ namespace GalliumPlus.WebApi.Dto
                 {
                     try
                     {
-                        customer = userDao.Read(dto.Customer);
+                        customer = this.userDao.Read(dto.Customer);
                     }
                     catch (ItemNotFoundException)
                     {
@@ -56,7 +62,7 @@ namespace GalliumPlus.WebApi.Dto
 
                 return new Order(
                     factory.Create(dto.PaymentMethod, dto.Customer),
-                    dto.Items!.Select(saleItemDto => saleItemMapper.ToModel(saleItemDto, daos.Item1)),
+                    dto.Items!.Select(saleItemDto => this.orderItemMapper.ToModel(saleItemDto)),
                     customer
                 );
             }

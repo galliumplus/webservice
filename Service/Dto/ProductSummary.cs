@@ -21,8 +21,15 @@ namespace GalliumPlus.WebApi.Dto
             this.Name = string.Empty;
         }
 
-        public class Mapper : Mapper<Product, ProductSummary, IProductDao>
+        public class Mapper : Mapper<Product, ProductSummary>
         {
+            private ICategoryDao categoryDao;
+
+            public Mapper(ICategoryDao categoryDao)
+            {
+                this.categoryDao = categoryDao;
+            }
+
             public override ProductSummary FromModel(Product model)
             {
                 return new ProductSummary
@@ -37,12 +44,12 @@ namespace GalliumPlus.WebApi.Dto
                 };
             }
 
-            public override Product ToModel(ProductSummary dto, IProductDao dao)
+            public override Product ToModel(ProductSummary dto)
             {
                 Category category;
                 try
                 {
-                    category = dao.Categories.Read(dto.Category!.Value);
+                    category = this.categoryDao.Read(dto.Category!.Value);
                 }
                 catch (ItemNotFoundException)
                 {

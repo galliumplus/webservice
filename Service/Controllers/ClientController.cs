@@ -10,11 +10,12 @@ namespace GalliumPlus.WebApi.Controllers
     public class ClientController : Controller
     {
         private IClientDao clientDao;
-        private ClientDetails.Mapper mapper = new();
+        private ClientDetails.Mapper mapper;
 
         public ClientController(IClientDao clientDao)
         {
             this.clientDao = clientDao;
+            this.mapper = new();
         }
 
         [HttpGet]
@@ -32,7 +33,7 @@ namespace GalliumPlus.WebApi.Controllers
         [HttpPost]
         public IActionResult Post(ClientDetails newClient)
         {
-            Client client = this.clientDao.Create(this.mapper.ToModel(newClient, this.clientDao));
+            Client client = this.clientDao.Create(this.mapper.ToModel(newClient));
             return Created("client", client.Id, this.mapper.FromModel(client));
         }
 

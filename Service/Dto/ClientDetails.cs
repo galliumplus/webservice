@@ -36,7 +36,7 @@ namespace GalliumPlus.WebApi.Dto
             this.Name = String.Empty;
         }
 
-        public class Mapper : Mapper<Client, ClientDetails, IClientDao>
+        public class Mapper : Mapper<Client, ClientDetails>
         {
             public override ClientDetails FromModel(Client model)
             {
@@ -78,7 +78,7 @@ namespace GalliumPlus.WebApi.Dto
                 return new InvalidItemException($"Les informations sur l'application sont incomplètes.");
             }
 
-            public override Client ToModel(ClientDetails dto, IClientDao dao)
+            public override Client ToModel(ClientDetails dto)
             {
                 if (!dto.Type.HasValue)
                 {

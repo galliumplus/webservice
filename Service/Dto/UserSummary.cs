@@ -28,8 +28,16 @@ namespace GalliumPlus.WebApi.Dto
             this.IsMember = null;
         }
 
-        public class Mapper : Mapper<User, UserSummary, IUserDao>
+        public class Mapper : Mapper<User, UserSummary>
         {
+            private IRoleDao roleDao;
+
+            public Mapper(IRoleDao roleDao)
+            {
+                this.roleDao = roleDao;
+            }
+
+
             public override UserSummary FromModel(User user)
             {
                 return new UserSummary
@@ -45,12 +53,12 @@ namespace GalliumPlus.WebApi.Dto
                 };
             }
 
-            public override User ToModel(UserSummary summary, IUserDao dao)
+            public override User ToModel(UserSummary summary)
             {
                 Role role;
                 try
                 {
-                    role = dao.Roles.Read(summary.Role!.Value);
+                    role = this.roleDao.Read(summary.Role!.Value);
                 }
                 catch (ItemNotFoundException)
                 {
