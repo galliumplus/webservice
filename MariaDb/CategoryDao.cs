@@ -23,17 +23,11 @@ namespace GalliumPlus.WebApi.Data.MariaDb
         public void Delete(int key)
         {
             using var connection = this.Connect();
+            Schema db = new(connection, Mode.MySql);
 
-            var command = connection.CreateCommand();
-            command.CommandText = "DELETE FROM `Category` WHERE `id` = @id";
-            command.Parameters.AddWithValue("@id", key);
+            bool ok = db.DeleteFrom("Category").Where(db.Column("id") == key).Apply();
 
-            int affectedRows = command.ExecuteNonQuery();
-
-            if (affectedRows != 1)
-            {
-                throw new ItemNotFoundException("Cette catégorie");
-            }
+            if (!ok) throw new ItemNotFoundException("Cette catégorie");
         }
 
         private static Category Hydrate(MySqlDataReader row)
@@ -47,11 +41,12 @@ namespace GalliumPlus.WebApi.Data.MariaDb
         public IEnumerable<Category> Read()
         {
             using var connection = this.Connect();
+            Schema db = new(connection, Mode.MySql);
 
-            var readCommand = connection.CreateCommand();
-            readCommand.CommandText = "SELECT `id`, `name` FROM `Category`";
-
-            using var results = readCommand.ExecuteReader();
+            using var results = db
+                .Select("id", "name")
+                .From("Category")
+                .Fetch<MySqlDataReader>();
 
             return this.ReadResults(results, Hydrate);
         }
@@ -59,36 +54,27 @@ namespace GalliumPlus.WebApi.Data.MariaDb
         public Category Read(int key)
         {
             using var connection = this.Connect();
+            Schema db = new(connection, Mode.MySql);
 
-            var readCommand = connection.CreateCommand();
-            readCommand.CommandText = "SELECT `id`, `name` FROM `Category` WHERE `id` = @id";
-            readCommand.Parameters.AddWithValue("@id", key);
+            using var result = db
+                .Select("id", "name")
+                .From("Category")
+                .Where(db.Column("id") == key)
+                .Fetch<MySqlDataReader>();
 
-            using var result = readCommand.ExecuteReader();
-
-            if (!result.Read())
-            {
-                throw new ItemNotFoundException("Cette catégorie");
-            }
-
+            if (!result.Read()) throw new ItemNotFoundException("Cette catégorie");
+            
             return Hydrate(result);
         }
 
         public Category Update(int key, Category item)
         {
             using var connection = this.Connect();
+            Schema db = new(connection, Mode.MySql);
 
-            var updateCommand = connection.CreateCommand();
-            updateCommand.CommandText = "UPDATE `Category` SET `name` = @name WHERE `id` = @id";
-            updateCommand.Parameters.AddWithValue("@name", item.Name);
-            updateCommand.Parameters.AddWithValue("@id", key);
+            bool ok = db.Update("Category").Set("name", item.Name).Where(db.Column("id") == key).Apply();
 
-            int affectedRows = updateCommand.ExecuteNonQuery();
-
-            if (affectedRows != 1)
-            {
-                throw new ItemNotFoundException("Cette catégorie");
-            }
+            if (!ok) throw new ItemNotFoundException("Cette catégorie");
 
             return item.WithId(key);
         }

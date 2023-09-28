@@ -68,25 +68,17 @@ namespace GalliumPlus.WebApi.Data.MariaDb
         public IEnumerable<Product> Read()
         {
             using var connection = this.Connect();
-
-            var readCommand = connection.CreateCommand();
-            readCommand.CommandText
-                = "SELECT `Product`.`id` as `productId`, `Product`.`name` as `productName`, "
-                + "`stock`, `nonMemberPrice`, `memberPrice`, `availability`, "
-                + "`Category`.`id` as `categoryId`, `Category`.`name` as `categoryName` "
-                + "FROM `Product` INNER JOIN `Category` ON `Category`.`id` = `Product`.`category`";
-
-            using var results = readCommand.ExecuteReader();
-
             Schema db = new(connection, Mode.MySql);
+            
             var product = db.Table("Product");
             var category = db.Table("Category");
+            var q = db
+                .Select(product.Column("id").As("productId"), product.Column("name").As("productName"))
+                .And(category.Column("id").As("categoryId"), category.Column("name").As("categoryName"))
+                .And("stock", "nonMemberPrice", "memberPrice", "availability")
+                .From(product).Join(category.Column("id"), product.Column("category"));
 
-            db.Select(product.Column("id").As("productId"), product.Column("name").As("productName"))
-              .And(category.Column("id").As("categoryId"), category.Column("name").As("categoryName"))
-              .And("stock", "nonMemberPrice", "memberPrice", "availability")
-              .From(product).Join(category, "id", product, "category")
-              .Fetch();
+            using var results = q.Fetch<MySqlDataReader>();
 
             return this.ReadResults(results, Hydrate);
         }
