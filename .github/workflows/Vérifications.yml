@@ -2,7 +2,7 @@ name: Vérifications
 
 on:
   push:
-    branches: [ "main", "actions-cd" ]
+    branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
 
