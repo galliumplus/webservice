@@ -102,12 +102,12 @@ builder.WebHost.ConfigureKestrel(opt =>
     if (galliumOptions.ListenAnyIp)
     {
         opt.ListenAnyIP(galliumOptions.HttpPort);
-        opt.ListenAnyIP(galliumOptions.HttpsPort, httpsConfiguration);
+        if (!galliumOptions.DisableHttps) opt.ListenAnyIP(galliumOptions.HttpsPort, httpsConfiguration);
     }
     else
     {
         opt.ListenLocalhost(galliumOptions.HttpPort);
-        opt.ListenLocalhost(galliumOptions.HttpsPort, httpsConfiguration);
+        if (!galliumOptions.DisableHttps) opt.ListenLocalhost(galliumOptions.HttpsPort, httpsConfiguration);
     }
 });
 
