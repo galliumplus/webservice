@@ -30,7 +30,7 @@ jobs:
         DEPLOY_HOSTNAME: ${{ secrets.DEPLOY_HOSTNAME }}
         DEPLOY_USERNAME: ${{ secrets.DEPLOY_USERNAME }}
         DEPLOY_PASSWORD: ${{ secrets.DEPLOY_PASSWORD }}
-      run: .deployment/galliumplus-deploy
+      run: python3 .deployment/galliumplus-deploy
   
   unit-tests:
     runs-on: ubuntu-latest
