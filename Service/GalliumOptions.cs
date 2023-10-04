@@ -14,6 +14,8 @@
 
         public bool ForceHttps { get; set; }
 
+        public bool DisableHttps { get; set; }
+
         public class MariaDbOptions
         {
             public string Host { get; set; }
@@ -46,6 +48,7 @@
             HttpPort = 5080;
             HttpsPort = 5443;
             ForceHttps = true;
+            DisableHttps = false;
             MariaDb = new();
         }
     }
