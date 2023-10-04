@@ -13,7 +13,7 @@ namespace GalliumPlus.WebApi.Data.MariaDb
         public Category Create(Category item)
         {
             using var connection = this.Connect();
-            Schema db = new(connection, Mode.MySql);
+            Schema db = new(connection);
             
             int id = db.InsertInto("Category").Value("name", item.Name).Apply();
 
@@ -23,7 +23,7 @@ namespace GalliumPlus.WebApi.Data.MariaDb
         public void Delete(int key)
         {
             using var connection = this.Connect();
-            Schema db = new(connection, Mode.MySql);
+            Schema db = new(connection);
 
             bool ok = db.DeleteFrom("Category").Where(db.Column("id") == key).Apply();
 
@@ -41,7 +41,7 @@ namespace GalliumPlus.WebApi.Data.MariaDb
         public IEnumerable<Category> Read()
         {
             using var connection = this.Connect();
-            Schema db = new(connection, Mode.MySql);
+            Schema db = new(connection);
 
             using var results = db
                 .Select("id", "name")
@@ -54,7 +54,7 @@ namespace GalliumPlus.WebApi.Data.MariaDb
         public Category Read(int key)
         {
             using var connection = this.Connect();
-            Schema db = new(connection, Mode.MySql);
+            Schema db = new(connection);
 
             using var result = db
                 .Select("id", "name")
@@ -70,7 +70,7 @@ namespace GalliumPlus.WebApi.Data.MariaDb
         public Category Update(int key, Category item)
         {
             using var connection = this.Connect();
-            Schema db = new(connection, Mode.MySql);
+            Schema db = new(connection);
 
             bool ok = db.Update("Category").Set("name", item.Name).Where(db.Column("id") == key).Apply();
 

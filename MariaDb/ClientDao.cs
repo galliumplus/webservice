@@ -15,7 +15,7 @@ namespace GalliumPlus.WebApi.Data.MariaDb
         public Client Create(Client item)
         {
             using var connection = this.Connect();
-            Schema db = new(connection, Mode.MySql);
+            Schema db = new(connection);
 
             int id = db.InsertInto("Client")
                        .Value("apiKey", item.ApiKey)
@@ -51,7 +51,7 @@ namespace GalliumPlus.WebApi.Data.MariaDb
         public void Delete(int key)
         {
             using var connection = this.Connect();
-            Schema db = new(connection, Mode.MySql);
+            Schema db = new(connection);
 
             bool ok = db.DeleteFrom("Client").Where(db.Column("id") == key).Apply();
             
@@ -105,7 +105,7 @@ namespace GalliumPlus.WebApi.Data.MariaDb
         public BotClient FindBotByApiKey(string apiKey)
         {
             using var connection = this.Connect();
-            Schema db = new(connection, Mode.MySql);
+            Schema db = new(connection);
 
             var clientTable = db.Table("Client");
             var botClientTable = db.Table("BotClient");
@@ -138,7 +138,7 @@ namespace GalliumPlus.WebApi.Data.MariaDb
         public Client FindByApiKey(string apiKey)
         {
             using var connection = this.Connect();
-            Schema db = new(connection, Mode.MySql);
+            Schema db = new(connection);
 
             var clientTable = db.Table("Client");
             var botClientTable = db.Table("BotClient");
@@ -165,7 +165,7 @@ namespace GalliumPlus.WebApi.Data.MariaDb
         public IEnumerable<Client> Read()
         {
             using var connection = this.Connect();
-            Schema db = new(connection, Mode.MySql);
+            Schema db = new(connection);
 
             var clientTable = db.Table("Client");
             var botClientTable = db.Table("BotClient");
@@ -192,7 +192,7 @@ namespace GalliumPlus.WebApi.Data.MariaDb
         internal static Client Read(int id, MySqlConnection connection)
         {
             var readCommand = connection.CreateCommand();
-            Schema db = new(connection, Mode.MySql);
+            Schema db = new(connection);
 
             var clientTable = db.Table("Client");
             var botClientTable = db.Table("BotClient");
@@ -219,11 +219,12 @@ namespace GalliumPlus.WebApi.Data.MariaDb
         public Client Update(int key, Client item)
         {
             var connection = this.Connect();
-            Schema db = new(connection, Mode.MySql);
+            Schema db = new(connection);
+            bool ok;
 
             if (item is BotClient bot)
             {
-                bool ok = db.Update("BotClient")
+                ok = db.Update("BotClient")
                             .Set("secret", bot.Secret.Hash)
                             .Set("salt", bot.Secret.Salt)
                             .Where(db.Column("id") == key)
@@ -233,7 +234,7 @@ namespace GalliumPlus.WebApi.Data.MariaDb
             }
             else if (item is SsoClient sso)
             {
-                bool ok = db.Update("SsoClient")
+                ok = db.Update("SsoClient")
                             .Set("secret", sso.Secret)
                             .Set("redirectUrl", sso.RedirectUrl)
                             .Set("logoUrl", sso.LogoUrl)
@@ -244,7 +245,7 @@ namespace GalliumPlus.WebApi.Data.MariaDb
                 if (!ok) throw new ItemNotFoundException("Cette application SSO");
             }
 
-            bool ok = db.Update("Client")
+            ok = db.Update("Client")
                         .Set("apiKey", item.ApiKey)
                         .Set("name", item.Name)
                         .Set("granted", (int)item.Granted)

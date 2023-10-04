@@ -2,6 +2,7 @@
 using GalliumPlus.WebApi.Core.Data;
 using GalliumPlus.WebApi.Core.Exceptions;
 using GalliumPlus.WebApi.Core.Users;
+using KiwiQuery;
 using MySqlConnector;
 
 namespace GalliumPlus.WebApi.Data.MariaDb
@@ -17,30 +18,24 @@ namespace GalliumPlus.WebApi.Data.MariaDb
         public void Create(Session item)
         {
             using var connection = this.Connect();
-
-            var command = connection.CreateCommand();
-            if (item.User is null)
-            {
-                command.CommandText
-                    = "INSERT INTO `Session`(`token`, `lastUse`, `expiration`, `user`, `client`) "
-                    + "VALUES (@token, @lastUse, @expiration, NULL, @client)";
-            }
-            else
-            {
-                command.CommandText
-                    = "INSERT INTO `Session`(`token`, `lastUse`, `expiration`, `user`, `client`) "
-                    + "VALUES (@token, @lastUse, @expiration,"
-                    + "(SELECT `id` FROM `User` WHERE `userId` = @user), @client)";
-                command.Parameters.AddWithValue("@user", item.User.Id);
-            }
-            command.Parameters.AddWithValue("@token", item.Token);
-            command.Parameters.AddWithValue("@lastUse", item.LastUse);
-            command.Parameters.AddWithValue("@expiration", item.Expiration);
-            command.Parameters.AddWithValue("@client", item.Client.Id);
+            Schema db = new(connection);
 
             try
             {
-                command.ExecuteNonQuery();
+                var command = db.InsertInto("Session")
+                            .Value("token", item.Token)
+                            .Value("lastUse", item.LastUse)
+                            .Value("expiration", item.Expiration)
+                            .Value("client", item.Client);
+
+                if (item.User is null)
+                {
+                    command.Value("user", db.Null);
+                }
+                else
+                {
+                    command.Value("user", db.Select("id").From("User").Where(db.Column("userId") == item.User.Id));
+                }
             }
             catch (MySqlException error)
             {
@@ -55,32 +50,23 @@ namespace GalliumPlus.WebApi.Data.MariaDb
         public void Delete(Session session)
         {
             using var connection = this.Connect();
+            Schema db = new(connection);
 
-            var command = connection.CreateCommand();
-            command.CommandText = "DELETE FROM `Session` WHERE `token` = @token";
-            command.Parameters.AddWithValue("@token", session.Token);
+            bool ok = db.DeleteFrom("Session").Where(db.Column("token") == session.Token).Apply();
 
-            var affectedRows = command.ExecuteNonQuery();
-
-            if (affectedRows != 1)
-            {
-                throw new ItemNotFoundException("Cette session");
-            }
+            if (!ok) throw new ItemNotFoundException("Cette session");
         }
 
         public Session Read(string token)
         {
             using var connection = this.Connect();
-
-            var command = connection.CreateCommand();
-            command.CommandText
-                = "SELECT `lastUse`, `expiration`, `user`, `client` "
-                + "FROM `Session` WHERE `token` = @token";
-            command.Parameters.AddWithValue("@token", token);
+            Schema db = new(connection);
 
             DateTime lastUse, expiration;
             int userId, clientId;
-            using (var result = command.ExecuteReader())
+            using (var result = db.Select("lastUse", "expiration", "user", "client")
+                                  .From("Session").Where(db.Column("token") == token)
+                                  .Fetch<MySqlDataReader>())
             {
                 if (!result.Read())
                 {
@@ -103,18 +89,12 @@ namespace GalliumPlus.WebApi.Data.MariaDb
         public void UpdateLastUse(Session session)
         {
             using var connection = this.Connect();
+            Schema db = new(connection);
 
-            var command = connection.CreateCommand();
-            command.CommandText = "UPDATE `Session` SET `lastUse` = @lastUse WHERE `token` = @token";
-            command.Parameters.AddWithValue("@lastUse", session.LastUse);
-            command.Parameters.AddWithValue("@token", session.Token);
+            bool ok = db.Update("Session").Set("lastUse", session.LastUse)
+                        .Where(db.Column("token") == session.Token).Apply();
 
-            var affectedRows = command.ExecuteNonQuery();
-
-            if (affectedRows != 1)
-            {
-                throw new ItemNotFoundException("Cette session");
-            }
-        }
+            if (!ok) throw new ItemNotFoundException("Cette session");
+        } 
     }
 }
