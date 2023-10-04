@@ -18,12 +18,12 @@ namespace GalliumPlus.WebApi.Data.MariaDb
             Schema db = new(connection);
 
             item.Id = db.InsertInto("Product")
-                        .Value("@name", item.Name)
-                        .Value("@stock", item.Stock)
-                        .Value("@nonMemberPrice", item.NonMemberPrice)
-                        .Value("@memberPrice", item.MemberPrice)
-                        .Value("@availability", (int)item.Availability)
-                        .Value("@category", item.Category.Id)
+                        .Value("name", item.Name)
+                        .Value("stock", item.Stock)
+                        .Value("nonMemberPrice", item.NonMemberPrice)
+                        .Value("memberPrice", item.MemberPrice)
+                        .Value("availability", (int)item.Availability)
+                        .Value("category", item.Category.Id)
                         .Apply();
 
             return item;

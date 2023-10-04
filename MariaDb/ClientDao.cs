@@ -149,8 +149,8 @@ namespace GalliumPlus.WebApi.Data.MariaDb
                                  .And(botClientTable.Column("id").As("botId"), botClientTable.Column("secret").As("botSecret"))
                                  .And(ssoClientTable.Column("id").As("ssoId"), ssoClientTable.Column("secret").As("ssoSecret"))
                                  .From(clientTable)
-                                 .Join(botClientTable.Column("id"), clientTable.Column("id"))
-                                 .Join(ssoClientTable.Column("id"), clientTable.Column("id"))
+                                 .LeftJoin(botClientTable.Column("id"), clientTable.Column("id"))
+                                 .LeftJoin(ssoClientTable.Column("id"), clientTable.Column("id"))
                                  .Where(db.Column("apiKey") == apiKey)
                                  .Fetch<MySqlDataReader>();
 
@@ -176,8 +176,8 @@ namespace GalliumPlus.WebApi.Data.MariaDb
                                  .And(botClientTable.Column("id").As("botId"), botClientTable.Column("secret").As("botSecret"))
                                  .And(ssoClientTable.Column("id").As("ssoId"), ssoClientTable.Column("secret").As("ssoSecret"))
                                  .From(clientTable)
-                                 .Join(botClientTable.Column("id"), clientTable.Column("id"))
-                                 .Join(ssoClientTable.Column("id"), clientTable.Column("id"))
+                                 .LeftJoin(botClientTable.Column("id"), clientTable.Column("id"))
+                                 .LeftJoin(ssoClientTable.Column("id"), clientTable.Column("id"))
                                  .Fetch<MySqlDataReader>();
 
             return this.ReadResults(results, Hydrate);
@@ -191,7 +191,6 @@ namespace GalliumPlus.WebApi.Data.MariaDb
 
         internal static Client Read(int id, MySqlConnection connection)
         {
-            var readCommand = connection.CreateCommand();
             Schema db = new(connection);
 
             var clientTable = db.Table("Client");
@@ -203,8 +202,8 @@ namespace GalliumPlus.WebApi.Data.MariaDb
                                  .And(botClientTable.Column("id").As("botId"), botClientTable.Column("secret").As("botSecret"))
                                  .And(ssoClientTable.Column("id").As("ssoId"), ssoClientTable.Column("secret").As("ssoSecret"))
                                  .From(clientTable)
-                                 .Join(botClientTable.Column("id"), clientTable.Column("id"))
-                                 .Join(ssoClientTable.Column("id"), clientTable.Column("id"))
+                                 .LeftJoin(botClientTable.Column("id"), clientTable.Column("id"))
+                                 .LeftJoin(ssoClientTable.Column("id"), clientTable.Column("id"))
                                  .Where(clientTable.Column("id") == id)
                                  .Fetch<MySqlDataReader>();
 

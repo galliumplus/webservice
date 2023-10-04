@@ -20,22 +20,24 @@ namespace GalliumPlus.WebApi.Data.MariaDb
             using var connection = this.Connect();
             Schema db = new(connection);
 
-            try
-            {
-                var command = db.InsertInto("Session")
+            var query = db.InsertInto("Session")
                             .Value("token", item.Token)
                             .Value("lastUse", item.LastUse)
                             .Value("expiration", item.Expiration)
-                            .Value("client", item.Client);
+                            .Value("client", item.Client.Id);
 
-                if (item.User is null)
-                {
-                    command.Value("user", db.Null);
-                }
-                else
-                {
-                    command.Value("user", db.Select("id").From("User").Where(db.Column("userId") == item.User.Id));
-                }
+            if (item.User is null)
+            {
+                query.Value("user", db.Null);
+            }
+            else
+            {
+                query.Value("user", db.Select("id").From("User").Where(db.Column("userId") == item.User.Id));
+            }
+
+            try
+            {
+                query.Apply();
             }
             catch (MySqlException error)
             {

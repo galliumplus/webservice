@@ -21,15 +21,15 @@ namespace GalliumPlus.WebApi.Data.MariaDb
             try
             {
                 db.InsertInto("User")
-                  .Value("@userId", item.Id)
-                  .Value("@firstName", item.Identity.FirstName)
-                  .Value("@lastName", item.Identity.LastName)
-                  .Value("@email", item.Identity.Email)
-                  .Value("@year", item.Identity.Year)
-                  .Value("@role", item.Role.Id)
-                  .Value("@deposit", item.Deposit)
-                  .Value("@isMember", item.IsMember)
-                  .Value("@registration", DateTime.UtcNow)
+                  .Value("userId", item.Id)
+                  .Value("firstName", item.Identity.FirstName)
+                  .Value("lastName", item.Identity.LastName)
+                  .Value("email", item.Identity.Email)
+                  .Value("year", item.Identity.Year)
+                  .Value("role", item.Role.Id)
+                  .Value("deposit", item.Deposit)
+                  .Value("isMember", item.IsMember)
+                  .Value("registration", DateTime.UtcNow)
                   .Apply();
             }
             catch (MySqlException error)
