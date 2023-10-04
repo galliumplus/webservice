@@ -34,7 +34,7 @@ namespace GalliumPlus.WebApi.Dto
             this.Category = category;
         }
 
-        public class Mapper : Mapper<Product, ProductDetails, IProductDao>
+        public class Mapper : Mapper<Product, ProductDetails>
         {
             private CategoryDetails.Mapper categoryMapper = new();
 
@@ -52,7 +52,7 @@ namespace GalliumPlus.WebApi.Dto
                 );
             }
 
-            public override Product ToModel(ProductDetails dto, IProductDao dao)
+            public override Product ToModel(ProductDetails dto)
             {
                 return new Product(
                     dto.Id,
@@ -61,7 +61,7 @@ namespace GalliumPlus.WebApi.Dto
                     dto.NonMemberPrice,
                     dto.MemberPrice,
                     dto.Availability,
-                    this.categoryMapper.ToModel(dto.Category, dao.Categories)
+                    this.categoryMapper.ToModel(dto.Category)
                 );
             }
         }

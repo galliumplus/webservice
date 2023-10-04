@@ -26,7 +26,7 @@ namespace GalliumPlus.WebApi.Dto
             IsMember = isMember;
         }
 
-        public class Mapper : Mapper<User, UserDetails, IUserDao>
+        public class Mapper : Mapper<User, UserDetails>
         {
             private RoleDetails.Mapper roleMapper = new();
 
@@ -44,7 +44,7 @@ namespace GalliumPlus.WebApi.Dto
                 );
             }
 
-            public override User ToModel(UserDetails details, IUserDao dao)
+            public override User ToModel(UserDetails details)
             {
                 return new User(
                     details.Id,
@@ -54,7 +54,7 @@ namespace GalliumPlus.WebApi.Dto
                         details.Email,
                         details.Year
                     ),
-                    roleMapper.ToModel(details.Role, dao.Roles),
+                    roleMapper.ToModel(details.Role),
                     details.Deposit,
                     details.IsMember
                 );

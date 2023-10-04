@@ -16,12 +16,13 @@ namespace GalliumPlus.WebApi.Controllers
     {
         private ISessionDao sessionDao;
         private IHistoryDao historyDao;
-        private LoggedIn.Mapper mapper = new();
+        private LoggedIn.Mapper mapper;
 
         public AccessController(ISessionDao sessionDao, IHistoryDao historyDao)
         {
             this.sessionDao = sessionDao;
             this.historyDao = historyDao;
+            this.mapper = new();
         }
 
         [HttpPost("login")]

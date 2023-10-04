@@ -17,14 +17,15 @@ namespace GalliumPlus.WebApi.Controllers
     {
         private IProductDao productDao;
         private IHistoryDao historyDao;
-        private ProductSummary.Mapper summaryMapper = new();
-        private ProductDetails.Mapper detailsMapper = new();
+        private ProductSummary.Mapper summaryMapper;
+        private ProductDetails.Mapper detailsMapper;
 
         public ProductController(IProductDao productDao, IHistoryDao historyDao)
         {
             this.productDao = productDao;
             this.historyDao = historyDao;
-
+            this.summaryMapper = new(productDao.Categories);
+            this.detailsMapper = new();
         }
 
         [HttpGet]
@@ -53,7 +54,7 @@ namespace GalliumPlus.WebApi.Controllers
         [RequiresPermissions(Permissions.MANAGE_PRODUCTS)]
         public IActionResult Post(ProductSummary newProduct)
         {
-            Product product = this.productDao.Create(this.summaryMapper.ToModel(newProduct, this.productDao));
+            Product product = this.productDao.Create(this.summaryMapper.ToModel(newProduct));
 
             HistoryAction action = new(
                 HistoryActionKind.EDIT_PRODUCT_OR_CATEGORIES,
@@ -69,7 +70,7 @@ namespace GalliumPlus.WebApi.Controllers
         [RequiresPermissions(Permissions.MANAGE_PRODUCTS)]
         public IActionResult Put(int id, ProductSummary updatedProduct)
         {
-            this.productDao.Update(id, this.summaryMapper.ToModel(updatedProduct, this.productDao));
+            this.productDao.Update(id, this.summaryMapper.ToModel(updatedProduct));
 
             HistoryAction action = new(
                 HistoryActionKind.EDIT_PRODUCT_OR_CATEGORIES,
