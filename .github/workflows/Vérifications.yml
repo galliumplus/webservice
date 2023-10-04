@@ -23,14 +23,17 @@ jobs:
       uses: actions/setup-python@v4.7.1
       with:
         python-version: '3.10'
+      if: github.event_name != 'pull_request'
     - name: Install Paramiko
       run: python3 -m pip install paramiko
+      if: github.event_name != 'pull_request'
     - name: Deploy build
       env:
         DEPLOY_HOSTNAME: ${{ secrets.DEPLOY_HOSTNAME }}
         DEPLOY_USERNAME: ${{ secrets.DEPLOY_USERNAME }}
         DEPLOY_PASSWORD: ${{ secrets.DEPLOY_PASSWORD }}
       run: python3 .deployment/galliumplus-deploy
+      if: github.event_name != 'pull_request'
   
   unit-tests:
     runs-on: ubuntu-latest
