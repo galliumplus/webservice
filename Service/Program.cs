@@ -127,7 +127,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
-ServerInfo.Current.SetVersion(0, 5, 0, "alpha");
+ServerInfo.Current.SetVersion(0, 5, 1, "alpha");
 Console.WriteLine(ServerInfo.Current);
 
 app.Run();
