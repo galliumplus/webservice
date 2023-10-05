@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace GalliumPlus.WebApi.Controllers
 {
 
-    [Route("api/users")]
+    [Route("users")]
     [Authorize]
     [ApiController]
     public class UserController : Controller

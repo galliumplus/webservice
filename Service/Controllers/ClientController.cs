@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace GalliumPlus.WebApi.Controllers
 {
-    [Route("api/clients")]
+    [Route("clients")]
     [ApiController]
     public class ClientController : Controller
     {

@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace GalliumPlus.WebApi.Controllers
 {
-    [Route("api/categories")]
+    [Route("categories")]
     [Authorize]
     [ApiController]
     public class CategoryController : Controller
