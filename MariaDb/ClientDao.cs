@@ -2,6 +2,7 @@
 using GalliumPlus.WebApi.Core.Data;
 using GalliumPlus.WebApi.Core.Exceptions;
 using GalliumPlus.WebApi.Core.Users;
+using KiwiQuery;
 using MySqlConnector;
 using System.Data;
 
@@ -14,42 +15,33 @@ namespace GalliumPlus.WebApi.Data.MariaDb
         public Client Create(Client item)
         {
             using var connection = this.Connect();
+            Schema db = new(connection);
 
-            var parentInsertCommand = connection.CreateCommand();
-            parentInsertCommand.CommandText = "INSERT INTO `Client`(`apiKey`, `name`, `granted`, `revoked`, `isEnabled`) VALUES (@apiKey, @name, @granted, @revoked, @isEnabled)";
-            parentInsertCommand.Parameters.AddWithValue("@apiKey", item.ApiKey);
-            parentInsertCommand.Parameters.AddWithValue("@name", item.Name);
-            parentInsertCommand.Parameters.AddWithValue("@granted", (int)item.Granted);
-            parentInsertCommand.Parameters.AddWithValue("@revoked", (int)item.Revoked);
-            parentInsertCommand.Parameters.AddWithValue("@isEnabled", item.IsEnabled);
-
-            parentInsertCommand.ExecuteNonQuery();
-
-            int id = (int)this.SelectLastInsertId(connection);
+            int id = db.InsertInto("Client")
+                       .Value("apiKey", item.ApiKey)
+                       .Value("name", item.Name)
+                       .Value("granted", (int)item.Granted)
+                       .Value("revoked", (int)item.Revoked)
+                       .Value("isEnabled", item.IsEnabled)
+                       .Apply();
 
             if (item is BotClient bot)
             {
-                var childInsertCommand = connection.CreateCommand();
-                childInsertCommand.CommandText = "INSERT INTO `BotClient`(`id`, `secret`, `salt`) VALUES (@id, @secret, @salt)";
-                childInsertCommand.Parameters.AddWithValue("@id", id);
-                childInsertCommand.Parameters.AddWithValue("@secret", bot.Secret.Hash);
-                childInsertCommand.Parameters.AddWithValue("@salt", bot.Secret.Salt);
-
-                childInsertCommand.ExecuteNonQuery();
+                db.InsertInto("BotClient")
+                  .Value("id", id)
+                  .Value("secret", bot.Secret.Hash)
+                  .Value("hash", bot.Secret.Salt)
+                  .Apply();
             }
             else if (item is SsoClient sso)
             {
-                var childInsertCommand = connection.CreateCommand();
-                childInsertCommand.CommandText
-                    = "INSERT INTO `SsoClient`(`id`, `secret`, `redirectUrl`, `logoUrl`, `usesApi`) "
-                    + "VALUES (@id, @secret, @redirectUrl, @logoUrl, @usesApi)";
-                childInsertCommand.Parameters.AddWithValue("@id", id);
-                childInsertCommand.Parameters.AddWithValue("@secret", sso.Secret);
-                childInsertCommand.Parameters.AddWithValue("@redirectUrl", sso.RedirectUrl);
-                childInsertCommand.Parameters.AddWithValue("@logoUrl", sso.LogoUrl);
-                childInsertCommand.Parameters.AddWithValue("@usesApi", sso.UsesApi);
-
-                childInsertCommand.ExecuteNonQuery();
+                db.InsertInto("SsoClient")
+                  .Value("id", id)
+                  .Value("secret", sso.Secret)
+                  .Value("redirectUrl", sso.RedirectUrl)
+                  .Value("logoUrl", sso.LogoUrl)
+                  .Value("usesApi", sso.UsesApi)
+                  .Apply();
             }
 
             item.Id = id;
@@ -59,17 +51,11 @@ namespace GalliumPlus.WebApi.Data.MariaDb
         public void Delete(int key)
         {
             using var connection = this.Connect();
+            Schema db = new(connection);
 
-            var command = connection.CreateCommand();
-            command.CommandText = "DELETE FROM `Client` WHERE `id` = @id";
-            command.Parameters.AddWithValue("@id", key);
-
-            int affectedRows = command.ExecuteNonQuery();
-
-            if (affectedRows != 1)
-            {
-                throw new ItemNotFoundException("Cette application");
-            }
+            bool ok = db.DeleteFrom("Client").Where(db.Column("id") == key).Apply();
+            
+            if (!ok) throw new ItemNotFoundException("Cette application");
         }
 
         internal static Client Hydrate(MySqlDataReader row)
@@ -119,16 +105,17 @@ namespace GalliumPlus.WebApi.Data.MariaDb
         public BotClient FindBotByApiKey(string apiKey)
         {
             using var connection = this.Connect();
+            Schema db = new(connection);
 
-            var findCommand = connection.CreateCommand();
-            findCommand.CommandText
-                = "SELECT `apiKey`, `name`, `granted`, `isEnabled`, "
-                + "`BotClient`.`id` as `id`, `secret`, `salt` "
-                + "FROM `Client` NATURAL JOIN `BotClient` "
-                + "WHERE `apiKey` = @apiKey";
-            findCommand.Parameters.AddWithValue("@apiKey", apiKey);
+            var clientTable = db.Table("Client");
+            var botClientTable = db.Table("BotClient");
 
-            using var result = findCommand.ExecuteReader();
+            using var result = db.Select("apiKey", "name", "granted", "isEnabled", "secret", "salt")
+                                 .And(botClientTable.Column("id"))
+                                 .From(clientTable)
+                                 .Join(botClientTable.Column("id"), clientTable.Column("id"))
+                                 .Where(db.Column("apiKey") == apiKey)
+                                 .Fetch<MySqlDataReader>();
 
             if (!result.Read())
             {
@@ -151,19 +138,21 @@ namespace GalliumPlus.WebApi.Data.MariaDb
         public Client FindByApiKey(string apiKey)
         {
             using var connection = this.Connect();
+            Schema db = new(connection);
 
-            var findCommand = connection.CreateCommand();
-            findCommand.CommandText
-                = "SELECT `Client`.`id` as `id`, `apiKey`, `name`, `granted`, `revoked`, `isEnabled`, "
-                + "`BotClient`.`id` as `botId`, `BotClient`.`secret` as `botSecret`, `salt`, "
-                + "`ssoclient`.`id` as `ssoId`, `SsoClient`.`secret` as `ssoSecret`, "
-                + "`redirectUrl`, `logoUrl`, `usesApi` "
-                + "FROM `Client` LEFT JOIN `BotClient` ON `BotClient`.`id` = `Client`.`id` "
-                + "LEFT JOIN `SsoClient` ON `SsoClient`.`id` = `Client`.`id` "
-                + "WHERE `apiKey` = @apiKey";
-            findCommand.Parameters.AddWithValue("@apiKey", apiKey);
+            var clientTable = db.Table("Client");
+            var botClientTable = db.Table("BotClient");
+            var ssoClientTable = db.Table("SsoClient");
 
-            using var result = findCommand.ExecuteReader();
+            using var result = db.Select("apiKey", "name", "granted", "revoked", "isEnabled", "salt", "redirectUrl", "logoUrl", "usesApi")
+                                 .And(clientTable.Column("id").As("id"))
+                                 .And(botClientTable.Column("id").As("botId"), botClientTable.Column("secret").As("botSecret"))
+                                 .And(ssoClientTable.Column("id").As("ssoId"), ssoClientTable.Column("secret").As("ssoSecret"))
+                                 .From(clientTable)
+                                 .LeftJoin(botClientTable.Column("id"), clientTable.Column("id"))
+                                 .LeftJoin(ssoClientTable.Column("id"), clientTable.Column("id"))
+                                 .Where(db.Column("apiKey") == apiKey)
+                                 .Fetch<MySqlDataReader>();
 
             if (!result.Read())
             {
@@ -176,17 +165,20 @@ namespace GalliumPlus.WebApi.Data.MariaDb
         public IEnumerable<Client> Read()
         {
             using var connection = this.Connect();
+            Schema db = new(connection);
 
-            var readCommand = connection.CreateCommand();
-            readCommand.CommandText
-                = "SELECT `Client`.`id` as `id`, `apiKey`, `name`, `granted`, `revoked`, `isEnabled`, "
-                + "`BotClient`.`id` as `botId`, `BotClient`.`secret` as `botSecret`, `salt`, "
-                + "`ssoclient`.`id` as `ssoId`, `SsoClient`.`secret` as `ssoSecret`, "
-                + "`redirectUrl`, `logoUrl`, `usesApi` "
-                + "FROM `Client` LEFT JOIN `BotClient` ON `BotClient`.`id` = `Client`.`id` "
-                + "LEFT JOIN `SsoClient` ON `SsoClient`.`id` = `Client`.`id`";
+            var clientTable = db.Table("Client");
+            var botClientTable = db.Table("BotClient");
+            var ssoClientTable = db.Table("SsoClient");
 
-            using var results = readCommand.ExecuteReader();
+            using var results = db.Select("apiKey", "name", "granted", "revoked", "isEnabled", "salt", "redirectUrl", "logoUrl", "usesApi")
+                                 .And(clientTable.Column("id").As("id"))
+                                 .And(botClientTable.Column("id").As("botId"), botClientTable.Column("secret").As("botSecret"))
+                                 .And(ssoClientTable.Column("id").As("ssoId"), ssoClientTable.Column("secret").As("ssoSecret"))
+                                 .From(clientTable)
+                                 .LeftJoin(botClientTable.Column("id"), clientTable.Column("id"))
+                                 .LeftJoin(ssoClientTable.Column("id"), clientTable.Column("id"))
+                                 .Fetch<MySqlDataReader>();
 
             return this.ReadResults(results, Hydrate);
         }
@@ -199,18 +191,21 @@ namespace GalliumPlus.WebApi.Data.MariaDb
 
         internal static Client Read(int id, MySqlConnection connection)
         {
-            var readCommand = connection.CreateCommand();
-            readCommand.CommandText
-                = "SELECT `Client`.`id` as `id`, `apiKey`, `name`, `granted`, `revoked`, `isEnabled`, "
-                + "`BotClient`.`id` as `botId`, `BotClient`.`secret` as `botSecret`, "
-                + "`ssoclient`.`id` as `ssoId`, `SsoClient`.`secret` as `ssoSecret`, "
-                + "`redirectUrl`, `logoUrl`, `usesApi` "
-                + "FROM `Client` LEFT JOIN `BotClient` ON `BotClient`.`id` = `Client`.`id` "
-                + "LEFT JOIN `SsoClient` ON `SsoClient`.`id` = `Client`.`id` "
-                + "WHERE `Client`.`id` = @id";
-            readCommand.Parameters.AddWithValue("@id", id);
+            Schema db = new(connection);
 
-            using var result = readCommand.ExecuteReader();
+            var clientTable = db.Table("Client");
+            var botClientTable = db.Table("BotClient");
+            var ssoClientTable = db.Table("SsoClient");
+
+            using var result = db.Select("apiKey", "name", "granted", "revoked", "isEnabled", "salt", "redirectUrl", "logoUrl", "usesApi")
+                                 .And(clientTable.Column("id").As("id"))
+                                 .And(botClientTable.Column("id").As("botId"), botClientTable.Column("secret").As("botSecret"))
+                                 .And(ssoClientTable.Column("id").As("ssoId"), ssoClientTable.Column("secret").As("ssoSecret"))
+                                 .From(clientTable)
+                                 .LeftJoin(botClientTable.Column("id"), clientTable.Column("id"))
+                                 .LeftJoin(ssoClientTable.Column("id"), clientTable.Column("id"))
+                                 .Where(clientTable.Column("id") == id)
+                                 .Fetch<MySqlDataReader>();
 
             if (!result.Read())
             {
@@ -223,59 +218,42 @@ namespace GalliumPlus.WebApi.Data.MariaDb
         public Client Update(int key, Client item)
         {
             var connection = this.Connect();
+            Schema db = new(connection);
+            bool ok;
 
             if (item is BotClient bot)
             {
-                var childUpdateCommand = connection.CreateCommand();
-                childUpdateCommand.CommandText = "UPDATE `BotClient` SET `secret` = @secret, `salt` = @salt WHERE `id` = @id";
-                childUpdateCommand.Parameters.AddWithValue("@id", key);
-                childUpdateCommand.Parameters.AddWithValue("@secret", bot.Secret.Hash);
-                childUpdateCommand.Parameters.AddWithValue("@salt", bot.Secret.Salt);
+                ok = db.Update("BotClient")
+                            .Set("secret", bot.Secret.Hash)
+                            .Set("salt", bot.Secret.Salt)
+                            .Where(db.Column("id") == key)
+                            .Apply();
 
-                int childAffectedRows = childUpdateCommand.ExecuteNonQuery();
-
-                if (childAffectedRows != 1)
-                {
-                    throw new ItemNotFoundException("Ce bot");
-                }
+                if (!ok) throw new ItemNotFoundException("Ce bot");
             }
             else if (item is SsoClient sso)
             {
-                var childUpdateCommand = connection.CreateCommand();
-                childUpdateCommand.CommandText
-                    = "UPDATE `SsoClient` SET `secret` = @secret, `redirectUrl` = @redirectUrl, "
-                    + "`logoUrl` = @logoUrl, `usesApi` = @usesApi WHERE `id` = @id";
-                childUpdateCommand.Parameters.AddWithValue("@id", key);
-                childUpdateCommand.Parameters.AddWithValue("@secret", sso.Secret);
-                childUpdateCommand.Parameters.AddWithValue("@redirectUrl", sso.RedirectUrl);
-                childUpdateCommand.Parameters.AddWithValue("@logoUrl", sso.LogoUrl);
-                childUpdateCommand.Parameters.AddWithValue("@usesApi", sso.UsesApi);
+                ok = db.Update("SsoClient")
+                            .Set("secret", sso.Secret)
+                            .Set("redirectUrl", sso.RedirectUrl)
+                            .Set("logoUrl", sso.LogoUrl)
+                            .Set("usesApi", sso.UsesApi)
+                            .Where(db.Column("id") == key)
+                            .Apply();
 
-                int childAffectedRows = childUpdateCommand.ExecuteNonQuery();
-
-                if (childAffectedRows != 1)
-                {
-                    throw new ItemNotFoundException("Cette application");
-                }
+                if (!ok) throw new ItemNotFoundException("Cette application SSO");
             }
 
-            var parentUpdateCommand = connection.CreateCommand();
-            parentUpdateCommand.CommandText
-                = "UPDATE `Client` SET `apiKey` = @apiKey, `name` = @name, `granted` = @granted, "
-                + "`revoked` = @revoked, `isEnabled` = @isEnabled WHERE `id` = @id";
-            parentUpdateCommand.Parameters.AddWithValue("@id", item.Id);
-            parentUpdateCommand.Parameters.AddWithValue("@apiKey", item.ApiKey);
-            parentUpdateCommand.Parameters.AddWithValue("@name", item.Name);
-            parentUpdateCommand.Parameters.AddWithValue("@granted", (int)item.Granted);
-            parentUpdateCommand.Parameters.AddWithValue("@revoked", (int)item.Revoked);
-            parentUpdateCommand.Parameters.AddWithValue("@isEnabled", item.IsEnabled);
-
-            int affectedRows = parentUpdateCommand.ExecuteNonQuery();
-
-            if (affectedRows != 1)
-            {
-                throw new ItemNotFoundException("Cette application");
-            }
+            ok = db.Update("Client")
+                        .Set("apiKey", item.ApiKey)
+                        .Set("name", item.Name)
+                        .Set("granted", (int)item.Granted)
+                        .Set("revoked", (int)item.Revoked)
+                        .Set("isEnabled", item.IsEnabled)
+                        .Where(db.Column("id") == key)
+                        .Apply();
+            
+            if (!ok) throw new ItemNotFoundException("Cette application");
 
             item.Id = key;
             return item;

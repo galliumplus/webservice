@@ -1,0 +1,3 @@
+[submodule "kiwiq"]
+	path = kiwiq
+	url = https://github.com/louisdevie/kiwiq.git

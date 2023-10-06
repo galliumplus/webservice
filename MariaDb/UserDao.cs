@@ -1,6 +1,7 @@
 ﻿using GalliumPlus.WebApi.Core.Data;
 using GalliumPlus.WebApi.Core.Exceptions;
 using GalliumPlus.WebApi.Core.Users;
+using KiwiQuery;
 using MySqlConnector;
 using System.Data;
 
@@ -15,24 +16,21 @@ namespace GalliumPlus.WebApi.Data.MariaDb
         public User Create(User item)
         {
             using var connection = this.Connect();
-
-            var command = connection.CreateCommand();
-            command.CommandText
-                = "INSERT INTO `User`(`userId`, `firstName`, `lastName`, `email`, `role`, `year`, `deposit`, `isMember`, `registration`) "
-                + "VALUES (@userId, @firstName, @lastName, @email, @role, @year, @deposit, @isMember, @registration)";
-            command.Parameters.AddWithValue("@userId", item.Id);
-            command.Parameters.AddWithValue("@firstName", item.Identity.FirstName);
-            command.Parameters.AddWithValue("@lastName", item.Identity.LastName);
-            command.Parameters.AddWithValue("@email", item.Identity.Email);
-            command.Parameters.AddWithValue("@year", item.Identity.Year);
-            command.Parameters.AddWithValue("@role", item.Role.Id);
-            command.Parameters.AddWithValue("@deposit", item.Deposit);
-            command.Parameters.AddWithValue("@isMember", item.IsMember);
-            command.Parameters.AddWithValue("@registration", DateTime.UtcNow);
+            Schema db = new(connection);
 
             try
             {
-                command.ExecuteNonQuery();
+                db.InsertInto("User")
+                  .Value("userId", item.Id)
+                  .Value("firstName", item.Identity.FirstName)
+                  .Value("lastName", item.Identity.LastName)
+                  .Value("email", item.Identity.Email)
+                  .Value("year", item.Identity.Year)
+                  .Value("role", item.Role.Id)
+                  .Value("deposit", item.Deposit)
+                  .Value("isMember", item.IsMember)
+                  .Value("registration", DateTime.UtcNow)
+                  .Apply();
             }
             catch (MySqlException error)
             {
@@ -49,17 +47,11 @@ namespace GalliumPlus.WebApi.Data.MariaDb
         public void Delete(string key)
         {
             using var connection = this.Connect();
+            Schema db = new(connection);
 
-            var command = connection.CreateCommand();
-            command.CommandText = "DELETE FROM `User` WHERE `userId` = @id";
-            command.Parameters.AddWithValue("@id", key);
+            bool ok = db.DeleteFrom("User").Where(db.Column("userId") == key).Apply();
 
-            var affectedRows = command.ExecuteNonQuery();
-
-            if (affectedRows != 1)
-            {
-                throw new ItemNotFoundException("Cet utilisateur");
-            }
+            if (!ok) throw new ItemNotFoundException("Cet utilisateur");
         }
 
         internal static User Hydrate(MySqlDataReader row)
@@ -93,14 +85,17 @@ namespace GalliumPlus.WebApi.Data.MariaDb
         public IEnumerable<User> Read()
         {
             using var connection = this.Connect();
+            Schema db = new(connection);
 
-            var command = connection.CreateCommand();
-            command.CommandText
-                = "SELECT `userId`, `firstName`, `lastName`, `email`, `year`, `deposit`, `isMember`, "
-                + "`password`, `salt`, `Role`.`id` as `roleId`, `name` as `roleName`, `permissions` "
-                + "FROM `User` INNER JOIN `Role` ON `User`.`role` = `Role`.`id`";
+            var userTable = db.Table("User");
+            var roleTable = db.Table("Role");
 
-            using var results = command.ExecuteReader();
+            using var results = db.Select("userId", "firstName", "lastName", "email", "year", "deposit", "isMember")
+                                  .And("password", "salt", "permissions")
+                                  .And(roleTable.Column("id").As("roleId"), roleTable.Column("name").As("roleName"))
+                                  .From(userTable)
+                                  .Join(roleTable.Column("id"), userTable.Column("role"))
+                                  .Fetch<MySqlDataReader>();
 
             return this.ReadResults(results, Hydrate);
         }
@@ -108,15 +103,18 @@ namespace GalliumPlus.WebApi.Data.MariaDb
         public User Read(string key)
         {
             using var connection = this.Connect();
+            Schema db = new(connection);
 
-            var command = connection.CreateCommand();
-            command.CommandText
-                = "SELECT `userId`, `firstName`, `lastName`, `email`, `year`, `deposit`, `isMember`, "
-                + "`password`, `salt`, `Role`.`id` as `roleId`, `name` as `roleName`, `permissions` "
-                + "FROM `User` INNER JOIN `Role` ON `User`.`role` = `Role`.`id` WHERE `userId` = @id";
-            command.Parameters.AddWithValue("@id", key);
+            var userTable = db.Table("User");
+            var roleTable = db.Table("Role");
 
-            using var result = command.ExecuteReader();
+            using var result = db.Select("userId", "firstName", "lastName", "email", "year", "deposit", "isMember")
+                                  .And("password", "salt", "permissions")
+                                  .And(roleTable.Column("id").As("roleId"), roleTable.Column("name").As("roleName"))
+                                  .From(userTable)
+                                  .Join(roleTable.Column("id"), userTable.Column("role"))
+                                  .Where(userTable.Column("userId") == key)
+                                  .Fetch<MySqlDataReader>();
 
             if (!result.Read())
             {
@@ -128,14 +126,18 @@ namespace GalliumPlus.WebApi.Data.MariaDb
 
         internal static User Read(int numId, MySqlConnection connection)
         {
-            var command = connection.CreateCommand();
-            command.CommandText
-                = "SELECT `userId`, `firstName`, `lastName`, `email`, `year`, `deposit`, `isMember`, "
-                + "`password`, `salt`, `Role`.`id` as `roleId`, `name` as `roleName`, `permissions` "
-                + "FROM `User` INNER JOIN `Role` ON `User`.`role` = `Role`.`id` WHERE `User`.`id` = @id";
-            command.Parameters.AddWithValue("@id", numId);
+            Schema db = new(connection);
 
-            using var result = command.ExecuteReader();
+            var userTable = db.Table("User");
+            var roleTable = db.Table("Role");
+
+            using var result = db.Select("userId", "firstName", "lastName", "email", "year", "deposit", "isMember")
+                                  .And("password", "salt", "permissions")
+                                  .And(roleTable.Column("id").As("roleId"), roleTable.Column("name").As("roleName"))
+                                  .From(userTable)
+                                  .Join(roleTable.Column("id"), userTable.Column("role"))
+                                  .Where(userTable.Column("id") == numId)
+                                  .Fetch<MySqlDataReader>();
 
             if (!result.Read())
             {
@@ -148,12 +150,10 @@ namespace GalliumPlus.WebApi.Data.MariaDb
         public decimal? ReadDeposit(string id)
         {
             using var connection = this.Connect();
+            Schema db = new(connection);
 
-            var command = connection.CreateCommand();
-            command.CommandText = "SELECT `deposit` FROM `User` WHERE `userId` = @id";
-            command.Parameters.AddWithValue("@id", id);
-
-            using var result = command.ExecuteReader();
+            using var result = db.Select("deposit").From("User").Where(db.Column("userId") == id)
+                                 .Fetch<MySqlDataReader>();
 
             if (!result.Read())
             {
@@ -173,25 +173,22 @@ namespace GalliumPlus.WebApi.Data.MariaDb
         public User Update(string key, User item)
         {
             using var connection = this.Connect();
-
-            var command = connection.CreateCommand();
-            command.CommandText
-                = "UPDATE `User` SET `userId` = @newUserId, `firstName` = @firstName, `lastName` = @lastName, "
-                + "`email` = @email, `role` = @role, `year` = @year, `deposit` = @deposit, `isMember` = @isMember "
-                + "WHERE `userId` = @oldUserId";
-            command.Parameters.AddWithValue("@newUserId", item.Id);
-            command.Parameters.AddWithValue("@firstName", item.Identity.FirstName);
-            command.Parameters.AddWithValue("@lastName", item.Identity.LastName);
-            command.Parameters.AddWithValue("@email", item.Identity.Email);
-            command.Parameters.AddWithValue("@year", item.Identity.Year);
-            command.Parameters.AddWithValue("@role", item.Role.Id);
-            command.Parameters.AddWithValue("@deposit", item.Deposit);
-            command.Parameters.AddWithValue("@isMember", item.IsMember);
-            command.Parameters.AddWithValue("@oldUserId", key);
+            Schema db = new(connection);
 
             try
             {
-                command.ExecuteNonQuery();
+                db.Update("User")
+                  .Set("userId", item.Id)
+                  .Set("firstName", item.Identity.FirstName)
+                  .Set("lastName", item.Identity.LastName)
+                  .Set("email", item.Identity.Email)
+                  .Set("year", item.Identity.Year)
+                  .Set("role", item.Role.Id)
+                  .Set("deposit", item.Deposit)
+                  .Set("isMember", item.IsMember)
+                  .Set("registration", DateTime.UtcNow)
+                  .Where(db.Column("userId") == key)
+                  .Apply();
             }
             catch (MySqlException error)
             {
@@ -208,18 +205,11 @@ namespace GalliumPlus.WebApi.Data.MariaDb
         public void UpdateDeposit(string id, decimal? deposit)
         {
             using var connection = this.Connect();
+            Schema db = new(connection);
 
-            var command = connection.CreateCommand();
-            command.CommandText = "UPDATE `User` SET `deposit` = @deposit WHERE `userId` = @id";
-            command.Parameters.AddWithValue("@id", id);
-            command.Parameters.AddWithValue("@deposit", deposit);
+            bool ok = db.Update("User").Set("deposit", deposit).Where(db.Column("userId") == id).Apply();
 
-            int affectedRows = command.ExecuteNonQuery();
-
-            if (affectedRows != 1)
-            {
-                throw new ItemNotFoundException("Cet utilisateur");
-            }
+            if (!ok) throw new ItemNotFoundException("Cet utilisateur");
         }
     }
 }
