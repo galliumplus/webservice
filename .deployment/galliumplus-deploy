@@ -1,0 +1,61 @@
+#!/usr/bin/python3
+
+import paramiko
+import os
+from pathlib import Path
+
+DEPLOY_HOSTNAME = os.environ["DEPLOY_HOSTNAME"]
+DEPLOY_USERNAME = os.environ["DEPLOY_USERNAME"]
+DEPLOY_PASSWORD = os.environ["DEPLOY_PASSWORD"]
+
+ssh_client = paramiko.SSHClient()
+ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+ssh_client.connect(
+    hostname=DEPLOY_HOSTNAME,
+    username=DEPLOY_USERNAME,
+    password=DEPLOY_PASSWORD,
+)
+
+print("Searching for files to upload...")
+
+bin_path = Path("./Service/bin/Release/net6.0")
+
+files_to_upload = [
+    bin_path / "Service",
+    bin_path / "Service.deps.json",
+    bin_path / "Service.runtimeconfig.json",
+]
+files_to_upload += bin_path.glob("*.dll")
+files_to_upload += bin_path.glob("runtimes/linux-x64/native/*")
+
+files_to_upload = [
+    file for file in files_to_upload if file.is_file() and not "Swagger" in file.name
+]
+
+print("Found ", len(files_to_upload), sep="", end=":")
+print("", *files_to_upload, sep="\n   ")
+
+print("\nStopping service...")
+stdin, stdout, stderr = ssh_client.exec_command("sudo systemctl stop galliumplus-api")
+print(*stdout.readlines(), *stderr.readlines())
+print("Done")
+
+print("\nUploading files...")
+remote_path = Path("/opt/galliumplus")
+ftp_client = ssh_client.open_sftp()
+for file_to_upload in files_to_upload:
+    print("Uploading", file_to_upload, "...")
+    ftp_client.put(
+        str(file_to_upload.absolute()),
+        str(remote_path / file_to_upload.relative_to(bin_path)),
+        lambda progress, total: print(f"  {progress/total:.0%}   ", end="\r"),
+    )
+ftp_client.close()
+stdin, stdout, stderr = ssh_client.exec_command("chmod a+x Service")
+print(*stdout.readlines(), *stderr.readlines())
+print("Done")
+
+print("\nRestarting service...")
+stdin, stdout, stderr = ssh_client.exec_command("sudo systemctl start galliumplus-api")
+print(*stdout.readlines(), *stderr.readlines())
+print("Done")

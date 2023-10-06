@@ -15,13 +15,13 @@ namespace GalliumPlus.WebApi.Controllers
     {
         private IRoleDao roleDao;
         private IHistoryDao historyDao;
-        private RoleDetails.Mapper mapper = new();
+        private RoleDetails.Mapper mapper;
 
         public RoleController(IRoleDao roleDao, IHistoryDao historyDao)
         {
             this.roleDao = roleDao;
             this.historyDao = historyDao;
-
+            this.mapper = new();
         }
 
         [HttpGet]
@@ -42,7 +42,7 @@ namespace GalliumPlus.WebApi.Controllers
         [RequiresPermissions(Permissions.MANAGE_ROLES)]
         public IActionResult Post(RoleDetails newRole)
         {
-            Role role = this.roleDao.Create(mapper.ToModel(newRole, this.roleDao));
+            Role role = this.roleDao.Create(mapper.ToModel(newRole));
 
             HistoryAction action = new(
                 HistoryActionKind.EDIT_USERS_OR_ROLES,
@@ -58,7 +58,7 @@ namespace GalliumPlus.WebApi.Controllers
         [RequiresPermissions(Permissions.MANAGE_ROLES)]
         public IActionResult Put(int id, RoleDetails updatedRole)
         {
-            this.roleDao.Update(id, mapper.ToModel(updatedRole, this.roleDao));
+            this.roleDao.Update(id, mapper.ToModel(updatedRole));
 
             HistoryAction action = new(
                 HistoryActionKind.EDIT_USERS_OR_ROLES,

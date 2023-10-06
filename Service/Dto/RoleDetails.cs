@@ -17,7 +17,7 @@ namespace GalliumPlus.WebApi.Dto
             this.Permissions = null;
         }
 
-        public class Mapper : Mapper<Role, RoleDetails, IRoleDao>
+        public class Mapper : Mapper<Role, RoleDetails>
         {
             public override RoleDetails FromModel(Role model)
             {
@@ -29,7 +29,7 @@ namespace GalliumPlus.WebApi.Dto
                 };
             }
 
-            public override Role ToModel(RoleDetails dto, IRoleDao dao)
+            public override Role ToModel(RoleDetails dto)
             {
                 return new Role(dto.Id, dto.Name, (Permissions)dto.Permissions!.Value);
             }

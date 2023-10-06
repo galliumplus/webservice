@@ -14,7 +14,7 @@ namespace GalliumPlus.WebApi.Controllers
     [ApiController]
     public class OrderController : Controller
     {
-        private OrderSummary.Mapper mapper = new();
+        private OrderSummary.Mapper mapper;
         private IProductDao productDao;
         private IUserDao userDao;
         private IHistoryDao historyDao;
@@ -24,14 +24,14 @@ namespace GalliumPlus.WebApi.Controllers
             this.productDao = productDao;
             this.userDao = userDao;
             this.historyDao = historyDao;
-
+            this.mapper = new(userDao, productDao);
         }
 
         [HttpPost("orders")]
         [RequiresPermissions(Permissions.SELL)]
         public IActionResult Post(OrderSummary newOrder)
         {
-            Order order = mapper.ToModel(newOrder, (this.productDao, this.userDao));
+            Order order = mapper.ToModel(newOrder);
 
             string result = order.ProcessPaymentAndUpdateStock(productDao);
 

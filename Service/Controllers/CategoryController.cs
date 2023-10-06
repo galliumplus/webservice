@@ -16,12 +16,13 @@ namespace GalliumPlus.WebApi.Controllers
     {
         private ICategoryDao categoryDao;
         private IHistoryDao historyDao;
-        private CategoryDetails.Mapper mapper = new();
+        private CategoryDetails.Mapper mapper;
 
         public CategoryController(ICategoryDao categoryDao, IHistoryDao historyDao)
         {
             this.categoryDao = categoryDao;
             this.historyDao = historyDao;
+            this.mapper = new();
 
         }
 
@@ -43,7 +44,7 @@ namespace GalliumPlus.WebApi.Controllers
         [RequiresPermissions(Permissions.MANAGE_CATEGORIES)]
         public IActionResult Post(CategoryDetails newCategory)
         {
-            Category category = this.categoryDao.Create(this.mapper.ToModel(newCategory, this.categoryDao));
+            Category category = this.categoryDao.Create(this.mapper.ToModel(newCategory));
 
             HistoryAction action = new(
                 HistoryActionKind.EDIT_PRODUCT_OR_CATEGORIES,
@@ -59,7 +60,7 @@ namespace GalliumPlus.WebApi.Controllers
         [RequiresPermissions(Permissions.MANAGE_CATEGORIES)]
         public IActionResult Put(int id, CategoryDetails updatedCategory)
         {
-            this.categoryDao.Update(id, this.mapper.ToModel(updatedCategory, this.categoryDao));
+            this.categoryDao.Update(id, this.mapper.ToModel(updatedCategory));
 
             HistoryAction action = new(
                 HistoryActionKind.EDIT_PRODUCT_OR_CATEGORIES,

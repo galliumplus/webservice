@@ -102,12 +102,12 @@ builder.WebHost.ConfigureKestrel(opt =>
     if (galliumOptions.ListenAnyIp)
     {
         opt.ListenAnyIP(galliumOptions.HttpPort);
-        opt.ListenAnyIP(galliumOptions.HttpsPort, httpsConfiguration);
+        if (!galliumOptions.DisableHttps) opt.ListenAnyIP(galliumOptions.HttpsPort, httpsConfiguration);
     }
     else
     {
         opt.ListenLocalhost(galliumOptions.HttpPort);
-        opt.ListenLocalhost(galliumOptions.HttpsPort, httpsConfiguration);
+        if (!galliumOptions.DisableHttps) opt.ListenLocalhost(galliumOptions.HttpsPort, httpsConfiguration);
     }
 });
 
@@ -127,7 +127,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
-ServerInfo.Current.SetVersion(0, 5, 0, "alpha");
+ServerInfo.Current.SetVersion(0, 5, 1, "alpha");
 Console.WriteLine(ServerInfo.Current);
 
 app.Run();
