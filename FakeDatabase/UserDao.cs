@@ -8,11 +8,20 @@ namespace GalliumPlus.WebApi.Data.FakeDatabase
     {
         private IRoleDao roles;
 
+        private class PrtDao : BaseDao<string, PasswordResetToken>
+        {
+            protected override string GetKey(PasswordResetToken item) => item.Token;
+
+            protected override void SetKey(ref PasswordResetToken item, string key) => throw new NotImplementedException(); // tkt mon pote
+        }
+        private PrtDao prtDao;
+
         public IRoleDao Roles => roles;
 
         public UserDao(IRoleDao roles)
         {
             this.roles = roles;
+            this.prtDao = new();
 
             this.Create(
                 new User(
@@ -87,6 +96,28 @@ namespace GalliumPlus.WebApi.Data.FakeDatabase
         protected override bool CheckConstraints(User item)
         {
             return item.Deposit > 0;
+        }
+
+        public void ChangePassword(string id, PasswordInformation newPassword)
+        {
+            User user = this.Read(id);
+            user.Password = newPassword;
+            this.Update(id, user);
+        }
+
+        public void CreatePasswordResetToken(PasswordResetToken token)
+        {
+            this.prtDao.Create(token);
+        }
+
+        public PasswordResetToken ReadPasswordResetToken(string token)
+        {
+            return this.prtDao.Read(token);
+        }
+
+        public void DeletePasswordResetToken(string token)
+        {
+            this.prtDao.Delete(token);
         }
     }
 }
