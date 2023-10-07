@@ -128,18 +128,18 @@ namespace GalliumPlus.WebApi.Controllers
             return Ok();
         }
 
-        [HttpPut("{id}/deposit")]
+        [HttpPost("{id}/deposit")]
         [RequiresPermissions(Permissions.MANAGE_DEPOSITS)]
-        public IActionResult PutDeposit(string id, [FromBody] decimal updatedDeposit)
+        public IActionResult PutDeposit(string id, [FromBody] decimal added)
         {
-            this.userDao.UpdateDeposit(id, MonetaryValue.CheckNonNegative(updatedDeposit, "Un acompte"));
+            this.userDao.AddToDeposit(id, MonetaryValue.CheckNonNegative(added, "Un rechargement d'acompte"));
 
             HistoryAction action = new(
                 HistoryActionKind.EDIT_USERS_OR_ROLES,
-                $"Ajout/retrait sur l'acompte de l'utilisateur {id}",
+                $"Rechargement de l'acompte de l'utilisateur {id}",
                 this.User!.Id,
                 id,
-                updatedDeposit
+                added
             );
             this.historyDao.AddEntry(action);
 

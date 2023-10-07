@@ -202,12 +202,12 @@ namespace GalliumPlus.WebApi.Data.MariaDb
             return item;
         }
 
-        public void UpdateDeposit(string id, decimal? deposit)
+        public void AddToDeposit(string id, decimal money)
         {
             using var connection = this.Connect();
             Schema db = new(connection);
 
-            bool ok = db.Update("User").Set("deposit", deposit).Where(db.Column("userId") == id).Apply();
+            bool ok = db.Update("User").Set("deposit", db.Column("deposit") + money).Where(db.Column("userId") == id).Apply();
 
             if (!ok) throw new ItemNotFoundException("Cet utilisateur");
         }
