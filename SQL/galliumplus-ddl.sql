@@ -23,6 +23,17 @@ CREATE TABLE `User` (
     UNIQUE (`userId`)
 );
 
+CREATE TABLE `PasswordResetToken` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `token` VARCHAR(20) NOT NULL CHARACTER SET ascii COLLATE ascii_bin,
+    `secret` BINARY(32) NOT NULL,
+    `salt` CHAR(32) NOT NULL,
+    `expiration` DATETIME NOT NULL,
+    `user` VARCHAR(20) NOT NULL CHARACTER SET ascii COLLATE ascii_bin,
+    PRIMARY KEY (`id`),
+    UNIQUE (`token`)
+);
+
 CREATE TABLE `Role` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(50) NOT NULL,
@@ -116,6 +127,7 @@ CREATE TABLE `HistoryUser` (
 );
 
 ALTER TABLE `User`          ADD FOREIGN KEY (`role`)         REFERENCES `Role`(`id`)                ON UPDATE CASCADE  ON DELETE RESTRICT;
+ALTER TABLE `PasswordResetToken` ADD FOREIGN KEY (`user`)    REFERENCES `User`(`userId`)            ON UPDATE CASCADE  ON DELETE CASCADE;
 ALTER TABLE `Session`       ADD FOREIGN KEY (`user`)         REFERENCES `User`(`id`)                ON UPDATE CASCADE  ON DELETE CASCADE;
 ALTER TABLE `Session`       ADD FOREIGN KEY (`client`)       REFERENCES `Client`(`id`)              ON UPDATE CASCADE  ON DELETE CASCADE;
 ALTER TABLE `BotClient`     ADD FOREIGN KEY (`id`)           REFERENCES `Client`(`id`)              ON UPDATE CASCADE  ON DELETE CASCADE;
