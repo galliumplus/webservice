@@ -11,7 +11,7 @@ class TestBase(TestCase, ABC):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.base_url = "https://localhost:5443/v1"
+        self.base_url = "https://localhost:5443/v1/"
         self.requests_options = {"verify": False}
         self.count_requests = True
 
