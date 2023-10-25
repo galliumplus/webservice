@@ -37,6 +37,8 @@ namespace CoreTest.Orders
 
             PaymentMethod withRealCustomer = new PaymentByDeposit(users, "lomens");
 
+            User customer = users.Read("lomens");
+
             // Free
 
             decimal? before = users.ReadDeposit("lomens");
@@ -46,21 +48,24 @@ namespace CoreTest.Orders
 
             // Enough deposit
 
-            users.UpdateDeposit("lomens", 10);
+            customer.Deposit = 10;
+            users.Update("lomens", customer);
             withRealCustomer.Pay(6.80m);
             after = users.ReadDeposit("lomens");
             Assert.Equal(3.20m, after);
 
             // Not enough deposit
 
-            users.UpdateDeposit("lomens", 10);
+            customer.Deposit = 10;
+            users.Update("lomens", customer);
             Assert.Throws<CantSellException>(() => withRealCustomer.Pay(24.20m));
             after = users.ReadDeposit("lomens");
             Assert.Equal(10, after);
 
             // Negative payment
 
-            users.UpdateDeposit("lomens", 10);
+            customer.Deposit = 10;
+            users.Update("lomens", customer);
             Assert.Throws<ArgumentOutOfRangeException>(() => withRealCustomer.Pay(-6.80m));
             after = users.ReadDeposit("lomens");
             Assert.Equal(10, after);

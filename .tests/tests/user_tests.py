@@ -58,7 +58,7 @@ class UserTests(TestBase):
         response = self.get(f"users/{invalid_id}")
         self.expect(response.status_code).to.be.equal_to(404)
         self.expect(response.json()).to.have.an_item("code").that._is.equal_to(
-            "ITEM_NOT_FOUND"
+            "ItemNotFound"
         )
 
     def test_user_get_self(self):
@@ -126,7 +126,7 @@ class UserTests(TestBase):
         response = self.post("users", invalid_user)
         self.expect(response.status_code).to.be.equal_to(400)
         self.expect(response.json()).to.have.an_item("code").that._is.equal_to(
-            "INVALID_ITEM"
+            "InvalidItem"
         )
 
         # Informations manquantes
@@ -142,7 +142,7 @@ class UserTests(TestBase):
         response = self.post("users", invalid_user)
         self.expect(response.status_code).to.be.equal_to(400)
         self.expect(response.json()).to.have.an_item("code").that._is.equal_to(
-            "INVALID_ITEM"
+            "InvalidItem"
         )
 
         # Mauvais types de données
@@ -160,7 +160,7 @@ class UserTests(TestBase):
         response = self.post("users", invalid_user)
         self.expect(response.status_code).to.be.equal_to(400)
         self.expect(response.json()).to.have.an_item("code").that._is.equal_to(
-            "INVALID_ITEM"
+            "InvalidItem"
         )
 
         # Existe déjà
@@ -178,7 +178,7 @@ class UserTests(TestBase):
         response = self.post("users", invalid_user)
         self.expect(response.status_code).to.be.equal_to(400)
         self.expect(response.json()).to.have.an_item("code").that._is.equal_to(
-            "DUPLICATE_ITEM"
+            "DuplicateItem"
         )
 
     def test_user_edit(self):
@@ -233,7 +233,7 @@ class UserTests(TestBase):
         response = self.put("users/jj000000", invalid_user)
         self.expect(response.status_code).to.be.equal_to(400)
         self.expect(response.json()).to.have.an_item("code").that._is.equal_to(
-            "INVALID_ITEM"
+            "InvalidItem"
         )
 
         # Informations manquantes
@@ -248,7 +248,7 @@ class UserTests(TestBase):
         response = self.put("users/jj000000", invalid_user)
         self.expect(response.status_code).to.be.equal_to(400)
         self.expect(response.json()).to.have.an_item("code").that._is.equal_to(
-            "INVALID_ITEM"
+            "InvalidItem"
         )
 
         # Mauvais types de données
@@ -266,7 +266,7 @@ class UserTests(TestBase):
         response = self.put("users/jj000000", invalid_user)
         self.expect(response.status_code).to.be.equal_to(400)
         self.expect(response.json()).to.have.an_item("code").that._is.equal_to(
-            "INVALID_ITEM"
+            "InvalidItem"
         )
 
         # Existe déjà
@@ -276,37 +276,42 @@ class UserTests(TestBase):
         response = self.put("users/jj000000", invalid_user)
         self.expect(response.status_code).to.be.equal_to(400)
         self.expect(response.json()).to.have.an_item("code").that._is.equal_to(
-            "DUPLICATE_ITEM"
+            "DuplicateItem"
         )
         response = self.get("users/jj000000")
         self.expect(response.status_code).to.be.equal_to(200)
 
     def test_user_edit_deposit(self):
-        userId = self.get("users").json()[0]["id"]
+        user_id = self.get("users").json()[0]["id"]
+
+        user = self.get(f"users/{user_id}").json()
+        user["deposit"] = 1.33
+        user["role"] = user["role"]["id"]
+        response = self.put(f"users/{user_id}", user)
 
         # Valeur OK
 
-        response = self.put(f"users/{userId}/deposit", 4.87)
+        response = self.post(f"users/{user_id}/deposit", 4.87)
         self.expect(response.status_code).to.be.equal_to(200)
 
-        deposit = self.get(f"users/{userId}").json()["deposit"]
-        self.expect(deposit).to.be.equal_to(4.87)
+        deposit = self.get(f"users/{user_id}").json()["deposit"]
+        self.expect(deposit).to.be.equal_to(6.20)
 
         # Fraction de centimes 😱
 
-        response = self.put(f"users/{userId}/deposit", 4.873)
+        response = self.post(f"users/{user_id}/deposit", 4.873)
         self.expect(response.status_code).to.be.equal_to(400)
 
-        deposit = self.get(f"users/{userId}").json()["deposit"]
-        self.expect(deposit).to.be.equal_to(4.87)
+        deposit = self.get(f"users/{user_id}").json()["deposit"]
+        self.expect(deposit).to.be.equal_to(6.20)
 
         # Acompte négatif 😡
 
-        response = self.put(f"users/{userId}/deposit", -4.87)
+        response = self.post(f"users/{user_id}/deposit", -4.87)
         self.expect(response.status_code).to.be.equal_to(400)
 
-        deposit = self.get(f"users/{userId}").json()["deposit"]
-        self.expect(deposit).to.be.equal_to(4.87)
+        deposit = self.get(f"users/{user_id}").json()["deposit"]
+        self.expect(deposit).to.be.equal_to(6.20)
 
     def test_user_delete(self):
         role = self.get("roles").json()[0]

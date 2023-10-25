@@ -2,11 +2,12 @@
 {
     public enum ErrorCode
     {
-        CANT_SELL,
-        DUPLICATE_ITEM,
-        INVALID_ITEM,
-        ITEM_NOT_FOUND,
-        PERMISSION_DENIED,
-        SERVICE_UNAVAILABLE,
+        CantSell,
+        DuplicateItem,
+        InvalidItem,
+        ItemNotFound,
+        PermissionDenied,
+        ServiceUnavailable,
+        FailedPrecondition,
     }
 }

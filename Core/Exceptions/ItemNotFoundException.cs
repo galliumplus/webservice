@@ -5,7 +5,7 @@
     /// </summary>
     public class ItemNotFoundException : GalliumException
     {
-        public override ErrorCode ErrorCode => ErrorCode.ITEM_NOT_FOUND;
+        public override ErrorCode ErrorCode => ErrorCode.ItemNotFound;
 
         /// <summary>
         /// Crée une nouvelle <see cref="ItemNotFoundException"/> indiquant

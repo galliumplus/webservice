@@ -35,7 +35,7 @@ namespace GalliumPlus.WebApi.Controllers
             if (!app.AllowUserLogin)
             {
                 return new ErrorResult(
-                   ErrorCode.PERMISSION_DENIED,
+                   ErrorCode.PermissionDenied,
                    $"Vous ne pouvez pas vous connecter directement à {app.Name}.",
                    StatusCodes.Status403Forbidden,
                    new { AppEnabled = app.IsEnabled, UserLoginAllowed = app.AllowUserLogin }

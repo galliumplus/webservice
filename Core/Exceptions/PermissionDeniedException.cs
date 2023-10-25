@@ -15,7 +15,7 @@ namespace GalliumPlus.WebApi.Core.Exceptions
         /// </summary>
         public Permissions Required { get => required; }
 
-        public override ErrorCode ErrorCode => ErrorCode.PERMISSION_DENIED;
+        public override ErrorCode ErrorCode => ErrorCode.PermissionDenied;
         /// <summary>
         /// Instancie l'exception.
         /// </summary>

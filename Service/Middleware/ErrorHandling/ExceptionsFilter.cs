@@ -44,9 +44,10 @@ namespace GalliumPlus.WebApi.Middleware.ErrorHandling
         {
             return errorCode switch
             {
-                ErrorCode.ITEM_NOT_FOUND => StatusCodes.Status404NotFound,
-                ErrorCode.PERMISSION_DENIED => StatusCodes.Status403Forbidden,
-                ErrorCode.SERVICE_UNAVAILABLE => StatusCodes.Status503ServiceUnavailable,
+                ErrorCode.ItemNotFound => StatusCodes.Status404NotFound,
+                ErrorCode.PermissionDenied => StatusCodes.Status403Forbidden,
+                ErrorCode.ServiceUnavailable => StatusCodes.Status503ServiceUnavailable,
+                ErrorCode.FailedPrecondition => StatusCodes.Status409Conflict,
                 _ => StatusCodes.Status400BadRequest
             };
         }
@@ -65,7 +66,7 @@ namespace GalliumPlus.WebApi.Middleware.ErrorHandling
                 }
 
                 return new ErrorResult(
-                    ErrorCode.INVALID_ITEM,
+                    ErrorCode.InvalidItem,
                     "Le format de cette ressource est invalide.",
                     400,
                     new { ModelStateErrors = modelStateErrors }
