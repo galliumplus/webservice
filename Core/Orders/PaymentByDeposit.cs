@@ -49,8 +49,7 @@ namespace GalliumPlus.WebApi.Core.Orders
                 throw new CantSellException("Cet utilisateur n'existe pas.");
             }
 
-            decimal newDeposit = currentDeposit - amount;
-            if (newDeposit < 0)
+            if (currentDeposit < amount)
             {
                 throw new CantSellException(
                     string.Format(
@@ -61,12 +60,12 @@ namespace GalliumPlus.WebApi.Core.Orders
                 );
             }
 
-            this.userDao.UpdateDeposit(this.depositId, newDeposit);
+            this.userDao.AddToDeposit(this.depositId, -amount);
 
             return string.Format(
                 currencyFormat.Value,
                 "Le paiement par acompte a bien été effectué (il reste {0:C}).",
-                newDeposit
+                currentDeposit - amount
             );
         }
     }

@@ -93,7 +93,7 @@ class RoleTests(TestBase):
         response = self.post("roles", invalid_role)
         self.expect(response.status_code).to.be.equal_to(400)
         self.expect(response.json()).to.have.an_item("code").that._is.equal_to(
-            "INVALID_ITEM"
+            "InvalidItem"
         )
 
         # Informations non valides
@@ -102,7 +102,7 @@ class RoleTests(TestBase):
         response = self.post("roles", invalid_role)
         self.expect(response.status_code).to.be.equal_to(400)
         self.expect(response.json()).to.have.an_item("code").that._is.equal_to(
-            "INVALID_ITEM"
+            "InvalidItem"
         )
 
     def test_role_edit(self):
@@ -126,7 +126,7 @@ class RoleTests(TestBase):
         response = self.put("roles/1", invalid_role)
         self.expect(response.status_code).to.be.equal_to(400)
         self.expect(response.json()).to.have.an_item("code").that._is.equal_to(
-            "INVALID_ITEM"
+            "InvalidItem"
         )
 
         # Informations non valides
@@ -135,7 +135,7 @@ class RoleTests(TestBase):
         response = self.put("roles/1", invalid_role)
         self.expect(response.status_code).to.be.equal_to(400)
         self.expect(response.json()).to.have.an_item("code").that._is.equal_to(
-            "INVALID_ITEM"
+            "InvalidItem"
         )
 
     def test_role_delete(self):

@@ -5,7 +5,7 @@
     /// </summary>
     public class DuplicateItemException : GalliumException
     {
-        public override ErrorCode ErrorCode => ErrorCode.DUPLICATE_ITEM;
+        public override ErrorCode ErrorCode => ErrorCode.DuplicateItem;
 
         public DuplicateItemException(string message) : base(message) { }
 

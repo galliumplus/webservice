@@ -5,7 +5,7 @@
     /// </summary>
     public class InvalidItemException : GalliumException
     {
-        public override ErrorCode ErrorCode => ErrorCode.INVALID_ITEM;
+        public override ErrorCode ErrorCode => ErrorCode.InvalidItem;
 
         public InvalidItemException(string message) : base(message) { }
     }

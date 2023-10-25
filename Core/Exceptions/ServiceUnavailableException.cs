@@ -12,7 +12,7 @@ namespace GalliumPlus.WebApi.Core.Exceptions
     /// </summary>
     public class ServiceUnavailableException : GalliumException
     {
-        public override ErrorCode ErrorCode => ErrorCode.SERVICE_UNAVAILABLE;
+        public override ErrorCode ErrorCode => ErrorCode.ServiceUnavailable;
 
         /// <summary>
         /// Constructeur par défaut

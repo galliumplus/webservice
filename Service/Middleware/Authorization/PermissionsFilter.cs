@@ -47,7 +47,7 @@ namespace GalliumPlus.WebApi.Middleware.Authorization
             };
 
             context.Result = new ErrorResult(
-                ErrorCode.PERMISSION_DENIED,
+                ErrorCode.PermissionDenied,
                 $"Vous n'avez pas la permission {messageAction}.",
                 StatusCodes.Status403Forbidden,
                 new { RequiredPermissions = required }

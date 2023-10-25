@@ -19,7 +19,7 @@ class OrderTests(TestBase):
         response = self.post("orders", empty_order)
         self.expect(response.status_code).to.be.equal_to(400)
         self.expect(response.json()).to.have.an_item("code").that._is.equal_to(
-            "CANT_SELL"
+            "CantSell"
         )
 
     def test_buy_not_deposit(self):
@@ -247,7 +247,10 @@ class OrderTests(TestBase):
         return user["deposit"]
 
     def set_deposit(self, user_id, amount):
-        self.put(f"users/{user_id}/deposit", amount)
+        user = self.get(f"users/{user_id}").json()
+        user["deposit"] = amount
+        user["role"] = user["role"]["id"]
+        response = self.put(f"users/{user_id}", user)
 
     def revoke_membership(self, user_id):
         user = self.get(f"users/{user_id}").json()

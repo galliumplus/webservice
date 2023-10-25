@@ -15,18 +15,17 @@ namespace GalliumPlus.WebApi.Core.Data
         /// </summary>
         /// <param name="id">L'identifiant de l'utilisateur.</param>
         /// <exception cref="ItemNotFoundException"></exception>
-        /// <exception cref="InvalidItemException"></exception>
         /// <returns>L'acompte en euros.</returns>
         public decimal? ReadDeposit(string id);
 
         /// <summary>
-        /// Mets à jour l'acompte d'un utilisateur.
+        /// Ajoute une certaine somme à l'acompte d'un utilisateur.
         /// </summary>
         /// <param name="id">L'identifiant de l'utilisateur.</param>
-        /// <param name="deposit">Le nouvel acompte.</param>
+        /// <param name="money">La somme à ajouter.</param>
         /// <exception cref="ItemNotFoundException"></exception>
         /// <exception cref="InvalidItemException"></exception>
-        public void UpdateDeposit(string id, decimal? deposit);
+        public void AddToDeposit(string id, decimal money);
 
         /// <summary>
         /// Modifie le mot de passe de l'utilisateur.

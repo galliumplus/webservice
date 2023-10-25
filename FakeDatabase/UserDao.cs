@@ -78,11 +78,11 @@ namespace GalliumPlus.WebApi.Data.FakeDatabase
             return this.Read(id).Deposit;
         }
 
-        public void UpdateDeposit(string id, decimal? deposit)
+        public void AddToDeposit(string id, decimal money)
         {
             User user = this.Read(id);
-            if (deposit < 0) throw new InvalidItemException("L'acompte ne peut pas être négatif.");
-            user.Deposit = deposit;
+            if (user.Deposit + money < 0) throw new InvalidItemException("L'acompte ne peut pas être négatif.");
+            user.Deposit += money;
             Update(id, user);
         }
 

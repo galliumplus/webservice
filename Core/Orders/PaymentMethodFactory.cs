@@ -14,12 +14,13 @@ namespace GalliumPlus.WebApi.Core.Orders
 
         public PaymentMethod Create(string method, string? customer)
         {
-            switch (method)
+            switch (method.ToLower())
             {
-                case "CREDIT_CARD":
+                case "creditcard":
+                case "credit_card":
                     return new PaymentByCreditCard();
 
-                case "DEPOSIT":
+                case "deposit":
                     if (customer == null || customer == "@anonymousmember")
                     {
                         throw new InvalidItemException(
@@ -29,10 +30,10 @@ namespace GalliumPlus.WebApi.Core.Orders
 
                     return new PaymentByDeposit(userDao, customer);
 
-                case "PAYPAL":
+                case "paypal":
                     return new PaymentByPaypal();
 
-                case "CASH":
+                case "cash":
                     return new PaymentInCash();
 
                 default:

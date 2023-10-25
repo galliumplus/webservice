@@ -5,7 +5,7 @@
     /// </summary>
     public class CantSellException : GalliumException
     {
-        public override ErrorCode ErrorCode => ErrorCode.CANT_SELL;
+        public override ErrorCode ErrorCode => ErrorCode.CantSell;
 
         public CantSellException(string message) : base(message) { }
     }
