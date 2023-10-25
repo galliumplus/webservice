@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace GalliumPlus.WebApi.Controllers
 {
+    [Route("v1")]
     [ApiController]
     public class AccessController : Controller
     {

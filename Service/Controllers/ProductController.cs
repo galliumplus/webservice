@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace GalliumPlus.WebApi.Controllers
 {
-    [Route("products")]
+    [Route("v1/products")]
     [Authorize]
     [ApiController]
     public class ProductController : Controller

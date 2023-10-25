@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace GalliumPlus.WebApi.Controllers
 {
-    [Route("orders")]
+    [Route("v1/orders")]
     [Authorize]
     [ApiController]
     public class OrderController : Controller
