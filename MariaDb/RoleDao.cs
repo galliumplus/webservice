@@ -1,6 +1,7 @@
 ﻿using GalliumPlus.WebApi.Core.Data;
 using GalliumPlus.WebApi.Core.Exceptions;
 using GalliumPlus.WebApi.Core.Users;
+using KiwiQuery;
 using MySqlConnector;
 
 namespace GalliumPlus.WebApi.Data.MariaDb
@@ -12,32 +13,21 @@ namespace GalliumPlus.WebApi.Data.MariaDb
         public Role Create(Role item)
         {
             using var connection = this.Connect();
+            Schema db = new(connection);
 
-            var command = connection.CreateCommand();
-            command.CommandText = "INSERT INTO `Role`(`name`, `permissions`) VALUES (@name, @permissions)";
-            command.Parameters.AddWithValue("@name", item.Name);
-            command.Parameters.AddWithValue("@permissions", (int)item.Permissions);
+            item.Id = db.InsertInto("Role").Value("name", item.Name).Value("permissions", (int)item.Permissions).Apply();
 
-            command.ExecuteNonQuery();
-
-            item.Id = (int)this.SelectLastInsertId(connection);
             return item;
         }
 
         public void Delete(int key)
         {
             using var connection = this.Connect();
+            Schema db = new(connection);
 
-            var command = connection.CreateCommand();
-            command.CommandText = "DELETE FROM `Role` WHERE `id` = @id";
-            command.Parameters.AddWithValue("@id", key);
+            bool ok = db.DeleteFrom("Role").Where(db.Column("id") == key).Apply();
 
-            int affectedRows = command.ExecuteNonQuery();
-
-            if (affectedRows != 1)
-            {
-                throw new ItemNotFoundException("Ce rôle");
-            }
+            if (!ok) throw new ItemNotFoundException("Ce rôle");
         }
 
         private static Role Hydrate(MySqlDataReader row)
@@ -52,11 +42,9 @@ namespace GalliumPlus.WebApi.Data.MariaDb
         public IEnumerable<Role> Read()
         {
             using var connection = this.Connect();
+            Schema db = new(connection);
 
-            var readCommand = connection.CreateCommand();
-            readCommand.CommandText = "SELECT `id`, `name`, `permissions` FROM `Role`";
-
-            using var results = readCommand.ExecuteReader();
+            using var results = db.Select("id", "name", "permissions").From("Role").Fetch<MySqlDataReader>();
 
             return this.ReadResults(results, Hydrate);
         }
@@ -64,12 +52,10 @@ namespace GalliumPlus.WebApi.Data.MariaDb
         public Role Read(int key)
         {
             using var connection = this.Connect();
+            Schema db = new(connection);
 
-            var readCommand = connection.CreateCommand();
-            readCommand.CommandText = "SELECT `id`, `name`, `Permissions` FROM `Role` WHERE `id` = @id";
-            readCommand.Parameters.AddWithValue("@id", key);
-
-            using var result = readCommand.ExecuteReader();
+            using var result = db.Select("id", "name", "permissions").From("Role")
+                                 .Where(db.Column("id") == key).Fetch<MySqlDataReader>();
 
             if (!result.Read())
             {
@@ -82,19 +68,12 @@ namespace GalliumPlus.WebApi.Data.MariaDb
         public Role Update(int key, Role item)
         {
             using var connection = this.Connect();
+            Schema db = new(connection);
 
-            var updateCommand = connection.CreateCommand();
-            updateCommand.CommandText = "UPDATE `Role` SET `name` = @name, `permissions` = @permissions WHERE `id` = @id";
-            updateCommand.Parameters.AddWithValue("@name", item.Name);
-            updateCommand.Parameters.AddWithValue("@permissions", (int)item.Permissions);
-            updateCommand.Parameters.AddWithValue("@id", key);
+            bool ok = db.Update("Role").Set("name", item.Name).Set("permissions", item.Permissions)
+                        .Where(db.Column("id") == key).Apply();
 
-            int affectedRows = updateCommand.ExecuteNonQuery();
-
-            if (affectedRows != 1)
-            {
-                throw new ItemNotFoundException("Ce rôle");
-            }
+            if (!ok) throw new ItemNotFoundException("Ce rôle");
 
             item.Id = key;
             return item;

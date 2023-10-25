@@ -1,6 +1,7 @@
 ﻿using GalliumPlus.WebApi.Core.Data;
 using GalliumPlus.WebApi.Core.Exceptions;
 using GalliumPlus.WebApi.Core.Stocks;
+using KiwiQuery;
 using MySqlConnector;
 
 namespace GalliumPlus.WebApi.Data.MariaDb
@@ -14,38 +15,28 @@ namespace GalliumPlus.WebApi.Data.MariaDb
         public Product Create(Product item)
         {
             using var connection = this.Connect();
+            Schema db = new(connection);
 
-            var command = connection.CreateCommand();
-            command.CommandText
-                = "INSERT INTO `Product`(`name`, `stock`, `nonMemberPrice`, `memberPrice`, `availability`, `category`) "
-                + "VALUES (@name, @stock, @nonMemberPrice, @memberPrice, @availability, @category)";
-            command.Parameters.AddWithValue("@name", item.Name);
-            command.Parameters.AddWithValue("@stock", item.Stock);
-            command.Parameters.AddWithValue("@nonMemberPrice", item.NonMemberPrice);
-            command.Parameters.AddWithValue("@memberPrice", item.MemberPrice);
-            command.Parameters.AddWithValue("@availability", (int)item.Availability);
-            command.Parameters.AddWithValue("@category", item.Category.Id);
+            item.Id = db.InsertInto("Product")
+                        .Value("name", item.Name)
+                        .Value("stock", item.Stock)
+                        .Value("nonMemberPrice", item.NonMemberPrice)
+                        .Value("memberPrice", item.MemberPrice)
+                        .Value("availability", (int)item.Availability)
+                        .Value("category", item.Category.Id)
+                        .Apply();
 
-            command.ExecuteNonQuery();
-
-            item.Id = (int)this.SelectLastInsertId(connection);
             return item;
         }
 
         public void Delete(int key)
         {
             using var connection = this.Connect();
+            Schema db = new(connection);
 
-            var command = connection.CreateCommand();
-            command.CommandText = "DELETE FROM `Product` WHERE `id` = @id";
-            command.Parameters.AddWithValue("@id", key);
+            bool ok = db.DeleteFrom("Product").Where(db.Column("id") == key).Apply();
 
-            int affectedRows = command.ExecuteNonQuery();
-
-            if (affectedRows != 1)
-            {
-                throw new ItemNotFoundException("Ce produit");
-            }
+            if (!ok) throw new ItemNotFoundException("Ce produit");
         }
 
         private static Product Hydrate(MySqlDataReader row)
@@ -67,15 +58,16 @@ namespace GalliumPlus.WebApi.Data.MariaDb
         public IEnumerable<Product> Read()
         {
             using var connection = this.Connect();
+            Schema db = new(connection);
 
-            var readCommand = connection.CreateCommand();
-            readCommand.CommandText
-                = "SELECT `Product`.`id` as `productId`, `Product`.`name` as `productName`, "
-                + "`stock`, `nonMemberPrice`, `memberPrice`, `availability`, "
-                + "`Category`.`id` as `categoryId`, `Category`.`name` as `categoryName` "
-                + "FROM `Product` INNER JOIN `Category` ON `Category`.`id` = `Product`.`category`";
-
-            using var results = readCommand.ExecuteReader();
+            var productTable = db.Table("Product");
+            var categoryTable = db.Table("Category");
+            using var results = db.Select(productTable.Column("id").As("productId"), productTable.Column("name").As("productName"))
+                                  .And(categoryTable.Column("id").As("categoryId"), categoryTable.Column("name").As("categoryName"))
+                                  .And("stock", "nonMemberPrice", "memberPrice", "availability")
+                                  .From(productTable)
+                                  .Join(categoryTable.Column("id"), productTable.Column("category"))
+                                  .Fetch<MySqlDataReader>();
 
             return this.ReadResults(results, Hydrate);
         }
@@ -83,17 +75,17 @@ namespace GalliumPlus.WebApi.Data.MariaDb
         public Product Read(int key)
         {
             using var connection = this.Connect();
+            Schema db = new(connection);
 
-            var readCommand = connection.CreateCommand();
-            readCommand.CommandText
-                = "SELECT `Product`.`id` as `productId`, `Product`.`name` as `productName`, "
-                + "`stock`, `nonMemberPrice`, `memberPrice`, `availability`, "
-                + "`Category`.`id` as `categoryId`, `Category`.`name` as `categoryName` "
-                + "FROM `Product` INNER JOIN `Category` ON `Category`.`id` = `Product`.`category` "
-                + "WHERE `Product`.`id` = @id";
-            readCommand.Parameters.AddWithValue("@id", key);
-
-            using var result = readCommand.ExecuteReader();
+            var productTable = db.Table("Product");
+            var categoryTable = db.Table("Category");
+            using var result = db.Select(productTable.Column("id").As("productId"), productTable.Column("name").As("productName"))
+                                 .And(categoryTable.Column("id").As("categoryId"), categoryTable.Column("name").As("categoryName"))
+                                 .And("stock", "nonMemberPrice", "memberPrice", "availability")
+                                 .From(productTable)
+                                 .Join(categoryTable.Column("id"), productTable.Column("category"))
+                                 .Where(productTable.Column("id") == key)
+                                 .Fetch<MySqlDataReader>();
 
             if (!result.Read())
             {
@@ -106,26 +98,19 @@ namespace GalliumPlus.WebApi.Data.MariaDb
         public Product Update(int key, Product item)
         {
             using var connection = this.Connect();
+            Schema db = new(connection);
 
-            var updateCommand = connection.CreateCommand();
-            updateCommand.CommandText
-                = "UPDATE `Product` SET `name` = @name, `stock` = @stock, "
-                + "`nonMemberPrice` = @nonMemberPrice, `memberPrice` = @memberPrice, "
-                + "`availability` = @availability, `category` = @category WHERE `id` = @id";
-            updateCommand.Parameters.AddWithValue("@name", item.Name);
-            updateCommand.Parameters.AddWithValue("@stock", item.Stock);
-            updateCommand.Parameters.AddWithValue("@nonMemberPrice", item.NonMemberPrice);
-            updateCommand.Parameters.AddWithValue("@memberPrice", item.MemberPrice);
-            updateCommand.Parameters.AddWithValue("@availability", item.Availability);
-            updateCommand.Parameters.AddWithValue("@category", item.Category.Id);
-            updateCommand.Parameters.AddWithValue("@id", key);
-
-            int affectedRows = updateCommand.ExecuteNonQuery();
-
-            if (affectedRows != 1)
-            {
-                throw new ItemNotFoundException("Ce produit");
-            }
+            bool ok = db.Update("Product")
+                        .Set("name", item.Name)
+                        .Set("stock", item.Stock)
+                        .Set("nonMemberPrice", item.NonMemberPrice)
+                        .Set("memberPrice", item.MemberPrice)
+                        .Set("availability", item.Availability)
+                        .Set("category", item.Category.Id)
+                        .Where(db.Column("id") == key)
+                        .Apply();
+            
+            if (!ok) throw new ItemNotFoundException("Ce produit");
 
             item.Id = key;
             return item;
@@ -134,30 +119,20 @@ namespace GalliumPlus.WebApi.Data.MariaDb
         public void WithdrawFromStock(int id, int amount)
         {
             using var connection = this.Connect();
+            Schema db = new(connection);
 
-            var updateCommand = connection.CreateCommand();
-            updateCommand.CommandText
-                = "UPDATE `Product` SET `stock` = `stock` - @amount WHERE `id` = @id";
-            updateCommand.Parameters.AddWithValue("@amount", amount);
-            updateCommand.Parameters.AddWithValue("@id", id);
+            bool ok = db.Update("Product").Set("stock", db.Column("stock") - amount).Where(db.Column("id") == id).Apply();
 
-            int affectedRows = updateCommand.ExecuteNonQuery();
-
-            if (affectedRows != 1)
-            {
-                throw new ItemNotFoundException("Ce produit");
-            }
+            if (!ok) throw new ItemNotFoundException("Ce produit");
         }
 
         public ProductImage ReadImage(int id)
         {
             using var connection = this.Connect();
+            Schema db = new(connection);
 
-            var readCommand = connection.CreateCommand();
-            readCommand.CommandText = "SELECT `imageSize`, `image` FROM `ProductImage` WHERE `id` = @id";
-            readCommand.Parameters.AddWithValue("@id", id);
-
-            using var result = readCommand.ExecuteReader();
+            using var result = db.Select("imageSize", "image").From("ProductImage")
+                                 .Where(db.Column("id") == id).Fetch<MySqlDataReader>();
 
             if (!result.Read())
             {
@@ -175,62 +150,46 @@ namespace GalliumPlus.WebApi.Data.MariaDb
         public void SetImage(int id, ProductImage image)
         {
             using var connection = this.Connect();
+            Schema db = new(connection);
 
-            var readCommand = connection.CreateCommand();
-            readCommand.CommandText = "SELECT COUNT(*) FROM `ProductImage` WHERE `id` = @id";
-            readCommand.Parameters.AddWithValue("@id", id);
+            bool existingImage, ok;
 
-            long existingImage = (readCommand.ExecuteScalar() as long? ?? 0);
-
-            var updateCommand = connection.CreateCommand();
-            if (existingImage == 1)
+            using (var result = db.Select(db.Count()).From("ProductImage").Where(db.Column("id") == id).Fetch())
             {
-                updateCommand.CommandText
-                    = "UPDATE `ProductImage` SET `imageSize` = @imageSize, `image` = @image WHERE `id` = @id";
+                existingImage = result.Read() && result.GetInt32(0) == 1;
+            }
+
+            if (existingImage)
+            {
+                ok = db.Update("ProductImage").Set("imageSize", image.Bytes.Length).Set("image", image.Bytes)
+                       .Where(db.Column("id") == id).Apply();
             }
             else
             {
-                updateCommand.CommandText
-                    = "INSERT INTO `ProductImage`(`id`, `imageSize`, `image`) VALUES (@id, @imageSize, @image)";
-            }
-            updateCommand.Parameters.AddWithValue("@imageSize", image.Bytes.Length);
-            updateCommand.Parameters.AddWithValue("@image", image.Bytes);
-            updateCommand.Parameters.AddWithValue("@id", id);
-
-            try
-            {
-                int affectedRows = updateCommand.ExecuteNonQuery();
-
-                if (affectedRows != 1)
+                try
                 {
-                    throw new ItemNotFoundException("Ce produit");
+                    db.InsertInto("ProductImage").Value("id", id).Value("image", image.Bytes).Value("ImageSize").Apply();
+                    ok = true;
+                }
+                catch (MySqlException err)
+                {
+                    // violation de clé étrangère
+                    if (err.ErrorCode == MySqlErrorCode.NoReferencedRow2) ok = false;
+                    else throw;
                 }
             }
-            catch (MySqlException err)
-            {
-                // violation de clé étrangère
-                if (err.ErrorCode == MySqlErrorCode.NoReferencedRow2)
-                {
-                    throw new ItemNotFoundException("Ce produit");
-                }
-                else throw;
-            }
+
+            if (!ok) throw new ItemNotFoundException("Ce produit");
         }
 
         public void UnsetImage(int id)
         {
             using var connection = this.Connect();
+            Schema db = new(connection);
 
-            var command = connection.CreateCommand();
-            command.CommandText = "DELETE FROM `ProductImage` WHERE `id` = @id";
-            command.Parameters.AddWithValue("@id", id);
+            bool ok = db.DeleteFrom("ProductImage").Where(db.Column("id") == id).Apply();
 
-            int affectedRows = command.ExecuteNonQuery();
-
-            if (affectedRows != 1)
-            {
-                throw new ItemNotFoundException("L'image de ce produit");
-            }
+            if (!ok) throw new ItemNotFoundException("L'image de ce produit");
         }
     }
 }

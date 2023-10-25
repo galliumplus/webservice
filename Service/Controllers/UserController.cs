@@ -145,5 +145,102 @@ namespace GalliumPlus.WebApi.Controllers
 
             return Ok();
         }
+
+        [HttpPut("@me/password")]
+        public IActionResult ChangePassword(PasswordModification passwordModification)
+        {
+            if (!this.User!.Password!.Match(passwordModification.CurrentPassword ?? ""))
+            {
+                throw new InvalidItemException("Le mot de passe actuel ne corresponds pas.");
+            }
+
+            PasswordInformation newPassword = PasswordInformation.FromPassword(passwordModification.NewPassword);
+
+            this.userDao.ChangePassword(this.User.Id, newPassword);
+
+            HistoryAction action = new(
+                HistoryActionKind.EDIT_USERS_OR_ROLES,
+                $"L'utilisateur {this.User.Id} a changé son mot de passe.",
+                this.User!.Id,
+                this.User!.Id
+            );
+            this.historyDao.AddEntry(action);
+
+            return Ok();
+        }
+
+        [HttpPut("{id}/password")]
+        [AllowAnonymous]
+        public IActionResult ChangePassword(string id, PasswordModification passwordModification)
+        {
+            if (id == this.User?.Id)
+            {
+                // same as PUT @me/password
+                return ChangePassword(passwordModification);
+            }
+
+            if (passwordModification.ResetToken is null)
+            {
+                throw new InvalidItemException("Jeton de réinitialisation manquant.");
+            }
+
+            string[] parts = passwordModification.ResetToken.Split(':');
+            if (parts.Length != 2)
+            {
+                throw new InvalidItemException("Jeton de réinitialisation invalide.");
+            }
+
+            PasswordResetToken prt = this.userDao.ReadPasswordResetToken(parts[0]);
+
+            if (!prt.MatchesSecret(parts[1]))
+            {
+                throw new InvalidItemException("Jeton de réinitialisation invalide.");
+            }
+
+            if (prt.Expired)
+            {
+                throw new InvalidItemException("Ce jeton de réinitialisation est expiré.");
+            }
+
+            PasswordInformation newPassword = PasswordInformation.FromPassword(passwordModification.NewPassword);
+
+            this.userDao.ChangePassword(prt.UserId, newPassword);
+            this.userDao.DeletePasswordResetToken(prt.Token);
+
+            HistoryAction action = new(
+                HistoryActionKind.EDIT_USERS_OR_ROLES,
+                $"L'utilisateur {prt.UserId} a réinitialisé son mot de passe.",
+                this.User!.Id,
+                this.User!.Id
+            );
+            this.historyDao.AddEntry(action);
+
+            return Ok();
+        }
+
+        [HttpGet("{id}/reset-password")]
+        [AllowAnonymous]
+        public IActionResult CanResetPassword(string id)
+        {
+            User user = this.userDao.Read(id);
+
+            return Json(user.Identity.Email.Length > 0);
+        }
+
+        [HttpPost("{id}/reset-password")]
+        [AllowAnonymous]
+        public IActionResult AskForPasswordReset(string id)
+        {
+            PasswordResetToken prt = PasswordResetToken.New(id);
+
+            string secret = prt.GenerateSecret();
+            string tokenAndSecret = String.Join(':', prt.Token, secret);
+
+            // TODO : envoyer un mail contenant le tokenAndSecret
+
+            this.userDao.CreatePasswordResetToken(prt);
+
+            return Ok();
+        }
     }
 }
