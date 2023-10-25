@@ -42,7 +42,7 @@ namespace GalliumPlus.WebApi.Core.Users
         public Role Role { get => this.role; set => this.role = value; }
 
         /// <summary>
-        /// Le mot de passe de l'ulitlisateur.
+        /// Le mot de passe de l'utilisateur.
         /// </summary>
         /// <remarks>
         /// Cette propriété ne doit pas être exposée par l'API.

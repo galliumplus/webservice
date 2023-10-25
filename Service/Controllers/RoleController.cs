@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace GalliumPlus.WebApi.Controllers
 {
-    [Route("api/roles")]
+    [Route("v1/roles")]
     [Authorize]
     [ApiController]
     public class RoleController : Controller

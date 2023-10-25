@@ -1,4 +1,5 @@
-﻿using GalliumPlus.WebApi.Core.Data;
+﻿using GalliumPlus.WebApi.Core.Applications;
+using GalliumPlus.WebApi.Core.Data;
 using GalliumPlus.WebApi.Core.Exceptions;
 using GalliumPlus.WebApi.Core.Users;
 using KiwiQuery;
@@ -210,6 +211,84 @@ namespace GalliumPlus.WebApi.Data.MariaDb
             bool ok = db.Update("User").Set("deposit", db.Column("deposit") + money).Where(db.Column("userId") == id).Apply();
 
             if (!ok) throw new ItemNotFoundException("Cet utilisateur");
+        }
+
+        public void ChangePassword(string id, PasswordInformation newPassword)
+        {
+            using var connection = this.Connect();
+            Schema db = new(connection);
+
+            bool ok = db.Update("User")
+                        .Set("password", newPassword.Hash)
+                        .Set("salt", newPassword.Salt)
+                        .Where(db.Column("userId") == id)
+                        .Apply();
+
+            if (!ok) throw new ItemNotFoundException("Cet utilisateur");
+        }
+
+        public void CreatePasswordResetToken(PasswordResetToken prt)
+        {
+            using var connection = this.Connect();
+            Schema db = new(connection);
+
+            try
+            {
+                db.InsertInto("PasswordResetToken")
+                  .Value("token", prt.Token)
+                  .Value("secret", prt.SecretHash)
+                  .Value("salt", prt.SecretSalt)
+                  .Value("expiration", prt.Expiration)
+                  .Value("user", prt.UserId)
+                  .Apply();
+            }
+            catch (MySqlException error)
+            {
+                if (error.ErrorCode == MySqlErrorCode.DuplicateKeyEntry)
+                {
+                    throw new DuplicateItemException();
+                }
+                else throw;
+            }
+        }
+
+        public PasswordResetToken ReadPasswordResetToken(string token)
+        {
+            using var connection = this.Connect();
+            Schema db = new(connection);
+
+            using var result = db.Select("secret", "salt", "expiration", "user")
+                                 .From("PasswordResetToken").Where(db.Column("token") == token)
+                                 .Fetch<MySqlDataReader>();
+
+            if (!result.Read())
+            {
+                throw new ItemNotFoundException("Ce jeton de réinitialisation de mot de passe");
+            }
+
+            byte[] hashedSecret = new byte[32];
+            result.GetBytes("secret", 0, hashedSecret, 0, 32);
+
+            PasswordResetToken prt = new(
+                token,
+                new OneTimeSecret(hashedSecret, result.GetString("salt")),
+                result.GetDateTime("expiration"),
+                result.GetString("userId")
+            );
+
+            return prt;
+        }
+
+        public void DeletePasswordResetToken(string token)
+        {
+            using var connection = this.Connect();
+            Schema db = new(connection);
+
+            bool ok = db.DeleteFrom("PasswordResetToken")
+                        .Where(db.Column("token") == token)
+                        .Apply();
+
+            if (!ok) throw new ItemNotFoundException("Ce jeton de réinitialisation de mot de passe");
         }
     }
 }

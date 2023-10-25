@@ -1,5 +1,5 @@
 from utils.test_base import TestBase
-from utils.auth import BearerAuth
+from utils.auth import BearerAuth, BasicAuth
 
 
 class UserTests(TestBase):
@@ -346,6 +346,39 @@ class UserTests(TestBase):
 
         response = self.delete("users/ar113926")
         self.expect(response.status_code).to.be.equal_to(404)
+
+    def test_user_change_password(self):
+        auth = BasicAuth("mf187870", "motdepasse")
+        key = "test-api-key-normal"
+
+        response = self.post("login", auth=auth, headers={"X-Api-Key": key})
+        self.expect(response.status_code).to.be.equal_to(200)
+
+        session = response.json()
+        token = self.expect(session).to.have.an_item("token").of.type(str).value
+
+        auth = BearerAuth(token)
+
+        response = self.put(
+            "users/@me/password",
+            {"currentPassword": "motdepasse", "newPassword": "M0tD3p4ss3!"},
+            auth=auth,
+        )
+        self.expect(response.status_code).to.be.equal_to(200)
+
+        # l'ancien mot de passe n'est plus accepté
+
+        auth = BasicAuth("mf187870", "motdepasse")
+
+        response = self.post("login", auth=auth, headers={"X-Api-Key": key})
+        self.expect(response.status_code).to.be.equal_to(401)
+
+        # le mot de passe a bien été changé
+
+        auth = BasicAuth("mf187870", "M0tD3p4ss3!")
+
+        response = self.post("login", auth=auth, headers={"X-Api-Key": key})
+        self.expect(response.status_code).to.be.equal_to(200)
 
     def test_user_no_authentification(self):
         self.unset_authentification()

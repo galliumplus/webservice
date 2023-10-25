@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace GalliumPlus.WebApi.Controllers
 {
-    [Route("api")]
+    [Route("v1/orders")]
     [Authorize]
     [ApiController]
     public class OrderController : Controller
@@ -27,7 +27,7 @@ namespace GalliumPlus.WebApi.Controllers
             this.mapper = new(userDao, productDao);
         }
 
-        [HttpPost("orders")]
+        [HttpPost]
         [RequiresPermissions(Permissions.SELL)]
         public IActionResult Post(OrderSummary newOrder)
         {
