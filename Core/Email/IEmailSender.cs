@@ -1,13 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace GalliumPlus.WebApi.Core.Email
+﻿namespace GalliumPlus.WebApi.Core.Email
 {
+    /// <summary>
+    /// Un système d'envoi de mail.
+    /// </summary>
     public interface IEmailSender
     {
+        /// <summary>
+        /// Envoie un mail.
+        /// </summary>
+        /// <param name="recipient">L'adresse mail du destinataire.</param>
+        /// <param name="subject">Le sujet du mail.</param>
+        /// <param name="content">Le contenu du mail (typiquement le résultat de <see cref="EmailTemplate.Render"/>).</param>
         void Send(string recipient, string subject, string content);
     }
 }
