@@ -8,7 +8,6 @@ using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using System.Text.Json;
 using GalliumPlus.WebApi;
-using GalliumPlus.WebApi.Core.Users;
 #if FAKE_DB
 using GalliumPlus.WebApi.Data.FakeDatabase;
 #else
