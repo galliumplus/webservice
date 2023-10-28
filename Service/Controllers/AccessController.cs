@@ -7,6 +7,7 @@ using GalliumPlus.WebApi.Dto;
 using GalliumPlus.WebApi.Middleware.ErrorHandling;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Quartz;
 
 namespace GalliumPlus.WebApi.Controllers
 {
@@ -17,12 +18,14 @@ namespace GalliumPlus.WebApi.Controllers
         private ISessionDao sessionDao;
         private IHistoryDao historyDao;
         private LoggedIn.Mapper mapper;
+        private ISchedulerFactory schedulerFactory;
 
-        public AccessController(ISessionDao sessionDao, IHistoryDao historyDao)
+        public AccessController(ISessionDao sessionDao, IHistoryDao historyDao, ISchedulerFactory schedulerFactory)
         {
             this.sessionDao = sessionDao;
             this.historyDao = historyDao;
             this.mapper = new();
+            this.schedulerFactory = schedulerFactory;
         }
 
         [HttpPost("login")]
@@ -94,6 +97,19 @@ namespace GalliumPlus.WebApi.Controllers
         public IActionResult LogOut()
         {
             this.sessionDao.Delete(this.Session!);
+            return Ok();
+        }
+
+        [HttpPost("greet")]
+        [AllowAnonymous]
+        public async Task<IActionResult> Greet(string? name)
+        {
+            IScheduler scheduler = await this.schedulerFactory.GetScheduler();
+
+            JobDataMap data = new JobDataMap();
+            data["name"] = name!;
+            await scheduler.TriggerJob(new JobKey("Greet"), data);
+
             return Ok();
         }
     }

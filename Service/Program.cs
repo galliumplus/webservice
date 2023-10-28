@@ -1,3 +1,5 @@
+#region Usings
+
 using GalliumPlus.WebApi.Core.Data;
 using GalliumPlus.WebApi.Middleware;
 using GalliumPlus.WebApi.Middleware.Authentication;
@@ -8,13 +10,19 @@ using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using System.Text.Json;
 using GalliumPlus.WebApi;
+using Quartz;
+using GalliumPlus.WebApi.Scheduling.Jobs;
 #if FAKE_DB
 using GalliumPlus.WebApi.Data.FakeDatabase;
 #else
 using GalliumPlus.WebApi.Data.MariaDb;
-#endif
+#endif 
+
+#endregion
 
 var builder = WebApplication.CreateBuilder(args);
+
+#region Configuration générale et options
 
 builder.Services
     .AddControllers(options =>
@@ -34,6 +42,12 @@ builder.Services
     });
 
 GalliumOptions galliumOptions = builder.Configuration.GetSection("Gallium").Get<GalliumOptions>() ?? new GalliumOptions();
+
+builder.Services.AddServerInfo();
+
+#endregion
+
+#region Base de données
 
 #if FAKE_DB
 // ajout en singleton, sinon les données ne sont pas persistées d'une requête à l'autre
@@ -64,6 +78,24 @@ builder.Services.AddSingleton(
 );
 #endif
 
+#endregion
+
+#region Planification
+
+builder.Services.AddQuartz(quartz =>
+{
+    quartz.AddJob<GreetJob>(job => job.WithIdentity("Greet").StoreDurably(true));
+});
+
+builder.Services.AddQuartzHostedService(quartz =>
+{
+    quartz.WaitForJobsToComplete = true;
+});
+
+#endregion
+
+#region Sérialisation (JSON)
+
 builder.Services.Configure<JsonOptions>(options =>
 {
     // accepte uniquement le format nombre JSON pour les entier et les floats
@@ -76,7 +108,10 @@ builder.Services.Configure<JsonOptions>(options =>
     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
 
-// configuration HTTP/HTTPS
+#endregion
+
+#region HTTP/HTTPS
+
 builder.WebHost.ConfigureKestrel(opt =>
 {
     Action<ListenOptions> httpsConfiguration = options =>
@@ -110,13 +145,17 @@ builder.WebHost.ConfigureKestrel(opt =>
     }
 });
 
-builder.Services.AddServerInfo();
+#endregion
+
+#region Authentification
 
 builder.Services
     .AddAuthentication(defaultScheme: "Bearer")
     .AddBearer()
     .AddBasic()
-    .AddKeyAndSecret();
+    .AddKeyAndSecret(); 
+
+#endregion
 
 var app = builder.Build();
 
