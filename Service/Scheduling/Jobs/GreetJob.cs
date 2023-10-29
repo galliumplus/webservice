@@ -2,6 +2,7 @@
 
 namespace GalliumPlus.WebApi.Scheduling.Jobs
 {
+    [JobConfiguration("Greet", StoreDurably = true)]
     public class GreetJob : IJob
     {
         public async Task Execute(IJobExecutionContext context)

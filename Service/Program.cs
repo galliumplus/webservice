@@ -1,17 +1,17 @@
 #region Usings
 
+using GalliumPlus.WebApi;
 using GalliumPlus.WebApi.Core.Data;
 using GalliumPlus.WebApi.Middleware;
 using GalliumPlus.WebApi.Middleware.Authentication;
 using GalliumPlus.WebApi.Middleware.Authorization;
 using GalliumPlus.WebApi.Middleware.ErrorHandling;
 using Microsoft.AspNetCore.Mvc;
-using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
-using System.Text.Json;
-using GalliumPlus.WebApi;
 using Quartz;
-using GalliumPlus.WebApi.Scheduling.Jobs;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using GalliumPlus.WebApi.Scheduling;
 #if FAKE_DB
 using GalliumPlus.WebApi.Data.FakeDatabase;
 #else
@@ -84,7 +84,7 @@ builder.Services.AddSingleton(
 
 builder.Services.AddQuartz(quartz =>
 {
-    quartz.AddJob<GreetJob>(job => job.WithIdentity("Greet").StoreDurably(true));
+    quartz.AddJobs();
 });
 
 builder.Services.AddQuartzHostedService(quartz =>
