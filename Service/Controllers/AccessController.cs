@@ -7,7 +7,6 @@ using GalliumPlus.WebApi.Dto;
 using GalliumPlus.WebApi.Middleware.ErrorHandling;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Quartz;
 
 namespace GalliumPlus.WebApi.Controllers
 {
@@ -18,14 +17,12 @@ namespace GalliumPlus.WebApi.Controllers
         private ISessionDao sessionDao;
         private IHistoryDao historyDao;
         private LoggedIn.Mapper mapper;
-        private ISchedulerFactory schedulerFactory;
 
-        public AccessController(ISessionDao sessionDao, IHistoryDao historyDao, ISchedulerFactory schedulerFactory)
+        public AccessController(ISessionDao sessionDao, IHistoryDao historyDao)
         {
             this.sessionDao = sessionDao;
             this.historyDao = historyDao;
             this.mapper = new();
-            this.schedulerFactory = schedulerFactory;
         }
 
         [HttpPost("login")]

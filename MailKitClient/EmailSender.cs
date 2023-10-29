@@ -6,6 +6,9 @@ using MimeKit;
 
 namespace GalliumPlus.WebApi.Email.MailKit
 {
+    /// <summary>
+    /// Envoi de mail basé sur MailKit.
+    /// </summary>
     public class EmailSender : IEmailSender
     {
         private MailKitOptions options;

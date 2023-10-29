@@ -2,23 +2,14 @@
 {
     public class MariaDbOptions
     {
-        public string Host { get; set; }
+        public string Host { get; set; } = "localhost";
 
-        public string UserId { get; set; }
+        public string UserId { get; set; } = "";
 
-        public string Password { get; set; }
+        public string Password { get; set; } = "";
 
-        public string Schema { get; set; }
+        public string Schema { get; set; } = "galliumplus";
 
-        public uint Port { get; set; }
-
-        public MariaDbOptions()
-        {
-            this.Host = "localhost";
-            this.UserId = "";
-            this.Password = "";
-            this.Schema = "galliumplus";
-            this.Port = 3306;
-        }
+        public uint Port { get; set; } = 3306;
     }
 }

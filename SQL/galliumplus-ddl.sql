@@ -127,7 +127,7 @@ CREATE TABLE `HistoryUser` (
 );
 
 ALTER TABLE `User`          ADD FOREIGN KEY (`role`)         REFERENCES `Role`(`id`)                ON UPDATE CASCADE  ON DELETE RESTRICT;
-ALTER TABLE `PasswordResetToken` ADD FOREIGN KEY (`user`)    REFERENCES `User`(`userId`)            ON UPDATE CASCADE  ON DELETE CASCADE;
+ALTER TABLE `PasswordResetToken` ADD FOREIGN KEY (`userId`)  REFERENCES `User`(`userId`)            ON UPDATE CASCADE  ON DELETE CASCADE;
 ALTER TABLE `Session`       ADD FOREIGN KEY (`user`)         REFERENCES `User`(`id`)                ON UPDATE CASCADE  ON DELETE CASCADE;
 ALTER TABLE `Session`       ADD FOREIGN KEY (`client`)       REFERENCES `Client`(`id`)              ON UPDATE CASCADE  ON DELETE CASCADE;
 ALTER TABLE `BotClient`     ADD FOREIGN KEY (`id`)           REFERENCES `Client`(`id`)              ON UPDATE CASCADE  ON DELETE CASCADE;

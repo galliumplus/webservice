@@ -84,18 +84,7 @@ namespace GalliumPlus.WebApi.Controllers
             this.userDao.CreatePasswordResetToken(prt);
 
             IScheduler scheduler = await this.schedulerFactory.GetScheduler();
-            await scheduler.TriggerJobWithArgs(
-                EmailSendingJob.JobKey,
-                new EmailSendingJob.Args(
-                    recipient: user.Identity.Email,
-                    subject: "Bienvenue au sein de l'ETIQ",
-                    template: "initpass.html",
-                    view: new InitOrResetPassword(
-                        $"https://{this.options.WebApplicationHost}/password/init?user={user.Id}&pprt={packedPrt}",
-                        prt.Expiration
-                    )
-                )
-            );
+            await scheduler.TriggerJobWithArgs(EmailSendingJob.JobKey, this.PrepareInitEmail(user, prt, packedPrt));
 
             HistoryAction action = new(
                 HistoryActionKind.EDIT_USERS_OR_ROLES,
@@ -266,33 +255,43 @@ namespace GalliumPlus.WebApi.Controllers
             EmailSendingJob.Args emailArgs;
             if (retryInit)
             {
-                emailArgs = new EmailSendingJob.Args(
-                    recipient: user.Identity.Email,
-                    subject: "Bienvenue au sein de l'ETIQ",
-                    template: "initpass.html",
-                    view: new InitOrResetPassword(
-                        $"https://{this.options.WebApplicationHost}/password/init?user={user.Id}&pprt={packedPrt}",
-                        prt.Expiration
-                    )
-                );
+                emailArgs = this.PrepareInitEmail(user, prt, packedPrt);
             }
             else
             {
-                emailArgs = new EmailSendingJob.Args(
-                    recipient: user.Identity.Email,
-                    subject: "Réinitialiser votre mot de passe",
-                    template: "resetpass.html",
-                    view: new InitOrResetPassword(
-                        $"https://{this.options.WebApplicationHost}/password/reset?user={user.Id}&pprt={packedPrt}",
-                        prt.Expiration
-                    )
-                );
+                emailArgs = this.PrepareResetEmail(user, prt, packedPrt);
             }
 
             IScheduler scheduler = await this.schedulerFactory.GetScheduler();
             await scheduler.TriggerJobWithArgs(EmailSendingJob.JobKey, emailArgs);
 
             return Ok();
+        }
+
+        private EmailSendingJob.Args PrepareInitEmail(User recipient, PasswordResetToken prt, string packedPrt)
+        {
+            return new EmailSendingJob.Args(
+                recipient: recipient.Identity.Email,
+                subject: "Bienvenue au sein de l'ETIQ",
+                template: "initpass.html",
+                view: new InitOrResetPassword(
+                    $"https://{this.options.WebApplicationHost}/password/init?user={recipient.Id}&pprt={packedPrt}",
+                    prt.Expiration
+                )
+            );
+        }
+
+        private EmailSendingJob.Args PrepareResetEmail(User recipient, PasswordResetToken prt, string packedPrt)
+        {
+            return new EmailSendingJob.Args(
+                recipient: recipient.Identity.Email,
+                subject: "Réinitialiser votre mot de passe",
+                template: "resetpass.html",
+                view: new InitOrResetPassword(
+                    $"https://{this.options.WebApplicationHost}/password/reset?user={recipient.Id}&pprt={packedPrt}",
+                    prt.Expiration
+                )
+            );
         }
     }
 }
