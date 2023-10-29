@@ -99,18 +99,5 @@ namespace GalliumPlus.WebApi.Controllers
             this.sessionDao.Delete(this.Session!);
             return Ok();
         }
-
-        [HttpPost("greet")]
-        [AllowAnonymous]
-        public async Task<IActionResult> Greet(string? name)
-        {
-            IScheduler scheduler = await this.schedulerFactory.GetScheduler();
-
-            JobDataMap data = new JobDataMap();
-            data["name"] = name!;
-            await scheduler.TriggerJob(new JobKey("Greet"), data);
-
-            return Ok();
-        }
     }
 }

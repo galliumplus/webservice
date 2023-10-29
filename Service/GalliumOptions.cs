@@ -1,55 +1,32 @@
-﻿namespace GalliumPlus.WebApi
+﻿using GalliumPlus.WebApi.Email.MailKit;
+#if !TEST
+using GalliumPlus.WebApi.Data.MariaDb;
+#endif
+
+namespace GalliumPlus.WebApi
 {
     public class GalliumOptions
     {
-        public bool ListenAnyIp { get; set; }
+        public bool ListenAnyIp { get; set; } = false;
 
-        public string? CertificateFile { get; set; }
+        public string? CertificateFile { get; set; } = null;
 
-        public string? CertificatePassword { get; set; }
+        public string? CertificatePassword { get; set; } = null;
 
-        public int HttpPort { get; set; }
+        public int HttpPort { get; set; } = 5080;
 
-        public int HttpsPort { get; set; }
+        public int HttpsPort { get; set; } = 5443;
 
-        public bool ForceHttps { get; set; }
+        public bool ForceHttps { get; set; } = true;
 
-        public bool DisableHttps { get; set; }
+        public bool DisableHttps { get; set; } = false;
 
-        public class MariaDbOptions
-        {
-            public string Host { get; set; }
+        public string WebApplicationHost { get; set; } = "gallium.etiq-dijon.fr";
 
-            public string UserId { get; set; }
+        public MailKitOptions MailKit { get; set; } = new();
 
-            public string Password { get; set; }
-
-            public string Schema { get; set; }
-
-            public uint Port { get; set; }
-
-            public MariaDbOptions()
-            {
-                this.Host = "localhost";
-                this.UserId = "";
-                this.Password = "";
-                this.Schema = "galliumplus";
-                this.Port = 3306;
-            }
-        }
-
-        public MariaDbOptions MariaDb { get; set; }
-
-        public GalliumOptions()
-        {
-            ListenAnyIp = false;
-            CertificateFile = null;
-            CertificatePassword = null;
-            HttpPort = 5080;
-            HttpsPort = 5443;
-            ForceHttps = true;
-            DisableHttps = false;
-            MariaDb = new();
-        }
+#if !TEST
+        public MariaDbOptions MariaDb { get; set; } = new();
+#endif
     }
 }

@@ -257,7 +257,7 @@ namespace GalliumPlus.WebApi.Data.MariaDb
             using var connection = this.Connect();
             Schema db = new(connection);
 
-            using var result = db.Select("secret", "salt", "expiration", "user")
+            using var result = db.Select("secret", "salt", "expiration", "userId")
                                  .From("PasswordResetToken").Where(db.Column("token") == token)
                                  .Fetch<MySqlDataReader>();
 

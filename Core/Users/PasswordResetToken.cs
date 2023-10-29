@@ -1,4 +1,5 @@
 ﻿using GalliumPlus.WebApi.Core.Applications;
+using GalliumPlus.WebApi.Core.Exceptions;
 using GalliumPlus.WebApi.Core.Random;
 
 namespace GalliumPlus.WebApi.Core.Users
@@ -99,6 +100,47 @@ namespace GalliumPlus.WebApi.Core.Users
         public bool MatchesSecret(string secret)
         {
             return this.secret.Match(secret);
+        }
+
+        /// <summary>
+        /// Concatène un jeton et un secret ensemble.
+        /// </summary>
+        /// <param name="token">Un jeton de réinitialisation.</param>
+        /// <param name="secret">Un code secret de réinitialisation.</param>
+        /// <returns>Une chaîne de caractères contenant le jeton et le code secret, utilisable dans un URL.</returns>
+        public static string Pack(string token, string secret)
+        {
+            return String.Join(':', token, secret);
+        }
+
+        /// <summary>
+        /// Génère le code secret et le concatène au jeton.
+        /// </summary>
+        /// <returns>
+        /// Une chaîne de caractères contenant le jeton et le code secret généré,
+        /// utilisable dans un URL. Une fois cette valeur oubliée, elle ne peut
+        /// plus être récupérée.
+        /// </returns>
+        public string GenerateSecretAndPack()
+        {
+            string secret = this.GenerateSecret();
+            return Pack(this.token, secret);
+        }
+
+        /// <summary>
+        /// Sépare un token et un code secret empaquetés.
+        /// </summary>
+        /// <param name="packedPrt">Les données empaquetées.</param>
+        /// <returns>Le jeton et le code secret, respectivement.</returns>
+        /// <exception cref="InvalidItemException"/>
+        public static (string, string) Unpack(string packedPrt)
+        {
+            string[] parts = packedPrt.Split(':');
+            if (parts.Length != 2)
+            {
+                throw new InvalidItemException("Jeton de réinitialisation invalide.");
+            }
+            return (parts[0], parts[1]);
         }
     }
 }

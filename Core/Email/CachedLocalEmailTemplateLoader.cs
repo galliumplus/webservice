@@ -47,7 +47,7 @@ namespace GalliumPlus.WebApi.Core.Email
             {
                 try
                 {
-                    using (StreamReader f = new(Path.Join(this.baseDirectory, name + ".html")))
+                    using (StreamReader f = new(Path.Join(this.baseDirectory, name)))
                     {
                         template = f.ReadToEnd();
                     }
@@ -90,20 +90,9 @@ namespace GalliumPlus.WebApi.Core.Email
             return template!;
         }
 
-        public EmailTemplate LoadTemplate(string identifier, bool ignoreNullContent = true)
+        public EmailTemplate GetTemplate(string identifier)
         {
-            if (this.Load(identifier) is string template)
-            {
-                return new EmailTemplate(template, this);
-            }
-            else if (ignoreNullContent)
-            {
-                return new EmailTemplate("", this);
-            }
-            else
-            {
-                throw new FileNotFoundException("Impossible de charger un modèle local", identifier);
-            }
+            return new EmailTemplate(identifier, this);
         }
     }
 }

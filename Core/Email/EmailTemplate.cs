@@ -9,17 +9,17 @@ namespace GalliumPlus.WebApi.Core.Email
     /// </summary>
     public class EmailTemplate
     {
-        private string raw;
+        private string name;
         private StubbleVisitorRenderer renderer;
 
         /// <summary>
         /// Crée un nouveau modèle de mail.
         /// </summary>
-        /// <param name="rawTemplate">Le contenu du modèle.</param>
+        /// <param name="name">Le nom du modèle.</param>
         /// <param name="partialTemplateLoader">(optionnel) Le chargeur de modèles partiels.</param>
-        public EmailTemplate(string rawTemplate, IStubbleLoader? partialTemplateLoader)
+        public EmailTemplate(string name, IStubbleLoader? partialTemplateLoader)
         {
-            this.raw = rawTemplate;
+            this.name = name;
             
             this.renderer = new StubbleBuilder()
                 .Configure(settings =>
@@ -39,13 +39,13 @@ namespace GalliumPlus.WebApi.Core.Email
         /// <returns>Le corps du mail.</returns>
         public string Render(object view)
         {
-            return this.renderer.Render(this.raw, view);
+            return this.renderer.Render(this.name, view);
         }
 
         /// <inheritdoc cref="Render(object)"/>
         public ValueTask<string> RenderAsync(object view)
         {
-            return renderer.RenderAsync(this.raw, view);
+            return this.renderer.RenderAsync(this.name, view);
         }
     }
 }

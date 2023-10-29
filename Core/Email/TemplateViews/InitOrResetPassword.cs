@@ -4,14 +4,14 @@ using System.Globalization;
 namespace GalliumPlus.WebApi.Core.Email.TemplateViews
 {
     /// <summary>
-    /// Le contenu dynamique d'un mail d'initialisation de compte.
+    /// Le contenu dynamique d'un mail d'initialisation de compte ou de réinitialisation de mot de passe.
     /// <br/>
-    /// (Ces mails sont envoyé à l'utilisateur lorsqu'un nouveau compte est créé)
+    /// (Ces mails sont envoyé à l'utilisateur lorsqu'un nouveau compte est créé ou qu'il a oublié son mot de passe)
     /// </summary>
-    public class InitialisePassword
+    public class InitOrResetPassword
     {
         /// <summary>
-        /// Le lien permettant d'activer le compte.
+        /// Le lien permettant d'activer le compte/changer le mot de passe.
         /// </summary>
         public string Link { get; private init; }
 
@@ -26,14 +26,14 @@ namespace GalliumPlus.WebApi.Core.Email.TemplateViews
         public string HumanExpiration => this.Expiration.Humanize(utcDate: true, culture: new CultureInfo("fr-FR"));
 
         /// <summary>
-        /// Rassemble les données pour un nouveau mail d'initialisation.
+        /// Rassemble les données pour un nouveau mail de (ré)initialisation.
         /// </summary>
-        /// <param name="link">L'URL complète de la page d'initialisation.</param>
+        /// <param name="link">L'URL complète de la page de saisie de mot de passe.</param>
         /// <param name="expiration">L'heure d'expiration du lien, en temps UTC.</param>
-        public InitialisePassword(string link, DateTime expiration)
+        public InitOrResetPassword(string link, DateTime expiration)
         {
             this.Link = link;
-            if (expiration.Kind == DateTimeKind.Utc) throw new ArgumentException("The link expiration must be expressed in UTC.");
+            if (expiration.Kind != DateTimeKind.Utc) throw new ArgumentException("The link expiration must be expressed in UTC.");
             this.Expiration = expiration;
         }
     }

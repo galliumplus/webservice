@@ -12,6 +12,8 @@ using Quartz;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using GalliumPlus.WebApi.Scheduling;
+using GalliumPlus.WebApi.Core.Email;
+using GalliumPlus.WebApi.Email.MailKit;
 #if FAKE_DB
 using GalliumPlus.WebApi.Data.FakeDatabase;
 #else
@@ -42,12 +44,13 @@ builder.Services
     });
 
 GalliumOptions galliumOptions = builder.Configuration.GetSection("Gallium").Get<GalliumOptions>() ?? new GalliumOptions();
+builder.Services.AddSingleton(galliumOptions);
 
 builder.Services.AddServerInfo();
 
 #endregion
 
-#region Base de données
+#region Base de données (Fake & MariaDB)
 
 #if FAKE_DB
 // ajout en singleton, sinon les données ne sont pas persistées d'une requête à l'autre
@@ -67,20 +70,12 @@ builder.Services.AddScoped<IRoleDao, RoleDao>();
 builder.Services.AddScoped<ISessionDao, SessionDao>();
 builder.Services.AddScoped<IUserDao, UserDao>();
 
-builder.Services.AddSingleton(
-    new DatabaseConnector(
-        galliumOptions.MariaDb.Host,
-        galliumOptions.MariaDb.UserId,
-        galliumOptions.MariaDb.Password,
-        galliumOptions.MariaDb.Schema,
-        galliumOptions.MariaDb.Port
-    )
-);
+builder.Services.AddSingleton(new DatabaseConnector(galliumOptions.MariaDb));
 #endif
 
 #endregion
 
-#region Planification
+#region Planification (Quartz)
 
 builder.Services.AddQuartz(quartz =>
 {
@@ -91,6 +86,16 @@ builder.Services.AddQuartzHostedService(quartz =>
 {
     quartz.WaitForJobsToComplete = true;
 });
+
+#endregion
+
+#region Envoi de mail
+
+builder.Services
+    .AddSingleton<IEmailTemplateLoader, CachedLocalEmailTemplateLoader>(
+        services => new CachedLocalEmailTemplateLoader(Path.Join(AppDomain.CurrentDomain.BaseDirectory, "templates"))
+    )
+    .AddSingleton<IEmailSender, EmailSender>(services => new EmailSender(galliumOptions.MailKit));
 
 #endregion
 
@@ -153,7 +158,7 @@ builder.Services
     .AddAuthentication(defaultScheme: "Bearer")
     .AddBearer()
     .AddBasic()
-    .AddKeyAndSecret(); 
+    .AddKeyAndSecret();
 
 #endregion
 

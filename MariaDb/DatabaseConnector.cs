@@ -7,15 +7,15 @@ namespace GalliumPlus.WebApi.Data.MariaDb
     {
         private string? connectionString = null;
 
-        public DatabaseConnector(string host, string userId, string password, string schema, uint port = 3306)
+        public DatabaseConnector(MariaDbOptions options)
         {
             var builder = new MySqlConnectionStringBuilder
             {
-                Server = host,
-                Port = port,
-                Database = schema,
-                UserID = userId,
-                Password = password,
+                Server = options.Host,
+                Port = options.Port,
+                Database = options.Schema,
+                UserID = options.UserId,
+                Password = options.Password,
                 Pooling = true,
             };
 
