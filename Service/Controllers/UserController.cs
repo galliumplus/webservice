@@ -1,16 +1,19 @@
 ﻿using GalliumPlus.WebApi.Core.Data;
+using GalliumPlus.WebApi.Core.Email.TemplateViews;
 using GalliumPlus.WebApi.Core.Exceptions;
 using GalliumPlus.WebApi.Core.History;
 using GalliumPlus.WebApi.Core.Stocks;
 using GalliumPlus.WebApi.Core.Users;
 using GalliumPlus.WebApi.Dto;
 using GalliumPlus.WebApi.Middleware.Authorization;
+using GalliumPlus.WebApi.Scheduling;
+using GalliumPlus.WebApi.Scheduling.Jobs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Quartz;
 
 namespace GalliumPlus.WebApi.Controllers
 {
-
     [Route("v1/users")]
     [Authorize]
     [ApiController]
@@ -20,13 +23,22 @@ namespace GalliumPlus.WebApi.Controllers
         private IHistoryDao historyDao;
         private UserSummary.Mapper summaryMapper;
         private UserDetails.Mapper detailsMapper;
+        private ISchedulerFactory schedulerFactory;
+        private GalliumOptions options;
 
-        public UserController(IUserDao userDao, IHistoryDao historyDao)
+        public UserController(
+            IUserDao userDao,
+            IHistoryDao historyDao,
+            ISchedulerFactory schedulerFactory,
+            GalliumOptions options
+        )
         {
             this.userDao = userDao;
             this.historyDao = historyDao;
             this.summaryMapper = new(userDao.Roles);
             this.detailsMapper = new();
+            this.schedulerFactory = schedulerFactory;
+            this.options = options;
         }
 
         [HttpGet]
@@ -61,11 +73,18 @@ namespace GalliumPlus.WebApi.Controllers
 
         [HttpPost]
         [RequiresPermissions(Permissions.MANAGE_USERS)]
-        public IActionResult Post(UserSummary newUser)
+        public async Task<IActionResult> Post(UserSummary newUser)
         {
             this.historyDao.CheckUserNotInHistory(newUser.Id);
 
             User user = this.userDao.Create(this.summaryMapper.ToModel(newUser));
+
+            PasswordResetToken prt = PasswordResetToken.New(user.Id);
+            string packedPrt = prt.GenerateSecretAndPack();
+            this.userDao.CreatePasswordResetToken(prt);
+
+            IScheduler scheduler = await this.schedulerFactory.GetScheduler();
+            await scheduler.TriggerJobWithArgs(EmailSendingJob.JobKey, this.PrepareInitEmail(user, prt, packedPrt));
 
             HistoryAction action = new(
                 HistoryActionKind.EDIT_USERS_OR_ROLES,
@@ -184,15 +203,11 @@ namespace GalliumPlus.WebApi.Controllers
                 throw new InvalidItemException("Jeton de réinitialisation manquant.");
             }
 
-            string[] parts = passwordModification.ResetToken.Split(':');
-            if (parts.Length != 2)
-            {
-                throw new InvalidItemException("Jeton de réinitialisation invalide.");
-            }
+            (string token, string secret) = PasswordResetToken.Unpack(passwordModification.ResetToken);
 
-            PasswordResetToken prt = this.userDao.ReadPasswordResetToken(parts[0]);
+            PasswordResetToken prt = this.userDao.ReadPasswordResetToken(token);
 
-            if (!prt.MatchesSecret(parts[1]))
+            if (!prt.MatchesSecret(secret))
             {
                 throw new InvalidItemException("Jeton de réinitialisation invalide.");
             }
@@ -229,18 +244,54 @@ namespace GalliumPlus.WebApi.Controllers
 
         [HttpPost("{id}/reset-password")]
         [AllowAnonymous]
-        public IActionResult AskForPasswordReset(string id)
+        public async Task<IActionResult> AskForPasswordReset(string id, bool retryInit)
         {
+            User user = this.userDao.Read(id);
+
             PasswordResetToken prt = PasswordResetToken.New(id);
-
-            string secret = prt.GenerateSecret();
-            string tokenAndSecret = String.Join(':', prt.Token, secret);
-
-            // TODO : envoyer un mail contenant le tokenAndSecret
-
+            string packedPrt = prt.GenerateSecretAndPack();
             this.userDao.CreatePasswordResetToken(prt);
 
+            EmailSendingJob.Args emailArgs;
+            if (retryInit)
+            {
+                emailArgs = this.PrepareInitEmail(user, prt, packedPrt);
+            }
+            else
+            {
+                emailArgs = this.PrepareResetEmail(user, prt, packedPrt);
+            }
+
+            IScheduler scheduler = await this.schedulerFactory.GetScheduler();
+            await scheduler.TriggerJobWithArgs(EmailSendingJob.JobKey, emailArgs);
+
             return Ok();
+        }
+
+        private EmailSendingJob.Args PrepareInitEmail(User recipient, PasswordResetToken prt, string packedPrt)
+        {
+            return new EmailSendingJob.Args(
+                recipient: recipient.Identity.Email,
+                subject: "Bienvenue au sein de l'ETIQ",
+                template: "initpass.html",
+                view: new InitOrResetPassword(
+                    $"https://{this.options.WebApplicationHost}/password/init?user={recipient.Id}&pprt={packedPrt}",
+                    prt.Expiration
+                )
+            );
+        }
+
+        private EmailSendingJob.Args PrepareResetEmail(User recipient, PasswordResetToken prt, string packedPrt)
+        {
+            return new EmailSendingJob.Args(
+                recipient: recipient.Identity.Email,
+                subject: "Réinitialiser votre mot de passe",
+                template: "resetpass.html",
+                view: new InitOrResetPassword(
+                    $"https://{this.options.WebApplicationHost}/password/reset?user={recipient.Id}&pprt={packedPrt}",
+                    prt.Expiration
+                )
+            );
         }
     }
 }

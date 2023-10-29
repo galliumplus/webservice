@@ -1,21 +1,30 @@
+#region Usings
+
+using GalliumPlus.WebApi;
 using GalliumPlus.WebApi.Core.Data;
 using GalliumPlus.WebApi.Middleware;
 using GalliumPlus.WebApi.Middleware.Authentication;
 using GalliumPlus.WebApi.Middleware.Authorization;
 using GalliumPlus.WebApi.Middleware.ErrorHandling;
 using Microsoft.AspNetCore.Mvc;
-using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
+using Quartz;
 using System.Text.Json;
-using GalliumPlus.WebApi;
-using GalliumPlus.WebApi.Core.Users;
+using System.Text.Json.Serialization;
+using GalliumPlus.WebApi.Scheduling;
+using GalliumPlus.WebApi.Core.Email;
+using GalliumPlus.WebApi.Email.MailKit;
 #if FAKE_DB
 using GalliumPlus.WebApi.Data.FakeDatabase;
 #else
 using GalliumPlus.WebApi.Data.MariaDb;
-#endif
+#endif 
+
+#endregion
 
 var builder = WebApplication.CreateBuilder(args);
+
+#region Configuration générale et options
 
 builder.Services
     .AddControllers(options =>
@@ -35,6 +44,13 @@ builder.Services
     });
 
 GalliumOptions galliumOptions = builder.Configuration.GetSection("Gallium").Get<GalliumOptions>() ?? new GalliumOptions();
+builder.Services.AddSingleton(galliumOptions);
+
+builder.Services.AddServerInfo();
+
+#endregion
+
+#region Base de données (Fake & MariaDB)
 
 #if FAKE_DB
 // ajout en singleton, sinon les données ne sont pas persistées d'une requête à l'autre
@@ -54,16 +70,36 @@ builder.Services.AddScoped<IRoleDao, RoleDao>();
 builder.Services.AddScoped<ISessionDao, SessionDao>();
 builder.Services.AddScoped<IUserDao, UserDao>();
 
-builder.Services.AddSingleton(
-    new DatabaseConnector(
-        galliumOptions.MariaDb.Host,
-        galliumOptions.MariaDb.UserId,
-        galliumOptions.MariaDb.Password,
-        galliumOptions.MariaDb.Schema,
-        galliumOptions.MariaDb.Port
-    )
-);
+builder.Services.AddSingleton(new DatabaseConnector(galliumOptions.MariaDb));
 #endif
+
+#endregion
+
+#region Planification (Quartz)
+
+builder.Services.AddQuartz(quartz =>
+{
+    quartz.AddJobs();
+});
+
+builder.Services.AddQuartzHostedService(quartz =>
+{
+    quartz.WaitForJobsToComplete = true;
+});
+
+#endregion
+
+#region Envoi de mail
+
+builder.Services
+    .AddSingleton<IEmailTemplateLoader, CachedLocalEmailTemplateLoader>(
+        services => new CachedLocalEmailTemplateLoader(Path.Join(AppDomain.CurrentDomain.BaseDirectory, "templates"))
+    )
+    .AddSingleton<IEmailSender, EmailSender>(services => new EmailSender(galliumOptions.MailKit));
+
+#endregion
+
+#region Sérialisation (JSON)
 
 builder.Services.Configure<JsonOptions>(options =>
 {
@@ -77,7 +113,10 @@ builder.Services.Configure<JsonOptions>(options =>
     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
 
-// configuration HTTP/HTTPS
+#endregion
+
+#region HTTP/HTTPS
+
 builder.WebHost.ConfigureKestrel(opt =>
 {
     Action<ListenOptions> httpsConfiguration = options =>
@@ -111,13 +150,17 @@ builder.WebHost.ConfigureKestrel(opt =>
     }
 });
 
-builder.Services.AddServerInfo();
+#endregion
+
+#region Authentification
 
 builder.Services
     .AddAuthentication(defaultScheme: "Bearer")
     .AddBearer()
     .AddBasic()
     .AddKeyAndSecret();
+
+#endregion
 
 var app = builder.Build();
 
@@ -127,7 +170,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
-ServerInfo.Current.SetVersion(0, 7, 0, "alpha");
+ServerInfo.Current.SetVersion(0, 8, 0, "alpha");
 Console.WriteLine(ServerInfo.Current);
 
 app.Run();

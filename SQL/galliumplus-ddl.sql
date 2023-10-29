@@ -8,7 +8,7 @@ DEFAULT COLLATE utf8mb4_unicode_520_ci;
 
 CREATE TABLE `User` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `userId` VARCHAR(20) NOT NULL CHARACTER SET ascii COLLATE ascii_bin,
+    `userId` VARCHAR(20) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
     `firstName` VARCHAR(50) NOT NULL,
     `lastName` VARCHAR(50) NOT NULL,
     `email` VARCHAR(80) NOT NULL,
@@ -25,11 +25,11 @@ CREATE TABLE `User` (
 
 CREATE TABLE `PasswordResetToken` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `token` VARCHAR(20) NOT NULL CHARACTER SET ascii COLLATE ascii_bin,
+    `token` VARCHAR(20) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
     `secret` BINARY(32) NOT NULL,
     `salt` CHAR(32) NOT NULL,
     `expiration` DATETIME NOT NULL,
-    `user` VARCHAR(20) NOT NULL CHARACTER SET ascii COLLATE ascii_bin,
+    `userId` VARCHAR(20) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
     PRIMARY KEY (`id`),
     UNIQUE (`token`)
 );
@@ -43,7 +43,7 @@ CREATE TABLE `Role` (
 
 CREATE TABLE `Session` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `token` CHAR(20) NOT NULL CHARACTER SET ascii COLLATE ascii_bin,
+    `token` CHAR(20) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
     `lastUse` DATETIME NOT NULL,
     `expiration` DATETIME NOT NULL,
     `user` INTEGER,
@@ -121,13 +121,13 @@ CREATE TABLE `HistoryActionKind` (
 
 CREATE TABLE `HistoryUser` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `userId` VARCHAR(21) NOT NULL CHARACTER SET ascii COLLATE ascii_bin,
+    `userId` VARCHAR(21) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
     PRIMARY KEY (`id`),
     UNIQUE (`userId`)
 );
 
 ALTER TABLE `User`          ADD FOREIGN KEY (`role`)         REFERENCES `Role`(`id`)                ON UPDATE CASCADE  ON DELETE RESTRICT;
-ALTER TABLE `PasswordResetToken` ADD FOREIGN KEY (`user`)    REFERENCES `User`(`userId`)            ON UPDATE CASCADE  ON DELETE CASCADE;
+ALTER TABLE `PasswordResetToken` ADD FOREIGN KEY (`userId`)  REFERENCES `User`(`userId`)            ON UPDATE CASCADE  ON DELETE CASCADE;
 ALTER TABLE `Session`       ADD FOREIGN KEY (`user`)         REFERENCES `User`(`id`)                ON UPDATE CASCADE  ON DELETE CASCADE;
 ALTER TABLE `Session`       ADD FOREIGN KEY (`client`)       REFERENCES `Client`(`id`)              ON UPDATE CASCADE  ON DELETE CASCADE;
 ALTER TABLE `BotClient`     ADD FOREIGN KEY (`id`)           REFERENCES `Client`(`id`)              ON UPDATE CASCADE  ON DELETE CASCADE;
