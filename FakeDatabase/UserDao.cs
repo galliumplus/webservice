@@ -95,7 +95,7 @@ namespace GalliumPlus.WebApi.Data.FakeDatabase
 
         protected override bool CheckConstraints(User item)
         {
-            return item.Deposit > 0;
+            return item.Deposit == null || item.Deposit >= 0;
         }
 
         public void ChangePassword(string id, PasswordInformation newPassword)
