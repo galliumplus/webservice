@@ -129,7 +129,7 @@ namespace GalliumPlus.WebApi.Controllers
         {
             User userToDelete = this.userDao.Read(id);
 
-            if (userToDelete.MayBeDeleted)
+            if (!userToDelete.MayBeDeleted)
             {
                 throw new PermissionDeniedException(Permissions.NONE);
             }
