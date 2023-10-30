@@ -69,7 +69,7 @@ namespace GalliumPlus.WebApi.Dto
                     summary.Id!,
                     new UserIdentity(summary.FirstName!, summary.LastName!, summary.Email!, summary.Year!),
                     role,
-                    summary.Deposit!.Value,
+                    summary.Deposit,
                     summary.IsMember!.Value
                 );
             }
