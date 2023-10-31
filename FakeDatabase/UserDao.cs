@@ -53,6 +53,8 @@ namespace GalliumPlus.WebApi.Data.FakeDatabase
         {
             try
             {
+                User old = this.Items[key];
+                item.Password = old.Password;
                 if (GetKey(item) == key)
                 {
                     if (!this.Items.ContainsKey(key)) throw new ItemNotFoundException();
