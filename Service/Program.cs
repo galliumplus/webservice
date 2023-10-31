@@ -13,11 +13,12 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using GalliumPlus.WebApi.Scheduling;
 using GalliumPlus.WebApi.Core.Email;
-using GalliumPlus.WebApi.Email.MailKit;
-#if FAKE_DB
+#if FAKE_DB && FAKE_EMAIL
 using GalliumPlus.WebApi.Data.FakeDatabase;
+using GalliumPlus.WebApi.Email.FakeEmailService;
 #else
 using GalliumPlus.WebApi.Data.MariaDb;
+using GalliumPlus.WebApi.Email.MailKit;
 #endif 
 
 #endregion
@@ -95,7 +96,11 @@ builder.Services
     .AddSingleton<IEmailTemplateLoader, CachedLocalEmailTemplateLoader>(
         services => new CachedLocalEmailTemplateLoader(Path.Join(AppDomain.CurrentDomain.BaseDirectory, "templates"))
     )
+#if FAKE_EMAIL
+    .AddSingleton<IEmailSender, FakeEmailSender>(services => new FakeEmailSender());
+#else
     .AddSingleton<IEmailSender, EmailSender>(services => new EmailSender(galliumOptions.MailKit));
+#endif
 
 #endregion
 

@@ -332,7 +332,17 @@ class UserTests(TestBase):
         response = self.get("users/ar113926")
         self.expect(response.status_code).to.be.equal_to(200)
 
-        # On le supprime
+        # On ne peut pas le supprimer : il a un acompte non vide
+
+        response = self.delete("users/ar113926")
+        self.expect(response.status_code).to.be.equal_to(403)
+
+        # On retire l'argent de son acompte
+
+        user["deposit"] = 0
+        self.put("users/ar113926", user)
+
+        # Cette fois-ci, on peut bien le supprimer
 
         response = self.delete("users/ar113926")
         self.expect(response.status_code).to.be.equal_to(200)
