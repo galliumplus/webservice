@@ -53,6 +53,8 @@ namespace GalliumPlus.WebApi.Data.FakeDatabase
         {
             try
             {
+                User old = this.Items[key];
+                item.Password = old.Password;
                 if (GetKey(item) == key)
                 {
                     if (!this.Items.ContainsKey(key)) throw new ItemNotFoundException();
@@ -95,7 +97,7 @@ namespace GalliumPlus.WebApi.Data.FakeDatabase
 
         protected override bool CheckConstraints(User item)
         {
-            return item.Deposit > 0;
+            return item.Deposit == null || item.Deposit >= 0;
         }
 
         public void ChangePassword(string id, PasswordInformation newPassword)

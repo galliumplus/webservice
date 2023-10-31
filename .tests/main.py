@@ -15,4 +15,4 @@ from tests.access_tests import AccessTests
 
 if __name__ == "__main__":
     decimal.DefaultContext.prec = 2
-    Launcher.launch("0.6.0")
+    Launcher.launch("0.8.2")

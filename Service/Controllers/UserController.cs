@@ -129,7 +129,7 @@ namespace GalliumPlus.WebApi.Controllers
         {
             User userToDelete = this.userDao.Read(id);
 
-            if (userToDelete.MayBeDeleted)
+            if (!userToDelete.MayBeDeleted)
             {
                 throw new PermissionDeniedException(Permissions.NONE);
             }
@@ -239,7 +239,9 @@ namespace GalliumPlus.WebApi.Controllers
         {
             User user = this.userDao.Read(id);
 
-            return Json(user.Identity.Email.Length > 0);
+            bool canResetPassword = user.Identity.Email.Length > 0 && user.Identity.Email != "UKN";
+
+            return Json(canResetPassword);
         }
 
         [HttpPost("{id}/reset-password")]

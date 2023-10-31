@@ -4,7 +4,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <RootNamespace>GalliumPlus.WebApi.Data.FakeDatabase</RootNamespace>
+    <RootNamespace>GalliumPlus.WebApi</RootNamespace>
     <Configurations>Debug;Release</Configurations>
   </PropertyGroup>
 
@@ -13,7 +13,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="images\serial-designation-n.png" />
+    <None Remove="Data\FakeDatabase\images\serial-designation-n.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-	<EmbeddedResource Include="images\serial-designation-n.png" />
+	<EmbeddedResource Include="Data\FakeDatabase\images\serial-designation-n.png" />
   </ItemGroup>
 
 </Project>

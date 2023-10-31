@@ -1,5 +1,5 @@
-﻿using GalliumPlus.WebApi.Email.MailKit;
-#if !TEST
+﻿#if !TEST
+using GalliumPlus.WebApi.Email.MailKit;
 using GalliumPlus.WebApi.Data.MariaDb;
 #endif
 
@@ -23,9 +23,9 @@ namespace GalliumPlus.WebApi
 
         public string WebApplicationHost { get; set; } = "gallium.etiq-dijon.fr";
 
+#if !TEST
         public MailKitOptions MailKit { get; set; } = new();
 
-#if !TEST
         public MariaDbOptions MariaDb { get; set; } = new();
 #endif
     }

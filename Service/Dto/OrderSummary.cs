@@ -74,7 +74,7 @@ namespace GalliumPlus.WebApi.Dto
                     new UserIdentity("Anonyme", "", "", ""),
                     new Role(-1, "Membre anonyme", Permissions.NONE),
                     0.00m,
-                    false
+                    true
                 );
             }
         }
