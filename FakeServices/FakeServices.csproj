@@ -24,4 +24,10 @@
 	<EmbeddedResource Include="Data\FakeDatabase\images\serial-designation-n.png" />
   </ItemGroup>
 
+	<ItemGroup>
+		<None Include="Email\templates\**"
+			  CopyToOutputDirectory="PreserveNewest" 
+              TargetPath="templates\%(Filename)%(Extension)" />
+	</ItemGroup>
+
 </Project>
