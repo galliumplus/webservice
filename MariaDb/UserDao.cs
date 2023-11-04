@@ -239,7 +239,7 @@ namespace GalliumPlus.WebApi.Data.MariaDb
                   .Value("secret", prt.SecretHash)
                   .Value("salt", prt.SecretSalt)
                   .Value("expiration", prt.Expiration)
-                  .Value("user", prt.UserId)
+                  .Value("userId", prt.UserId)
                   .Apply();
             }
             catch (MySqlException error)
