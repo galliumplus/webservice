@@ -390,6 +390,29 @@ class UserTests(TestBase):
         response = self.post("login", auth=auth, headers={"X-Api-Key": key})
         self.expect(response.status_code).to.be.equal_to(200)
 
+        # test de réinitialisation
+
+        response = self.put(
+            "users/mf187870/password",
+            {"resetToken": "test-prt-1:secret-code", "newPassword": "motdepasse"},
+            auth=auth,
+        )
+        self.expect(response.status_code).to.be.equal_to(200)
+
+        # le second mot de passe n'est plus accepté
+
+        auth = BasicAuth("mf187870", "M0tD3p4ss3!")
+
+        response = self.post("login", auth=auth, headers={"X-Api-Key": key})
+        self.expect(response.status_code).to.be.equal_to(401)
+
+        # le mot de passe a bien été réinitialisé
+
+        auth = BasicAuth("mf187870", "motdepasse")
+
+        response = self.post("login", auth=auth, headers={"X-Api-Key": key})
+        self.expect(response.status_code).to.be.equal_to(200)
+
     def test_user_no_authentification(self):
         self.unset_authentification()
 
