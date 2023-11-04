@@ -25,9 +25,7 @@
   </ItemGroup>
 
 	<ItemGroup>
-		<None Include="Email\templates\**"
-			  CopyToOutputDirectory="PreserveNewest" 
-              TargetPath="templates\%(Filename)%(Extension)" />
+		<None Include="Email\templates\**" CopyToOutputDirectory="PreserveNewest" TargetPath="templates\%(Filename)%(Extension)" />
 	</ItemGroup>
 
 </Project>

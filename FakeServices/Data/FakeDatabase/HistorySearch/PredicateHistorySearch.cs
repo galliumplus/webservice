@@ -29,14 +29,14 @@ namespace GalliumPlus.WebApi.Data.FakeDatabase.HistorySearch
         public void Visit(FromCriteria fromCriteria)
         {
             this.predicate = new ClosurePredicate(
-                historyAction => historyAction.Time > fromCriteria.Date
+                historyAction => historyAction.Time >= fromCriteria.Date
             );
         }
 
         public void Visit(ToCriteria toCriteria)
         {
             this.predicate = new ClosurePredicate(
-                historyAction => historyAction.Time < toCriteria.Date
+                historyAction => historyAction.Time <= toCriteria.Date
             );
         }
     }

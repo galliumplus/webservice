@@ -1,4 +1,5 @@
 ﻿using GalliumPlus.WebApi.Core.Data;
+using GalliumPlus.WebApi.Core.Data.HistorySearch;
 using GalliumPlus.WebApi.Core.Exceptions;
 using GalliumPlus.WebApi.Core.History;
 using KiwiQuery;
@@ -21,7 +22,7 @@ namespace GalliumPlus.WebApi.Data.MariaDb
 
             db.InsertInto("HistoryAction")
               .Value("text", action.Text)
-              .Value("time", DateTime.UtcNow)
+              .Value("time", action.Time)
               .Value("kind", (int)action.ActionKind)
               .Value("actor", actorId)
               .Value("target", targetId)
@@ -96,6 +97,17 @@ namespace GalliumPlus.WebApi.Data.MariaDb
                 }
                 else throw;
             }
+        }
+
+        public IEnumerable<HistoryAction> Read(IHistorySearchCriteria criteria, Pagination pagination)
+        {
+            using var connection = this.Connect();
+            Schema db = new(connection);
+
+            using var result = db.Select("text", "time", "kind", "actor", "target", "numericValue")
+                                 .From("HistoryAction")
+                                 .Where(new KiwiQueryHistorySearch(db).CriteriaToPredicate(criteria))
+                                 .Limit()
         }
     }
 }
