@@ -1,4 +1,5 @@
-﻿using GalliumPlus.WebApi.Core.Data;
+﻿using GalliumPlus.WebApi.Core.Applications;
+using GalliumPlus.WebApi.Core.Data;
 using GalliumPlus.WebApi.Core.Exceptions;
 using GalliumPlus.WebApi.Core.Users;
 
@@ -10,6 +11,20 @@ namespace GalliumPlus.WebApi.Data.FakeDatabase
 
         private class PrtDao : BaseDao<string, PasswordResetToken>
         {
+            public PrtDao()
+            {
+                var codeAsPwd = PasswordInformation.FromPassword("secret-code");
+
+                this.Create(
+                    new PasswordResetToken(
+                        "test-prt-1",
+                        new OneTimeSecret(codeAsPwd.Hash, codeAsPwd.Salt),
+                        new DateTime(2099, 01, 01),
+                        "mf187870"
+                    )
+                );
+            }
+
             protected override string GetKey(PasswordResetToken item) => item.Token;
 
             protected override void SetKey(ref PasswordResetToken item, string key) => throw new NotImplementedException(); // tkt mon pote
