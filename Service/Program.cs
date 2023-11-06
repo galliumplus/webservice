@@ -120,7 +120,7 @@ builder.Services.Configure<JsonOptions>(options =>
 
 #endregion
 
-#region HTTP/HTTPS
+#region HTTP/HTTPS et CORS
 
 builder.WebHost.ConfigureKestrel(opt =>
 {
@@ -155,6 +155,14 @@ builder.WebHost.ConfigureKestrel(opt =>
     }
 });
 
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+    });
+});
+
 #endregion
 
 #region Authentification
@@ -171,6 +179,7 @@ var app = builder.Build();
 
 if (galliumOptions.ForceHttps) app.UseHttpsRedirection();
 app.UseServerInfo();
+app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
