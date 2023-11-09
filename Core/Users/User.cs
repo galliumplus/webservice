@@ -1,5 +1,4 @@
 using GalliumPlus.WebApi.Core.Exceptions;
-using GalliumPlus.WebApi.Core.Stocks;
 
 namespace GalliumPlus.WebApi.Core.Users
 {

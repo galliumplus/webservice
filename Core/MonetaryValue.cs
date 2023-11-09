@@ -1,6 +1,6 @@
 ﻿using GalliumPlus.WebApi.Core.Exceptions;
 
-namespace GalliumPlus.WebApi.Core.Stocks
+namespace GalliumPlus.WebApi.Core
 {
     /// <summary>
     /// Classe d'aide à la validation des valeurs monétaires.

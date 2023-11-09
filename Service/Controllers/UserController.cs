@@ -1,8 +1,8 @@
-﻿using GalliumPlus.WebApi.Core.Data;
+﻿using GalliumPlus.WebApi.Core;
+using GalliumPlus.WebApi.Core.Data;
 using GalliumPlus.WebApi.Core.Email.TemplateViews;
 using GalliumPlus.WebApi.Core.Exceptions;
 using GalliumPlus.WebApi.Core.History;
-using GalliumPlus.WebApi.Core.Stocks;
 using GalliumPlus.WebApi.Core.Users;
 using GalliumPlus.WebApi.Dto;
 using GalliumPlus.WebApi.Middleware.Authorization;

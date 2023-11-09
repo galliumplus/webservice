@@ -1,4 +1,6 @@
-﻿namespace CoreTest.Users
+﻿using GalliumPlus.WebApi.Core;
+
+namespace CoreTest.Users
 {
     public class PasswordInformationTest
     {
