@@ -1,4 +1,6 @@
-﻿namespace CoreTest.Applications
+﻿using GalliumPlus.WebApi.Core;
+
+namespace CoreTest.Applications
 {
     public class BotClientTest
     {

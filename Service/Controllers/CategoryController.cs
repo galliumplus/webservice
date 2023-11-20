@@ -47,7 +47,7 @@ namespace GalliumPlus.WebApi.Controllers
             Category category = this.categoryDao.Create(this.mapper.ToModel(newCategory));
 
             HistoryAction action = new(
-                HistoryActionKind.EDIT_PRODUCT_OR_CATEGORIES,
+                HistoryActionKind.EditProductsOrCategories,
                 $"Ajout de la catégorie {category.Name}",
                 this.User!.Id
             );
@@ -63,7 +63,7 @@ namespace GalliumPlus.WebApi.Controllers
             this.categoryDao.Update(id, this.mapper.ToModel(updatedCategory));
 
             HistoryAction action = new(
-                HistoryActionKind.EDIT_PRODUCT_OR_CATEGORIES,
+                HistoryActionKind.EditProductsOrCategories,
                 $"Modification de la catégorie {updatedCategory.Name}",
                 this.User!.Id
             );
@@ -80,7 +80,7 @@ namespace GalliumPlus.WebApi.Controllers
             this.categoryDao.Delete(id);
 
             HistoryAction action = new(
-                HistoryActionKind.EDIT_PRODUCT_OR_CATEGORIES,
+                HistoryActionKind.EditProductsOrCategories,
                 $"Suppression de la catégorie {categoryName}",
                 this.User!.Id
             );

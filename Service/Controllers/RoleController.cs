@@ -45,7 +45,7 @@ namespace GalliumPlus.WebApi.Controllers
             Role role = this.roleDao.Create(mapper.ToModel(newRole));
 
             HistoryAction action = new(
-                HistoryActionKind.EDIT_USERS_OR_ROLES,
+                HistoryActionKind.EditUsersOrRoles,
                 $"Ajout du rôle {role.Name}",
                 this.User!.Id
             );
@@ -61,7 +61,7 @@ namespace GalliumPlus.WebApi.Controllers
             this.roleDao.Update(id, mapper.ToModel(updatedRole));
 
             HistoryAction action = new(
-                HistoryActionKind.EDIT_USERS_OR_ROLES,
+                HistoryActionKind.EditUsersOrRoles,
                 $"Modification du rôle {updatedRole.Name}",
                 this.User!.Id
             );
@@ -78,7 +78,7 @@ namespace GalliumPlus.WebApi.Controllers
             this.roleDao.Delete(id);
 
             HistoryAction action = new(
-                HistoryActionKind.EDIT_USERS_OR_ROLES,
+                HistoryActionKind.EditUsersOrRoles,
                 $"Suppression du rôle {roleName}",
                 this.User!.Id
             );

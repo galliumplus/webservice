@@ -5,10 +5,10 @@ from utils.auth import BearerAuth
 class ProductTests(TestBase):
     def setUp(self):
         super().setUp()
-        self.set_authentification(BearerAuth("09876543210987654321"))
+        self.set_authentication(BearerAuth("09876543210987654321"))
 
     def tearDown(self):
-        self.unset_authentification()
+        self.unset_authentication()
 
     def test_product_get_all(self):
         response = self.get("products")
@@ -275,7 +275,7 @@ class ProductTests(TestBase):
         self.expect(response.status_code).to.be.equal_to(404)
 
     def test_product_no_authentification(self):
-        self.unset_authentification()
+        self.unset_authentication()
 
         response = self.get("products")
         self.expect(response.status_code).to.be.equal_to(401)
@@ -303,7 +303,7 @@ class ProductTests(TestBase):
             "category": category,
         }
 
-        self.set_authentification(BearerAuth("12345678901234567890"))
+        self.set_authentication(BearerAuth("12345678901234567890"))
 
         response = self.get("products")
         self.expect(response.status_code).to.be.equal_to(403)

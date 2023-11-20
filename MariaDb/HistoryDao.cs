@@ -1,8 +1,10 @@
 ﻿using GalliumPlus.WebApi.Core.Data;
+using GalliumPlus.WebApi.Core.Data.HistorySearch;
 using GalliumPlus.WebApi.Core.Exceptions;
 using GalliumPlus.WebApi.Core.History;
 using KiwiQuery;
 using MySqlConnector;
+using System.Data;
 
 namespace GalliumPlus.WebApi.Data.MariaDb
 {
@@ -21,7 +23,7 @@ namespace GalliumPlus.WebApi.Data.MariaDb
 
             db.InsertInto("HistoryAction")
               .Value("text", action.Text)
-              .Value("time", DateTime.UtcNow)
+              .Value("time", action.Time)
               .Value("kind", (int)action.ActionKind)
               .Value("actor", actorId)
               .Value("target", targetId)
@@ -96,6 +98,31 @@ namespace GalliumPlus.WebApi.Data.MariaDb
                 }
                 else throw;
             }
+        }
+
+        private static HistoryAction Hydrate(MySqlDataReader row)
+        {
+            return new HistoryAction(
+                actionKind: (HistoryActionKind)row.GetInt32("kind"),
+                text: row.GetString("text"),
+                actor: row.IsDBNull("actor") ? null : row.GetString("actor"),
+                target: row.IsDBNull("target") ? null : row.GetString("target"),
+                numericValue: row.IsDBNull("numericValue") ? null : row.GetDecimal("numericValue")
+            );
+        }
+
+        public IEnumerable<HistoryAction> Read(IHistorySearchCriteria criteria, Pagination pagination)
+        {
+            using var connection = this.Connect();
+            Schema db = new(connection);
+
+            using var results = db.Select("text", "time", "kind", "actor", "target", "numericValue")
+                                  .From("HistoryAction")
+                                  .Where(new KiwiQueryHistorySearch(db).CriteriaToPredicate(criteria))
+                                  .Limit(pagination.PageSize).Offset(pagination.StartIndex)
+                                  .Fetch<MySqlDataReader>();
+
+            return this.ReadResults(results, Hydrate);
         }
     }
 }

@@ -3,15 +3,20 @@ from decimal import Decimal, getcontext as decimal_context
 
 from utils.test_base import TestBase
 from utils.auth import BearerAuth
+from .history_tests_helpers import HistoryTestHelpers
 
 
 class OrderTests(TestBase):
     def setUp(self):
         super().setUp()
-        self.set_authentification(BearerAuth("09876543210987654321"))
+        self.set_authentication(BearerAuth("09876543210987654321"))
+        self.history = HistoryTestHelpers(self)
+
+        self.product_1 = self.get("products/1").json()
+        self.product_2 = self.get("products/2").json()
 
     def tearDown(self):
-        self.unset_authentification()
+        self.unset_authentication()
 
     def test_buy_nothing(self):
         empty_order = {"items": [], "paymentMethod": "CASH"}
@@ -25,21 +30,99 @@ class OrderTests(TestBase):
     def test_buy_not_deposit(self):
         self.set_stock(1, 50)
         self.set_stock(2, 50)
+        self.grant_membership("lomens")
 
-        self.buy_not_deposit("CASH")
-        self.buy_not_deposit("CREDIT_CARD")
-        self.buy_not_deposit("PAYPAL")
-        self.buy_not_deposit("CASH", "@anonymousmember")
-        self.buy_not_deposit("CREDIT_CARD", "@anonymousmember")
-        self.buy_not_deposit("PAYPAL", "@anonymousmember")
-        self.buy_not_deposit("CASH", "lomens")
-        self.buy_not_deposit("CREDIT_CARD", "lomens")
-        self.buy_not_deposit("PAYPAL", "lomens")
+        with self.history.watch():
+            self.buy_not_deposit("CASH")
+            self.buy_not_deposit("CREDIT_CARD")
+            self.buy_not_deposit("PAYPAL")
+            self.buy_not_deposit("CASH", "@anonymousmember")
+            self.buy_not_deposit("CREDIT_CARD", "@anonymousmember")
+            self.buy_not_deposit("PAYPAL", "@anonymousmember")
+            self.buy_not_deposit("CASH", "lomens")
+            self.buy_not_deposit("CREDIT_CARD", "lomens")
+            self.buy_not_deposit("PAYPAL", "lomens")
 
         # 9x2 achetés
         self.expect(self.stock(1)).to.be.equal_to(32)
         # 9x3 achetés
         self.expect(self.stock(2)).to.be.equal_to(23)
+
+        order_description = (
+            f"{self.product_1['name']} × 2, {self.product_2['name']} × 3"
+        )
+        order_total_non_member = (
+            self.product_1["nonMemberPrice"] * 2 + self.product_2["nonMemberPrice"] * 3
+        )
+        order_total_member = (
+            self.product_1["memberPrice"] * 2 + self.product_2["memberPrice"] * 3
+        )
+
+        self.history.expect_entries(
+            self.history.purchase_action(
+                "en liquide",
+                order_description,
+                "eb069420",
+                None,
+                order_total_non_member,
+            ),
+            self.history.purchase_action(
+                "par carte bancaire",
+                order_description,
+                "eb069420",
+                None,
+                order_total_non_member,
+            ),
+            self.history.purchase_action(
+                "par PayPal",
+                order_description,
+                "eb069420",
+                None,
+                order_total_non_member,
+            ),
+            self.history.purchase_action(
+                "en liquide",
+                order_description,
+                "eb069420",
+                None,
+                order_total_member,
+            ),
+            self.history.purchase_action(
+                "par carte bancaire",
+                order_description,
+                "eb069420",
+                None,
+                order_total_member,
+            ),
+            self.history.purchase_action(
+                "par PayPal",
+                order_description,
+                "eb069420",
+                None,
+                order_total_member,
+            ),
+            self.history.purchase_action(
+                "en liquide",
+                order_description,
+                "eb069420",
+                "lomens",
+                order_total_member,
+            ),
+            self.history.purchase_action(
+                "par carte bancaire",
+                order_description,
+                "eb069420",
+                "lomens",
+                order_total_member,
+            ),
+            self.history.purchase_action(
+                "par PayPal",
+                order_description,
+                "eb069420",
+                "lomens",
+                order_total_member,
+            ),
+        )
 
     def buy_not_deposit(self, payment_method, customer=None):
         valid_order = {
@@ -215,13 +298,13 @@ class OrderTests(TestBase):
         self.expect(response.status_code).to.be.equal_to(400)
 
     def test_buy_no_authentification(self):
-        self.unset_authentification()
+        self.unset_authentication()
 
         response = self.post("orders", {})
         self.expect(response.status_code).to.be.equal_to(401)
 
     def test_buy_no_authorization(self):
-        self.set_authentification(BearerAuth("12345678901234567890"))
+        self.set_authentication(BearerAuth("12345678901234567890"))
 
         order = {
             "items": [{"product": 1, "quantity": 2}, {"product": 2, "quantity": 3}],

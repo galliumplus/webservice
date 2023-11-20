@@ -1,9 +1,8 @@
 ﻿using GalliumPlus.WebApi.Core.Random;
-using GalliumPlus.WebApi.Core.Users;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace GalliumPlus.WebApi.Core.Applications
+namespace GalliumPlus.WebApi.Core
 {
     /// <summary>
     /// Code secret qui ne peut être vu que lorsqu'il est regénéré.

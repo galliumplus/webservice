@@ -154,7 +154,7 @@ namespace GalliumPlus.WebApi.Data.MariaDb
 
             bool existingImage, ok;
 
-            using (var result = db.Select(db.Count()).From("ProductImage").Where(db.Column("id") == id).Fetch())
+            using (var result = db.Select(SQL.COUNT()).From("ProductImage").Where(db.Column("id") == id).Fetch())
             {
                 existingImage = result.Read() && result.GetInt32(0) == 1;
             }

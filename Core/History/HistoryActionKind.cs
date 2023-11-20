@@ -8,21 +8,26 @@
         /// <summary>
         /// Connexion à L'API.
         /// </summary>
-        LOG_IN = 1,
+        LogIn = 1,
 
         /// <summary>
         /// Gestion des produits ou des catégories.
         /// </summary>
-        EDIT_PRODUCT_OR_CATEGORIES = 2,
+        EditProductsOrCategories = 2,
 
         /// <summary>
         /// Gestion des utilisateurs ou des rôles.
         /// </summary>
-        EDIT_USERS_OR_ROLES = 3,
+        EditUsersOrRoles = 3,
 
         /// <summary>
         /// Achats.
         /// </summary>
-        PURCHASE = 4,
+        Purchase = 4,
+
+        /// <summary>
+        /// Rechargement d'acompte.
+        /// </summary>
+        Deposit = 4,
     }
 }

@@ -38,8 +38,8 @@ namespace GalliumPlus.WebApi.Controllers
             string? customerId = null;
             if (order.Customer != null && order.Customer.Id != "anonymousmember00000000000") customerId = order.Customer.Id;
             HistoryAction action = new(
-                HistoryActionKind.PURCHASE,
-                $"Achat par {order.PaymentMethod.Description} de : {order.ItemsDescription}",
+                HistoryActionKind.Purchase,
+                $"Achat {order.PaymentMethod.Description} de : {order.ItemsDescription}",
                 this.User!.Id,
                 customerId,
                 order.TotalPrice()

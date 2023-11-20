@@ -3,7 +3,7 @@ using Konscious.Security.Cryptography;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace GalliumPlus.WebApi.Core.Users
+namespace GalliumPlus.WebApi.Core
 {
     public class PasswordInformation
     {

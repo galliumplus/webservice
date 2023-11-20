@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="KiwiQuery" Version="0.1.0" />
+    <PackageReference Include="KiwiQuery" Version="0.3.0" />
     <PackageReference Include="MySqlConnector" Version="2.2.7" />
   </ItemGroup>
 

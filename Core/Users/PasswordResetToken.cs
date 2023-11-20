@@ -1,5 +1,4 @@
-﻿using GalliumPlus.WebApi.Core.Applications;
-using GalliumPlus.WebApi.Core.Exceptions;
+﻿using GalliumPlus.WebApi.Core.Exceptions;
 using GalliumPlus.WebApi.Core.Random;
 
 namespace GalliumPlus.WebApi.Core.Users
