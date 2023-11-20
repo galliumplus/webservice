@@ -2,7 +2,7 @@
 {
     public class PaymentByCreditCard : PaymentMethod
     {
-        public override string Description => "carte bancaire";
+        public override string Description => "par carte bancaire";
 
         protected override string ProcessPayment(decimal _) => "OK";
     }

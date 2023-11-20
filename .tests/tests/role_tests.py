@@ -18,10 +18,10 @@ class Permissions:
 class RoleTests(TestBase):
     def setUp(self):
         super().setUp()
-        self.set_authentification(BearerAuth("09876543210987654321"))
+        self.set_authentication(BearerAuth("09876543210987654321"))
 
     def tearDown(self):
-        self.unset_authentification()
+        self.unset_authentication()
 
     def test_role_get_all(self):
         response = self.get("roles")
@@ -158,7 +158,7 @@ class RoleTests(TestBase):
         self.expect(response.status_code).to.be.equal_to(404)
 
     def test_role_no_authentification(self):
-        self.unset_authentification()
+        self.unset_authentication()
 
         response = self.get("roles")
         self.expect(response.status_code).to.be.equal_to(401)
@@ -172,7 +172,7 @@ class RoleTests(TestBase):
         self.expect(response.status_code).to.be.equal_to(401)
 
     def test_role_no_permission(self):
-        self.set_authentification(BearerAuth("12345678901234567890"))
+        self.set_authentication(BearerAuth("12345678901234567890"))
 
         response = self.get("roles")
         self.expect(response.status_code).to.be.equal_to(403)

@@ -50,7 +50,7 @@ namespace GalliumPlus.WebApi.Controllers
                     this.sessionDao.Create(session);
 
                     HistoryAction action = new(
-                        HistoryActionKind.LOG_IN,
+                        HistoryActionKind.LogIn,
                         $"Connexion à {app.Name}",
                         user.Id
                     );
@@ -77,7 +77,7 @@ namespace GalliumPlus.WebApi.Controllers
                     this.sessionDao.Create(session);
 
                     HistoryAction action = new(
-                        HistoryActionKind.LOG_IN,
+                        HistoryActionKind.LogIn,
                         $"Connexion de {bot.Name}"
                     );
                     this.historyDao.AddEntry(action);

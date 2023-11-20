@@ -17,7 +17,7 @@ namespace GalliumPlus.WebApi.Core.Orders
         /// </summary>
         public string UserId => this.depositId;
 
-        public override string Description => $"acompte ({this.depositId})";
+        public override string Description => $"par acompte ({this.depositId})";
 
         /// <summary>
         /// Crée un mode de paiement par acompte.

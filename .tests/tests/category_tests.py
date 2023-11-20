@@ -1,14 +1,16 @@
 from utils.test_base import TestBase
 from utils.auth import BearerAuth
+from .history_tests_helpers import HistoryTestHelpers
 
 
 class CategoryTests(TestBase):
     def setUp(self):
         super().setUp()
-        self.set_authentification(BearerAuth("09876543210987654321"))
+        self.set_authentication(BearerAuth("09876543210987654321"))
+        self.history = HistoryTestHelpers(self)
 
     def tearDown(self):
-        self.unset_authentification()
+        self.unset_authentication()
 
     def test_category_get_all(self):
         response = self.get("categories")
@@ -45,7 +47,8 @@ class CategoryTests(TestBase):
 
         valid_category = {"name": "Jus"}
 
-        response = self.post("categories", valid_category)
+        with self.history.watch():
+            response = self.post("categories", valid_category)
         self.expect(response.status_code).to.be.equal_to(201)
         location = self.expect(response.headers).to.have.an_item("Location").value
 
@@ -60,6 +63,10 @@ class CategoryTests(TestBase):
 
         new_category_count = len(self.get("categories").json())
         self.expect(new_category_count).to.be.equal_to(previous_category_count + 1)
+
+        self.history.expect_entries(
+            self.history.category_added_action("Jus", "eb069420")
+        )
 
         # Informations manquantes
 
@@ -84,11 +91,16 @@ class CategoryTests(TestBase):
         valid_category.update(Name="Jus")
         category_id = valid_category["id"]
 
-        response = self.put(f"categories/{category_id}", valid_category)
+        with self.history.watch():
+            response = self.put(f"categories/{category_id}", valid_category)
         self.expect(response.status_code).to.be.equal_to(200)
 
         edited_category = self.get(f"categories/{category_id}").json()
         self.expect(edited_category["name"]).to.be.equal_to("Jus")
+
+        self.history.expect_entries(
+            self.history.category_modified_action("Jus", "eb069420")
+        )
 
         # category qui n'existe pas
 
@@ -119,8 +131,13 @@ class CategoryTests(TestBase):
 
         # On supprimme la catégorie
 
-        response = self.delete(location)
+        with self.history.watch():
+            response = self.delete(location)
         self.expect(response.status_code).to.be.equal_to(200)
+
+        self.history.expect_entries(
+            self.history.category_deleted_action("Jus", "eb069420")
+        )
 
         # La catégorie n'existe plus
 
@@ -133,7 +150,7 @@ class CategoryTests(TestBase):
         self.expect(response.status_code).to.be.equal_to(404)
 
     def test_category_no_authentification(self):
-        self.unset_authentification()
+        self.unset_authentication()
 
         response = self.get("categories")
         self.expect(response.status_code).to.be.equal_to(401)
@@ -147,7 +164,7 @@ class CategoryTests(TestBase):
         self.expect(response.status_code).to.be.equal_to(401)
 
     def test_category_no_permission(self):
-        self.set_authentification(BearerAuth("12345678901234567890"))
+        self.set_authentication(BearerAuth("12345678901234567890"))
 
         response = self.get("categories")
         self.expect(response.status_code).to.be.equal_to(403)

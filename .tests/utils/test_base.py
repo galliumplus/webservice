@@ -14,6 +14,7 @@ class TestBase(TestCase, ABC):
         self.base_url = "https://localhost:5443/v1/"
         self.requests_options = {"verify": False}
         self.count_requests = True
+        self.stacked_auth = None
 
     @classmethod
     def request_count(cls):
@@ -34,12 +35,26 @@ class TestBase(TestCase, ABC):
         else:
             return self.base_url + url.lstrip("/")
 
-    def set_authentification(self, auth):
-        self.requests_options["auth"] = auth
+    def set_authentication(self, auth):
+        if auth is None:
+            self.unset_authentication()
+        else:
+            self.requests_options["auth"] = auth
 
-    def unset_authentification(self):
+    def unset_authentication(self):
         if "auth" in self.requests_options:
             del self.requests_options["auth"]
+
+    def push_authentication(self, auth):
+        if self.stacked_auth is not None:
+            raise RuntimeError("auth already pushed")
+
+        self.stacked_auth = self.requests_options.get("auth")
+        self.set_authentication(auth)
+
+    def pop_authentication(self):
+        self.set_authentication(self.stacked_auth)
+        self.stacked_auth = None
 
     def stop_counting_requests(self):
         self.counting_requests = False

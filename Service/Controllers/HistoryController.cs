@@ -1,12 +1,16 @@
 ﻿using GalliumPlus.WebApi.Core.Data;
 using GalliumPlus.WebApi.Core.Data.HistorySearch;
 using GalliumPlus.WebApi.Core.Exceptions;
+using GalliumPlus.WebApi.Core.Users;
 using GalliumPlus.WebApi.Dto;
+using GalliumPlus.WebApi.Middleware.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GalliumPlus.WebApi.Controllers
 {
-    [Route("api/history")]
+    [Route("v1/history")]
+    [Authorize]
     [ApiController]
     public class HistoryController : Controller
     {
@@ -32,6 +36,7 @@ namespace GalliumPlus.WebApi.Controllers
         }
 
         [HttpGet]
+        [RequiresPermissions(Permissions.READ_LOGS)]
         public IActionResult Get(
             int pageSize = 50,
             int pageIndex = 0,

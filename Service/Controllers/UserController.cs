@@ -87,7 +87,7 @@ namespace GalliumPlus.WebApi.Controllers
             await scheduler.TriggerJobWithArgs(EmailSendingJob.JobKey, this.PrepareInitEmail(user, prt, packedPrt));
 
             HistoryAction action = new(
-                HistoryActionKind.EDIT_USERS_OR_ROLES,
+                HistoryActionKind.EditUsersOrRoles,
                 $"Ajout de l'utilisateur {user.Id}",
                 this.User!.Id,
                 user.Id
@@ -113,7 +113,7 @@ namespace GalliumPlus.WebApi.Controllers
                 this.historyDao.UpdateUserId(id, updatedUser.Id);
             }
             HistoryAction action = new(
-                HistoryActionKind.EDIT_USERS_OR_ROLES,
+                HistoryActionKind.EditUsersOrRoles,
                 $"Modification de l'utilisateur {updatedUser.Id}",
                 this.User!.Id,
                 updatedUser.Id
@@ -137,7 +137,7 @@ namespace GalliumPlus.WebApi.Controllers
             this.userDao.Delete(id);
 
             HistoryAction action = new(
-                HistoryActionKind.EDIT_USERS_OR_ROLES,
+                HistoryActionKind.EditUsersOrRoles,
                 $"Supression de l'utilisateur {userToDelete.Id}",
                 this.User!.Id,
                 userToDelete.Id
@@ -154,7 +154,7 @@ namespace GalliumPlus.WebApi.Controllers
             this.userDao.AddToDeposit(id, MonetaryValue.CheckNonNegative(added, "Un rechargement d'acompte"));
 
             HistoryAction action = new(
-                HistoryActionKind.EDIT_USERS_OR_ROLES,
+                HistoryActionKind.Deposit,
                 $"Rechargement de l'acompte de l'utilisateur {id}",
                 this.User!.Id,
                 id,
@@ -178,7 +178,7 @@ namespace GalliumPlus.WebApi.Controllers
             this.userDao.ChangePassword(this.User.Id, newPassword);
 
             HistoryAction action = new(
-                HistoryActionKind.EDIT_USERS_OR_ROLES,
+                HistoryActionKind.EditUsersOrRoles,
                 $"L'utilisateur {this.User.Id} a changé son mot de passe.",
                 this.User!.Id,
                 this.User!.Id
@@ -223,7 +223,7 @@ namespace GalliumPlus.WebApi.Controllers
             this.userDao.DeletePasswordResetToken(prt.Token);
 
             HistoryAction action = new(
-                HistoryActionKind.EDIT_USERS_OR_ROLES,
+                HistoryActionKind.EditUsersOrRoles,
                 $"L'utilisateur {prt.UserId} a réinitialisé son mot de passe.",
                 this.User!.Id,
                 this.User!.Id

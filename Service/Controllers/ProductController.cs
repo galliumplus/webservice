@@ -57,7 +57,7 @@ namespace GalliumPlus.WebApi.Controllers
             Product product = this.productDao.Create(this.summaryMapper.ToModel(newProduct));
 
             HistoryAction action = new(
-                HistoryActionKind.EDIT_PRODUCT_OR_CATEGORIES,
+                HistoryActionKind.EditProductsOrCategories,
                 $"Ajout du produit {product.Name}",
                 this.User!.Id
             );
@@ -73,7 +73,7 @@ namespace GalliumPlus.WebApi.Controllers
             this.productDao.Update(id, this.summaryMapper.ToModel(updatedProduct));
 
             HistoryAction action = new(
-                HistoryActionKind.EDIT_PRODUCT_OR_CATEGORIES,
+                HistoryActionKind.EditProductsOrCategories,
                 $"Modification du produit {updatedProduct.Name}",
                 this.User!.Id
             );
@@ -92,7 +92,7 @@ namespace GalliumPlus.WebApi.Controllers
 
             string productName = this.productDao.Read(id).Name;
             HistoryAction action = new(
-                HistoryActionKind.EDIT_PRODUCT_OR_CATEGORIES,
+                HistoryActionKind.EditProductsOrCategories,
                 $"Modification de l'image du produit {productName}",
                 this.User!.Id
             );
@@ -109,7 +109,7 @@ namespace GalliumPlus.WebApi.Controllers
             this.productDao.Delete(id);
 
             HistoryAction action = new(
-                HistoryActionKind.EDIT_PRODUCT_OR_CATEGORIES,
+                HistoryActionKind.EditProductsOrCategories,
                 $"Suppression du produit {productName}",
                 this.User!.Id
             );
@@ -126,7 +126,7 @@ namespace GalliumPlus.WebApi.Controllers
             this.productDao.UnsetImage(id);
 
             HistoryAction action = new(
-                HistoryActionKind.EDIT_PRODUCT_OR_CATEGORIES,
+                HistoryActionKind.EditProductsOrCategories,
                 $"Suppression de l'image du produit {productName}",
                 this.User!.Id
             );

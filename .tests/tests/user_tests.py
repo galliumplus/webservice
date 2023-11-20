@@ -5,10 +5,10 @@ from utils.auth import BearerAuth, BasicAuth
 class UserTests(TestBase):
     def setUp(self):
         super().setUp()
-        self.set_authentification(BearerAuth("09876543210987654321"))
+        self.set_authentication(BearerAuth("09876543210987654321"))
 
     def tearDown(self):
-        self.unset_authentification()
+        self.unset_authentication()
 
     def test_user_get_all(self):
         response = self.get("users")
@@ -391,7 +391,7 @@ class UserTests(TestBase):
         self.expect(response.status_code).to.be.equal_to(200)
 
     def test_user_no_authentification(self):
-        self.unset_authentification()
+        self.unset_authentication()
 
         response = self.get("users")
         self.expect(response.status_code).to.be.equal_to(401)
@@ -419,7 +419,7 @@ class UserTests(TestBase):
             "isMember": False,
         }
 
-        self.set_authentification(BearerAuth("12345678901234567890"))
+        self.set_authentication(BearerAuth("12345678901234567890"))
 
         # tests sur d'autres utilisateurs
 
