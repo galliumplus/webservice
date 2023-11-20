@@ -180,8 +180,8 @@ namespace GalliumPlus.WebApi.Controllers
             HistoryAction action = new(
                 HistoryActionKind.EditUsersOrRoles,
                 $"L'utilisateur {this.User.Id} a changé son mot de passe.",
-                this.User!.Id,
-                this.User!.Id
+                this.User.Id,
+                this.User.Id
             );
             this.historyDao.AddEntry(action);
 
@@ -225,8 +225,8 @@ namespace GalliumPlus.WebApi.Controllers
             HistoryAction action = new(
                 HistoryActionKind.EditUsersOrRoles,
                 $"L'utilisateur {prt.UserId} a réinitialisé son mot de passe.",
-                this.User!.Id,
-                this.User!.Id
+                prt.UserId,
+                prt.UserId
             );
             this.historyDao.AddEntry(action);
 
