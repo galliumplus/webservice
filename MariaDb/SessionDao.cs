@@ -28,7 +28,7 @@ namespace GalliumPlus.WebApi.Data.MariaDb
 
             if (item.User is null)
             {
-                query.Value("user", db.Null);
+                query.Value("user", SQL.NULL);
             }
             else
             {
