@@ -105,6 +105,7 @@ namespace GalliumPlus.WebApi.Data.MariaDb
             return new HistoryAction(
                 actionKind: (HistoryActionKind)row.GetInt32("kind"),
                 text: row.GetString("text"),
+                time: row.GetDateTime("time"),
                 actor: row.IsDBNull("actorUserId") ? null : row.GetString("actorUserId"),
                 target: row.IsDBNull("targetUserId") ? null : row.GetString("targetUserId"),
                 numericValue: row.IsDBNull("numericValue") ? null : row.GetDecimal("numericValue")
