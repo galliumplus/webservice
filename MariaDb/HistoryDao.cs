@@ -105,8 +105,8 @@ namespace GalliumPlus.WebApi.Data.MariaDb
             return new HistoryAction(
                 actionKind: (HistoryActionKind)row.GetInt32("kind"),
                 text: row.GetString("text"),
-                actor: row.IsDBNull("actor") ? null : row.GetString("actor"),
-                target: row.IsDBNull("target") ? null : row.GetString("target"),
+                actor: row.IsDBNull("actorUserId") ? null : row.GetString("actorUserId"),
+                target: row.IsDBNull("targetUserId") ? null : row.GetString("targetUserId"),
                 numericValue: row.IsDBNull("numericValue") ? null : row.GetDecimal("numericValue")
             );
         }
@@ -116,11 +116,21 @@ namespace GalliumPlus.WebApi.Data.MariaDb
             using var connection = this.Connect();
             Schema db = new(connection);
 
-            using var results = db.Select("text", "time", "kind", "actor", "target", "numericValue")
-                                  .From("HistoryAction")
-                                  .Where(new KiwiQueryHistorySearch(db).CriteriaToPredicate(criteria))
-                                  .Limit(pagination.PageSize).Offset(pagination.StartIndex)
-                                  .Fetch<MySqlDataReader>();
+            var actionTable = db.Table("HistoryAction");
+            var actorAliasedTable = db.Table("HistoryUser").As("ActorUser");
+            var targetAliasedTable = db.Table("HistoryUser").As("TargetUser");
+            var actorTable = db.Table("ActorUser");
+            var targetTable = db.Table("TargetUser");
+
+            using var results = db.Select("text", "time", "kind", "numericValue")
+                .And(actorTable.Column("userId").As("actorUserId"))
+                .And(targetTable.Column("userId").As("targetUserId"))
+                .From(actionTable)
+                .LeftJoin(actorAliasedTable, actionTable.Column("actor"), actorTable.Column("id"))
+                .LeftJoin(targetAliasedTable, actionTable.Column("target"), targetTable.Column("id"))
+                .Where(new KiwiQueryHistorySearch(db).CriteriaToPredicate(criteria))
+                .Limit(pagination.PageSize).Offset(pagination.StartIndex)
+                .Fetch<MySqlDataReader>();
 
             return this.ReadResults(results, Hydrate);
         }

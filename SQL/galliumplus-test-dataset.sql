@@ -19,6 +19,7 @@ DELETE FROM `SsoClient`;
 DELETE FROM `BotClient`;
 DELETE FROM `Client`;
 DELETE FROM `Session`;
+delete from `PasswordResetToken`;
 
 INSERT INTO `Client` VALUES
 	(1, 'test-api-key-normal', 'Tests (normal)', 0, 0, 1),
@@ -42,5 +43,7 @@ INSERT INTO `Session` VALUES
 	(1, '12345678901234567890', NOW(), '2099-12-31', 1, 1),
 	(2, '09876543210987654321', NOW(), '2099-12-31', 3, 1);
 
-DELETE FROM historyaction;
-DELETE FROM historyuser;
+insert into `PasswordResetToken` values (1, 'test-prt-1', 0x077c0ecb24275498a55cffb49abbbb83256be79ff9f29bb0ca0615a759f6cc57, 'j0REaldrjr2JPtqszJDvYcfbx43jTupu', '2099-12-31', 'mf187870');
+
+DELETE FROM `HistoryAction`;
+DELETE FROM `HistoryUser`;
