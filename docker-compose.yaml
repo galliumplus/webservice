@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  webapp:
+    build:
+      context: .
+      dockerfile: ./Service/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - CorsAllowedOrigins=http://allowed-origin.com,https://another-allowed-origin.com
+    ports:
+      - "5080:5080"
+    depends_on:
+      - mariadb
+    networks:
+      - webnet
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200m"
+        max-file: "10"
+
+  mariadb:
+    image: mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: mypassword
+      MYSQL_DATABASE: mydb
+    volumes:
+      - mariadb-data:/var/lib/mysql
+      - ./SQL:/docker-entrypoint-initdb.d:ro
+    networks:
+      - webnet
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+
+networks:
+  webnet:
+
+volumes:
+  mariadb-data:
