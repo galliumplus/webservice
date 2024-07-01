@@ -61,7 +61,7 @@ namespace GalliumPlus.WebApi.Controllers
         [HttpGet("@me", Order = -1)]
         public IActionResult GetSelf()
         {
-            if (this.User is User user)
+            if (this.User is { } user)
             {
                 return Json(this.detailsMapper.FromModel(user));
             }

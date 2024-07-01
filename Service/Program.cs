@@ -25,12 +25,12 @@ using GalliumPlus.WebApi.Email.MailKit;
 
 var builder = WebApplication.CreateBuilder(args);
 
-#region Configuration générale et options
+#region Configuration g?n?rale et options
 
 builder.Services
     .AddControllers(options =>
     {
-        // Filtre pour les exceptions propres à Gallium
+        // Filtre pour les exceptions propres ? Gallium
         options.Filters.Add<ExceptionsFilter>();
         // Filtre pour les permissions de Gallium
         options.Filters.Add<PermissionsFilter>();
@@ -51,10 +51,10 @@ builder.Services.AddServerInfo();
 
 #endregion
 
-#region Base de données (Fake & MariaDB)
+#region Base de donn?es (Fake & MariaDB)
 
 #if FAKE_DB
-// ajout en singleton, sinon les données ne sont pas persistées d'une requête à l'autre
+// ajout en singleton, sinon les donn?es ne sont pas persist?es d'une requ?te ? l'autre
 builder.Services.AddSingleton<ICategoryDao, CategoryDao>();
 builder.Services.AddSingleton<IClientDao, ClientDao>();
 builder.Services.AddSingleton<IHistoryDao, HistoryDao>();
@@ -104,7 +104,7 @@ builder.Services
 
 #endregion
 
-#region Sérialisation (JSON)
+#region S?rialisation (JSON)
 
 builder.Services.Configure<JsonOptions>(options =>
 {
@@ -112,9 +112,9 @@ builder.Services.Configure<JsonOptions>(options =>
     options.JsonSerializerOptions.NumberHandling = JsonNumberHandling.Strict;
     // accepte les virgules en fin de liste / d'objet
     options.JsonSerializerOptions.AllowTrailingCommas = true;
-    // garde les noms de propriétés tels quels
+    // garde les noms de propri?t?s tels quels
     options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-    // sérialise les énumérations sous forme de texte
+    // s?rialise les ?num?rations sous forme de texte
     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
 
@@ -126,9 +126,9 @@ builder.WebHost.ConfigureKestrel(opt =>
 {
     Action<ListenOptions> httpsConfiguration = options =>
     {
-        if (galliumOptions.CertificateFile is string certififcate)
+        if (galliumOptions.CertificateFile is { } certififcate)
         {
-            if (galliumOptions.CertificatePassword is string password)
+            if (galliumOptions.CertificatePassword is { } password)
             {
                 options.UseHttps(certififcate, password);
             }
@@ -184,7 +184,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
-ServerInfo.Current.SetVersion(1, 0, 2, "beta");
+ServerInfo.Current.SetVersion(1, 0, 3, "beta");
 Console.WriteLine(ServerInfo.Current);
 
 app.Run();

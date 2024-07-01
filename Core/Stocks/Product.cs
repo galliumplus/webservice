@@ -70,7 +70,7 @@
         /// <param name="nonMemberPrice">Prix non-adhérent.</param>
         /// <param name="memberPrice">Prix adhérent.</param>
         /// <param name="availability">Disponibilité du produit.</param>
-        /// <param name="categoryId">Catégorie du produit.</param>
+        /// <param name="category">Catégorie du produit.</param>
         public Product(
             int id,
             string name,

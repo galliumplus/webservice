@@ -4,7 +4,7 @@
     {
         public async Task InvokeAsync(HttpContext context, RequestDelegate next)
         {
-            context.Response.Headers.Add("X-Gallium-Version", ServerInfo.Current.Version);
+            context.Response.Headers.Append("X-Gallium-Version", ServerInfo.Current.Version);
             await next.Invoke(context);
         }
     }
@@ -70,7 +70,7 @@
 public static partial class Builtins
 {
     // astuce pour récupérer l'heure du build
-    // CompileTime est bien défini, ce n'est pas grave s'il apparaît comme une erreur
+    private static readonly long CompileTime = 0;
     public static DateTime CompileDateTime => new DateTime(CompileTime, DateTimeKind.Utc);
 }
 

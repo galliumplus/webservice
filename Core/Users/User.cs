@@ -15,16 +15,16 @@ namespace GalliumPlus.WebApi.Core.Users
         private PasswordInformation? password;
 
         /// <summary>
-        /// L'identifiant IUT (ou identifiant spécial) de l'utilisateur.
+        /// L'identifiant IUT (ou identifiant spï¿½cial) de l'utilisateur.
         /// </summary>
-        /// <exception cref="InvalidItemException">Le setter renvoie une erreur si la valeur contient des caractères speciaux</exception>
+        /// <exception cref="InvalidItemException">Le setter renvoie une erreur si la valeur contient des caractï¿½res speciaux</exception>
         public string Id
         {
             get => this.id;
             set
             {
                 if (value.Any(c => !char.IsLetterOrDigit(c)))
-                    throw new InvalidItemException("Un identifiant ne peut pas contenir de caractères spéciaux.");
+                    throw new InvalidItemException("Un identifiant ne peut pas contenir de caractï¿½res spï¿½ciaux.");
                 else
                     this.id = value.ToLower();
             }
@@ -36,7 +36,7 @@ namespace GalliumPlus.WebApi.Core.Users
         public UserIdentity Identity => this.identity;
 
         /// <summary>
-        /// L'identifiant du rôle de l'utilisateur.
+        /// L'identifiant du rï¿½le de l'utilisateur.
         /// </summary>
         public Role Role { get => this.role; set => this.role = value; }
 
@@ -44,7 +44,7 @@ namespace GalliumPlus.WebApi.Core.Users
         /// Le mot de passe de l'utilisateur.
         /// </summary>
         /// <remarks>
-        /// Cette propriété ne doit pas être exposée par l'API.
+        /// Cette propriï¿½tï¿½ ne doit pas ï¿½tre exposï¿½e par l'API.
         /// </remarks>
         public PasswordInformation? Password { get => this.password; set => this.password = value; }
 
@@ -56,7 +56,7 @@ namespace GalliumPlus.WebApi.Core.Users
             get => this.deposit;
             set
             {
-                if (value is decimal nonNullValue)
+                if (value is { } nonNullValue)
                 {
                     MonetaryValue.CheckNonNegative(nonNullValue, "Un acompte");
                 }
@@ -65,27 +65,27 @@ namespace GalliumPlus.WebApi.Core.Users
         }
 
         /// <summary>
-        /// Indique si l'utilisateur est adhérent ou non.
+        /// Indique si l'utilisateur est adhï¿½rent ou non.
         /// </summary>
         public bool IsMember { get => this.isMember; set => this.isMember = value; }
 
         /// <summary>
-        /// Idique si un utilisateur peut être supprimé ou non.
+        /// Idique si un utilisateur peut ï¿½tre supprimï¿½ ou non.
         /// </summary>
         /// <remarks>
-        /// Il doit être impossible de supprimer un utilisateur pour lequel cette propriété vaut faux.
+        /// Il doit ï¿½tre impossible de supprimer un utilisateur pour lequel cette propriï¿½tï¿½ vaut faux.
         /// </remarks>
         public bool MayBeDeleted => this.deposit is null || this.deposit.Value == 0;
 
         /// <summary>
-        /// Crée un utilisateur sans informations sur son mot de passe.
+        /// Crï¿½e un utilisateur sans informations sur son mot de passe.
         /// </summary>
-        /// <param name="id">L'identifiant IUT (ou identifiant spécial) de l'utilisateur.</param>
+        /// <param name="id">L'identifiant IUT (ou identifiant spï¿½cial) de l'utilisateur.</param>
         /// <param name="identity">Les informations personelles de l'utilisateur.</param>
-        /// <param name="role">Le rôle de l'utilisateur.</param>
+        /// <param name="role">Le rï¿½le de l'utilisateur.</param>
         /// <param name="deposit">L'acompte de l'utilisateur en euros.</param>
-        /// <param name="isMember"> <see langword="true"/> si l'utilisateur est adhérent.</param>
-        /// <exception cref="InvalidItemException">Renvoie une erreur si User.Id contient des caractères speciaux</exception>
+        /// <param name="isMember"> <see langword="true"/> si l'utilisateur est adhï¿½rent.</param>
+        /// <exception cref="InvalidItemException">Renvoie une erreur si User.Id contient des caractï¿½res speciaux</exception>
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         public User(string id, UserIdentity identity, Role role, decimal? deposit, bool isMember)
         {
@@ -99,15 +99,15 @@ namespace GalliumPlus.WebApi.Core.Users
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
         /// <summary>
-        /// Crée un utilisateur avec les informations de mot de passe.
+        /// Crï¿½e un utilisateur avec les informations de mot de passe.
         /// </summary>
-        /// <param name="id">L'identifiant IUT (ou identifiant spécial) de l'utilisateur.</param>
+        /// <param name="id">L'identifiant IUT (ou identifiant spï¿½cial) de l'utilisateur.</param>
         /// <param name="identity">Les informations personelles de l'utilisateur.</param>
-        /// <param name="role">Le rôle de l'utilisateur.</param>
+        /// <param name="role">Le rï¿½le de l'utilisateur.</param>
         /// <param name="deposit">L'acompte de l'utilisateur en euros.</param>
-        /// <param name="isMember"> <see langword="true"/> si l'utilisateur est adhérent.</param>
+        /// <param name="isMember"> <see langword="true"/> si l'utilisateur est adhï¿½rent.</param>
         /// <param name="password">Le mot de passe de l'utilisateur.</param>
-        /// <exception cref="InvalidItemException">Renvoie une erreur si User.Id contient des caractères speciaux</exception>
+        /// <exception cref="InvalidItemException">Renvoie une erreur si User.Id contient des caractï¿½res speciaux</exception>
         public User(
             string id,
             UserIdentity identity,
