@@ -30,9 +30,12 @@
 	</ItemGroup>
 
 	<Target Name="Date" BeforeTargets="BeforeBuild">
-		<WriteLinesToFile File="$(IntermediateOutputPath)builtins.cs" Lines="static partial class Builtins { public static readonly long CompileTime = $([System.DateTime]::Now.Ticks) %3B }" Overwrite="true" />
+		<WriteLinesToFile
+				File="$(IntermediateOutputPath)Builtins.g.cs"
+				Lines="static partial class Builtins { static Builtins() { CompileTime = $([System.DateTime]::Now.Ticks) %3B } }"
+				Overwrite="true" />
 		<ItemGroup>
-			<Compile Include="$(IntermediateOutputPath)builtins.cs" />
+			<Compile Include="$(IntermediateOutputPath)Builtins.g.cs" />
 		</ItemGroup>
 	</Target>
 

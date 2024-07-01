@@ -17,9 +17,9 @@ namespace GalliumPlus.WebApi.Data.MariaDb
             using var connection = this.Connect();
             Schema db = new(connection);
 
-            int? actorId = action.Actor is string actor ? this.EnsureUserIsInHistory(actor, db) : null;
+            int? actorId = action.Actor is { } actor ? this.EnsureUserIsInHistory(actor, db) : null;
 
-            int? targetId = action.Target is string target ? this.EnsureUserIsInHistory(target, db) : null;
+            int? targetId = action.Target is { } target ? this.EnsureUserIsInHistory(target, db) : null;
 
             db.InsertInto("HistoryAction")
               .Value("text", action.Text)

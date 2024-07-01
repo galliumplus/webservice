@@ -35,7 +35,7 @@ namespace GalliumPlus.WebApi.Core.Orders
             decimal currentDeposit;
             try
             {
-                if (this.userDao.ReadDeposit(this.depositId) is decimal deposit)
+                if (this.userDao.ReadDeposit(this.depositId) is { } deposit)
                 {
                     currentDeposit = deposit;
                 }

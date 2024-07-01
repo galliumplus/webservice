@@ -87,7 +87,7 @@ namespace GalliumPlus.WebApi.Middleware.Authentication
             }
             else
             {
-                if (await ParseBodyAsync() is Credentials creds)
+                if (await ParseBodyAsync() is { } creds)
                 {
                     credentials = creds;
                 }

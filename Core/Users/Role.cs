@@ -1,7 +1,7 @@
 namespace GalliumPlus.WebApi.Core.Users
 {
     /// <summary>
-    /// Le rôle d'un utilisateur. 
+    /// Le rÃ´le d'un utilisateur. 
     /// </summary>
     public class Role
     {
@@ -10,26 +10,26 @@ namespace GalliumPlus.WebApi.Core.Users
         private Permissions permissions;
 
         /// <summary>
-        /// L'identifiant du rôle.
+        /// L'identifiant du rÃ´le.
         /// </summary>
         public int Id { get => this.id; set => this.id = value; }
 
         /// <summary>
-        /// Le nom affiché du rôle.
+        /// Le nom affichÃ© du rÃ´le.
         /// </summary>
         public string Name { get => this.name; set => this.name = value; }
 
         /// <summary>
-        /// La somme des permissions attribuées au rôle.
+        /// La somme des permissions attribuÃ©es au rÃ´le.
         /// </summary>
         public Permissions Permissions { get => this.permissions; set => this.permissions = value; }
 
         /// <summary>
-        /// Crée un rôle.
+        /// CrÃ©e un rÃ´le.
         /// </summary>
-        /// <param name="id">L'identifiant du rôle.</param>
-        /// <param name="name">Le nom affiché du rôle.</param>
-        /// <param name="permissions">La somme des permissions attribuées au rôle.</param>
+        /// <param name="id">L'identifiant du rÃ´le.</param>
+        /// <param name="name">Le nom affichÃ© du rÃ´le.</param>
+        /// <param name="permissions">La somme des permissions attribuÃ©es au rÃ´le.</param>
         public Role(int id, string name, Permissions permissions)
         {
             this.id = id;
