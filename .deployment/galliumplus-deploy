@@ -3,6 +3,7 @@
 import paramiko
 import os
 from pathlib import Path
+import hashlib
 
 DEPLOY_HOSTNAME = os.environ["DEPLOY_HOSTNAME"]
 DEPLOY_USERNAME = os.environ["DEPLOY_USERNAME"]
@@ -16,9 +17,9 @@ ssh_client.connect(
     password=DEPLOY_PASSWORD,
 )
 
-print("Searching for files to upload...")
+print("Recherche de fichiers à téléverser...")
 
-bin_path = Path("./Service/bin/Release/net6.0")
+bin_path = Path("./Service/bin/Release/net8.0")
 
 files_to_upload = [
     bin_path / "Service",
@@ -27,24 +28,61 @@ files_to_upload = [
 ]
 files_to_upload += bin_path.glob("*.dll")
 files_to_upload += bin_path.glob("runtimes/linux-x64/native/*")
+files_to_upload += bin_path.glob("*/*.resources.dll")
+
+
+def sha256sum(filename):
+    with open(filename, "rb", buffering=0) as f:
+        return hashlib.file_digest(f, "sha256").hexdigest()
+
 
 files_to_upload = [
-    file for file in files_to_upload if file.is_file() and not "Swagger" in file.name
+    (file, sha256sum(file))
+    for file in files_to_upload
+    if file.is_file() and not "Swagger" in file.name
 ]
 
-print("Found ", len(files_to_upload), sep="", end=":")
-print("", *files_to_upload, sep="\n   ")
+print(len(files_to_upload), " fichiers trouvés ", sep="", end=":")
+print("", *(file for file, _ in files_to_upload), sep="\n   ")
 
-print("\nStopping service...")
+print("Recherche de fichiers existants sur le serveur...")
+stdin, stdout, stderr = ssh_client.exec_command(
+    "for file in Service Service.deps.json Service.runtimeconfig.json *.dll runtimes/linux-x64/native/* */*.resources.dll; "
+    'do if [ -f $file ]; then sha256sum "$file"; fi; done;'
+)
+
+existing_files = [
+    (lambda t: (t[1].strip(), t[0]))(out_line.split("  ", 2))
+    for out_line in stdout.readlines()
+]
+
+print(len(existing_files), " fichiers trouvés ", sep="", end=":")
+print("", *(file for file, _ in existing_files), sep="\n   ")
+
+print("\nArrêt du service...")
 stdin, stdout, stderr = ssh_client.exec_command("sudo systemctl stop galliumplus-api")
 print(*stdout.readlines(), *stderr.readlines())
-print("Done")
+print("OK")
 
-print("\nUploading files...")
+print("\nTéléversement des fichiers...")
 remote_path = Path("/opt/galliumplus")
 ftp_client = ssh_client.open_sftp()
-for file_to_upload in files_to_upload:
-    print("Uploading", file_to_upload, "...")
+for file_to_upload, checksum in files_to_upload:
+    existing_file_and_checksum = next(
+        (
+            (file, checksum)
+            for file, checksum in existing_files
+            if file_to_upload.relative_to(bin_path) == Path(file)
+        ),
+        None,
+    )
+    if existing_file_and_checksum:
+        if checksum == existing_file_and_checksum[1]:
+            print(file_to_upload, "est déjà à jour")
+            continue
+
+    print("Envoi de", file_to_upload, "...")
+    print(str(file_to_upload.absolute()))
     ftp_client.put(
         str(file_to_upload.absolute()),
         str(remote_path / file_to_upload.relative_to(bin_path)),
@@ -53,9 +91,9 @@ for file_to_upload in files_to_upload:
 ftp_client.close()
 stdin, stdout, stderr = ssh_client.exec_command("chmod a+x Service")
 print(*stdout.readlines(), *stderr.readlines())
-print("Done")
+print("OK")
 
-print("\nRestarting service...")
+print("\nRedémarrage du service...")
 stdin, stdout, stderr = ssh_client.exec_command("sudo systemctl start galliumplus-api")
 print(*stdout.readlines(), *stderr.readlines())
-print("Done")
+print("OK")
