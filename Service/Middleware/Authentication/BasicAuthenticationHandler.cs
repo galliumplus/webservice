@@ -20,10 +20,9 @@ namespace GalliumPlus.WebApi.Middleware.Authentication
             IOptionsMonitor<AuthenticationSchemeOptions> options,
             ILoggerFactory logger,
             UrlEncoder encoder,
-            ISystemClock clock,
             IUserDao users,
             IClientDao clients)
-        : base(options, logger, encoder, clock)
+        : base(options, logger, encoder)
         {
             this.users = users;
             this.clients = clients;
@@ -37,7 +36,7 @@ namespace GalliumPlus.WebApi.Middleware.Authentication
 
             try
             {
-                var authHeader = AuthenticationHeaderValue.Parse(Request.Headers["Authorization"]);
+                var authHeader = AuthenticationHeaderValue.Parse(Request.Headers.Authorization.ToString());
 
                 if (authHeader.Scheme != "Basic") return false;
 

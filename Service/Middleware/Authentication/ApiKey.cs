@@ -11,7 +11,7 @@ namespace GalliumPlus.WebApi.Middleware.Authentication
 
             if (headers.TryGetValue("X-API-Key", out StringValues headerValues))
             {
-                apiKey = headerValues;
+                apiKey = headerValues.ToString();
                 return true;
             }
 

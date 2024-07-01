@@ -4,7 +4,7 @@
     {
         public async Task InvokeAsync(HttpContext context, RequestDelegate next)
         {
-            context.Response.Headers.Add("X-Gallium-Version", ServerInfo.Current.Version);
+            context.Response.Headers.Append("X-Gallium-Version", ServerInfo.Current.Version);
             await next.Invoke(context);
         }
     }

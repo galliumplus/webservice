@@ -16,9 +16,8 @@ namespace GalliumPlus.WebApi.Middleware.Authentication
             IOptionsMonitor<AuthenticationSchemeOptions> options,
             ILoggerFactory logger,
             UrlEncoder encoder,
-            ISystemClock clock,
             IClientDao clients)
-        : base(options, logger, encoder, clock)
+        : base(options, logger, encoder)
         {
             this.clients = clients;
         }
@@ -28,7 +27,7 @@ namespace GalliumPlus.WebApi.Middleware.Authentication
             secret = "";
             try
             {
-                var authHeader = AuthenticationHeaderValue.Parse(Request.Headers["Authorization"]);
+                var authHeader = AuthenticationHeaderValue.Parse(Request.Headers.Authorization.ToString());
 
                 if (authHeader.Scheme != "Secret") return false;
 
