@@ -1,12 +1,12 @@
-﻿using GalliumPlus.WebApi.Core.Data;
+﻿using System.Data;
+using GalliumPlus.WebApi.Core.Data;
 using GalliumPlus.WebApi.Core.Data.HistorySearch;
 using GalliumPlus.WebApi.Core.Exceptions;
 using GalliumPlus.WebApi.Core.History;
 using KiwiQuery;
 using MySqlConnector;
-using System.Data;
 
-namespace GalliumPlus.WebApi.Data.MariaDb
+namespace GalliumPlus.WebApi.Data.MariaDb.Implementations
 {
     public class HistoryDao : Dao, IHistoryDao
     {
@@ -51,7 +51,7 @@ namespace GalliumPlus.WebApi.Data.MariaDb
         {
             try
             {
-                if (FindHistoryUserId(userId, db, out int id))
+                if (this.FindHistoryUserId(userId, db, out int id))
                 {
                     return id;
                 }
@@ -63,7 +63,7 @@ namespace GalliumPlus.WebApi.Data.MariaDb
             catch (MySqlException error)
             {
                 if (error.ErrorCode == MySqlErrorCode.DuplicateKeyEntry
-                    && FindHistoryUserId(userId, db, out int id))
+                    && this.FindHistoryUserId(userId, db, out int id))
                 {
                     return id;
                 }
@@ -75,7 +75,7 @@ namespace GalliumPlus.WebApi.Data.MariaDb
         {
             using var connection = this.Connect();
 
-            if (FindHistoryUserId(userId, new Schema(connection), out int _))
+            if (this.FindHistoryUserId(userId, new Schema(connection), out int _))
             {
                 throw new DuplicateItemException("Un autre utilisateur avec cet identifiant existe déjà dans l'historique.");
             }
