@@ -4,7 +4,7 @@ using GalliumPlus.WebApi.Core.Users;
 using KiwiQuery;
 using MySqlConnector;
 
-namespace GalliumPlus.WebApi.Data.MariaDb
+namespace GalliumPlus.WebApi.Data.MariaDb.Implementations
 {
     public class RoleDao : Dao, IRoleDao
     {

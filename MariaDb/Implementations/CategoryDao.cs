@@ -4,7 +4,7 @@ using GalliumPlus.WebApi.Core.Stocks;
 using KiwiQuery;
 using MySqlConnector;
 
-namespace GalliumPlus.WebApi.Data.MariaDb
+namespace GalliumPlus.WebApi.Data.MariaDb.Implementations
 {
     public class CategoryDao : Dao, ICategoryDao
     {
