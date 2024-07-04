@@ -59,6 +59,7 @@ existing_files = [
     (lambda t: (t[1].strip(), t[0]))(out_line.split("  ", 2))
     for out_line in stdout.readlines()
 ]
+files_to_remove = [file for file, _ in existing_files]
 
 print(len(existing_files), " fichiers trouvés ", sep="", end=":")
 print("", *(file for file, _ in existing_files), sep="\n   ")
@@ -71,6 +72,7 @@ print("OK")
 print("\nTéléversement des fichiers...")
 remote_path = Path("/opt/galliumplus")
 ftp_client = ssh_client.open_sftp()
+
 for file_to_upload, checksum in files_to_upload:
     existing_file_and_checksum = next(
         (
@@ -81,17 +83,28 @@ for file_to_upload, checksum in files_to_upload:
         None,
     )
     if existing_file_and_checksum:
+        files_to_remove.remove(existing_file_and_checksum[0])
         if checksum == existing_file_and_checksum[1]:
             print(file_to_upload, "est déjà à jour")
             continue
 
     print("Envoi de", file_to_upload, "...")
-    print(str(file_to_upload.absolute()))
+    relative_remote_path = file_to_upload.relative_to(bin_path)
+    if str(relative_remote_path.parent) != ".":
+        print(
+            f"   Vérification du(des) dossier(s) intermédiaire(s) {relative_remote_path.parent}"
+        )
+        ssh_client.exec_command(f"mkdir -p {remote_path / relative_remote_path.parent}")
     ftp_client.put(
         str(file_to_upload.absolute()),
-        str(remote_path / file_to_upload.relative_to(bin_path)),
+        str(remote_path / relative_remote_path),
         lambda progress, total: print(f"  {progress/total:.0%}   ", end="\r"),
     )
+
+for file_to_remove in files_to_remove:
+    print("Supression du fichier obsolète ", file_to_remove, "...")
+    ftp_client.remove(str(remote_path / file_to_remove))
+
 ftp_client.close()
 stdin, stdout, stderr = ssh_client.exec_command("chmod a+x Service")
 print(*stdout.readlines(), *stderr.readlines())
