@@ -13,7 +13,7 @@ ssh_client = paramiko.SSHClient()
 ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 password_mask = "".join(["*" for _ in DEPLOY_PASSWORD])
 print(
-    f"Connexion en tant que {DEPLOY_USERNAME}@{DEPLOY_HOSTNAME} with password {''.join()}"
+    f"Connexion en tant que {DEPLOY_USERNAME}@{DEPLOY_HOSTNAME} with password {password_mask}"
 )
 ssh_client.connect(
     hostname=DEPLOY_HOSTNAME,
