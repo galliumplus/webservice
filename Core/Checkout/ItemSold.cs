@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using GalliumPlus.WebApi.Core.Stocks;
 
 namespace GalliumPlus.WebApi.Core.Checkout;
@@ -18,6 +19,7 @@ public class ItemSold(
 
     public decimal PrimaryPrice => primaryPrice;
 
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public decimal? SecondaryPrice => secondaryPrice;
 
     public IEnumerable<ItemSellingPrice> Prices => prices;
