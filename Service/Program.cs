@@ -13,32 +13,31 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using GalliumPlus.WebApi.Scheduling;
 using GalliumPlus.WebApi.Core.Email;
+using GalliumPlus.WebApi.Services;
 
 #if FAKE_DB
 using GalliumPlus.WebApi.Data.FakeDatabase;
 #else
 using GalliumPlus.WebApi.Data.MariaDb;
 using GalliumPlus.WebApi.Data.MariaDb.Implementations;
-using FluentMigrator.Runner;
 #endif
 
 #if FAKE_EMAIL
 using GalliumPlus.WebApi.Email.FakeEmailService;
 #else
-using GalliumPlus.WebApi.Data.MariaDb;
 using GalliumPlus.WebApi.Email.MailKit;
 #endif 
 
 #endregion
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-#region Configuration g?n?rale et options
+#region Configuration générale et options
 
 builder.Services
     .AddControllers(options =>
     {
-        // Filtre pour les exceptions propres ? Gallium
+        // Filtre pour les exceptions propres à Gallium
         options.Filters.Add<ExceptionsFilter>();
         // Filtre pour les permissions de Gallium
         options.Filters.Add<PermissionsFilter>();
@@ -57,12 +56,14 @@ builder.Services.AddSingleton(galliumOptions);
 
 builder.Services.AddServerInfo();
 
+builder.Services.AddGalliumServices();
+
 #endregion
 
-#region Base de donn?es (Fake & MariaDB)
+#region Base de données (Fake & MariaDB)
 
 #if FAKE_DB
-// ajout en singleton, sinon les donn?es ne sont pas persist?es d'une requ?te ? l'autre
+// ajout en singleton, sinon les données ne sont pas gardées d'une requête à l'autre
 builder.Services.AddSingleton<ICategoryDao, CategoryDao>();
 builder.Services.AddSingleton<IClientDao, ClientDao>();
 builder.Services.AddSingleton<IHistoryDao, HistoryDao>();
@@ -102,17 +103,17 @@ builder.Services.AddQuartzHostedService(quartz =>
 
 builder.Services
     .AddSingleton<IEmailTemplateLoader, CachedLocalEmailTemplateLoader>(
-        services => new CachedLocalEmailTemplateLoader(Path.Join(AppDomain.CurrentDomain.BaseDirectory, "templates"))
+        _ => new CachedLocalEmailTemplateLoader(Path.Join(AppDomain.CurrentDomain.BaseDirectory, "templates"))
     )
 #if FAKE_EMAIL
     .AddSingleton<IEmailSender, FakeEmailSender>(services => new FakeEmailSender());
 #else
-    .AddSingleton<IEmailSender, EmailSender>(services => new EmailSender(galliumOptions.MailKit));
+    .AddSingleton<IEmailSender, EmailSender>(_ => new EmailSender(galliumOptions.MailKit));
 #endif
 
 #endregion
 
-#region S?rialisation (JSON)
+#region Sérialisation (JSON)
 
 builder.Services.Configure<JsonOptions>(options =>
 {
@@ -120,9 +121,9 @@ builder.Services.Configure<JsonOptions>(options =>
     options.JsonSerializerOptions.NumberHandling = JsonNumberHandling.Strict;
     // accepte les virgules en fin de liste / d'objet
     options.JsonSerializerOptions.AllowTrailingCommas = true;
-    // garde les noms de propri?t?s tels quels
+    // garde les noms de propriétés tels quels
     options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-    // s?rialise les ?num?rations sous forme de texte
+    // sérialise les énumérations sous forme de texte
     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
 
@@ -134,15 +135,15 @@ builder.WebHost.ConfigureKestrel(opt =>
 {
     Action<ListenOptions> httpsConfiguration = options =>
     {
-        if (galliumOptions.CertificateFile is { } certififcate)
+        if (galliumOptions.CertificateFile is { } certificate)
         {
             if (galliumOptions.CertificatePassword is { } password)
             {
-                options.UseHttps(certififcate, password);
+                options.UseHttps(certificate, password);
             }
             else
             {
-                options.UseHttps(certififcate);
+                options.UseHttps(certificate);
             }
         }
         else
@@ -183,7 +184,7 @@ builder.Services
 
 #endregion
 
-var app = builder.Build();
+WebApplication app = builder.Build();
 
 if (galliumOptions.ForceHttps) app.UseHttpsRedirection();
 app.UseServerInfo();
@@ -192,7 +193,14 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
-ServerInfo.Current.SetVersion(1, 0, 3, "beta");
+ServerInfo.Current.SetVersion(1, 1, 0, "beta");
 Console.WriteLine(ServerInfo.Current);
+
+#if !FAKE_DB
+using (IServiceScope scope = app.Services.CreateScope())
+{
+    MigrationsRunner.UpdateDatabase(scope.ServiceProvider);
+}
+#endif
 
 app.Run();

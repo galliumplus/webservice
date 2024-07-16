@@ -12,6 +12,7 @@ from tests.order_tests import OrderTests
 from tests.user_tests import UserTests
 from tests.access_tests import AccessTests
 from tests.client_tests import ClientTests
+from tests.checkout_tests import CheckoutTests
 
 
 if __name__ == "__main__":
