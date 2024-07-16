@@ -13,6 +13,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using GalliumPlus.WebApi.Scheduling;
 using GalliumPlus.WebApi.Core.Email;
+using GalliumPlus.WebApi.Services;
 #if FAKE_DB && FAKE_EMAIL
 using GalliumPlus.WebApi.Data.FakeDatabase;
 using GalliumPlus.WebApi.Email.FakeEmailService;
@@ -25,12 +26,12 @@ using GalliumPlus.WebApi.Email.MailKit;
 
 var builder = WebApplication.CreateBuilder(args);
 
-#region Configuration g?n?rale et options
+#region Configuration générale et options
 
 builder.Services
     .AddControllers(options =>
     {
-        // Filtre pour les exceptions propres ? Gallium
+        // Filtre pour les exceptions propres à Gallium
         options.Filters.Add<ExceptionsFilter>();
         // Filtre pour les permissions de Gallium
         options.Filters.Add<PermissionsFilter>();
@@ -48,6 +49,8 @@ GalliumOptions galliumOptions = builder.Configuration.GetSection("Gallium").Get<
 builder.Services.AddSingleton(galliumOptions);
 
 builder.Services.AddServerInfo();
+
+builder.Services.AddGalliumServices();
 
 #endregion
 
@@ -184,7 +187,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
-ServerInfo.Current.SetVersion(1, 0, 3, "beta");
+ServerInfo.Current.SetVersion(1, 1, 0, "beta");
 Console.WriteLine(ServerInfo.Current);
 
 app.Run();

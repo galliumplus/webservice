@@ -21,7 +21,9 @@ namespace GalliumPlus.WebApi
 
         public bool DisableHttps { get; set; } = false;
 
-        public string WebApplicationHost { get; set; } = "gallium.etiq-dijon.fr";
+        public string Host { get; set; } = "localhost";
+        
+        public string PreferredWebApplicationHost { get; set; } = "gallium-plus-preview.netlify.app";
 
 #if !TEST
         public MailKitOptions MailKit { get; set; } = new();

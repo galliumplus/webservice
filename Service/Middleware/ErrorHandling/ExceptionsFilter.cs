@@ -7,15 +7,20 @@ namespace GalliumPlus.WebApi.Middleware.ErrorHandling
     /// <summary>
     /// Gestion des erreurs propres au code métier.
     /// </summary>
-    public class ExceptionsFilter : IExceptionFilter, IOrderedFilter
+    public class ExceptionsFilter(ILoggerFactory loggerFactory) : IExceptionFilter, IOrderedFilter
     {
         // priorité haute, on veut qu'il s'applique juste après le contrôleur
         public int Order => 1_000_000;
+
+        private readonly ILogger logger = loggerFactory.CreateLogger<ExceptionsFilter>();
 
         public void OnException(ExceptionContext context)
         {
             if (context.Exception is PermissionDeniedException permissionDenied)
             {
+                logger.LogDebug("Caught a PermissionDeniedException ({}) !", permissionDenied.Message);
+                logger.LogDebug("Required permissions were {}", permissionDenied.Required);
+                
                 string messageAction = context.HttpContext.Request.Method switch
                 {
                     "GET" or "HEAD" => "d'accéder à cette ressource",
@@ -32,6 +37,8 @@ namespace GalliumPlus.WebApi.Middleware.ErrorHandling
             }
             else if (context.Exception is GalliumException galliumException)
             {
+                logger.LogDebug("Caught a GalliumException ({}) !", galliumException.Message);
+                
                 context.Result = new ErrorResult(
                     galliumException,
                     ErrorCodeToStatusCode(galliumException.ErrorCode)
@@ -64,7 +71,7 @@ namespace GalliumPlus.WebApi.Middleware.ErrorHandling
                         modelStateErrors.Add(error.ErrorMessage);
                     }
                 }
-
+                
                 return new ErrorResult(
                     ErrorCode.InvalidItem,
                     "Le format de cette ressource est invalide.",

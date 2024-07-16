@@ -4,7 +4,7 @@
     {
         public async Task InvokeAsync(HttpContext context, RequestDelegate next)
         {
-            context.Response.Headers.Append("X-Gallium-Version", ServerInfo.Current.Version);
+            context.Response.Headers.Append("X-Gallium-Version", ServerInfo.Current.PrettyVersion);
             await next.Invoke(context);
         }
     }
@@ -34,25 +34,28 @@
             }
         }
 
-        private string version = $"unknown (unknown/{configuration})";
+        private string prettyVersion = $"unknown (unknown/{CONFIGURATION})";
+        private string compactVersion = "unknown";
 
 #if TEST
-        private const string configuration = "test";
+        private const string CONFIGURATION = "test";
 #elif DEBUG
-        private const string configuration = "debug";
+        private const string CONFIGURATION = "debug";
 #else
-        private const string configuration = "release";
+        private const string CONFIGURATION = "release";
 #endif
 
-        public string Version => this.version;
-
+        public string PrettyVersion => this.prettyVersion;
+        
+        public string CompactVersion => this.compactVersion;
 
         private ServerInfo() { }
 
         public void SetVersion(int major, int minor, int patch, string stage = "unknown")
         {
             string build = Builtins.CompileDateTime.ToString("yyMMddHHmm");
-            this.version = $"{major}.{minor}.{patch}.{build} ({stage}/{configuration})";
+            this.prettyVersion = $"{major}.{minor}.{patch}.{build} ({stage}/{CONFIGURATION})";
+            this.compactVersion = $"{major}.{minor}.{patch}-{CONFIGURATION[0]}";
         }
 
         public override string ToString()
@@ -62,7 +65,7 @@
                  + " | |  _ / _` | | | | | | | '_ ` _ \\'_   _|\n"
                  + " | |_| | (_| | | | | |_| | | | | | | |_|   \n"
                  + "  \\____|\\__,_|_|_|_|\\__,_|_| |_| |_|    \n"
-                 + $"\n Gallium+ Web API Server v{this.Version}\n";
+                 + $"\n Gallium+ Web API Server v{this.PrettyVersion}\n";
         }
     }
 }

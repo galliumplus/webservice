@@ -13,6 +13,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <PackageReference Include="JWT" Version="10.1.1" />
 	  <PackageReference Include="Quartz.Extensions.Hosting" Version="3.7.0" />
 	</ItemGroup>
 
@@ -30,10 +31,7 @@
 	</ItemGroup>
 
 	<Target Name="Date" BeforeTargets="BeforeBuild">
-		<WriteLinesToFile
-				File="$(IntermediateOutputPath)Builtins.g.cs"
-				Lines="static partial class Builtins { static Builtins() { CompileTime = $([System.DateTime]::Now.Ticks) %3B } }"
-				Overwrite="true" />
+		<WriteLinesToFile File="$(IntermediateOutputPath)Builtins.g.cs" Lines="static partial class Builtins { static Builtins() { CompileTime = $([System.DateTime]::Now.Ticks) %3B } }" Overwrite="true" />
 		<ItemGroup>
 			<Compile Include="$(IntermediateOutputPath)Builtins.g.cs" />
 		</ItemGroup>

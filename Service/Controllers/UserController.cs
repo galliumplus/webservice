@@ -277,7 +277,7 @@ namespace GalliumPlus.WebApi.Controllers
                 subject: "Bienvenue au sein de l'ETIQ",
                 template: "initpass.html",
                 view: new InitOrResetPassword(
-                    $"https://{this.options.WebApplicationHost}/password/init?user={recipient.Id}&pprt={packedPrt}",
+                    $"https://{this.options.PreferredWebApplicationHost}/password/init?user={recipient.Id}&pprt={packedPrt}",
                     prt.Expiration
                 )
             );
@@ -290,7 +290,7 @@ namespace GalliumPlus.WebApi.Controllers
                 subject: "Réinitialiser votre mot de passe",
                 template: "resetpass.html",
                 view: new InitOrResetPassword(
-                    $"https://{this.options.WebApplicationHost}/password/reset?user={recipient.Id}&pprt={packedPrt}",
+                    $"https://{this.options.PreferredWebApplicationHost}/password/reset?user={recipient.Id}&pprt={packedPrt}",
                     prt.Expiration
                 )
             );

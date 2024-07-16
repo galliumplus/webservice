@@ -9,6 +9,7 @@
         private readonly DateTime expiration = new DateTime(2023, 05, 13, 20, 29, 0);
 
         private readonly User user = new User(
+            1,
             "mmansouri",
             new UserIdentity("Mehdi", "Mansouri", "mehdi.mansouri@iut-dijon.u-bourgogne.fr", "PROF"),
             new Role(0, "Adhérent", Permissions.NONE),

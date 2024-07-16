@@ -14,8 +14,9 @@ namespace CoreTest.Users
         [Fact]
         public void ConstructorWithoutPasswordInformation()
         {
-            User user = new User("mmansouri", new UserIdentity("Mehdi", "Mansouri", "mehdi.mansouri@iut-dijon.u-bourgogne.fr", "PROF"), profRole, 21.30m, false);
+            User user = new User(1, "mmansouri", new UserIdentity("Mehdi", "Mansouri", "mehdi.mansouri@iut-dijon.u-bourgogne.fr", "PROF"), profRole, 21.30m, false);
 
+            Assert.Equal(1, user.Iuid);
             Assert.Equal("mmansouri", user.Id);
             Assert.Equal("Mehdi", user.Identity.FirstName);
             Assert.Equal("Mansouri", user.Identity.LastName);
@@ -28,8 +29,9 @@ namespace CoreTest.Users
         [Fact]
         public void ConstructorWithPasswordInformation()
         {
-            User user = new User("mmansouri", new UserIdentity("Mehdi", "Mansouri", "mehdi.mansouri@iut-dijon.u-bourgogne.fr", "PROF"), profRole, 21.30m, false, password);
+            User user = new User(1, "mmansouri", new UserIdentity("Mehdi", "Mansouri", "mehdi.mansouri@iut-dijon.u-bourgogne.fr", "PROF"), profRole, 21.30m, false, password);
 
+            Assert.Equal(1, user.Iuid);
             Assert.Equal("mmansouri", user.Id);
             Assert.Equal("Mehdi", user.Identity.FirstName);
             Assert.Equal("Mansouri", user.Identity.LastName);
@@ -43,10 +45,10 @@ namespace CoreTest.Users
         [Fact]
         public void InvalidItemExceptionThrownOnInvalidUserIdInConstructor()
         {
-            Action userCreationWithPassword = () => new User("@mansouri", new UserIdentity("Mehdi", "Mansouri", "mehdi.mansouri@iut-dijon.u-bourgogne.fr", "PROF"), profRole, 21.30m, false, password);
+            Action userCreationWithPassword = () => new User(1, "@mansouri", new UserIdentity("Mehdi", "Mansouri", "mehdi.mansouri@iut-dijon.u-bourgogne.fr", "PROF"), profRole, 21.30m, false, password);
             InvalidItemException exception = Assert.Throws<InvalidItemException>(userCreationWithPassword);
 
-            Action userCreationWithoutPassword = () => new User("@mansouri", new UserIdentity("Mehdi", "Mansouri", "mehdi.mansouri@iut-dijon.u-bourgogne.fr", "PROF"), profRole, 21.30m, false);
+            Action userCreationWithoutPassword = () => new User(1, "@mansouri", new UserIdentity("Mehdi", "Mansouri", "mehdi.mansouri@iut-dijon.u-bourgogne.fr", "PROF"), profRole, 21.30m, false);
             exception = Assert.Throws<InvalidItemException>(userCreationWithoutPassword);
         }
 
@@ -54,6 +56,7 @@ namespace CoreTest.Users
         public void InvalidItemExceptionThrownOnInvalidUserIdInSetter()
         {
             User user = new(
+                1,
                 "mansouri",
                 new UserIdentity("Mehdi", "Mansouri", "mehdi.mansouri@iut-dijon.u-bourgogne.fr", "PROF"),
                 profRole, 21.30m, false,

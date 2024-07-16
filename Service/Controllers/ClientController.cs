@@ -7,48 +7,48 @@ namespace GalliumPlus.WebApi.Controllers
 {
     [Route("v1/clients")]
     [ApiController]
-    public class ClientController : Controller
+    public class ClientController(IClientDao clientDao) : Controller
     {
-        private IClientDao clientDao;
-        private ClientDetails.Mapper mapper;
-
-        public ClientController(IClientDao clientDao)
-        {
-            this.clientDao = clientDao;
-            this.mapper = new();
-        }
+        private readonly ClientDetails.Mapper mapper = new();
+        private readonly SsoClientPublicInfo.Mapper publicInfoMapper = new();
 
         [HttpGet]
         public IActionResult Get()
         {
-            return Json(this.mapper.FromModel(this.clientDao.Read()));
+            return Json(this.mapper.FromModel(clientDao.Read()));
         }
 
-        [HttpGet("{id}", Name = "client")]
+        [HttpGet("{id:int}", Name = "client")]
         public IActionResult Get(int id)
         {
-            return Json(this.mapper.FromModel(this.clientDao.Read(id)));
+            return Json(this.mapper.FromModel(clientDao.Read(id)));
+        }
+
+        [HttpGet("public-info/sso/{key}")]
+        public IActionResult GetPublicInfoSso(string key)
+        {
+            return Json(this.publicInfoMapper.FromModel(clientDao.FindSsoByApiKey(key)));
         }
 
         [HttpPost]
         public IActionResult Post(ClientDetails newClient)
         {
-            Client client = this.clientDao.Create(this.mapper.ToModel(newClient));
+            Client client = clientDao.Create(this.mapper.ToModel(newClient));
             return Created("client", client.Id, this.mapper.FromModel(client));
         }
 
-        [HttpPatch("{id}")]
+        [HttpPatch("{id:int}")]
         public IActionResult Patch(int id, ClientDetails clientPatch)
         {
-            Client client = this.clientDao.Read(id);
+            Client client = clientDao.Read(id);
             this.mapper.PatchModel(client, clientPatch);
             return Ok();
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:int}")]
         public IActionResult Delete(int id)
         {
-            this.clientDao.Delete(id);
+            clientDao.Delete(id);
             return Ok();
         }
     }

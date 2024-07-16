@@ -25,9 +25,13 @@ INSERT INTO `Client` VALUES
 	(1, 'test-api-key-normal', 'Tests (normal)', 0, 0, 1),
 	(2, 'test-api-key-restric', 'Tests (restricted)', 0, 374, 1),
 	(3, 'test-api-key-minimum', 'Tests (minimum)', 1, 0, 1),
-	(4, 'test-api-key-bot', 'Tests (bot)', 0, 0, 1);
+	(4, 'test-api-key-bot', 'Tests (bot)', 0, 0, 1),
+    (5, 'test-api-key-sso', 'Tests (SSO)', 1, 0, 1);
 
 INSERT INTO `BotClient`(`id`) VALUES (4);
+
+INSERT INTO `SsoClient` VALUES
+    (5, 'test-sso-secret', 0, 'https://example.app/login', 'https://example.app/static/logo.png');
 
 INSERT INTO `Role` VALUES
 	(1, 'Adhérent', 0),

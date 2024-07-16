@@ -43,8 +43,11 @@ options specific to gallium tests:
         if auto:
             try:
                 cls.free_port(5443)
-            except:
-                pass
+            except Exception as err:
+                print(
+                    f"{cls.ANSI_RED}Failed to free port 5443 because {type(err).__name__} {err}.{cls.ANSI_RESET}"
+                )
+                sys.exit(1)
 
         # start test server
         if auto:
@@ -88,13 +91,14 @@ options specific to gallium tests:
             print(f"{cls.ANSI_RED}Tests failed: {e}{cls.ANSI_RESET}")
 
         print(
-            f"({TestBase.request_count()} requests sent with an average latency of {TestBase.average_latency()*1000:.3f} ms)"
+            f"({TestBase.request_count()} requests sent with an average latency of {TestBase.average_latency()} ms)"
         )
 
         # clean up
         if auto:
             print("Killing server...")
-            server.kill()
+            server.terminate()
+            server.wait()
         else:
             print("All done, you can stop the server now.")
 
@@ -104,10 +108,15 @@ options specific to gallium tests:
     @classmethod
     def free_port(cls, port):
         for proc in psutil.process_iter():
-            for conns in proc.connections(kind="inet"):
-                if conns.laddr.port == port:
+            try:
+                conns = proc.connections(kind="inet")
+            except psutil.AccessDenied:
+                conns = []
+            for conn in conns:
+                if conn.laddr.port == port:
                     print(f"Stopping {proc.name()} to free the port {port}...")
                     proc.send_signal(signal.SIGTERM)
+                    proc.wait()
                     break
 
     @classmethod
