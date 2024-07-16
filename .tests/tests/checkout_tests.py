@@ -37,3 +37,14 @@ class CheckoutTests(TestBase):
         price = prices[0]
         self.expect(price).to.have.an_item("pricingId").of.type(int)
         self.expect(price).to.have.an_item("price").that.is_.a_number()
+
+    def test_create_order(self):
+        order = {
+            "operationCode": "O",
+            "customer": "@anonymous_customer",
+            "description": "commande test",
+            "items": [{"code": "P0002", "quantity": 3}],
+        }
+
+        response = self.post("operations/sale", order)
+        self.expect(response.status_code).to.be.equal_to(200)

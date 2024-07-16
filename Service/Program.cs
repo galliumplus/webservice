@@ -193,7 +193,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
-ServerInfo.Current.SetVersion(1, 1, 0, "beta");
+ServerInfo.Current.SetVersion(1, 1, 0, "alpha");
 Console.WriteLine(ServerInfo.Current);
 
 #if !FAKE_DB
