@@ -30,7 +30,7 @@ using GalliumPlus.WebApi.Email.MailKit;
 
 #endregion
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 #region Configuration générale et options
 
@@ -51,8 +51,7 @@ builder.Services
         options.SuppressMapClientErrors = true;
     });
 
-GalliumOptions galliumOptions =
-    builder.Configuration.GetSection("Gallium").Get<GalliumOptions>() ?? new GalliumOptions();
+GalliumOptions galliumOptions = builder.Configuration.GetSection("Gallium").Get<GalliumOptions>() ?? new GalliumOptions();
 builder.Services.AddSingleton(galliumOptions);
 
 builder.Services.AddServerInfo();
@@ -62,7 +61,7 @@ builder.Services.AddServerInfo();
 #region Base de données (Fake & MariaDB)
 
 #if FAKE_DB
-// ajout en singleton, sinon les données ne sont pas persist?es d'une requête à l'autre
+// ajout en singleton, sinon les données ne sont pas gardées d'une requête à l'autre
 builder.Services.AddSingleton<ICategoryDao, CategoryDao>();
 builder.Services.AddSingleton<IClientDao, ClientDao>();
 builder.Services.AddSingleton<IHistoryDao, HistoryDao>();
@@ -94,9 +93,15 @@ builder.Services.AddFluentMigratorCore()
 
 #region Planification (Quartz)
 
-builder.Services.AddQuartz(quartz => { quartz.AddJobs(); });
+builder.Services.AddQuartz(quartz =>
+{
+    quartz.AddJobs();
+});
 
-builder.Services.AddQuartzHostedService(quartz => { quartz.WaitForJobsToComplete = true; });
+builder.Services.AddQuartzHostedService(quartz =>
+{
+    quartz.WaitForJobsToComplete = true;
+});
 
 #endregion
 
@@ -104,12 +109,12 @@ builder.Services.AddQuartzHostedService(quartz => { quartz.WaitForJobsToComplete
 
 builder.Services
     .AddSingleton<IEmailTemplateLoader, CachedLocalEmailTemplateLoader>(
-        services => new CachedLocalEmailTemplateLoader(Path.Join(AppDomain.CurrentDomain.BaseDirectory, "templates"))
+        _ => new CachedLocalEmailTemplateLoader(Path.Join(AppDomain.CurrentDomain.BaseDirectory, "templates"))
     )
 #if FAKE_EMAIL
-       .AddSingleton<IEmailSender, FakeEmailSender>(services => new FakeEmailSender());
+    .AddSingleton<IEmailSender, FakeEmailSender>(services => new FakeEmailSender());
 #else
-    .AddSingleton<IEmailSender, EmailSender>(services => new EmailSender(galliumOptions.MailKit));
+    .AddSingleton<IEmailSender, EmailSender>(_ => new EmailSender(galliumOptions.MailKit));
 #endif
 
 #endregion
@@ -167,7 +172,10 @@ builder.WebHost.ConfigureKestrel(opt =>
 
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(policy => { policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod(); });
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+    });
 });
 
 #endregion
@@ -182,7 +190,7 @@ builder.Services
 
 #endregion
 
-var app = builder.Build();
+WebApplication app = builder.Build();
 
 if (galliumOptions.ForceHttps) app.UseHttpsRedirection();
 app.UseServerInfo();
@@ -191,7 +199,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
-ServerInfo.Current.SetVersion(1, 0, 3, "beta");
+ServerInfo.Current.SetVersion(1, 0, 5, "beta");
 Console.WriteLine(ServerInfo.Current);
 
 #if !FAKE_DB

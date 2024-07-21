@@ -5,7 +5,7 @@ namespace GalliumPlus.WebApi.Data.MariaDb.Migrations.v1_00_00;
 
 // ReSharper disable once InconsistentNaming
 // ReSharper disable once UnusedType.Global
-[Migration(2024_07_03_019)]
+[Migration(1_00_00_019)]
 public class CreateForeignKey_HistoryAction_HistoryUser_actor : Migration
 {
 	public override void Up()

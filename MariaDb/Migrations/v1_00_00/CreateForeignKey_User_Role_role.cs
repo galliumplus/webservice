@@ -5,7 +5,7 @@ namespace GalliumPlus.WebApi.Data.MariaDb.Migrations.v1_00_00;
 
 // ReSharper disable once InconsistentNaming
 // ReSharper disable once UnusedType.Global
-[Migration(2024_07_03_012)]
+[Migration(1_00_00_012)]
 public class CreateForeignKey_User_Role_role : Migration
 {
     public override void Up()
