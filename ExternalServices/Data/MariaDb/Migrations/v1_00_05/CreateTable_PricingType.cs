@@ -11,7 +11,8 @@ public class CreateTable_PricingType : Migration
     {
         this.Create.Table("PricingType")
             .WithColumn("id").AsInt64().PrimaryKey().Identity()
-            .WithColumn("name").AsString(50).NotNullable()
+            .WithColumn("shortName").AsString(16).NotNullable()
+            .WithColumn("longName").AsString(50).NotNullable()
             .WithColumn("requiresMembership").AsBoolean().NotNullable()
             .WithColumn("applicableDuring").AsInt64()
             .ForeignKey("FK_PricingType_Event_applicableDuring", "Event", "id");

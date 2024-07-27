@@ -14,7 +14,7 @@ public class CreateTable_Price : Migration
             .WithColumn("price").AsDecimal(6, 2).NotNullable()
             .WithColumn("isDiscount").AsInt16().NotNullable()
             .WithColumn("effectiveDate").AsDate().NotNullable()
-            .WithColumn("expirationDate").AsDate().NotNullable()
+            .WithColumn("expirationDate").AsDate().Nullable()
             .WithColumn("expiresUponExhaustion").AsBoolean().NotNullable()
             .WithColumn("type").AsInt64().ForeignKey("FK_Price_PricingType_type", "PricingType", "id")
             .WithColumn("item").AsInt64().ForeignKey("FK_Price_Item_item", "Item", "id");

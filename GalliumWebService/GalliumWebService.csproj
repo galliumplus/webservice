@@ -25,8 +25,7 @@
 	</ItemGroup>
 
 	<ItemGroup Condition="($(Configuration) == 'Debug') Or ($(Configuration) == 'Release')">
-		<ProjectReference Include="..\MariaDb\MariaDb.csproj" />
-		<ProjectReference Include="..\MailKitClient\MailKitClient.csproj" />
+		<ProjectReference Include="..\ExternalServices\ExternalServices.csproj" />
 	</ItemGroup>
 
 	<Target Name="Date" BeforeTargets="BeforeBuild">
