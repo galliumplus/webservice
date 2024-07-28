@@ -41,7 +41,6 @@ namespace GalliumPlus.WebApi.Data.MariaDb.Implementations
                   .Value("secret", sso.Secret)
                   .Value("redirectUrl", sso.RedirectUrl)
                   .Value("logoUrl", sso.LogoUrl)
-                  .Value("usesApi", sso.UsesApi)
                   .Apply();
             }
 
@@ -86,7 +85,7 @@ namespace GalliumPlus.WebApi.Data.MariaDb.Implementations
                     row.GetString("redirectUrl"),
                     (Permissions)row.GetInt32("granted"),
                     (Permissions)row.GetInt32("revoked"),
-                    row.GetBoolean("usesApi"),
+                    false,
                     row.IsDBNull("logoUrl") ? null : row.GetString("logoUrl")
                 );
             }
@@ -109,12 +108,12 @@ namespace GalliumPlus.WebApi.Data.MariaDb.Implementations
             Schema db = new(connection);
 
             var clientTable = db.Table("Client");
-            var botClientTable = db.Table("BotClient");
+            var appAccessTable = db.Table("AppAccess");
 
             using var result = db.Select("apiKey", "name", "granted", "isEnabled", "secret", "salt")
-                                 .And(botClientTable.Column("id"))
+                                 .And(appAccessTable.Column("id"))
                                  .From(clientTable)
-                                 .Join(botClientTable.Column("id"), clientTable.Column("id"))
+                                 .Join(appAccessTable.Column("id"), clientTable.Column("id"))
                                  .Where(db.Column("apiKey") == apiKey)
                                  .Fetch<MySqlDataReader>();
 
@@ -142,16 +141,16 @@ namespace GalliumPlus.WebApi.Data.MariaDb.Implementations
             Schema db = new(connection);
 
             var clientTable = db.Table("Client");
-            var botClientTable = db.Table("BotClient");
-            var ssoClientTable = db.Table("SsoClient");
+            var appAccessTable = db.Table("AppAccess");
+            var sameSignOnTable = db.Table("SameSignOn");
 
-            using var result = db.Select("apiKey", "name", "granted", "revoked", "isEnabled", "salt", "redirectUrl", "logoUrl", "usesApi")
+            using var result = db.Select("apiKey", "name", "granted", "revoked", "isEnabled", "salt", "redirectUrl", "logoUrl")
                                  .And(clientTable.Column("id").As("id"))
-                                 .And(botClientTable.Column("id").As("botId"), botClientTable.Column("secret").As("botSecret"))
-                                 .And(ssoClientTable.Column("id").As("ssoId"), ssoClientTable.Column("secret").As("ssoSecret"))
+                                 .And(appAccessTable.Column("id").As("botId"), appAccessTable.Column("secret").As("botSecret"))
+                                 .And(sameSignOnTable.Column("id").As("ssoId"), sameSignOnTable.Column("secret").As("ssoSecret"))
                                  .From(clientTable)
-                                 .LeftJoin(botClientTable.Column("id"), clientTable.Column("id"))
-                                 .LeftJoin(ssoClientTable.Column("id"), clientTable.Column("id"))
+                                 .LeftJoin(appAccessTable.Column("id"), clientTable.Column("id"))
+                                 .LeftJoin(sameSignOnTable.Column("id"), clientTable.Column("id"))
                                  .Where(db.Column("apiKey") == apiKey)
                                  .Fetch<MySqlDataReader>();
 
@@ -169,16 +168,16 @@ namespace GalliumPlus.WebApi.Data.MariaDb.Implementations
             Schema db = new(connection);
 
             var clientTable = db.Table("Client");
-            var botClientTable = db.Table("BotClient");
-            var ssoClientTable = db.Table("SsoClient");
+            var appAccessTable = db.Table("AppAccess");
+            var sameSignOnTable = db.Table("SameSignOn");
 
-            using var results = db.Select("apiKey", "name", "granted", "revoked", "isEnabled", "salt", "redirectUrl", "logoUrl", "usesApi")
+            using var results = db.Select("apiKey", "name", "granted", "revoked", "isEnabled", "salt", "redirectUrl", "logoUrl")
                                  .And(clientTable.Column("id").As("id"))
-                                 .And(botClientTable.Column("id").As("botId"), botClientTable.Column("secret").As("botSecret"))
-                                 .And(ssoClientTable.Column("id").As("ssoId"), ssoClientTable.Column("secret").As("ssoSecret"))
+                                 .And(appAccessTable.Column("id").As("botId"), appAccessTable.Column("secret").As("botSecret"))
+                                 .And(sameSignOnTable.Column("id").As("ssoId"), sameSignOnTable.Column("secret").As("ssoSecret"))
                                  .From(clientTable)
-                                 .LeftJoin(botClientTable.Column("id"), clientTable.Column("id"))
-                                 .LeftJoin(ssoClientTable.Column("id"), clientTable.Column("id"))
+                                 .LeftJoin(appAccessTable.Column("id"), clientTable.Column("id"))
+                                 .LeftJoin(sameSignOnTable.Column("id"), clientTable.Column("id"))
                                  .Fetch<MySqlDataReader>();
 
             return this.ReadResults(results, Hydrate);
@@ -195,16 +194,16 @@ namespace GalliumPlus.WebApi.Data.MariaDb.Implementations
             Schema db = new(connection);
 
             var clientTable = db.Table("Client");
-            var botClientTable = db.Table("BotClient");
-            var ssoClientTable = db.Table("SsoClient");
+            var appAccessTable = db.Table("AppAccess");
+            var sameSignOnTable = db.Table("SameSignOn");
 
-            using var result = db.Select("apiKey", "name", "granted", "revoked", "isEnabled", "salt", "redirectUrl", "logoUrl", "usesApi")
+            using var result = db.Select("apiKey", "name", "granted", "revoked", "isEnabled", "salt", "redirectUrl", "logoUrl")
                                  .And(clientTable.Column("id").As("id"))
-                                 .And(botClientTable.Column("id").As("botId"), botClientTable.Column("secret").As("botSecret"))
-                                 .And(ssoClientTable.Column("id").As("ssoId"), ssoClientTable.Column("secret").As("ssoSecret"))
+                                 .And(appAccessTable.Column("id").As("botId"), appAccessTable.Column("secret").As("botSecret"))
+                                 .And(sameSignOnTable.Column("id").As("ssoId"), sameSignOnTable.Column("secret").As("ssoSecret"))
                                  .From(clientTable)
-                                 .LeftJoin(botClientTable.Column("id"), clientTable.Column("id"))
-                                 .LeftJoin(ssoClientTable.Column("id"), clientTable.Column("id"))
+                                 .LeftJoin(appAccessTable.Column("id"), clientTable.Column("id"))
+                                 .LeftJoin(sameSignOnTable.Column("id"), clientTable.Column("id"))
                                  .Where(clientTable.Column("id") == id)
                                  .Fetch<MySqlDataReader>();
 
@@ -238,7 +237,6 @@ namespace GalliumPlus.WebApi.Data.MariaDb.Implementations
                             .Set("secret", sso.Secret)
                             .Set("redirectUrl", sso.RedirectUrl)
                             .Set("logoUrl", sso.LogoUrl)
-                            .Set("usesApi", sso.UsesApi)
                             .Where(db.Column("id") == key)
                             .Apply();
 

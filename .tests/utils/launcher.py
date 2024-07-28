@@ -37,6 +37,12 @@ options specific to gallium tests:
         else:
             timeout = 10
 
+        if "--no-restore" in sys.argv:
+            sys.argv.remove("--no-restore")
+            no_restore = True
+        else:
+            no_restore = False
+
         success = False
 
         # free port
@@ -52,9 +58,10 @@ options specific to gallium tests:
         # start test server
         if auto:
             print("Starting server in TEST mode...")
-            server = subprocess.Popen(
-                ["dotnet", "run", "--project", "GalliumWebService", "-c", "Test"]
-            )
+            args = ["dotnet", "run", "--project", "GalliumWebService", "-c", "Test"]
+            if no_restore:
+                args.append("--no-restore")
+            server = subprocess.Popen(args)
         else:
             print("Waiting for server to start...")
 

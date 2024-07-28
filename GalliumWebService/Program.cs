@@ -112,7 +112,7 @@ builder.Services
         _ => new CachedLocalEmailTemplateLoader(Path.Join(AppDomain.CurrentDomain.BaseDirectory, "templates"))
     )
 #if FAKE_EMAIL
-    .AddSingleton<IEmailSender, FakeEmailSender>(services => new FakeEmailSender());
+    .AddSingleton<IEmailSender, FakeEmailSender>(_ => new FakeEmailSender());
 #else
     .AddSingleton<IEmailSender, EmailSender>(_ => new EmailSender(galliumOptions.MailKit));
 #endif

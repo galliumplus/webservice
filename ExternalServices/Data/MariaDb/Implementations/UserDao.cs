@@ -31,6 +31,9 @@ namespace GalliumPlus.WebApi.Data.MariaDb.Implementations
                   .Value("deposit", item.Deposit)
                   .Value("isMember", item.IsMember)
                   .Value("registration", DateTime.UtcNow)
+                  .Value("deleted", false)
+                  .Value("event", 1)
+                  .Value("membershipEnd", new DateTime(2024, 07, 28))
                   .Apply();
             }
             catch (MySqlException error)
