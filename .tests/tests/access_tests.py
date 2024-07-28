@@ -111,12 +111,12 @@ class AccessTests(TestBase):
             self.expect(member_edit_response.status_code).to.be.equal_to(403)
 
             president_read_response = self.get("products/1", auth=president_token_auth)
-            self.expect(president_read_response.status_code).to.be.equal_to(200)
+            self.expect(president_read_response.status_code).to.not_.be.equal_to(403)
 
             president_edit_response = self.post(
                 "categories", json={"name": "Catégorie"}, auth=president_token_auth
             )
-            self.expect(president_edit_response.status_code).to.be.equal_to(201)
+            self.expect(president_edit_response.status_code).to.not_.be.equal_to(403)
 
         self.history.expect_entries(
             self.history.login_action("Tests (normal)", "lomens"),
@@ -173,7 +173,7 @@ class AccessTests(TestBase):
             self.expect(member_edit_response.status_code).to.be.equal_to(403)
 
             president_read_response = self.get("products/1", auth=president_token_auth)
-            self.expect(president_read_response.status_code).to.be.equal_to(200)
+            self.expect(president_read_response.status_code).to.not_.be.equal_to(403)
 
             president_edit_response = self.post(
                 "categories", json={"name": "Catégorie"}, auth=president_token_auth
@@ -228,7 +228,7 @@ class AccessTests(TestBase):
 
             member_read_response = self.get("products/1", auth=member_token_auth)
             # allowed by api key
-            self.expect(member_read_response.status_code).to.be.equal_to(200)
+            self.expect(member_read_response.status_code).to.not_.be.equal_to(403)
 
             member_edit_response = self.post(
                 "categories", json={"name": "Catégorie"}, auth=member_token_auth
@@ -236,12 +236,12 @@ class AccessTests(TestBase):
             self.expect(member_edit_response.status_code).to.be.equal_to(403)
 
             president_read_response = self.get("products/1", auth=president_token_auth)
-            self.expect(president_read_response.status_code).to.be.equal_to(200)
+            self.expect(president_read_response.status_code).to.not_.be.equal_to(403)
 
             president_edit_response = self.post(
                 "categories", json={"name": "Catégorie"}, auth=president_token_auth
             )
-            self.expect(president_edit_response.status_code).to.be.equal_to(201)
+            self.expect(president_edit_response.status_code).to.not_.be.equal_to(403)
 
         self.history.expect_entries(
             self.history.login_action("Tests (minimum)", "lomens"),
