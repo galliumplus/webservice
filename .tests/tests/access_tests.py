@@ -248,3 +248,33 @@ class AccessTests(TestBase):
             self.history.login_action("Tests (minimum)", "eb069420"),
             self.history.category_added_action("Catégorie", "eb069420"),
         )
+
+    def test_login_app(self):
+        with self.history.watch():
+            app_auth = SecretKeyAuth("motdepasse")
+            key = "test-api-key-bot"
+
+            response = self.post("connect", auth=app_auth, headers={"X-Api-Key": key})
+            self.expect(response.status_code).to.be.equal_to(200)
+
+            session = response.json()
+            (
+                self.expect(session)
+                .to.have.an_item("permissions")
+                .of.type(int)
+                .that._is.equal_to(1)
+            )
+            token = self.expect(session).to.have.an_item("token").value
+            token_auth = BearerAuth(token)
+
+            read_response = self.get("products/1", auth=token_auth)
+            self.expect(read_response.status_code).to.be.equal_to(200)
+
+            edit_response = self.post(
+                "categories", json={"name": "Catégorie"}, auth=token_auth
+            )
+            self.expect(edit_response.status_code).to.be.equal_to(403)
+
+        self.history.expect_entries(
+            self.history.app_login_action("Tests (bot)"),
+        )

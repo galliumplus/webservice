@@ -49,6 +49,13 @@ class HistoryTestHelpers:
             "actor": user_id,
         }
 
+    def app_login_action(self, app_name):
+        return {
+            "actionKind": "LogIn",
+            "text": f"Connexion de {app_name}",
+            "actor": None,
+        }
+
     def category_added_action(self, category_name, user_id):
         return {
             "actionKind": "EditProductsOrCategories",

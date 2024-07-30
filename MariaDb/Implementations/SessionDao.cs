@@ -1,4 +1,5 @@
-﻿using GalliumPlus.WebApi.Core.Data;
+﻿using System.Data;
+using GalliumPlus.WebApi.Core.Data;
 using GalliumPlus.WebApi.Core.Exceptions;
 using GalliumPlus.WebApi.Core.Users;
 using KiwiQuery;
@@ -64,7 +65,8 @@ namespace GalliumPlus.WebApi.Data.MariaDb.Implementations
             Schema db = new(connection);
 
             DateTime lastUse, expiration;
-            int userId, clientId;
+            int? userId;
+            int clientId;
             using (var result = db.Select("lastUse", "expiration", "user", "client")
                                   .From("Session").Where(db.Column("token") == token)
                                   .Fetch<MySqlDataReader>())
@@ -76,13 +78,13 @@ namespace GalliumPlus.WebApi.Data.MariaDb.Implementations
 
                 lastUse = result.GetDateTime("lastUse");
                 expiration = result.GetDateTime("expiration");
-                userId = result.GetInt32("user");
+                userId = result.IsDBNull("user") ? null : result.GetInt32("user");
                 clientId = result.GetInt32("client");
             }
 
             return new Session(
                 token, lastUse, expiration,
-                UserDao.Read(userId, connection),
+                userId.HasValue ? UserDao.Read(userId.Value, connection) : null,
                 ClientDao.Read(clientId, connection)
             );
         }
