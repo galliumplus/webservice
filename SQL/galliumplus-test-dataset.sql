@@ -13,7 +13,7 @@ INSERT INTO `Category` VALUES
 INSERT INTO `Item` VALUES
 	(1, 'Coca Cherry', 0, 0, 27, 1, NULL, NULL, 0),
 	(2, 'KitKat',      0, 0, 14, 2, NULL, NULL, 0),  
-	(3, 'Pablo',       0, 1,  1, 2, NULL, NULL, 0);
+	(3, 'Pablo',       0, 1,  1, 3, NULL, NULL, 0);
 
 INSERT INTO `PricingType` VALUES
     (1, 'NON ADHÉRENT', 'Tarif test non-adhérent', 0, 1),

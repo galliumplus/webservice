@@ -7,15 +7,18 @@ namespace GalliumPlus.WebApi.Middleware.ErrorHandling
     /// <summary>
     /// Gestion des erreurs propres au code métier.
     /// </summary>
-    public class ExceptionsFilter : IExceptionFilter, IOrderedFilter
+    public class ExceptionsFilter(ILoggerFactory loggerFactory) : IExceptionFilter, IOrderedFilter
     {
         // priorité haute, on veut qu'il s'applique juste après le contrôleur
         public int Order => 1_000_000;
+        
+        private ILogger<ExceptionsFilter> logger = loggerFactory.CreateLogger<ExceptionsFilter>();
 
         public void OnException(ExceptionContext context)
         {
             if (context.Exception is PermissionDeniedException permissionDenied)
             {
+                this.logger.LogDebug($"PermissionDeniedException capturée à la sortie de {context.HttpContext.Request.Method} {context.HttpContext.Request.Path}");
                 string messageAction = context.HttpContext.Request.Method switch
                 {
                     "GET" or "HEAD" => "d'accéder à cette ressource",
@@ -32,6 +35,7 @@ namespace GalliumPlus.WebApi.Middleware.ErrorHandling
             }
             else if (context.Exception is GalliumException galliumException)
             {
+                this.logger.LogDebug($"{galliumException.GetType().Name} capturée à la sortie de {context.HttpContext.Request.Method} {context.HttpContext.Request.Path}");
                 context.Result = new ErrorResult(
                     galliumException,
                     ErrorCodeToStatusCode(galliumException.ErrorCode)

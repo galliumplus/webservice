@@ -17,15 +17,47 @@ namespace GalliumPlus.WebApi.Data.MariaDb.Implementations
             using var connection = this.Connect();
             Schema db = new(connection);
 
-            item.Id = db.InsertInto("Product")
+            item.Id = db.InsertInto("Item")
                         .Value("name", item.Name)
-                        .Value("stock", item.Stock)
-                        .Value("nonMemberPrice", item.NonMemberPrice)
-                        .Value("memberPrice", item.MemberPrice)
-                        .Value("availability", (int)item.Availability)
+                        .Value("isBundle", false)
+                        .Value("isAvailable", (int)item.Availability)
+                        .Value("currentStock", item.Stock)
                         .Value("category", item.Category.Id)
+                        .Value("group", (object?)null)
+                        .Value("picture", (object?)null)
+                        .Value("deleted", false)
                         .Apply();
 
+            db.InsertInto("Price")
+                .Value("price", item.NonMemberPrice)
+                .Value("isDiscount", false)
+                .Value("effectiveDate", DateOnly.FromDateTime(DateTime.Now))
+                .Value("expirationDate", (object?)null)
+                .Value("expiresUponExhaustion", false)
+                .Value("type",
+                    db.Select("id").From("PricingType").Where(SQL.AND(
+                        db.Column("applicableDuring") == 1,
+                        db.Column("requiresMembership") == 0
+                    ))
+                )
+                .Value("item", item.Id)
+                .Apply();
+            
+            db.InsertInto("Price")
+                .Value("price", item.MemberPrice)
+                .Value("isDiscount", false)
+                .Value("effectiveDate", DateOnly.FromDateTime(DateTime.Now))
+                .Value("expirationDate", (object?)null)
+                .Value("expiresUponExhaustion", false)
+                .Value("type",
+                    db.Select("id").From("PricingType").Where(SQL.AND(
+                        db.Column("applicableDuring") == 1,
+                        db.Column("requiresMembership") == 1
+                    ))
+                )
+                .Value("item", item.Id)
+                .Apply();
+            
             return item;
         }
 
@@ -34,7 +66,7 @@ namespace GalliumPlus.WebApi.Data.MariaDb.Implementations
             using var connection = this.Connect();
             Schema db = new(connection);
 
-            bool ok = db.DeleteFrom("Product").Where(db.Column("id") == key).Apply();
+            bool ok = db.Update("Item").Set("deleted", true).Where(db.Column("id") == key).Apply();
 
             if (!ok) throw new ItemNotFoundException("Ce produit");
         }
@@ -54,21 +86,32 @@ namespace GalliumPlus.WebApi.Data.MariaDb.Implementations
                 )
             );
         }
-
+        
         public IEnumerable<Product> Read()
         {
             using var connection = this.Connect();
-            Schema db = new(connection);
 
-            var productTable = db.Table("Product");
-            var categoryTable = db.Table("Category");
-            using var results = db.Select(productTable.Column("id").As("productId"), productTable.Column("name").As("productName"))
-                                  .And(categoryTable.Column("id").As("categoryId"), categoryTable.Column("name").As("categoryName"))
-                                  .And("stock", "nonMemberPrice", "memberPrice", "availability")
-                                  .From(productTable)
-                                  .Join(categoryTable.Column("id"), productTable.Column("category"))
-                                  .Fetch<MySqlDataReader>();
-
+            var cmd = connection.CreateCommand();
+            cmd.CommandText = @"
+                WITH pv AS (
+                  SELECT p.price, p.item, pt.requiresMembership FROM Price p JOIN PricingType pt ON p.type = pt.id AND pt.applicableDuring = 1
+                )
+                SELECT i.id AS productId
+                     , i.name AS productName
+                     , c.id AS categoryId
+                     , c.name AS categoryName
+                     , i.currentStock AS stock
+                     , i.isAvailable AS availability
+                     , nmp.price AS nonMemberPrice
+                     , mp.price AS memberPrice
+                FROM `Item` i
+                JOIN Category c ON i.category = c.id
+                JOIN pv nmp ON nmp.item = i.id AND nmp.requiresMembership = 0
+                JOIN pv mp ON mp.item = i.id AND mp.requiresMembership = 1
+                WHERE i.deleted = 0
+            ";
+            using var results = cmd.ExecuteReader();
+            
             return this.ReadResults(results, Hydrate);
         }
 
@@ -77,15 +120,27 @@ namespace GalliumPlus.WebApi.Data.MariaDb.Implementations
             using var connection = this.Connect();
             Schema db = new(connection);
 
-            var productTable = db.Table("Product");
-            var categoryTable = db.Table("Category");
-            using var result = db.Select(productTable.Column("id").As("productId"), productTable.Column("name").As("productName"))
-                                 .And(categoryTable.Column("id").As("categoryId"), categoryTable.Column("name").As("categoryName"))
-                                 .And("stock", "nonMemberPrice", "memberPrice", "availability")
-                                 .From(productTable)
-                                 .Join(categoryTable.Column("id"), productTable.Column("category"))
-                                 .Where(productTable.Column("id") == key)
-                                 .Fetch<MySqlDataReader>();
+            var cmd = connection.CreateCommand();
+            cmd.CommandText = @"
+                WITH pv AS (
+                  SELECT p.price, p.item, pt.requiresMembership FROM Price p JOIN PricingType pt ON p.type = pt.id AND pt.applicableDuring = 1
+                )
+                SELECT i.id AS productId
+                     , i.name AS productName
+                     , c.id AS categoryId
+                     , c.name AS categoryName
+                     , i.currentStock AS stock
+                     , i.isAvailable AS availability
+                     , nmp.price AS nonMemberPrice
+                     , mp.price AS memberPrice
+                FROM `Item` i
+                JOIN Category c ON i.category = c.id
+                JOIN pv nmp ON nmp.item = i.id AND nmp.requiresMembership = 0
+                JOIN pv mp ON mp.item = i.id AND mp.requiresMembership = 1
+                WHERE i.deleted = 0 AND i.id = @key
+            ";
+            cmd.Parameters.AddWithValue("key", key);
+            using var result = cmd.ExecuteReader();
 
             if (!result.Read())
             {
@@ -100,15 +155,42 @@ namespace GalliumPlus.WebApi.Data.MariaDb.Implementations
             using var connection = this.Connect();
             Schema db = new(connection);
 
-            bool ok = db.Update("Product")
+            bool ok = db.Update("Item")
                         .Set("name", item.Name)
-                        .Set("stock", item.Stock)
-                        .Set("nonMemberPrice", item.NonMemberPrice)
-                        .Set("memberPrice", item.MemberPrice)
-                        .Set("availability", item.Availability)
+                        .Set("currentStock", item.Stock)
+                        .Set("isAvailable", item.Availability)
                         .Set("category", item.Category.Id)
                         .Where(db.Column("id") == key)
                         .Apply();
+
+            if (ok)
+            {
+                var cmd = connection.CreateCommand();
+                cmd.CommandText = @"
+                    UPDATE Price SET price = @price WHERE TYPE IN
+                        (  SELECT id FROM PricingType WHERE 
+                           applicableDuring = 1 AND
+                           requiresMembership <> 1
+                        ) AND
+                        item = @item
+                ";
+                cmd.Parameters.AddWithValue("price", item.NonMemberPrice);
+                cmd.Parameters.AddWithValue("item", key);
+                cmd.ExecuteNonQuery();
+                
+                cmd = connection.CreateCommand();
+                cmd.CommandText = @"
+                    UPDATE Price SET price = @price WHERE TYPE IN
+                        (  SELECT id FROM PricingType WHERE 
+                           applicableDuring = 1 AND
+                           requiresMembership = 1
+                        ) AND
+                        item = @item
+                ";
+                cmd.Parameters.AddWithValue("price", item.MemberPrice);
+                cmd.Parameters.AddWithValue("item", key);
+                cmd.ExecuteNonQuery();
+            }
             
             if (!ok) throw new ItemNotFoundException("Ce produit");
 
@@ -121,7 +203,7 @@ namespace GalliumPlus.WebApi.Data.MariaDb.Implementations
             using var connection = this.Connect();
             Schema db = new(connection);
 
-            bool ok = db.Update("Product").Set("stock", db.Column("stock") - amount).Where(db.Column("id") == id).Apply();
+            bool ok = db.Update("Item").Set("currentStock", db.Column("currentStock") - amount).Where(db.Column("id") == id).Apply();
 
             if (!ok) throw new ItemNotFoundException("Ce produit");
         }
