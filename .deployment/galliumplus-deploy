@@ -23,12 +23,12 @@ ssh_client.connect(
 
 print("Recherche de fichiers à téléverser...")
 
-bin_path = Path("./Service/bin/Release/net8.0")
+bin_path = Path("./GalliumWebService/bin/Release/net8.0")
 
 files_to_upload = [
-    bin_path / "Service",
-    bin_path / "Service.deps.json",
-    bin_path / "Service.runtimeconfig.json",
+    bin_path / "GalliumWebService",
+    bin_path / "GalliumWebService.deps.json",
+    bin_path / "GalliumWebService.runtimeconfig.json",
 ]
 files_to_upload += bin_path.glob("*.dll")
 files_to_upload += bin_path.glob("runtimes/linux-x64/native/*")
@@ -51,7 +51,7 @@ print("", *(file for file, _ in files_to_upload), sep="\n   ")
 
 print("Recherche de fichiers existants sur le serveur...")
 stdin, stdout, stderr = ssh_client.exec_command(
-    "for file in Service Service.deps.json Service.runtimeconfig.json *.dll runtimes/linux-x64/native/* */*.resources.dll; "
+    "for file in GalliumWebService GalliumWebService.deps.json GalliumWebService.runtimeconfig.json *.dll runtimes/linux-x64/native/* */*.resources.dll; "
     'do if [ -f $file ]; then sha256sum "$file"; fi; done;'
 )
 
@@ -106,7 +106,7 @@ for file_to_remove in files_to_remove:
     ftp_client.remove(str(remote_path / file_to_remove))
 
 ftp_client.close()
-stdin, stdout, stderr = ssh_client.exec_command("chmod a+x Service")
+stdin, stdout, stderr = ssh_client.exec_command("chmod a+x GalliumWebService")
 print(*stdout.readlines(), *stderr.readlines())
 print("OK")
 
