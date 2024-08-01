@@ -25,9 +25,9 @@ INSERT INTO `Client` VALUES
 	(1, 'test-api-key-normal', 'Tests (normal)', 0, 0, 1),
 	(2, 'test-api-key-restric', 'Tests (restricted)', 0, 374, 1),
 	(3, 'test-api-key-minimum', 'Tests (minimum)', 1, 0, 1),
-	(4, 'test-api-key-bot', 'Tests (bot)', 1, 0, 1);
+	(4, 'test-api-key-bot', 'Tests (bot)', 0, 0, 1);
 
-INSERT INTO `AppAccess`  VALUES (4, 0x6ff1904d29b818007ccbf05954bc1cd50f70148e41265cb823d54e2e3312b095, 'sel');
+INSERT INTO `BotClient`(`id`) VALUES (4);
 
 INSERT INTO `Role` VALUES
 	(1, 'Adhérent', 0),

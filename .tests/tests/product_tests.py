@@ -170,7 +170,7 @@ class ProductTests(TestBase):
 
         # Test avec un produit valide
 
-        product.update(Stock=399, NonMemberPrice=0.20, MemberPrice=0.10)
+        product.update(stock=399, nonMemberPrice=0.20, memberPrice=0.10)
 
         response = self.put(location, product)
         self.expect(response.status_code).to.be.equal_to(200)
@@ -185,7 +185,7 @@ class ProductTests(TestBase):
         # categorie inexistant
 
         invalid_product = product.copy()
-        invalid_product.update(Category=12356)
+        invalid_product.update(category=12356)
         response = self.put(location, invalid_product)
         self.expect(response.status_code).to.be.equal_to(400)
         self.expect(response.json()).to.have.an_item("code").that._is.equal_to(

@@ -22,7 +22,11 @@ class TestBase(TestCase, ABC):
 
     @classmethod
     def average_latency(cls):
-        return cls.__total_time / cls.__request_count
+        return (
+            f"{cls.__total_time / cls.__request_count*1000:.3f}"
+            if cls.__request_count > 0
+            else "--"
+        )
 
     def setUp(self):
         requests.packages.urllib3.disable_warnings(
@@ -73,14 +77,14 @@ class TestBase(TestCase, ABC):
         return self.__send(
             requests.head,
             self.prepend_base_url(url),
-            **(self.requests_options | options)
+            **(self.requests_options | options),
         )
 
     def get(self, url, **options):
         return self.__send(
             requests.get,
             self.prepend_base_url(url),
-            **(self.requests_options | options)
+            **(self.requests_options | options),
         )
 
     def post(self, url, json=None, **options):
@@ -88,7 +92,7 @@ class TestBase(TestCase, ABC):
             requests.post,
             self.prepend_base_url(url),
             json=json,
-            **(self.requests_options | options)
+            **(self.requests_options | options),
         )
 
     def put(self, url, json=None, **options):
@@ -96,7 +100,7 @@ class TestBase(TestCase, ABC):
             requests.put,
             self.prepend_base_url(url),
             json=json,
-            **(self.requests_options | options)
+            **(self.requests_options | options),
         )
 
     def patch(self, url, json=None, **options):
@@ -104,14 +108,14 @@ class TestBase(TestCase, ABC):
             requests.patch,
             self.prepend_base_url(url),
             json=json,
-            **(self.requests_options | options)
+            **(self.requests_options | options),
         )
 
     def delete(self, url, **options):
         return self.__send(
             requests.delete,
             self.prepend_base_url(url),
-            **(self.requests_options | options)
+            **(self.requests_options | options),
         )
 
     def expect(self, value):

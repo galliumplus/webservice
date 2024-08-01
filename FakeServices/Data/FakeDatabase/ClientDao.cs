@@ -47,14 +47,15 @@ namespace GalliumPlus.WebApi.Data.FakeDatabase
                 )
             );
 
+            PasswordInformation botKey = PasswordInformation.FromPassword("motdepasse"); 
             this.Create(
                 new BotClient(
                     id: 0,
                     name: "Tests (bot)",
                     apiKey: "test-api-key-bot",
                     isEnabled: true,
-                    permissions: Permissions.NONE,
-                    secret: new OneTimeSecret()
+                    permissions: Permissions.SEE_PRODUCTS_AND_CATEGORIES,
+                    secret: new OneTimeSecret(botKey.Hash, botKey.Salt)
                 )
             );
         }
