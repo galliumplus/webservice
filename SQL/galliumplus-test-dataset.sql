@@ -1,47 +1,33 @@
 
-DELETE FROM `Price`;
-DELETE FROM `PricingType`;
 DELETE FROM `Product`;
-DELETE FROM `Item`;
 DELETE FROM `Category`;
 
 INSERT INTO `Category` VALUES
-	(1, 'Boissons', 1),
-	(2, 'Snacks',   1),
-	(3, 'Pablo',    1);
+	(1, 'Boissons'),
+	(2, 'Snacks'),
+	(3, 'Pablo');
 
-INSERT INTO `Item` VALUES
-	(1, 'Coca Cherry', 0, 0, 27, 1, NULL, NULL, 0),
-	(2, 'KitKat',      0, 0, 14, 2, NULL, NULL, 0),  
-	(3, 'Pablo',       0, 1,  1, 3, NULL, NULL, 0);
+INSERT INTO `Product` VALUES
+	(1, 'Coca Cherry', 27, 1.00, 0.80, 0, 1),
+	(2, 'KitKat', 14, 0.80, 0.60, 0, 2),
+	(3, 'Pablo', 1, 999.99, 500.00, 1, 3);
 
-INSERT INTO `PricingType` VALUES
-    (1, 'NON ADHÉRENT', 'Tarif test non-adhérent', 0, 1),
-    (2, 'ADHÉRENT',     'Tarif test adhérent',     1, 1);
-	
-INSERT INTO `Price` VALUES
-    (1,   1.00, 0, '2024-01-01', NULL, 0, 1, 1),
-    (2,   0.80, 0, '2024-01-01', NULL, 0, 2, 1),
-    (3,   0.80, 0, '2024-01-01', NULL, 0, 1, 2),
-    (4,   0.60, 0, '2024-01-01', NULL, 0, 2, 2),
-    (5, 999.99, 0, '2024-01-01', NULL, 0, 1, 3),
-    (6, 500.00, 0, '2024-01-01', NULL, 0, 2, 3);
-   
+
 DELETE FROM `User`;
 DELETE FROM `Role`;
-DELETE FROM `SameSignOn`;
-DELETE FROM `AppAccess`;
+DELETE FROM `SsoClient`;
+DELETE FROM `BotClient`;
 DELETE FROM `Client`;
 DELETE FROM `Session`;
 delete from `PasswordResetToken`;
 
 INSERT INTO `Client` VALUES
-	(1, 'test-api-key-normal',  'Tests (normal)',     0,   0, 1, 0),
-	(2, 'test-api-key-restric', 'Tests (restricted)', 0, 374, 1, 0),
-	(3, 'test-api-key-minimum', 'Tests (minimum)',    1,   0, 1, 0),
-	(4, 'test-api-key-bot',     'Tests (bot)',        0,   0, 1, 0);
+	(1, 'test-api-key-normal', 'Tests (normal)', 0, 0, 1),
+	(2, 'test-api-key-restric', 'Tests (restricted)', 0, 374, 1),
+	(3, 'test-api-key-minimum', 'Tests (minimum)', 1, 0, 1),
+	(4, 'test-api-key-bot', 'Tests (bot)', 1, 0, 1);
 
-INSERT INTO `AppAccess` (`id`) VALUES (4);
+INSERT INTO `AppAccess`  VALUES (4, 0x6ff1904d29b818007ccbf05954bc1cd50f70148e41265cb823d54e2e3312b095, 'sel');
 
 INSERT INTO `Role` VALUES
 	(1, 'Adhérent', 0),
@@ -49,9 +35,9 @@ INSERT INTO `Role` VALUES
 	(3, 'Président', 511);
 
 INSERT INTO `User` VALUES
-	(1, 'lomens', 'Nicolas', 'RESIN', 'nicolas.resin@iut-dijon.u-bourgogne.fr', 1, 'PROF', 20.00, 1, 0x6ff1904d29b818007ccbf05954bc1cd50f70148e41265cb823d54e2e3312b095, 'sel', NOW(), 0, 1, '2099-12-31'),
-	(2, 'mf187870', 'Matéo', 'FAVARD', 'mateo.favard@iut-dijon.u-bourgogne.fr', 2, '3A', 9999.99, 1, 0x6ff1904d29b818007ccbf05954bc1cd50f70148e41265cb823d54e2e3312b095, 'sel', NOW(), 0, 1, '2099-12-31'),
-	(3, 'eb069420', 'Evan', 'BEUGNOT', 'evan.beugnot@iut-dijon.u-bourgogne.fr', 3, '2A', 9999.99, 1, 0x6ff1904d29b818007ccbf05954bc1cd50f70148e41265cb823d54e2e3312b095, 'sel', NOW(), 0, 1, '2099-12-31');
+	(1, 'lomens', 'Nicolas', 'RESIN', 'nicolas.resin@iut-dijon.u-bourgogne.fr', 1, 'PROF', 20.00, 1, 0x6ff1904d29b818007ccbf05954bc1cd50f70148e41265cb823d54e2e3312b095, 'sel', NOW()),
+	(2, 'mf187870', 'Matéo', 'FAVARD', 'mateo.favard@iut-dijon.u-bourgogne.fr', 2, '3A', 9999.99, 1, 0x6ff1904d29b818007ccbf05954bc1cd50f70148e41265cb823d54e2e3312b095, 'sel', NOW()),
+	(3, 'eb069420', 'Evan', 'BEUGNOT', 'evan.beugnot@iut-dijon.u-bourgogne.fr', 3, '2A', 9999.99, 1, 0x6ff1904d29b818007ccbf05954bc1cd50f70148e41265cb823d54e2e3312b095, 'sel', NOW());
 
 INSERT INTO `Session` VALUES
 	(1, '12345678901234567890', NOW(), '2099-12-31', 1, 1),

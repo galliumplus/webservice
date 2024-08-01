@@ -32,5 +32,5 @@ class SecretKeyAuth(AuthBase):
 
     def __call__(self, request):
         # modify and return the request
-        request.headers["Authorization"] = f"Secret {self.__token}"
+        request.headers["Authorization"] = f"Secret {self.__key}"
         return request
