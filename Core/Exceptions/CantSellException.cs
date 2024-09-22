@@ -1,12 +1,11 @@
-﻿namespace GalliumPlus.WebApi.Core.Exceptions
-{
-    /// <summary>
-    /// Erreur indiquant une vente refusée.
-    /// </summary>
-    public class CantSellException : GalliumException
-    {
-        public override ErrorCode ErrorCode => ErrorCode.CantSell;
+﻿namespace GalliumPlus.WebApi.Core.Exceptions;
 
-        public CantSellException(string message) : base(message) { }
-    }
+/// <summary>
+/// Erreur indiquant une vente refusée.
+/// </summary>
+public class CantSellException : GalliumException
+{
+    public override ErrorCode ErrorCode => ErrorCode.CantSell;
+
+    public CantSellException(string message) : base(message) { }
 }

@@ -1,38 +1,38 @@
 ﻿using GalliumPlus.WebApi.Core.Exceptions;
 
-namespace CoreTest.Orders
+namespace GalliumPlus.WebApi.Core.Orders;
+
+public class PaymentMethodTest
 {
-    public class PaymentMethodTest
+    private void ExternalPayment(PaymentMethod method)
     {
-        private void ExternalPayment(PaymentMethod method)
-        {
             method.Pay(0);
             method.Pay(10);
             method.Pay(1_000_000_000);
             Assert.Throws<ArgumentOutOfRangeException>(() => method.Pay(-10));
         }
 
-        [Fact]
-        public void ByCreditCard()
-        {
-            ExternalPayment(new PaymentByCreditCard());
+    [Fact]
+    public void ByCreditCard()
+    {
+            this.ExternalPayment(new PaymentByCreditCard());
         }
 
-        [Fact]
-        public void ByPaypal()
-        {
-            ExternalPayment(new PaymentByPaypal());
+    [Fact]
+    public void ByPaypal()
+    {
+            this.ExternalPayment(new PaymentByPaypal());
         }
 
-        [Fact]
-        public void InCash()
-        {
-            ExternalPayment(new PaymentInCash());
+    [Fact]
+    public void InCash()
+    {
+            this.ExternalPayment(new PaymentInCash());
         }
 
-        [Fact]
-        public void ByDeposit()
-        {
+    [Fact]
+    public void ByDeposit()
+    {
             var users = new UserDao(new RoleDao());
 
             PaymentMethod withRealCustomer = new PaymentByDeposit(users, "lomens");
@@ -76,5 +76,4 @@ namespace CoreTest.Orders
 
             Assert.Throws<CantSellException>(() => withFakeCustomer.Pay(0));
         }
-    }
 }

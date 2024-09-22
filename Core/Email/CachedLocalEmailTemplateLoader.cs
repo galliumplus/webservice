@@ -2,97 +2,96 @@
 using System.Collections.Concurrent;
 using System.Text;
 
-namespace GalliumPlus.WebApi.Core.Email
+namespace GalliumPlus.WebApi.Core.Email;
+
+/// <summary>
+/// Un chargeur de modèles qui va récupère les données depuis le système de
+/// fichiers local et les mets en cache. Les modèles sont identifiés par leur
+/// nom de fichier.
+/// </summary>
+public class CachedLocalEmailTemplateLoader : IEmailTemplateLoader, IStubbleLoader
 {
+    private string baseDirectory;
+    private Dictionary<string, string> cache;
+
     /// <summary>
-    /// Un chargeur de modèles qui va récupère les données depuis le système de
-    /// fichiers local et les mets en cache. Les modèles sont identifiés par leur
-    /// nom de fichier.
+    /// Crée un nouveau chargeur local.
     /// </summary>
-    public class CachedLocalEmailTemplateLoader : IEmailTemplateLoader, IStubbleLoader
+    /// <param name="baseDirectory">Le chemin absolu du dossier contenant les modèles.</param>
+    public CachedLocalEmailTemplateLoader(string baseDirectory)
     {
-        private string baseDirectory;
-        private Dictionary<string, string> cache;
+        this.baseDirectory = baseDirectory;
+        this.cache = new();
+    }
 
-        /// <summary>
-        /// Crée un nouveau chargeur local.
-        /// </summary>
-        /// <param name="baseDirectory">Le chemin absolu du dossier contenant les modèles.</param>
-        public CachedLocalEmailTemplateLoader(string baseDirectory)
+    public IStubbleLoader Clone()
+    {
+        var loader = new CachedLocalEmailTemplateLoader(this.baseDirectory)
         {
-            this.baseDirectory = baseDirectory;
-            this.cache = new();
+            cache = new(this.cache)
+        };
+        return loader;
+    }
+
+    public string Load(string name)
+    {
+        string? template;
+        bool cached;
+
+        lock (this.cache)
+        {
+            cached = this.cache.TryGetValue(name, out template);
         }
 
-        public IStubbleLoader Clone()
+        if (!cached)
         {
-            var loader = new CachedLocalEmailTemplateLoader(this.baseDirectory)
+            try
             {
-                cache = new(this.cache)
-            };
-            return loader;
-        }
-
-        public string Load(string name)
-        {
-            string? template;
-            bool cached;
-
-            lock (this.cache)
-            {
-                cached = this.cache.TryGetValue(name, out template);
-            }
-
-            if (!cached)
-            {
-                try
+                using (StreamReader f = new(Path.Join(this.baseDirectory, name)))
                 {
-                    using (StreamReader f = new(Path.Join(this.baseDirectory, name)))
-                    {
-                        template = f.ReadToEnd();
-                    }
-                    lock (this.cache)
-                    {
-                        cache.TryAdd(name, template);
-                    }
+                    template = f.ReadToEnd();
                 }
-                catch (FileNotFoundException err)
+                lock (this.cache)
                 {
-                    Console.WriteLine(err.Message);
-                    template = null;
+                    cache.TryAdd(name, template);
                 }
             }
-
-            return template!;
-        }
-
-        public async ValueTask<string> LoadAsync(string name)
-        {
-            string? template;
-
-            if (!cache.TryGetValue(name, out template))
+            catch (FileNotFoundException err)
             {
-                try
-                {
-                    using (StreamReader f = new(Path.Join(this.baseDirectory, name), Encoding.UTF8))
-                    {
-                        template = await f.ReadToEndAsync();
-                    }
-                    cache.Add(name, template);
-                }
-                catch (FileNotFoundException err)
-                {
-                    Console.WriteLine(err.Message);
-                    template = null;
-                }
+                Console.WriteLine(err.Message);
+                template = null;
             }
-
-            return template!;
         }
 
-        public EmailTemplate GetTemplate(string identifier)
+        return template!;
+    }
+
+    public async ValueTask<string> LoadAsync(string name)
+    {
+        string? template;
+
+        if (!cache.TryGetValue(name, out template))
         {
-            return new EmailTemplate(identifier, this);
+            try
+            {
+                using (StreamReader f = new(Path.Join(this.baseDirectory, name), Encoding.UTF8))
+                {
+                    template = await f.ReadToEndAsync();
+                }
+                cache.Add(name, template);
+            }
+            catch (FileNotFoundException err)
+            {
+                Console.WriteLine(err.Message);
+                template = null;
+            }
         }
+
+        return template!;
+    }
+
+    public EmailTemplate GetTemplate(string identifier)
+    {
+        return new EmailTemplate(identifier, this);
     }
 }

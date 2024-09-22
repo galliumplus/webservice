@@ -1,12 +1,12 @@
 ﻿using GalliumPlus.WebApi.Core.Exceptions;
 
-namespace CoreTest.Orders
+namespace GalliumPlus.WebApi.Core.Orders;
+
+public class OrderItemTest
 {
-    public class OrderItemTest
+    [Fact]
+    public void Tests()
     {
-        [Fact]
-        public void Tests()
-        {
             var products = new ProductDao(new CategoryDao());
             Product product = products.Read(1);
 
@@ -23,5 +23,4 @@ namespace CoreTest.Orders
             Assert.Equal(product.NonMemberPrice * 3, item.NonMemberTotalPrice);
             Assert.Equal(product.MemberPrice * 3, item.MemberTotalPrice);
         }
-    }
 }

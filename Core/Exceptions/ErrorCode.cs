@@ -1,13 +1,12 @@
-﻿namespace GalliumPlus.WebApi.Core.Exceptions
+﻿namespace GalliumPlus.WebApi.Core.Exceptions;
+
+public enum ErrorCode
 {
-    public enum ErrorCode
-    {
-        CantSell,
-        DuplicateItem,
-        InvalidItem,
-        ItemNotFound,
-        PermissionDenied,
-        ServiceUnavailable,
-        FailedPrecondition,
-    }
+    CantSell,
+    DuplicateItem,
+    InvalidItem,
+    ItemNotFound,
+    PermissionDenied,
+    ServiceUnavailable,
+    FailedPrecondition,
 }

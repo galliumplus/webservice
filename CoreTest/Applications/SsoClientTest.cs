@@ -1,10 +1,10 @@
-﻿namespace CoreTest.Applications
+﻿namespace GalliumPlus.WebApi.Core.Applications;
+
+public class SsoClientTest
 {
-    public class SsoClientTest
+    [Fact]
+    public void ConstructorExisting()
     {
-        [Fact]
-        public void ConstructorExisting()
-        {
             SsoClient client = new(
                 id: 123,
                 apiKey: "sso-service-id",
@@ -30,9 +30,9 @@
             Assert.Equal("https://etiq-dijon.fr/assets/images/logo.png", client.LogoUrl);
         }
 
-        [Fact]
-        public void ConstructorNew()
-        {
+    [Fact]
+    public void ConstructorNew()
+    {
             SsoClient client = new(
                 name: "App",
                 redirectUrl: "https://etiq-dijon.fr/",
@@ -50,9 +50,9 @@
             Assert.Null(client.LogoUrl);
         }
 
-        [Fact]
-        public void RegenerateSecret()
-        {
+    [Fact]
+    public void RegenerateSecret()
+    {
             SsoClient client = new(
                 name: "App",
                 redirectUrl: "https://etiq-dijon.fr/",
@@ -66,5 +66,4 @@
             Assert.NotEqual(previousSecret, client.Secret);
             Assert.Matches(ClientTest.RE_SECRET, client.Secret);
         }
-    }
 }

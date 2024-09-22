@@ -1,15 +1,14 @@
-﻿namespace CoreTest.Users
-{
-    public class RoleTest
-    {
-        [Fact]
-        public void Constructor()
-        {
-            Role role = new Role(123, "Rôle", Permissions.MANAGE_PRODUCTS);
+﻿namespace GalliumPlus.WebApi.Core.Users;
 
-            Assert.Equal(123, role.Id);
-            Assert.Equal("Rôle", role.Name);
-            Assert.Equal(Permissions.MANAGE_PRODUCTS, role.Permissions);
-        }
+public class RoleTest
+{
+    [Fact]
+    public void Constructor()
+    {
+        Role role = new Role(123, "Rôle", Permissions.MANAGE_PRODUCTS);
+
+        Assert.Equal(123, role.Id);
+        Assert.Equal("Rôle", role.Name);
+        Assert.Equal(Permissions.MANAGE_PRODUCTS, role.Permissions);
     }
 }

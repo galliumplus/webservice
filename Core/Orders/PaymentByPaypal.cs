@@ -1,9 +1,8 @@
-﻿namespace GalliumPlus.WebApi.Core.Orders
-{
-    public class PaymentByPaypal : PaymentMethod
-    {
-        public override string Description => "par PayPal";
+﻿namespace GalliumPlus.WebApi.Core.Orders;
 
-        protected override string ProcessPayment(decimal _) => "OK";
-    }
+public class PaymentByPaypal : PaymentMethod
+{
+    public override string Description => "par PayPal";
+
+    protected override string ProcessPayment(decimal _) => "OK";
 }

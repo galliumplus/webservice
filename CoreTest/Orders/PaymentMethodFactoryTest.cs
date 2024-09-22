@@ -1,11 +1,11 @@
 ﻿using GalliumPlus.WebApi.Core.Exceptions;
 
-namespace CoreTest.Orders
+namespace GalliumPlus.WebApi.Core.Orders;
+
+public class PaymentMethodFactoryTest
 {
-    public class PaymentMethodFactoryTest
+    private void CreateExternal<ExactType>(string method)
     {
-        private void CreateExternal<ExactType>(string method)
-        {
             var factory = new PaymentMethodFactory(new UserDao(new RoleDao()));
 
             var paymentByCreditCard = factory.Create(method, null);
@@ -18,27 +18,27 @@ namespace CoreTest.Orders
             Assert.IsType<ExactType>(paymentByCreditCard);
         }
 
-        [Fact]
-        public void CreateCreditCard()
-        {
-            CreateExternal<PaymentByCreditCard>("CREDIT_CARD");
+    [Fact]
+    public void CreateCreditCard()
+    {
+            this.CreateExternal<PaymentByCreditCard>("CREDIT_CARD");
         }
 
-        [Fact]
-        public void CreatePaypal()
-        {
-            CreateExternal<PaymentByPaypal>("PAYPAL");
+    [Fact]
+    public void CreatePaypal()
+    {
+            this.CreateExternal<PaymentByPaypal>("PAYPAL");
         }
 
-        [Fact]
-        public void CreateCash()
-        {
-            CreateExternal<PaymentInCash>("CASH");
+    [Fact]
+    public void CreateCash()
+    {
+            this.CreateExternal<PaymentInCash>("CASH");
         }
 
-        [Fact]
-        public void CreateDeposit()
-        {
+    [Fact]
+    public void CreateDeposit()
+    {
             var factory = new PaymentMethodFactory(new UserDao(new RoleDao()));
 
             Assert.Throws<InvalidItemException>(() => factory.Create("DEPOSIT", null));
@@ -51,5 +51,4 @@ namespace CoreTest.Orders
             Assert.IsType<PaymentByDeposit>(withRealCustomer);
             Assert.IsType<PaymentByDeposit>(withFakeCustomer);
         }
-    }
 }

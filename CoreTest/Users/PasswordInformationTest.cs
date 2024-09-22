@@ -1,12 +1,10 @@
-﻿using GalliumPlus.WebApi.Core;
+﻿namespace CoreTest.Users;
 
-namespace CoreTest.Users
+public class PasswordInformationTest
 {
-    public class PasswordInformationTest
+    [Fact]
+    public void Constructor()
     {
-        [Fact]
-        public void Constructor()
-        {
             var password = new PasswordInformation(
                 new byte[5] { 0x12, 0x34, 0x56, 0x78, 0x90 },
                 "abcdefghijklmnopqrstuvwxyz"
@@ -21,9 +19,9 @@ namespace CoreTest.Users
             Assert.Equal("abcdefghijklmnopqrstuvwxyz", password.Salt);
         }
 
-        [Fact]
-        public void FromPassword()
-        {
+    [Fact]
+    public void FromPassword()
+    {
             var password1 = PasswordInformation.FromPassword("eticlubdufoot");
             var password2 = PasswordInformation.FromPassword("eticlubdufoot");
 
@@ -33,13 +31,12 @@ namespace CoreTest.Users
             Assert.NotEqual(password1.Hash, password2.Hash);
         }
 
-        [Fact]
-        public void Match()
-        {
+    [Fact]
+    public void Match()
+    {
             var password = PasswordInformation.FromPassword("eticlubdufoot");
 
             Assert.True(password.Match("eticlubdufoot"));
             Assert.False(password.Match("eticlubdefoot"));
         }
-    }
 }

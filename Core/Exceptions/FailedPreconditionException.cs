@@ -4,12 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GalliumPlus.WebApi.Core.Exceptions
-{
-    public class FailedPreconditionException : GalliumException
-    {
-        public override ErrorCode ErrorCode => ErrorCode.FailedPrecondition;
+namespace GalliumPlus.WebApi.Core.Exceptions;
 
-        public FailedPreconditionException(string message) : base(message) { }
-    }
+public class FailedPreconditionException : GalliumException
+{
+    public override ErrorCode ErrorCode => ErrorCode.FailedPrecondition;
+
+    public FailedPreconditionException(string message) : base(message) { }
 }

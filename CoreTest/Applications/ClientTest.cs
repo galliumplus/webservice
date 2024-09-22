@@ -1,13 +1,13 @@
-﻿namespace CoreTest.Applications
-{
-    public class ClientTest
-    {
-        public static readonly Regex RE_API_KEY = new Regex(@"^[A-Za-z0-9]{20}$");
-        public static readonly Regex RE_SECRET = new Regex(@"^([A-Za-z0-9]{8})-([A-Za-z0-9]{12})-([A-Za-z0-9]{8})$");
+﻿namespace GalliumPlus.WebApi.Core.Applications;
 
-        [Fact]
-        public void ConstructorExisting()
-        {
+public class ClientTest
+{
+    public static readonly Regex RE_API_KEY = new Regex(@"^[A-Za-z0-9]{20}$");
+    public static readonly Regex RE_SECRET = new Regex(@"^([A-Za-z0-9]{8})-([A-Za-z0-9]{12})-([A-Za-z0-9]{8})$");
+
+    [Fact]
+    public void ConstructorExisting()
+    {
             Client client = new(
                 id: 123,
                 apiKey: "test-api-key",
@@ -26,9 +26,9 @@
             Assert.False(client.AllowUserLogin);
         }
 
-        [Fact]
-        public void ConstructorNew()
-        {
+    [Fact]
+    public void ConstructorNew()
+    {
             Client client = new(
                 name: "App",
                 revoked: Permissions.MANAGE_USERS
@@ -42,9 +42,9 @@
             Assert.True(client.AllowUserLogin);
         }
 
-        [Fact]
-        public void AllowUserLogin()
-        {
+    [Fact]
+    public void AllowUserLogin()
+    {
             Client client1 = new(
                 id: 123,
                 apiKey: "test-api-key",
@@ -84,9 +84,9 @@
             Assert.False(client4.AllowUserLogin);
         }
 
-        [Fact]
-        public void Filter()
-        {
+    [Fact]
+    public void Filter()
+    {
             // test simple
 
             Permissions before1 = Permissions.SEE_PRODUCTS_AND_CATEGORIES
@@ -114,5 +114,4 @@
 
             Assert.Equal(before2, after2);
         }
-    }
 }

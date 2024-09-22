@@ -1,13 +1,12 @@
 ﻿using GalliumPlus.WebApi.Core.Exceptions;
-using System.Reflection;
 
-namespace CoreTest.Orders
+namespace GalliumPlus.WebApi.Core.Orders;
+
+public class OrderTest
 {
-    public class OrderTest
+    [Fact]
+    public void Empty()
     {
-        [Fact]
-        public void Empty()
-        {
             var products = new ProductDao(new CategoryDao());
 
             Order order = new(
@@ -18,9 +17,9 @@ namespace CoreTest.Orders
             Assert.Throws<CantSellException>(() => order.ProcessPaymentAndUpdateStock(products));
         }
 
-        [Fact]
-        public void NotEnoughInStock()
-        {
+    [Fact]
+    public void NotEnoughInStock()
+    {
             var products = new ProductDao(new CategoryDao());
 
             Product product1 = products.Read(1);
@@ -37,9 +36,9 @@ namespace CoreTest.Orders
             Assert.Throws<CantSellException>(() => order.ProcessPaymentAndUpdateStock(products));
         }
 
-        [Fact]
-        public void PaymentByDeposit()
-        {
+    [Fact]
+    public void PaymentByDeposit()
+    {
             var products = new ProductDao(new CategoryDao());
             var users = new UserDao(new RoleDao());
 
@@ -66,9 +65,9 @@ namespace CoreTest.Orders
             order.ProcessPaymentAndUpdateStock(products);
         }
 
-        [Fact]
-        public void OrderProcessing()
-        {
+    [Fact]
+    public void OrderProcessing()
+    {
             var products = new ProductDao(new CategoryDao());
             var users = new UserDao(new RoleDao());
 
@@ -104,5 +103,4 @@ namespace CoreTest.Orders
             Assert.Equal(stock1After, stock1Before - 1);
             Assert.Equal(stock2After, stock2Before - 2);
         }
-    }
 }

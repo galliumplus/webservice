@@ -1,147 +1,146 @@
-﻿namespace CoreTest.Users
+﻿namespace GalliumPlus.WebApi.Core.Users;
+
+public class SessionTest
 {
-    public class SessionTest
+    // heure à laquelle j'ai commencé à écrire cette classe
+    private readonly DateTime lastUse = new DateTime(2023, 05, 13, 19, 13, 0);
+
+    // heure à laquelle j'ai fini
+    private readonly DateTime expiration = new DateTime(2023, 05, 13, 20, 29, 0);
+
+    private readonly User user = new User(
+        "mmansouri",
+        new UserIdentity("Mehdi", "Mansouri", "mehdi.mansouri@iut-dijon.u-bourgogne.fr", "PROF"),
+        new Role(0, "Adhérent", Permissions.NONE),
+        21.30m,
+        false
+    );
+
+    private readonly Client client = new Client("Test client");
+
+    private readonly TimeSpan timeMargin = TimeSpan.FromMilliseconds(500);
+
+    [Fact]
+    public void Constructor()
     {
-        // heure à laquelle j'ai commencé à écrire cette classe
-        private readonly DateTime lastUse = new DateTime(2023, 05, 13, 19, 13, 0);
+        Session session = new Session("abcdef", this.lastUse, this.expiration, this.user, this.client);
 
-        // heure à laquelle j'ai fini
-        private readonly DateTime expiration = new DateTime(2023, 05, 13, 20, 29, 0);
+        Assert.Equal("abcdef", session.Token);
+        Assert.Equal(this.lastUse, session.LastUse);
+        Assert.Equal(this.expiration, session.Expiration);
+        Assert.Equal(this.user, session.User);
+        Assert.Equal(this.client, session.Client);
+    }
 
-        private readonly User user = new User(
-            "mmansouri",
-            new UserIdentity("Mehdi", "Mansouri", "mehdi.mansouri@iut-dijon.u-bourgogne.fr", "PROF"),
-            new Role(0, "Adhérent", Permissions.NONE),
-            21.30m,
-            false
+    [Fact]
+    public void PermissionsProperty()
+    {
+        this.user.Role.Permissions = Permissions.SEE_PRODUCTS_AND_CATEGORIES
+                                     | Permissions.SEE_ALL_USERS_AND_ROLES;
+        Client client1 = new Client(
+            name: "App 1",
+            granted: Permissions.MANAGE_PRODUCTS,
+            revoked: Permissions.SEE_ALL_USERS_AND_ROLES
         );
+        Session session1 = Session.LogIn(client1, this.user);
 
-        private readonly Client client = new Client("Test client");
+        Assert.Equal(Permissions.MANAGE_PRODUCTS, session1.Permissions);
 
-        private readonly TimeSpan timeMargin = TimeSpan.FromMilliseconds(500);
+        this.user.Role.Permissions = Permissions.READ_LOGS;
+        Client client2 = new Client(
+            name: "App 2",
+            granted: Permissions.SEE_PRODUCTS_AND_CATEGORIES,
+            revoked: Permissions.MANAGE_PRODUCTS // écrase la permission donnée précedemment
+        );
+        Session session2 = Session.LogIn(client2, this.user);
 
-        [Fact]
-        public void Constructor()
-        {
-            Session session = new Session("abcdef", lastUse, expiration, user, client);
+        Assert.Equal(Permissions.READ_LOGS, session2.Permissions);
+    }
 
-            Assert.Equal("abcdef", session.Token);
-            Assert.Equal(lastUse, session.LastUse);
-            Assert.Equal(expiration, session.Expiration);
-            Assert.Equal(user, session.User);
-            Assert.Equal(client, session.Client);
-        }
+    [Fact]
+    public void UnusedSince()
+    {
+        TimeSpan fiveMinutes = TimeSpan.FromMinutes(5);
+        DateTime fiveMinutesAgo = DateTime.UtcNow.Subtract(fiveMinutes);
 
-        [Fact]
-        public void PermissionsProperty()
-        {
-            user.Role.Permissions = Permissions.SEE_PRODUCTS_AND_CATEGORIES
-                                  | Permissions.SEE_ALL_USERS_AND_ROLES;
-            Client client1 = new Client(
-                name: "App 1",
-                granted: Permissions.MANAGE_PRODUCTS,
-                revoked: Permissions.SEE_ALL_USERS_AND_ROLES
-            );
-            Session session1 = Session.LogIn(client1, user);
+        Session session = new Session("abcdef", fiveMinutesAgo, this.expiration, this.user, this.client);
 
-            Assert.Equal(Permissions.MANAGE_PRODUCTS, session1.Permissions);
+        Assert.InRange(session.UnusedSince, fiveMinutes, fiveMinutes + this.timeMargin);
+    }
 
-            user.Role.Permissions = Permissions.READ_LOGS;
-            Client client2 = new Client(
-                name: "App 2",
-                granted: Permissions.SEE_PRODUCTS_AND_CATEGORIES,
-                revoked: Permissions.MANAGE_PRODUCTS // écrase la permission donnée précedemment
-            );
-            Session session2 = Session.LogIn(client2, user);
+    [Fact]
+    public void ExpiresIn()
+    {
+        TimeSpan twoDays = TimeSpan.FromDays(2);
+        DateTime twoDaysLater = DateTime.UtcNow.Add(twoDays);
 
-            Assert.Equal(Permissions.READ_LOGS, session2.Permissions);
-        }
+        Session session = new Session("abcdef", this.lastUse, twoDaysLater, this.user, this.client);
 
-        [Fact]
-        public void UnusedSince()
-        {
-            TimeSpan fiveMinutes = TimeSpan.FromMinutes(5);
-            DateTime fiveMinutesAgo = DateTime.UtcNow.Subtract(fiveMinutes);
+        Assert.InRange(session.ExpiresIn, twoDays - this.timeMargin, twoDays);
+    }
 
-            Session session = new Session("abcdef", fiveMinutesAgo, expiration, user, client);
+    [Fact]
+    public void Expired()
+    {
+        DateTime recent = DateTime.UtcNow - (Session.INACTIVITY_TIMEOUT / 2);
+        DateTime notRecent = DateTime.UtcNow - (Session.INACTIVITY_TIMEOUT * 2);
+        DateTime future = DateTime.UtcNow.AddHours(1);
+        DateTime past = DateTime.UtcNow.AddHours(-1);
 
-            Assert.InRange(session.UnusedSince, fiveMinutes, fiveMinutes + timeMargin);
-        }
+        Session notExpired = new Session("abcdef", recent, future, this.user, this.client);
+        Assert.False(notExpired.Expired);
 
-        [Fact]
-        public void ExpiresIn()
-        {
-            TimeSpan twoDays = TimeSpan.FromDays(2);
-            DateTime twoDaysLater = DateTime.UtcNow.Add(twoDays);
+        Session expiredInactivity = new Session("abcdef", notRecent, future, this.user, this.client);
+        Assert.True(expiredInactivity.Expired);
 
-            Session session = new Session("abcdef", lastUse, twoDaysLater, user, client);
+        Session expiredLifetime = new Session("abcdef", recent, past, this.user, this.client);
+        Assert.True(expiredLifetime.Expired);
 
-            Assert.InRange(session.ExpiresIn, twoDays - timeMargin, twoDays);
-        }
+        Session expiredBoth = new Session("abcdef", notRecent, past, this.user, this.client);
+        Assert.True(expiredBoth.Expired);
 
-        [Fact]
-        public void Expired()
-        {
-            DateTime recent = DateTime.UtcNow - (Session.INACTIVITY_TIMEOUT / 2);
-            DateTime notRecent = DateTime.UtcNow - (Session.INACTIVITY_TIMEOUT * 2);
-            DateTime future = DateTime.UtcNow.AddHours(1);
-            DateTime past = DateTime.UtcNow.AddHours(-1);
+        Session createdInTheFuture = new Session("abcdef", future, future, this.user, this.client);
+        Assert.False(createdInTheFuture.Expired);
+    }
 
-            Session notExpired = new Session("abcdef", recent, future, user, client);
-            Assert.False(notExpired.Expired);
+    [Fact]
+    public void LogIn()
+    {
+        DateTime now = DateTime.UtcNow;
+        DateTime exp = now + Session.LIFETIME;
 
-            Session expiredInactivity = new Session("abcdef", notRecent, future, user, client);
-            Assert.True(expiredInactivity.Expired);
+        Session newSession = Session.LogIn(this.client, this.user);
 
-            Session expiredLifetime = new Session("abcdef", recent, past, user, client);
-            Assert.True(expiredLifetime.Expired);
+        Assert.Equal(20, newSession.Token.Length);
+        Assert.InRange(newSession.LastUse, now, now + this.timeMargin);
+        Assert.InRange(newSession.Expiration, exp, exp + this.timeMargin);
+        Assert.Equal(this.user, newSession.User);
+        Assert.Equal(this.client, newSession.Client);
+    }
 
-            Session expiredBoth = new Session("abcdef", notRecent, past, user, client);
-            Assert.True(expiredBoth.Expired);
+    [Fact]
+    public void Refresh()
+    {
+        DateTime recent = DateTime.UtcNow - (Session.INACTIVITY_TIMEOUT / 2);
+        DateTime notRecent = DateTime.UtcNow - (Session.INACTIVITY_TIMEOUT * 2);
+        DateTime future = DateTime.UtcNow.AddHours(1);
+        DateTime past = DateTime.UtcNow.AddHours(-1);
 
-            Session createdInTheFuture = new Session("abcdef", future, future, user, client);
-            Assert.False(createdInTheFuture.Expired);
-        }
+        Session notExpired = new Session("abcdef", recent, future, this.user, this.client);
+        Assert.True(notExpired.Refresh());
+        Assert.InRange(notExpired.UnusedSince, TimeSpan.Zero, this.timeMargin);
 
-        [Fact]
-        public void LogIn()
-        {
-            DateTime now = DateTime.UtcNow;
-            DateTime exp = now + Session.LIFETIME;
+        Session expiredInactivity = new Session("abcdef", notRecent, future, this.user, this.client);
+        Assert.False(expiredInactivity.Refresh());
 
-            Session newSession = Session.LogIn(client, user);
+        Session expiredLifetime = new Session("abcdef", recent, past, this.user, this.client);
+        Assert.False(expiredLifetime.Refresh());
 
-            Assert.Equal(20, newSession.Token.Length);
-            Assert.InRange(newSession.LastUse, now, now + timeMargin);
-            Assert.InRange(newSession.Expiration, exp, exp + timeMargin);
-            Assert.Equal(user, newSession.User);
-            Assert.Equal(client, newSession.Client);
-        }
+        Session expiredBoth = new Session("abcdef", notRecent, past, this.user, this.client);
+        Assert.False(expiredBoth.Refresh());
 
-        [Fact]
-        public void Refresh()
-        {
-            DateTime recent = DateTime.UtcNow - (Session.INACTIVITY_TIMEOUT / 2);
-            DateTime notRecent = DateTime.UtcNow - (Session.INACTIVITY_TIMEOUT * 2);
-            DateTime future = DateTime.UtcNow.AddHours(1);
-            DateTime past = DateTime.UtcNow.AddHours(-1);
-
-            Session notExpired = new Session("abcdef", recent, future, user, client);
-            Assert.True(notExpired.Refresh());
-            Assert.InRange(notExpired.UnusedSince, TimeSpan.Zero, timeMargin);
-
-            Session expiredInactivity = new Session("abcdef", notRecent, future, user, client);
-            Assert.False(expiredInactivity.Refresh());
-
-            Session expiredLifetime = new Session("abcdef", recent, past, user, client);
-            Assert.False(expiredLifetime.Refresh());
-
-            Session expiredBoth = new Session("abcdef", notRecent, past, user, client);
-            Assert.False(expiredBoth.Refresh());
-
-            Session createdInTheFuture = new Session("abcdef", future, future, user, client);
-            Assert.True(createdInTheFuture.Refresh());
-            Assert.InRange(createdInTheFuture.UnusedSince, TimeSpan.Zero, timeMargin);
-        }
+        Session createdInTheFuture = new Session("abcdef", future, future, this.user, this.client);
+        Assert.True(createdInTheFuture.Refresh());
+        Assert.InRange(createdInTheFuture.UnusedSince, TimeSpan.Zero, this.timeMargin);
     }
 }
