@@ -5,7 +5,7 @@ VisualStudioVersion = 17.5.33424.131
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core", "Core\Core.csproj", "{2FBF183A-5654-484C-8F60-6D6A1EA2F75C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GalliumWebService", "GalliumWebService\GalliumWebService.csproj", "{2FD09829-C865-4CFF-BD3E-557FAA1CD3C4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GalliumPlus", "GalliumPlus\GalliumPlus.csproj", "{2FD09829-C865-4CFF-BD3E-557FAA1CD3C4}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoreTest", "CoreTest\CoreTest.csproj", "{902C447E-38D6-4EA3-97DF-05CD5B8E7C7F}"
 EndProject
