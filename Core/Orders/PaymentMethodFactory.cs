@@ -1,7 +1,7 @@
-﻿using GalliumPlus.WebApi.Core.Data;
-using GalliumPlus.WebApi.Core.Exceptions;
+﻿using GalliumPlus.Core.Data;
+using GalliumPlus.Core.Exceptions;
 
-namespace GalliumPlus.WebApi.Core.Orders;
+namespace GalliumPlus.Core.Orders;
 
 public class PaymentMethodFactory
 {
@@ -28,7 +28,7 @@ public class PaymentMethodFactory
                 );
             }
 
-            return new PaymentByDeposit(userDao, customer);
+            return new PaymentByDeposit(this.userDao, customer);
 
         case "paypal":
             return new PaymentByPaypal();

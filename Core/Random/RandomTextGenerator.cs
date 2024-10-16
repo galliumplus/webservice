@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace GalliumPlus.WebApi.Core.Random;
+namespace GalliumPlus.Core.Random;
 
 /// <summary>
 /// Classe encapsulant un RNG, utile pour générer du texte aléatoire.
@@ -16,7 +16,7 @@ internal class RandomTextGenerator
     /// </summary>
     public RandomTextGenerator(IRandomProvider provider)
     {
-        rng = provider;
+        this.rng = provider;
     }
 
     /// <summary>
@@ -31,7 +31,7 @@ internal class RandomTextGenerator
 
         for (int i = 0; i < size; i++)
         {
-            builder.Append(rng.Pick(ALPHANUM));
+            builder.Append(this.rng.Pick(ALPHANUM));
         }
 
         return builder.ToString();
@@ -53,7 +53,7 @@ internal class RandomTextGenerator
             }
             else
             {
-                builder.Append(rng.Pick(ALPHANUM));
+                builder.Append(this.rng.Pick(ALPHANUM));
             }
         }
 

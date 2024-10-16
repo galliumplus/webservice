@@ -1,6 +1,7 @@
-﻿using GalliumPlus.WebApi.Core.Users;
+﻿using GalliumPlus.Core.Security;
+using GalliumPlus.Core.Users;
 
-namespace GalliumPlus.WebApi.Core.Applications;
+namespace GalliumPlus.Core.Applications;
 
 /// <summary>
 /// Représente un client automatisé.

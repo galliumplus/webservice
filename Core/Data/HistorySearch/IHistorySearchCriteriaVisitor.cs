@@ -1,4 +1,4 @@
-﻿namespace GalliumPlus.WebApi.Core.Data.HistorySearch;
+﻿namespace GalliumPlus.Core.Data.HistorySearch;
 
 /// <summary>
 /// Un algorithme traintant les critères. (principalement la transformation des critères en prédicats par la couche de données)

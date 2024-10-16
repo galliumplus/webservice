@@ -2,7 +2,7 @@
 using Stubble.Core.Builders;
 using Stubble.Core.Interfaces;
 
-namespace GalliumPlus.WebApi.Core.Email;
+namespace GalliumPlus.Core.Email;
 
 /// <summary>
 /// Un modèle de mail.

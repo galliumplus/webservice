@@ -1,6 +1,6 @@
-﻿using GalliumPlus.WebApi.Core.Exceptions;
+﻿using GalliumPlus.Core.Exceptions;
 
-namespace GalliumPlus.WebApi.Core;
+namespace GalliumPlus.Core;
 
 /// <summary>
 /// Classe d'aide à la validation des valeurs monétaires.
@@ -8,7 +8,7 @@ namespace GalliumPlus.WebApi.Core;
 public static class MonetaryValue
 {
     /// <summary>
-    /// Vérifie qu'un nombre décimal n'as pas plus de deux chiffres après la virgules.
+    /// Vérifie qu'un nombre décimal n'as pas plus de deux chiffres après la virgule.
     /// </summary>
     /// <param name="euros">La valeur à vérifier.</param>
     /// <param name="description">

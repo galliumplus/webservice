@@ -1,4 +1,7 @@
-﻿using GalliumPlus.WebApi.Core.Exceptions;
+﻿using GalliumPlus.Core;
+using GalliumPlus.Core.Exceptions;
+using GalliumPlus.Core.Security;
+using GalliumPlus.Core.Users;
 
 namespace GalliumPlus.WebApi.Core.Users;
 

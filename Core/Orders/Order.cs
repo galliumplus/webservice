@@ -1,8 +1,8 @@
-﻿using GalliumPlus.WebApi.Core.Data;
-using GalliumPlus.WebApi.Core.Exceptions;
-using GalliumPlus.WebApi.Core.Users;
+﻿using GalliumPlus.Core.Data;
+using GalliumPlus.Core.Exceptions;
+using GalliumPlus.Core.Users;
 
-namespace GalliumPlus.WebApi.Core.Orders;
+namespace GalliumPlus.Core.Orders;
 
 /// <summary>
 /// Représente une vente.

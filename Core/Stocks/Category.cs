@@ -1,4 +1,4 @@
-﻿namespace GalliumPlus.WebApi.Core.Stocks;
+﻿namespace GalliumPlus.Core.Stocks;
 
 /// <summary>
 /// Une catégorie de produits.

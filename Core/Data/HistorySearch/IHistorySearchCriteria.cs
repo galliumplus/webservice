@@ -1,4 +1,4 @@
-﻿namespace GalliumPlus.WebApi.Core.Data.HistorySearch;
+﻿namespace GalliumPlus.Core.Data.HistorySearch;
 
 /// <summary>
 /// Un critère de recherche dans l'historique.

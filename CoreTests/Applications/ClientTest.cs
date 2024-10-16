@@ -1,4 +1,7 @@
-﻿namespace GalliumPlus.WebApi.Core.Applications;
+﻿using GalliumPlus.Core.Applications;
+using GalliumPlus.Core.Users;
+
+namespace GalliumPlus.WebApi.Core.Applications;
 
 public class ClientTest
 {

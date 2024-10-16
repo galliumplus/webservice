@@ -1,4 +1,4 @@
-﻿namespace GalliumPlus.WebApi.Core.Stocks;
+﻿namespace GalliumPlus.Core.Stocks;
 
 /// <summary>
 /// Un produit.
@@ -6,12 +6,12 @@
 public class Product
 {
     private int id;
-    private string name;
+    private readonly string name;
     private int stock;
-    private decimal nonMemberPrice;
-    private decimal memberPrice;
-    private Availability availability;
-    private Category category;
+    private readonly decimal nonMemberPrice;
+    private readonly decimal memberPrice;
+    private readonly Availability availability;
+    private readonly Category category;
 
     /// <summary>
     /// L'identifiant du produit.

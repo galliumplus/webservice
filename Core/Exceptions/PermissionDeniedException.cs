@@ -1,6 +1,6 @@
-﻿using GalliumPlus.WebApi.Core.Users;
+﻿using GalliumPlus.Core.Users;
 
-namespace GalliumPlus.WebApi.Core.Exceptions;
+namespace GalliumPlus.Core.Exceptions;
 
 /// <summary>
 /// Erreur indiquant que l'utilisateur n'a pas les permissions suffisantes
@@ -13,7 +13,7 @@ public class PermissionDeniedException : GalliumException
     /// <summary>
     /// Les permissions qu étaient requises.
     /// </summary>
-    public Permissions Required { get => required; }
+    public Permissions Required { get => this.required; }
 
     public override ErrorCode ErrorCode => ErrorCode.PermissionDenied;
         

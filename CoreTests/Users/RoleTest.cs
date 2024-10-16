@@ -1,4 +1,6 @@
-﻿namespace GalliumPlus.WebApi.Core.Users;
+﻿using GalliumPlus.Core.Users;
+
+namespace GalliumPlus.WebApi.Core.Users;
 
 public class RoleTest
 {

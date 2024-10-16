@@ -1,8 +1,7 @@
-﻿using Stubble.Core.Interfaces;
-using System.Collections.Concurrent;
-using System.Text;
+﻿using System.Text;
+using Stubble.Core.Interfaces;
 
-namespace GalliumPlus.WebApi.Core.Email;
+namespace GalliumPlus.Core.Email;
 
 /// <summary>
 /// Un chargeur de modèles qui va récupère les données depuis le système de
@@ -53,7 +52,7 @@ public class CachedLocalEmailTemplateLoader : IEmailTemplateLoader, IStubbleLoad
                 }
                 lock (this.cache)
                 {
-                    cache.TryAdd(name, template);
+                    this.cache.TryAdd(name, template);
                 }
             }
             catch (FileNotFoundException err)
@@ -70,7 +69,7 @@ public class CachedLocalEmailTemplateLoader : IEmailTemplateLoader, IStubbleLoad
     {
         string? template;
 
-        if (!cache.TryGetValue(name, out template))
+        if (!this.cache.TryGetValue(name, out template))
         {
             try
             {
@@ -78,7 +77,7 @@ public class CachedLocalEmailTemplateLoader : IEmailTemplateLoader, IStubbleLoad
                 {
                     template = await f.ReadToEndAsync();
                 }
-                cache.Add(name, template);
+                this.cache.Add(name, template);
             }
             catch (FileNotFoundException err)
             {

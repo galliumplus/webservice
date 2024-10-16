@@ -1,4 +1,4 @@
-﻿namespace GalliumPlus.WebApi.Core.Email;
+﻿namespace GalliumPlus.Core.Email;
 
 /// <summary>
 /// Un système d'envoi de mail.

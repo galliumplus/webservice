@@ -1,6 +1,6 @@
-﻿using GalliumPlus.WebApi.Core.Exceptions;
+﻿using GalliumPlus.Core.Exceptions;
 
-namespace GalliumPlus.WebApi.Core.Orders;
+namespace GalliumPlus.Core.Orders;
 
 public abstract class PaymentMethod
 {

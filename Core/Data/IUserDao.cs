@@ -1,7 +1,8 @@
-﻿using GalliumPlus.WebApi.Core.Exceptions;
-using GalliumPlus.WebApi.Core.Users;
+﻿using GalliumPlus.Core.Exceptions;
+using GalliumPlus.Core.Security;
+using GalliumPlus.Core.Users;
 
-namespace GalliumPlus.WebApi.Core.Data;
+namespace GalliumPlus.Core.Data;
 
 public interface IUserDao : IBasicDao<string, User>
 {

@@ -1,7 +1,7 @@
-﻿using GalliumPlus.WebApi.Core.Applications;
-using GalliumPlus.WebApi.Core.Random;
+﻿using GalliumPlus.Core.Applications;
+using GalliumPlus.Core.Random;
 
-namespace GalliumPlus.WebApi.Core.Users;
+namespace GalliumPlus.Core.Users;
 
 public class Session
 {

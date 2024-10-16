@@ -1,6 +1,6 @@
-﻿using GalliumPlus.WebApi.Core.Applications;
+﻿using GalliumPlus.Core.Applications;
 
-namespace GalliumPlus.WebApi.Core.Data;
+namespace GalliumPlus.Core.Data;
 
 public interface IClientDao : IBasicDao<int, Client>
 {

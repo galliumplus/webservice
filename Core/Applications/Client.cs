@@ -1,8 +1,8 @@
-﻿using GalliumPlus.WebApi.Core.Random;
-using GalliumPlus.WebApi.Core.Users;
+﻿using GalliumPlus.Core.Random;
+using GalliumPlus.Core.Users;
 using KiwiQuery.Mapped;
 
-namespace GalliumPlus.WebApi.Core.Applications;
+namespace GalliumPlus.Core.Applications;
 
 /// <summary>
 /// Représente une application depuis laquelle l'API est utilisée.

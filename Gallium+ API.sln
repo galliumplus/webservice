@@ -5,7 +5,7 @@ VisualStudioVersion = 17.5.33424.131
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core", "Core\Core.csproj", "{2FBF183A-5654-484C-8F60-6D6A1EA2F75C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GalliumPlus", "GalliumPlus\GalliumPlus.csproj", "{2FD09829-C865-4CFF-BD3E-557FAA1CD3C4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebService", "WebService\WebService.csproj", "{2FD09829-C865-4CFF-BD3E-557FAA1CD3C4}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoreTests", "CoreTests\CoreTests.csproj", "{902C447E-38D6-4EA3-97DF-05CD5B8E7C7F}"
 EndProject
@@ -16,9 +16,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.github\workflows\Vérifications.yml = .github\workflows\Vérifications.yml
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExternalServices", "ExternalServices\ExternalServices.csproj", "{0091163D-F909-442C-9397-859D8E069322}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "External", "External\External.csproj", "{0091163D-F909-442C-9397-859D8E069322}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FakeServices", "FakeServices\FakeServices.csproj", "{C2F60092-E6D7-41D0-9903-A5EE953EAAD8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fake", "Fake\Fake.csproj", "{C2F60092-E6D7-41D0-9903-A5EE953EAAD8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KiwiQuery.Mapped", "KiwiQuery\KiwiQuery.Mapped\KiwiQuery.Mapped.csproj", "{F9F0A039-621F-44BA-BE3A-EDA0A1690EBB}"
 EndProject

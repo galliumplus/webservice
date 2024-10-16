@@ -1,7 +1,7 @@
-﻿using GalliumPlus.WebApi.Core.Random;
-using GalliumPlus.WebApi.Core.Users;
+﻿using GalliumPlus.Core.Random;
+using GalliumPlus.Core.Users;
 
-namespace GalliumPlus.WebApi.Core.Applications;
+namespace GalliumPlus.Core.Applications;
 
 /// <summary>
 /// Une application cliente qui authentifie ses utilisateurs

@@ -1,8 +1,8 @@
-﻿using GalliumPlus.WebApi.Core.Exceptions;
-using GalliumPlus.WebApi.Core.Stocks;
-using System.Text;
+﻿using System.Text;
+using GalliumPlus.Core.Exceptions;
+using GalliumPlus.Core.Stocks;
 
-namespace GalliumPlus.WebApi.Core.Orders;
+namespace GalliumPlus.Core.Orders;
 
 /// <summary>
 /// Un produit en une certaine quantité.

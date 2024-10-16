@@ -1,6 +1,6 @@
 ﻿using System.Security.Cryptography;
 
-namespace GalliumPlus.WebApi.Core.Random;
+namespace GalliumPlus.Core.Random;
 
 /// <summary>
 /// Générateur adapté à une utilisation cryptographique basé sur <see cref="RandomNumberGenerator"/>.

@@ -1,4 +1,4 @@
-﻿namespace GalliumPlus.WebApi.Core.Orders;
+﻿namespace GalliumPlus.Core.Orders;
 
 public class PaymentInCash : PaymentMethod
 {

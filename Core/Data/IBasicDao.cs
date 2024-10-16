@@ -1,6 +1,6 @@
-﻿using GalliumPlus.WebApi.Core.Exceptions;
+﻿using GalliumPlus.Core.Exceptions;
 
-namespace GalliumPlus.WebApi.Core.Data;
+namespace GalliumPlus.Core.Data;
 
 /// <summary>
 /// Opérations basiques (CRUD) d'accès aux données.

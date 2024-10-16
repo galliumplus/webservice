@@ -1,4 +1,4 @@
-﻿namespace GalliumPlus.WebApi.Core.Data.HistorySearch;
+﻿namespace GalliumPlus.Core.Data.HistorySearch;
 
 /// <summary>
 /// Un critère de recherche qui requiert que l'action ait été effectuée <em>avant</em> une certaine date.

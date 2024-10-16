@@ -1,6 +1,6 @@
 ﻿using ImageMagick;
 
-namespace GalliumPlus.WebApi.Core.Stocks;
+namespace GalliumPlus.Core.Stocks;
 
 /// <summary>
 /// Une image normalisée au format PNG de 400x400 pixels.
@@ -36,7 +36,7 @@ public class ProductImage
     /// <remarks>
     /// L'image est au format PNG et d'une taille de 400x400 pixels.
     /// </remarks>
-    public byte[] Bytes => data;
+    public byte[] Bytes => this.data;
 
     /// <summary>
     /// L'image sous forme d'un flux en lecture seule.
@@ -44,7 +44,7 @@ public class ProductImage
     /// <remarks>
     /// L'image est au format PNG et d'une taille de 400x400 pixels.
     /// </remarks>
-    public Stream Stream => new MemoryStream(data, writable: false);
+    public Stream Stream => new MemoryStream(this.data, writable: false);
 
     private ProductImage(byte[] data)
     {

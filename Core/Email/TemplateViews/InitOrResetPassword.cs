@@ -1,7 +1,7 @@
-﻿using Humanizer;
-using System.Globalization;
+﻿using System.Globalization;
+using Humanizer;
 
-namespace GalliumPlus.WebApi.Core.Email.TemplateViews;
+namespace GalliumPlus.Core.Email.TemplateViews;
 
 /// <summary>
 /// Le contenu dynamique d'un mail d'initialisation de compte ou de réinitialisation de mot de passe.

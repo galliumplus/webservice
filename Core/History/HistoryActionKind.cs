@@ -1,4 +1,4 @@
-﻿namespace GalliumPlus.WebApi.Core.History;
+﻿namespace GalliumPlus.Core.History;
 
 /// <summary>
 /// Les différents types d'actions.

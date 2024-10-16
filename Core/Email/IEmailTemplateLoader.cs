@@ -1,4 +1,4 @@
-﻿namespace GalliumPlus.WebApi.Core.Email;
+﻿namespace GalliumPlus.Core.Email;
 
 /// <summary>
 /// Un chargeur de modèles. Son rôle est de préparer des <see cref="EmailTemplate"/>.

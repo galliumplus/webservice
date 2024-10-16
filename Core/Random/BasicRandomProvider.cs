@@ -1,4 +1,4 @@
-﻿namespace GalliumPlus.WebApi.Core.Random;
+﻿namespace GalliumPlus.Core.Random;
 
 /// <summary>
 /// Générateur simple basé sur <see cref="System.Random"/>.

@@ -1,4 +1,4 @@
-﻿namespace GalliumPlus.WebApi.Core.Random;
+﻿namespace GalliumPlus.Core.Random;
 
 internal interface IRandomProvider
 {

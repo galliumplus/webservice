@@ -1,8 +1,8 @@
-﻿using GalliumPlus.WebApi.Core.History;
-using GalliumPlus.WebApi.Core.Exceptions;
-using GalliumPlus.WebApi.Core.Data.HistorySearch;
+﻿using GalliumPlus.Core.Data.HistorySearch;
+using GalliumPlus.Core.Exceptions;
+using GalliumPlus.Core.History;
 
-namespace GalliumPlus.WebApi.Core.Data;
+namespace GalliumPlus.Core.Data;
 
 public interface IHistoryDao
 {

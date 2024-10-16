@@ -1,4 +1,7 @@
-﻿namespace GalliumPlus.WebApi.Core.Users;
+﻿using GalliumPlus.Core.Applications;
+using GalliumPlus.Core.Users;
+
+namespace GalliumPlus.WebApi.Core.Users;
 
 public class SessionTest
 {

@@ -1,7 +1,8 @@
-﻿using GalliumPlus.WebApi.Core.Exceptions;
-using GalliumPlus.WebApi.Core.Random;
+﻿using GalliumPlus.Core.Exceptions;
+using GalliumPlus.Core.Random;
+using GalliumPlus.Core.Security;
 
-namespace GalliumPlus.WebApi.Core.Users;
+namespace GalliumPlus.Core.Users;
 
 public class PasswordResetToken
 {

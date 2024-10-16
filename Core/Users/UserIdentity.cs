@@ -1,4 +1,4 @@
-﻿namespace GalliumPlus.WebApi.Core.Users;
+﻿namespace GalliumPlus.Core.Users;
 
 /// <summary>
 /// Les informations personelles d'un utilisateur.

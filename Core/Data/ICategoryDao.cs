@@ -1,6 +1,6 @@
-﻿using GalliumPlus.WebApi.Core.Stocks;
+﻿using GalliumPlus.Core.Stocks;
 
-namespace GalliumPlus.WebApi.Core.Data;
+namespace GalliumPlus.Core.Data;
 
 public interface ICategoryDao : IBasicDao<int, Category>
 {

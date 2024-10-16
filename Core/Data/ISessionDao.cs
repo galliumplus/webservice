@@ -1,6 +1,6 @@
-﻿using GalliumPlus.WebApi.Core.Users;
+﻿using GalliumPlus.Core.Users;
 
-namespace GalliumPlus.WebApi.Core.Data;
+namespace GalliumPlus.Core.Data;
 
 public interface ISessionDao
 {

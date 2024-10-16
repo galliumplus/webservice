@@ -1,8 +1,8 @@
-﻿using GalliumPlus.WebApi.Core.Data;
-using GalliumPlus.WebApi.Core.Exceptions;
-using System.Globalization;
+﻿using System.Globalization;
+using GalliumPlus.Core.Data;
+using GalliumPlus.Core.Exceptions;
 
-namespace GalliumPlus.WebApi.Core.Orders;
+namespace GalliumPlus.Core.Orders;
 
 public class PaymentByDeposit : PaymentMethod
 {

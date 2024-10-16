@@ -1,6 +1,7 @@
-using GalliumPlus.WebApi.Core.Exceptions;
+using GalliumPlus.Core.Exceptions;
+using GalliumPlus.Core.Security;
 
-namespace GalliumPlus.WebApi.Core.Users;
+namespace GalliumPlus.Core.Users;
 
 /// <summary>
 /// Un utilisateur de l'application.

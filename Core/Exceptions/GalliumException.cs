@@ -1,4 +1,4 @@
-﻿namespace GalliumPlus.WebApi.Core.Exceptions;
+﻿namespace GalliumPlus.Core.Exceptions;
 
 public abstract class GalliumException : Exception
 {
