@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core", "Core\Core.csproj", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GalliumPlus", "GalliumPlus\GalliumPlus.csproj", "{2FD09829-C865-4CFF-BD3E-557FAA1CD3C4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoreTest", "CoreTest\CoreTest.csproj", "{902C447E-38D6-4EA3-97DF-05CD5B8E7C7F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoreTests", "CoreTests\CoreTests.csproj", "{902C447E-38D6-4EA3-97DF-05CD5B8E7C7F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{EB470CC0-FED5-477D-9FEF-318DA01EAA81}"
 	ProjectSection(SolutionItems) = preProject
