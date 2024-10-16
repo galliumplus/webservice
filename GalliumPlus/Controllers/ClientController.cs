@@ -1,54 +1,48 @@
 ﻿using GalliumPlus.WebApi.Core.Applications;
 using GalliumPlus.WebApi.Core.Data;
-using GalliumPlus.WebApi.Dto;
+using GalliumPlus.WebApi.Core.Users;
+using GalliumPlus.WebApi.Middleware.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GalliumPlus.WebApi.Controllers
 {
     [Route("v1/clients")]
+    [Authorize]
     [ApiController]
-    public class ClientController : Controller
+    public class ClientController(IClientDao clientDao) : Controller
     {
-        private IClientDao clientDao;
-        private ClientDetails.Mapper mapper;
-
-        public ClientController(IClientDao clientDao)
-        {
-            this.clientDao = clientDao;
-            this.mapper = new();
-        }
-
         [HttpGet]
+        [RequiresPermissions(Permissions.MANAGE_CLIENTS)]
         public IActionResult Get()
         {
-            return Json(this.mapper.FromModel(this.clientDao.Read()));
-        }
+            return this.Json(clientDao.Read());
+        } 
 
-        [HttpGet("{id}", Name = "client")]
+        [HttpGet("{id:int}", Name = "client")]
         public IActionResult Get(int id)
         {
-            return Json(this.mapper.FromModel(this.clientDao.Read(id)));
+            return this.Json(clientDao.Read(id));
         }
 
         [HttpPost]
-        public IActionResult Post(ClientDetails newClient)
+        public IActionResult Post(Client newClient)
         {
-            Client client = this.clientDao.Create(this.mapper.ToModel(newClient));
-            return Created("client", client.Id, this.mapper.FromModel(client));
+            Client client = clientDao.Create(newClient);
+            return this.Created("client", client.Id, client);
         }
 
-        [HttpPatch("{id}")]
-        public IActionResult Patch(int id, ClientDetails clientPatch)
+        [HttpPut("{id}")]
+        public IActionResult Put(int id, Client client)
         {
-            Client client = this.clientDao.Read(id);
-            this.mapper.PatchModel(client, clientPatch);
-            return Ok();
+            clientDao.Update(id, client);
+            return this.Ok();
         }
 
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            this.clientDao.Delete(id);
+            clientDao.Delete(id);
             return Ok();
         }
     }

@@ -58,7 +58,7 @@ options specific to gallium tests:
         # start test server
         if auto:
             print("Starting server in TEST mode...")
-            args = ["dotnet", "run", "--project", "GalliumWebService", "-c", "Test"]
+            args = ["dotnet", "run", "--project", "GalliumPlus", "-c", "Test"]
             if no_restore:
                 args.append("--no-restore")
             server = subprocess.Popen(args)

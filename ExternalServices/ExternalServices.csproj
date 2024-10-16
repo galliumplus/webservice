@@ -10,13 +10,14 @@
   <ItemGroup>
     <PackageReference Include="FluentMigrator" Version="5.2.0" />
     <PackageReference Include="FluentMigrator.Runner.MySql" Version="5.2.0" />
-    <PackageReference Include="KiwiQuery" Version="0.4.0" />
     <PackageReference Include="MailKit" Version="4.7.1.1" />
     <PackageReference Include="MySqlConnector" Version="2.3.1" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Core\Core.csproj" />
+    <ProjectReference Include="..\KiwiQuery\KiwiQuery.Mapped\KiwiQuery.Mapped.csproj" />
+    <ProjectReference Include="..\KiwiQuery\KiwiQuery\KiwiQuery.csproj" />
   </ItemGroup>
 
 </Project>

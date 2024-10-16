@@ -1,10 +1,11 @@
 ﻿using GalliumPlus.WebApi.Core.Random;
 using GalliumPlus.WebApi.Core.Users;
+using KiwiQuery.Mapped;
 
 namespace GalliumPlus.WebApi.Core.Applications;
 
 /// <summary>
-/// Réprésente une application depuis laquelle l'API est utilisée.
+/// Représente une application depuis laquelle l'API est utilisée.
 /// </summary>
 public class Client
 {
@@ -59,6 +60,7 @@ public class Client
     /// <param name="isEnabled">Si l'application est active ou non.</param>
     /// <param name="granted">Les permissions accordées à tous les utilisateurs.</param>
     /// <param name="revoked">Les permissions refusées à tous les utilisateurs.</param>
+    [PersistenceConstructor]
     public Client(
         int id,
         string apiKey,

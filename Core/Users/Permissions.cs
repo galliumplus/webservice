@@ -1,10 +1,10 @@
-/**
+/*
  * PAR PITIÉ, NE MODIFIEZ PAS LES PERMISSIONS EXISTANTES.
  *
  * Vous pouvez rajouter de nouvelles permissions avec des puissances de 2
  * (jusqu'à 2 147 483 648)
  *
- * RÉFLÉCHISSEZ AUSSI AVANT DE RENOMMER/CHANGER LA SIGNIFICATION D'UN RÔLE
+ * RÉFLÉCHISSEZ AUSSI AVANT DE RENOMMER/CHANGER LA SIGNIFICATION D'UNE PERMISSION
  */
 
 namespace GalliumPlus.WebApi.Core.Users;
@@ -12,6 +12,7 @@ namespace GalliumPlus.WebApi.Core.Users;
 /// <summary>
 /// Permissions spéciales attribuées aux rôles.
 /// </summary>
+[Flags]
 public enum Permissions : uint
 {
     /// <summary>
@@ -76,6 +77,13 @@ public enum Permissions : uint
     RESET_MEMBERSHIPS = 256 | MANAGE_USERS,
 
     NOT_RESET_MEMBERSHIPS = 256,
+
+    /// <summary>
+    /// Permission de gérer les applications connectées à Gallium.
+    /// </summary>
+    MANAGE_CLIENTS = 512,
+
+    NOT_MANAGE_CLIENTS = 512,
 
     //=== PERMISSIONS COMPOSÉES ===//
 

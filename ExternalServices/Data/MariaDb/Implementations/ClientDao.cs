@@ -5,6 +5,7 @@ using GalliumPlus.WebApi.Core.Data;
 using GalliumPlus.WebApi.Core.Exceptions;
 using GalliumPlus.WebApi.Core.Users;
 using KiwiQuery;
+using KiwiQuery.Mapped;
 using MySqlConnector;
 
 namespace GalliumPlus.WebApi.Data.MariaDb.Implementations
@@ -166,21 +167,7 @@ namespace GalliumPlus.WebApi.Data.MariaDb.Implementations
         {
             using var connection = this.Connect();
             Schema db = new(connection);
-
-            var clientTable = db.Table("Client");
-            var appAccessTable = db.Table("AppAccess");
-            var sameSignOnTable = db.Table("SameSignOn");
-
-            using var results = db.Select("apiKey", "name", "granted", "revoked", "isEnabled", "salt", "redirectUrl", "logoUrl")
-                                 .And(clientTable.Column("id").As("id"))
-                                 .And(appAccessTable.Column("id").As("botId"), appAccessTable.Column("secret").As("botSecret"))
-                                 .And(sameSignOnTable.Column("id").As("ssoId"), sameSignOnTable.Column("secret").As("ssoSecret"))
-                                 .From(clientTable)
-                                 .LeftJoin(appAccessTable.Column("id"), clientTable.Column("id"))
-                                 .LeftJoin(sameSignOnTable.Column("id"), clientTable.Column("id"))
-                                 .Fetch<MySqlDataReader>();
-
-            return this.ReadResults(results, Hydrate);
+            return db.Select<Client>().FetchList();
         }
 
         public Client Read(int key)
