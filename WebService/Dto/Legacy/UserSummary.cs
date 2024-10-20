@@ -66,6 +66,7 @@ namespace GalliumPlus.WebService.Dto
                 }
 
                 return new User(
+                    -1,
                     summary.Id!,
                     new UserIdentity(summary.FirstName!, summary.LastName!, summary.Email!, summary.Year!),
                     role,

@@ -57,6 +57,8 @@ builder.Services.AddSingleton(galliumOptions);
 
 builder.Services.AddServerInfo();
 
+builder.Services.AddGalliumServices();
+
 #endregion
 
 #region Base de données (Fake & MariaDB)

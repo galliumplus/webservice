@@ -16,67 +16,67 @@ public class UserTest
     [Fact]
     public void ConstructorWithoutPasswordInformation()
     {
-            User user = new User("mmansouri", new UserIdentity("Mehdi", "Mansouri", "mehdi.mansouri@iut-dijon.u-bourgogne.fr", "PROF"), this.profRole, 21.30m, false);
+        User user = new User(1, "mmansouri", new UserIdentity("Mehdi", "Mansouri", "mehdi.mansouri@iut-dijon.u-bourgogne.fr", "PROF"), profRole, 21.30m, false);
 
-            Assert.Equal("mmansouri", user.Id);
-            Assert.Equal("Mehdi", user.Identity.FirstName);
-            Assert.Equal("Mansouri", user.Identity.LastName);
-            Assert.Equal(this.profRole, user.Role);
-            Assert.Equal("PROF", user.Identity.Year);
-            Assert.Equal(21.30m, user.Deposit);
-            Assert.False(user.IsMember);
-        }
+        Assert.Equal(1, user.Iuid);
+        Assert.Equal("mmansouri", user.Id);
+        Assert.Equal("Mehdi", user.Identity.FirstName);
+        Assert.Equal("Mansouri", user.Identity.LastName);
+        Assert.Equal(this.profRole, user.Role);
+        Assert.Equal("PROF", user.Identity.Year);
+        Assert.Equal(21.30m, user.Deposit);
+        Assert.False(user.IsMember);
+    }
 
     [Fact]
     public void ConstructorWithPasswordInformation()
     {
-            User user = new User("mmansouri", new UserIdentity("Mehdi", "Mansouri", "mehdi.mansouri@iut-dijon.u-bourgogne.fr", "PROF"), this.profRole, 21.30m, false, this.password);
+        User user = new User(1, "mmansouri", new UserIdentity("Mehdi", "Mansouri", "mehdi.mansouri@iut-dijon.u-bourgogne.fr", "PROF"), profRole, 21.30m, false, this.password);
 
-            Assert.Equal("mmansouri", user.Id);
-            Assert.Equal("Mehdi", user.Identity.FirstName);
-            Assert.Equal("Mansouri", user.Identity.LastName);
-            Assert.Equal(this.profRole, user.Role);
-            Assert.Equal("PROF", user.Identity.Year);
-            Assert.Equal(21.30m, user.Deposit);
-            Assert.False(user.IsMember);
-            Assert.Equal(this.password, user.Password);
-        }
+        Assert.Equal(1, user.Iuid);
+        Assert.Equal("mmansouri", user.Id);
+        Assert.Equal("Mehdi", user.Identity.FirstName);
+        Assert.Equal("Mansouri", user.Identity.LastName);
+        Assert.Equal(this.profRole, user.Role);
+        Assert.Equal("PROF", user.Identity.Year);
+        Assert.Equal(21.30m, user.Deposit);
+        Assert.False(user.IsMember);
+        Assert.Equal(this.password, user.Password);
+    }
 
     [Fact]
     public void InvalidItemExceptionThrownOnInvalidUserIdInConstructor()
     {
-            Action userCreationWithPassword = () => new User("@mansouri", new UserIdentity("Mehdi", "Mansouri", "mehdi.mansouri@iut-dijon.u-bourgogne.fr", "PROF"), this.profRole, 21.30m, false, this.password);
-            InvalidItemException exception = Assert.Throws<InvalidItemException>(userCreationWithPassword);
+        Action userCreationWithPassword = () => new User(1, "@mansouri", new UserIdentity("Mehdi", "Mansouri", "mehdi.mansouri@iut-dijon.u-bourgogne.fr", "PROF"), profRole, 21.30m, false, password);
+        Assert.Throws<InvalidItemException>(userCreationWithPassword);
 
-            Action userCreationWithoutPassword = () => new User("@mansouri", new UserIdentity("Mehdi", "Mansouri", "mehdi.mansouri@iut-dijon.u-bourgogne.fr", "PROF"), this.profRole, 21.30m, false);
-            exception = Assert.Throws<InvalidItemException>(userCreationWithoutPassword);
-        }
+        Action userCreationWithoutPassword = () => new User(1, "@mansouri", new UserIdentity("Mehdi", "Mansouri", "mehdi.mansouri@iut-dijon.u-bourgogne.fr", "PROF"), profRole, 21.30m, false);
+        Assert.Throws<InvalidItemException>(userCreationWithoutPassword);
+    }
 
     [Fact]
     public void InvalidItemExceptionThrownOnInvalidUserIdInSetter()
     {
-            User user = new(
-                "mansouri",
-                new UserIdentity("Mehdi", "Mansouri", "mehdi.mansouri@iut-dijon.u-bourgogne.fr", "PROF"),
-                this.profRole, 21.30m, false,
-                this.password
-            );
+        User user = new(
+            1,
+            "mansouri",
+            new UserIdentity("Mehdi", "Mansouri", "mehdi.mansouri@iut-dijon.u-bourgogne.fr", "PROF"), this.profRole, 21.30m, false, this.password
+        );
 
-            foreach (string id in this.validIdList)
+        foreach (string id in this.validIdList)
+        {
+            try
             {
-                try
-                {
-                    user.Id = id;
-                }
-                catch (InvalidItemException)
-                {
-                    Assert.Fail($"{id} est censé etre accepté par le setter de User.Id");
-                }
+                user.Id = id;
             }
-
-            foreach (string id in this.invalidIdList)
-                Assert.Throws<InvalidItemException>(() => user.Id = id);
-
+            catch (InvalidItemException)
+            {
+                Assert.Fail($"{id} est censé etre accepté par le setter de User.Id");
+            }
         }
 
+        foreach (string id in this.invalidIdList)
+            Assert.Throws<InvalidItemException>(() => user.Id = id);
+
+    }
 }

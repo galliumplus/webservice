@@ -46,6 +46,7 @@ namespace GalliumPlus.WebService.Dto
             public override User ToModel(UserDetails details)
             {
                 return new User(
+                    -1,
                     details.Id,
                     new UserIdentity(
                         details.FirstName,

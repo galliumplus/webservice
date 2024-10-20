@@ -41,6 +41,7 @@ namespace GalliumPlus.Data.Fake
 
             this.Create(
                 new User(
+                    1,
                     "lomens",
                     new UserIdentity("Nicolas", "RESIN", "nicolas.resin@iut-dijon.u-bourgogne.fr", "PROF"),
                     this.roles.Read(1), 20, false,
@@ -49,6 +50,7 @@ namespace GalliumPlus.Data.Fake
             );
             this.Create(
                 new User(
+                    2,
                     "mf187870", 
                     new UserIdentity("Matéo", "FAVARD", "mateo.favard@iut-dijon.u-bourgogne.fr", "3A"),
                     this.roles.Read(2), 1_000_000_000, false,
@@ -57,6 +59,7 @@ namespace GalliumPlus.Data.Fake
             );
             this.Create(
                 new User(
+                    3,
                     "eb069420",
                     new UserIdentity("Evan", "BEUGNOT", "evan.beugnot@iut-dijon.u-bourgogne.fr", "2A"),
                     this.roles.Read(3), 1_000_000_000, false,

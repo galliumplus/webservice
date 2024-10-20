@@ -19,6 +19,8 @@ namespace GalliumPlus.WebService.Middleware.ErrorHandling
             if (context.Exception is PermissionDeniedException permissionDenied)
             {
                 this.logger.LogDebug($"PermissionDeniedException capturée à la sortie de {context.HttpContext.Request.Method} {context.HttpContext.Request.Path}");
+                this.logger.LogDebug("Les permissions requises étaient {}", permissionDenied.Required);
+                
                 string messageAction = context.HttpContext.Request.Method switch
                 {
                     "GET" or "HEAD" => "d'accéder à cette ressource",
@@ -68,7 +70,7 @@ namespace GalliumPlus.WebService.Middleware.ErrorHandling
                         modelStateErrors.Add(error.ErrorMessage);
                     }
                 }
-
+                
                 return new ErrorResult(
                     ErrorCode.InvalidItem,
                     "Le format de cette ressource est invalide.",

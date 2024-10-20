@@ -28,7 +28,7 @@ namespace GalliumPlus.WebService.Middleware.Authentication
             this.clients = clients;
         }
 
-        private readonly record struct Credentials(string Username, string Password);
+        private readonly record struct Credentials(string Username, string Password, string? Application);
 
         private bool TryParseHeader(out Credentials credentials)
         {
@@ -43,7 +43,7 @@ namespace GalliumPlus.WebService.Middleware.Authentication
                 var credentialsBytes = Convert.FromBase64String(authHeader.Parameter ?? "");
                 var credentialsParts = Encoding.UTF8.GetString(credentialsBytes).Split(':', 2);
 
-                credentials = new Credentials(credentialsParts[0], credentialsParts[1]);
+                credentials = new Credentials(credentialsParts[0], credentialsParts[1], null);
                 return true;
             }
             catch
@@ -119,10 +119,11 @@ namespace GalliumPlus.WebService.Middleware.Authentication
                 return AuthenticateResult.Fail("Passwords don't match");
             }
 
-            this.Context.Items.Add("User", user);
-            this.Context.Items.Add("Client", app);
+            Context.Items.Add("User", user);
+            Context.Items.Add("Client", app);
+            if (credentials.Application != null) Context.Items.Add("SsoClientKey", credentials.Application);
 
-            return AuthenticateResult.Success(new EmptyTicket(this.Scheme));
+            return AuthenticateResult.Success(new EmptyTicket(Scheme));
         }
     }
 

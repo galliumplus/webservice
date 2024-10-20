@@ -1,4 +1,4 @@
-﻿using GalliumPlus.Core.Applications;
+using GalliumPlus.Core.Applications;
 using GalliumPlus.Core.Data;
 using GalliumPlus.Core.Exceptions;
 using GalliumPlus.Core.History;
@@ -13,18 +13,9 @@ namespace GalliumPlus.WebService.Controllers
 {
     [Route("v1")]
     [ApiController]
-    public class AccessController : Controller
+    public class AccessController(AccessService service, ISessionDao sessionDao, IHistoryDao historyDao) : Controller
     {
-        private ISessionDao sessionDao;
-        private IHistoryDao historyDao;
-        private LoggedIn.Mapper mapper;
-
-        public AccessController(ISessionDao sessionDao, IHistoryDao historyDao)
-        {
-            this.sessionDao = sessionDao;
-            this.historyDao = historyDao;
-            this.mapper = new();
-        }
+        private LoggedIn.Mapper mapper = new();
 
         [HttpPost("login")]
         [Authorize(AuthenticationSchemes = "Basic")]
@@ -48,14 +39,14 @@ namespace GalliumPlus.WebService.Controllers
                 try
                 {
                     Session session = Session.LogIn(app, user);
-                    this.sessionDao.Create(session);
+                    sessionDao.Create(session);
 
                     HistoryAction action = new(
                         HistoryActionKind.LogIn,
                         $"Connexion à {app.Name}",
                         user.Id
                     );
-                    this.historyDao.AddEntry(action);
+                    historyDao.AddEntry(action);
 
                     return this.Json(this.mapper.FromModel(session));
                 }
@@ -75,13 +66,13 @@ namespace GalliumPlus.WebService.Controllers
                 try
                 {
                     Session session = Session.LogIn(bot);
-                    this.sessionDao.Create(session);
+                    sessionDao.Create(session);
 
                     HistoryAction action = new(
                         HistoryActionKind.LogIn,
                         $"Connexion de {bot.Name}"
                     );
-                    this.historyDao.AddEntry(action);
+                    historyDao.AddEntry(action);
 
                     return this.Json(this.mapper.FromModel(session));
                 }
@@ -90,11 +81,28 @@ namespace GalliumPlus.WebService.Controllers
             return this.StatusCode(StatusCodes.Status503ServiceUnavailable);
         }
 
+        [HttpPost("same-sign-on")]
+        [Authorize(AuthenticationSchemes = "Basic")]
+        public IActionResult SameSignOn(GalliumOptions options)
+        {
+            this.HttpContext.Items.TryGetValue("SsoClientKey", out object? appKey);
+            var session = service.SameSignOn(this.Client!, this.User!, (string)appKey!, options.Host);
+            
+            HistoryAction action = new(
+                HistoryActionKind.LogIn,
+                $"Connexion à une appli externe ({session.RedirectUrl}) via le portail de {this.Client!.Name}",
+                this.User!.Id
+            );
+            historyDao.AddEntry(action);
+            
+            return Json(session);
+        }
+
         [HttpPost("logout")]
         [Authorize(AuthenticationSchemes = "Bearer")]
         public IActionResult LogOut()
         {
-            this.sessionDao.Delete(this.Session!);
+            sessionDao.Delete(this.Session!);
             return this.Ok();
         }
     }

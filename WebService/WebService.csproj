@@ -13,6 +13,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <PackageReference Include="JWT" Version="10.1.1" />
 	  <PackageReference Include="Quartz.Extensions.Hosting" Version="3.7.0" />
 	</ItemGroup>
 

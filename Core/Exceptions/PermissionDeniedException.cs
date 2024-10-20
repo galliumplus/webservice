@@ -21,7 +21,7 @@ public class PermissionDeniedException : GalliumException
     /// Instancie l'exception.
     /// </summary>
     /// <param name="required">Les permissions requises pour effectuer l'action.</param>
-    public PermissionDeniedException(Permissions required) : base()
+    public PermissionDeniedException(Permissions required)
     {
         this.required = required;
     }

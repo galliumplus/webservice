@@ -59,6 +59,21 @@ namespace GalliumPlus.Data.Fake
             );
             client.AppAccess = new AppAccess(0, new OneTimeSecret(botKey.Hash, botKey.Salt));
             this.Create(client);
+
+            this.Create(
+                new SsoClient(
+                    id: 0,
+                    name: "Tests (SSO)",
+                    apiKey: "test-api-key-sso",
+                    isEnabled: true,
+                    granted: Permissions.SEE_PRODUCTS_AND_CATEGORIES,
+                    revoked: Permissions.NONE,
+                    secret: "test-sso-secret",
+                    redirectUrl: "https://example.app/login",
+                    usesApi: false,
+                    logoUrl: "https://example.app/static/logo.png"
+                )
+            );
         }
 
         public Client FindByApiKey(string apiKey)
@@ -78,6 +93,18 @@ namespace GalliumPlus.Data.Fake
             if (this.FindByApiKey(apiKey) is { AppAccess: not null } bot)
             {
                 return bot;
+            }
+            else
+            {
+                throw new ItemNotFoundException();
+            }
+        }
+
+        public SsoClient FindSsoByApiKey(string apiKey)
+        {
+            if (this.FindByApiKey(apiKey) is SsoClient ssoClient)
+            {
+                return ssoClient;
             }
             else
             {
