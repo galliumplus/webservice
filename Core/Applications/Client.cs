@@ -1,4 +1,5 @@
-﻿using GalliumPlus.Core.Random;
+﻿using System.Text.Json.Serialization;
+using GalliumPlus.Core.Random;
 using GalliumPlus.Core.Users;
 using KiwiQuery.Mapped;
 
@@ -9,6 +10,7 @@ namespace GalliumPlus.Core.Applications;
 /// </summary>
 public class Client
 {
+    [Key]
     private int id;
     private string apiKey;
     private string name;
@@ -16,41 +18,80 @@ public class Client
     private Permissions revoked;
     private bool isEnabled;
 
+    [HasOne("id")]
+    private AppAccess? appAccess;
+
     /// <summary>
     /// L'identifiant de l'application.
     /// </summary>
-    public int Id { get => this.id; set => this.id = value; }
+    public int Id
+    {
+        get => this.id;
+        set => this.id = value;
+    }
 
     /// <summary>
     /// La clé d'API de l'application.
     /// </summary>
-    public string ApiKey { get => this.apiKey; set => this.apiKey = value; }
+    public string ApiKey
+    {
+        get => this.apiKey;
+        set => this.apiKey = value;
+    }
 
     /// <summary>
     /// Le nom servant à identifier rapidement l'application.
     /// </summary>
-    public string Name { get => this.name; set => this.name = value; }
+    public string Name
+    {
+        get => this.name;
+        set => this.name = value;
+    }
 
     /// <summary>
     /// Les permissions données à tous les utilisteurs de l'application.
     /// </summary>
-    public Permissions Granted { get => this.granted; set => this.granted = value; }
+    public Permissions Granted
+    {
+        get => this.granted;
+        set => this.granted = value;
+    }
 
     /// <summary>
     /// Les permissions enlevées à tous les utilisateurs de l'application.
     /// </summary>
-    public Permissions Revoked { get => this.revoked; set => this.revoked = value; }
+    public Permissions Revoked
+    {
+        get => this.revoked;
+        set => this.revoked = value;
+    }
 
     /// <summary>
     /// Indique si l'application est utilisable ou non.
     /// </summary>
-    public bool IsEnabled { get => this.isEnabled; set => this.isEnabled = value; }
+    public bool IsEnabled
+    {
+        get => this.isEnabled;
+        set => this.isEnabled = value;
+    }
 
     /// <summary>
     /// Indique si des utilisateurs peuvent se connecter via l'application.
     /// </summary>
-    public virtual bool AllowUserLogin => this.IsEnabled;
+    [JsonIgnore]
+    public virtual bool AllowUserLogin => this.IsEnabled && !this.HasAppAccess;
 
+    /// <summary>
+    /// La clé d'accès applicatif de ce client, ou <see langword="null"/> s'il n'en a pas.
+    /// </summary>
+    [JsonIgnore]
+    public AppAccess? AppAccess { get => this.appAccess; set => this.appAccess = value; }
+
+    /// <summary>
+    /// Indique si une clé d'accès applicatif est présente.
+    /// </summary>
+    public bool HasAppAccess => this.appAccess != null;
+    
     /// <summary>
     /// Crée une application existante.
     /// </summary>

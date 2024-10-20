@@ -1,4 +1,5 @@
 ﻿using GalliumPlus.Core.Applications;
+using GalliumPlus.Core.Exceptions;
 
 namespace GalliumPlus.Core.Data;
 
@@ -16,7 +17,7 @@ public interface IClientDao : IBasicDao<int, Client>
     /// Récupère un client automatisé par sa clé d'API.
     /// </summary>
     /// <param name="apiKey">La clé d'API du client recherché.</param>
-    /// <returns>Le <see cref="BotClient"/> correspondant.</returns>
+    /// <returns>Le <see cref="Client"/> correspondant. Il aura forcément un <see cref="AppAccess"/>.</returns>
     /// <exception cref="ItemNotFoundException"/>
-    public BotClient FindBotByApiKey(string apiKey);
+    public Client FindBotByApiKey(string apiKey);
 }

@@ -70,9 +70,13 @@
     }
 }
 
+#pragma warning disable CA1050
+
 public static partial class Builtins
 {
     // astuce pour récupérer l'heure du build
-    private static readonly long CompileTime = 0;
-    public static DateTime CompileDateTime => new DateTime(CompileTime, DateTimeKind.Utc);
+    private static readonly long CompileTime;
+    public static DateTime CompileDateTime => new(CompileTime, DateTimeKind.Utc);
 }
+
+#pragma warning restore CA1050

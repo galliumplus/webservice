@@ -3,12 +3,13 @@ BDD-style assertions for unittest
 """
 
 import re
+from unittest import TestCase
 
 
 class Expectations:
     __property = property
 
-    def __init__(self, test_case, value):
+    def __init__(self, test_case: TestCase, value):
         self.test_case = test_case
         self.value = value
         self.negation = False
@@ -119,6 +120,7 @@ class Expectations:
 
         if self.negation:
             self.test_case.assertNotIn(key, self.value)
+            return self
         else:
             self.test_case.assertIn(key, self.value)
             return Expectations(self.test_case, self.value[key])

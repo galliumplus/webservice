@@ -14,7 +14,7 @@
 
         public IEnumerable<TDto> FromModel(IEnumerable<TModel> models)
         {
-            foreach (TModel model in models) yield return this.FromModel(model);
+            return models.Select(this.FromModel);
         }
     }
 }

@@ -2,7 +2,7 @@ from itertools import zip_longest
 from utils.auth import BearerAuth
 
 
-class HistoryTestHelpers:
+class AuditTestHelpers:
     def __init__(self, test_suite):
         self.history = []
         self.diff = []
@@ -54,13 +54,6 @@ class HistoryTestHelpers:
             "actionKind": "LogIn",
             "text": f"Connexion de {app_name}",
             "actor": None,
-        }
-
-    def login_sso_action(self, portal_name, app_name, app_url, user_id):
-        return {
-            "actionKind": "LogIn",
-            "text": f"Connexion à {app_name} ({app_url}) via le portail de {app_name}",
-            "actor": user_id,
         }
 
     def category_added_action(self, category_name, user_id):

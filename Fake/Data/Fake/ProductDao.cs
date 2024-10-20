@@ -17,7 +17,7 @@ namespace GalliumPlus.Data.Fake
         {
             this.categoryDao = categoryDao;
 
-            string defaultImageName = "GalliumPlus.WebApi.Data.FakeDatabase.images.serial-designation-n.png";
+            string defaultImageName = "GalliumPlus.Data.Fake.images.serial-designation-n.png";
             Stream defaultImageStream = Assembly.GetExecutingAssembly().GetManifestResourceStream(defaultImageName)!;
             byte[] defaultImageData = new byte[defaultImageStream.Length];
             defaultImageStream.Read(defaultImageData, 0, defaultImageData.Length);

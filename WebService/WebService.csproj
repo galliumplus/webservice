@@ -18,10 +18,11 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\Core\Core.csproj" />
+		<Compile Include="$(IntermediateOutputPath)Builtins.g.cs" />
 	</ItemGroup>
 
 	<ItemGroup Condition="$(Configuration) == 'Test'">
-		<ProjectReference Include="..\FakeServices\FakeServices.csproj" />
+		<ProjectReference Include="..\Fake\Fake.csproj" />
 	</ItemGroup>
 
 	<ItemGroup Condition="($(Configuration) == 'Debug') Or ($(Configuration) == 'Release')">
@@ -33,9 +34,6 @@
 				File="$(IntermediateOutputPath)Builtins.g.cs"
 				Lines="static partial class Builtins { static Builtins() { CompileTime = $([System.DateTime]::Now.Ticks) %3B } }"
 				Overwrite="true" />
-		<ItemGroup>
-			<Compile Include="$(IntermediateOutputPath)Builtins.g.cs" />
-		</ItemGroup>
 	</Target>
 
 

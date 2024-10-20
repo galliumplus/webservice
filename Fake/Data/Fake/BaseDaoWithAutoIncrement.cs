@@ -4,11 +4,11 @@
     {
         private int nextInsertKey = 1;
 
-        public override TItem Create(TItem item)
+        public override TItem Create(TItem client)
         {
-            this.SetKey(ref item, this.nextInsertKey);
+            this.SetKey(ref client, this.nextInsertKey);
             this.nextInsertKey++;
-            return base.Create(item);
+            return base.Create(client);
         }
     }
 }

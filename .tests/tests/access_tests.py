@@ -1,4 +1,5 @@
 import re
+import jwt
 from utils.test_base import TestBase
 from utils.auth import BearerAuth, BasicAuth, SecretKeyAuth
 from .history_tests_helpers import HistoryTestHelpers
@@ -247,6 +248,49 @@ class AccessTests(TestBase):
             self.history.login_action("Tests (minimum)", "lomens"),
             self.history.login_action("Tests (minimum)", "eb069420"),
             self.history.category_added_action("Catégorie", "eb069420"),
+        )
+
+    def test_sso(self):
+        galliumKey = "test-api-key-normal"
+
+        login_data = {
+            "Application": "test-api-key-sso",
+            "Username": "lomens",
+            "Password": "motdepasse",
+        }
+
+        with self.history.watch():
+            response = self.post(
+                "same-sign-on", json=login_data, headers={"X-Api-Key": galliumKey}
+            )
+
+        self.expect(response.status_code).to.be.equal_to(200)
+
+        session = response.json()
+
+        token = self.expect(session).to.have.an_item("jwt").of.type(str).value
+        payload = jwt.decode(token, "test-sso-secret", algorithms=["HS256"])
+
+        self.expect(payload).to.have.an_item("exp").of.type(int)
+        self.expect(payload).to.have.an_item("gallium.usr").that.is_.equal_to("lomens")
+        iuid = self.expect(payload).to.have.an_item("gallium.iuid").of.type(int).value
+        self.expect(payload).to.have.an_item("iat").of.type(int)
+        self.expect(payload).to.have.an_item("iss").of.type(str)
+        self.expect(payload).to.have.an_item("sub").that.is_.equal_to(str(iuid))
+
+        redirect_url = (
+            self.expect(session).to.have.an_item("redirectUrl").of.type(str).value
+        )
+
+        full_redirect_url = (
+            self.expect(session).to.have.an_item("fullRedirectUrl").of.type(str).value
+        )
+        self.expect(full_redirect_url).to.be.equal_to(f"{redirect_url}?token={token}")
+
+        self.history.expect_entries(
+            self.history.login_sso_action(
+                "Tests (normal)", "https://example.app/login", "lomens"
+            )
         )
 
     def test_login_app(self):

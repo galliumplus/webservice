@@ -28,6 +28,7 @@ namespace GalliumPlus.Data.Fake
                     | Permissions.MANAGE_ROLES
                     | Permissions.MANAGE_USERS
                     | Permissions.RESET_MEMBERSHIPS
+                    | Permissions.MANAGE_CLIENTS
                 )
             );
         }

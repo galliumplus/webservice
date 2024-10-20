@@ -15,18 +15,18 @@ namespace GalliumPlus.Data.Fake
             this.items = new Dictionary<TKey, TItem>();
         }
 
-        virtual public TItem Create(TItem item)
+        virtual public TItem Create(TItem client)
         {
             lock (this.items)
             {
-                if (!this.CheckConstraints(item))
+                if (!this.CheckConstraints(client))
                 {
                     throw new InvalidItemException("Custom constraints violated");
                 }
 
-                TKey key = this.GetKey(item);
+                TKey key = this.GetKey(client);
 
-                if (!this.items.TryAdd(key, item))
+                if (!this.items.TryAdd(key, client))
                 {
                     throw new DuplicateItemException();
                 }

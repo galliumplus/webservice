@@ -1,6 +1,8 @@
 ﻿using GalliumPlus.Data;
+#if !TEST
 using GalliumPlus.Data.MariaDb;
 using GalliumPlus.Email.MailKit;
+#endif
 
 namespace GalliumPlus.WebService
 {

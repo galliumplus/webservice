@@ -12,8 +12,8 @@ public interface IBasicDao<TKey, TItem>
     /// <summary>
     /// Enregistre un nouvel item.
     /// </summary>
-    /// <param name="item">L'item à insérer.</param>
-    public TItem Create(TItem item);
+    /// <param name="client">L'item à insérer.</param>
+    public TItem Create(TItem client);
 
     /// <summary>
     /// Récupère tous les items.

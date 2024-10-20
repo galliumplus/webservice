@@ -10,14 +10,14 @@ namespace GalliumPlus.Data.MariaDb.Implementations
     {
         public CategoryDao(DatabaseConnector connector) : base(connector) { }
 
-        public Category Create(Category item)
+        public Category Create(Category client)
         {
             using var connection = this.Connect();
             Schema db = new(connection);
             
-            int id = db.InsertInto("Category").Value("name", item.Name).Apply();
+            int id = db.InsertInto("Category").Value("name", client.Name).Apply();
 
-            return item.WithId(id);
+            return client.WithId(id);
         }
 
         public void Delete(int key)

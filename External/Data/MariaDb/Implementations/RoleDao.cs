@@ -10,14 +10,14 @@ namespace GalliumPlus.Data.MariaDb.Implementations
     {
         public RoleDao(DatabaseConnector connector) : base(connector) { }
 
-        public Role Create(Role item)
+        public Role Create(Role client)
         {
             using var connection = this.Connect();
             Schema db = new(connection);
 
-            item.Id = db.InsertInto("Role").Value("name", item.Name).Value("permissions", (int)item.Permissions).Apply();
+            client.Id = db.InsertInto("Role").Value("name", client.Name).Value("permissions", (int)client.Permissions).Apply();
 
-            return item;
+            return client;
         }
 
         public void Delete(int key)

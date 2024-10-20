@@ -24,6 +24,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KiwiQuery.Mapped", "KiwiQue
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KiwiQuery", "KiwiQuery\KiwiQuery\KiwiQuery.csproj", "{AB95D438-12FE-48A2-BABF-2639BF81341B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "KiwiQuery\Tests\Tests.csproj", "{56FDEA9E-F9A1-4112-8919-9617AFD40F84}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -73,6 +75,12 @@ Global
 		{AB95D438-12FE-48A2-BABF-2639BF81341B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{AB95D438-12FE-48A2-BABF-2639BF81341B}.Test|Any CPU.ActiveCfg = Debug|Any CPU
 		{AB95D438-12FE-48A2-BABF-2639BF81341B}.Test|Any CPU.Build.0 = Debug|Any CPU
+		{56FDEA9E-F9A1-4112-8919-9617AFD40F84}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{56FDEA9E-F9A1-4112-8919-9617AFD40F84}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{56FDEA9E-F9A1-4112-8919-9617AFD40F84}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{56FDEA9E-F9A1-4112-8919-9617AFD40F84}.Release|Any CPU.Build.0 = Release|Any CPU
+		{56FDEA9E-F9A1-4112-8919-9617AFD40F84}.Test|Any CPU.ActiveCfg = Debug|Any CPU
+		{56FDEA9E-F9A1-4112-8919-9617AFD40F84}.Test|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

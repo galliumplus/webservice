@@ -7,6 +7,7 @@ using System.Text.Json.Serialization;
 using GalliumPlus.Core.Data;
 using GalliumPlus.Core.Email;
 using GalliumPlus.WebService;
+using GalliumPlus.WebService.Dto;
 using GalliumPlus.WebService.Middleware;
 using GalliumPlus.WebService.Middleware.Authentication;
 using GalliumPlus.WebService.Middleware.Authorization;
@@ -14,15 +15,16 @@ using GalliumPlus.WebService.Middleware.ErrorHandling;
 using GalliumPlus.WebService.Scheduling;
 
 #if FAKE_DB
-using GalliumPlus.WebApi.Data.FakeDatabase;
+using GalliumPlus.Data.Fake;
 #else
 using GalliumPlus.Data.MariaDb;
 using GalliumPlus.Data.MariaDb.Implementations;
 using FluentMigrator.Runner;
+using KiwiQuery;
 #endif
 
 #if FAKE_EMAIL
-using GalliumPlus.WebApi.Email.FakeEmailService;
+using GalliumPlus.Email.Fake;
 #else
 using GalliumPlus.Email.MailKit;
 #endif
@@ -80,9 +82,9 @@ builder.Services.AddScoped<IUserDao, UserDao>();
 builder.Services.AddSingleton(new DatabaseConnector(galliumOptions.MariaDb));
 
 builder.Services.AddFluentMigratorCore()
-    .ConfigureRunner(rb =>
+    .ConfigureRunner(mrb =>
     {
-        rb.AddMySql8()
+        mrb.AddMySql8()
             .WithGlobalConnectionString(galliumOptions.MariaDb.ToConnectionString())
             .ScanIn(typeof(MigrationsRunner).Assembly).For.Migrations();
     });
@@ -128,7 +130,9 @@ builder.Services.Configure<JsonOptions>(options =>
     options.JsonSerializerOptions.AllowTrailingCommas = true;
     // garde les noms de propriétés tels quels
     options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-    // sérialise les énumérations sous forme de texte
+    // sérialise les permissions sous forme numérique
+    options.JsonSerializerOptions.Converters.Add(new PermissionsCodeConverter());
+    // et les autres énumérations sous forme de texte
     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
 
@@ -204,6 +208,7 @@ Console.WriteLine(ServerInfo.Current);
 #if !FAKE_DB
 using (IServiceScope scope = app.Services.CreateScope())
 {
+    Schema.AlwaysLogTo(scope.ServiceProvider.GetRequiredService<ILoggerFactory>().CreateLogger("KIWIQ"));
     MigrationsRunner.UpdateDatabase(scope.ServiceProvider);
 }
 #endif

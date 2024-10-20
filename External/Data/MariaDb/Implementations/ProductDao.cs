@@ -12,24 +12,24 @@ namespace GalliumPlus.Data.MariaDb.Implementations
 
         public ICategoryDao Categories => new CategoryDao(this.Connector);
 
-        public Product Create(Product item)
+        public Product Create(Product client)
         {
             using var connection = this.Connect();
             Schema db = new(connection);
 
-            item.Id = db.InsertInto("Item")
-                        .Value("name", item.Name)
+            client.Id = db.InsertInto("Item")
+                        .Value("name", client.Name)
                         .Value("isBundle", false)
-                        .Value("isAvailable", (int)item.Availability)
-                        .Value("currentStock", item.Stock)
-                        .Value("category", item.Category.Id)
+                        .Value("isAvailable", (int)client.Availability)
+                        .Value("currentStock", client.Stock)
+                        .Value("category", client.Category.Id)
                         .Value("group", (object?)null)
                         .Value("picture", (object?)null)
                         .Value("deleted", false)
                         .Apply();
 
             db.InsertInto("Price")
-                .Value("price", item.NonMemberPrice)
+                .Value("price", client.NonMemberPrice)
                 .Value("isDiscount", false)
                 .Value("effectiveDate", DateOnly.FromDateTime(DateTime.Now))
                 .Value("expirationDate", (object?)null)
@@ -40,11 +40,11 @@ namespace GalliumPlus.Data.MariaDb.Implementations
                         db.Column("requiresMembership") == 0
                     ))
                 )
-                .Value("item", item.Id)
+                .Value("item", client.Id)
                 .Apply();
             
             db.InsertInto("Price")
-                .Value("price", item.MemberPrice)
+                .Value("price", client.MemberPrice)
                 .Value("isDiscount", false)
                 .Value("effectiveDate", DateOnly.FromDateTime(DateTime.Now))
                 .Value("expirationDate", (object?)null)
@@ -55,10 +55,10 @@ namespace GalliumPlus.Data.MariaDb.Implementations
                         db.Column("requiresMembership") == 1
                     ))
                 )
-                .Value("item", item.Id)
+                .Value("item", client.Id)
                 .Apply();
             
-            return item;
+            return client;
         }
 
         public void Delete(int key)

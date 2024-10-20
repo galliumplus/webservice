@@ -15,7 +15,7 @@ namespace GalliumPlus.Data.MariaDb.Implementations
 
         public IRoleDao Roles => new RoleDao(this.Connector);
 
-        public User Create(User item)
+        public User Create(User client)
         {
             using var connection = this.Connect();
             Schema db = new(connection);
@@ -23,14 +23,14 @@ namespace GalliumPlus.Data.MariaDb.Implementations
             try
             {
                 db.InsertInto("User")
-                  .Value("userId", item.Id)
-                  .Value("firstName", item.Identity.FirstName)
-                  .Value("lastName", item.Identity.LastName)
-                  .Value("email", item.Identity.Email)
-                  .Value("year", item.Identity.Year)
-                  .Value("role", item.Role.Id)
-                  .Value("deposit", item.Deposit)
-                  .Value("isMember", item.IsMember)
+                  .Value("userId", client.Id)
+                  .Value("firstName", client.Identity.FirstName)
+                  .Value("lastName", client.Identity.LastName)
+                  .Value("email", client.Identity.Email)
+                  .Value("year", client.Identity.Year)
+                  .Value("role", client.Role.Id)
+                  .Value("deposit", client.Deposit)
+                  .Value("isMember", client.IsMember)
                   .Value("registration", DateTime.UtcNow)
                   .Value("deleted", false)
                   .Value("event", 1)
@@ -46,7 +46,7 @@ namespace GalliumPlus.Data.MariaDb.Implementations
                 else throw;
             }
 
-            return item;
+            return client;
         }
 
         public void Delete(string key)

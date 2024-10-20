@@ -12,7 +12,7 @@ namespace GalliumPlus.WebService.Middleware.ErrorHandling
         // priorité haute, on veut qu'il s'applique juste après le contrôleur
         public int Order => 1_000_000;
         
-        private ILogger<ExceptionsFilter> logger = loggerFactory.CreateLogger<ExceptionsFilter>();
+        private readonly ILogger<ExceptionsFilter> logger = loggerFactory.CreateLogger<ExceptionsFilter>();
 
         public void OnException(ExceptionContext context)
         {

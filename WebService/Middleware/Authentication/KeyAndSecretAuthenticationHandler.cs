@@ -58,7 +58,7 @@ namespace GalliumPlus.WebService.Middleware.Authentication
                 return AuthenticateResult.Fail("Missing API key");
             }
 
-            BotClient bot;
+            Client bot;
             try
             {
                 bot = this.clients.FindBotByApiKey(apiKey);
@@ -68,9 +68,9 @@ namespace GalliumPlus.WebService.Middleware.Authentication
                 return AuthenticateResult.Fail("Invalid API key");
             }
 
-            if (!bot.Secret.Match(secret))
+            if (!bot.AppAccess!.Secret.Match(secret))
             {
-                return AuthenticateResult.Fail("Secret don't match");
+                return AuthenticateResult.Fail("Secret doesn't match");
             }
 
             this.Context.Items.Add("Client", bot);

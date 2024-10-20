@@ -48,17 +48,17 @@ namespace GalliumPlus.Data.Fake
                 )
             );
 
-            PasswordInformation botKey = PasswordInformation.FromPassword("motdepasse"); 
-            this.Create(
-                new BotClient(
-                    id: 0,
-                    name: "Tests (bot)",
-                    apiKey: "test-api-key-bot",
-                    isEnabled: true,
-                    permissions: Permissions.SEE_PRODUCTS_AND_CATEGORIES,
-                    secret: new OneTimeSecret(botKey.Hash, botKey.Salt)
-                )
+            PasswordInformation botKey = PasswordInformation.FromPassword("motdepasse");
+            var client = new Client(
+                id: 0,
+                name: "Tests (bot)",
+                apiKey: "test-api-key-bot",
+                isEnabled: true,
+                granted: Permissions.SEE_PRODUCTS_AND_CATEGORIES,
+                revoked: Permissions.NONE
             );
+            client.AppAccess = new AppAccess(0, new OneTimeSecret(botKey.Hash, botKey.Salt));
+            this.Create(client);
         }
 
         public Client FindByApiKey(string apiKey)
@@ -73,9 +73,9 @@ namespace GalliumPlus.Data.Fake
             }
         }
 
-        public BotClient FindBotByApiKey(string apiKey)
+        public Client FindBotByApiKey(string apiKey)
         {
-            if (this.FindByApiKey(apiKey) is BotClient bot)
+            if (this.FindByApiKey(apiKey) is { AppAccess: not null } bot)
             {
                 return bot;
             }
