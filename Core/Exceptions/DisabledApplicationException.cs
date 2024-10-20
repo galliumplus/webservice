@@ -1,6 +1,4 @@
-using GalliumPlus.WebApi.Core.Users;
-
-namespace GalliumPlus.WebApi.Core.Exceptions
+namespace GalliumPlus.Core.Exceptions
 {
     /// <summary>
     /// Exception levée quand un utilisateur tente de se connecter à une application qui a été désactivée.
@@ -13,7 +11,7 @@ namespace GalliumPlus.WebApi.Core.Exceptions
         /// Instancie l'exception.
         /// </summary>
         /// <param name="appName">Le nom de l'application concernée.</param>
-        public DisabledApplicationException(string appName) : base($"")
+        public DisabledApplicationException(string appName) : base($"Impossible de se connecter à l'application {appName}, elle est désactivée.")
         {
         }
     }

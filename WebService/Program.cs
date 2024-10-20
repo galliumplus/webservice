@@ -13,6 +13,7 @@ using GalliumPlus.WebService.Middleware.Authentication;
 using GalliumPlus.WebService.Middleware.Authorization;
 using GalliumPlus.WebService.Middleware.ErrorHandling;
 using GalliumPlus.WebService.Scheduling;
+using GalliumPlus.WebService.Services;
 
 #if FAKE_DB
 using GalliumPlus.Data.Fake;

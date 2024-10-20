@@ -5,9 +5,9 @@ using GalliumPlus.Core.History;
 using GalliumPlus.Core.Users;
 using GalliumPlus.WebService.Dto;
 using GalliumPlus.WebService.Middleware.ErrorHandling;
+using GalliumPlus.WebService.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Controller = GalliumPlus.WebService.Controllers.Controller;
 
 namespace GalliumPlus.WebService.Controllers
 {
@@ -86,7 +86,7 @@ namespace GalliumPlus.WebService.Controllers
         public IActionResult SameSignOn(GalliumOptions options)
         {
             this.HttpContext.Items.TryGetValue("SsoClientKey", out object? appKey);
-            var session = service.SameSignOn(this.Client!, this.User!, (string)appKey!, options.Host);
+            var session = service.SameSignOn(this.User!, (string)appKey!, options.Host);
             
             HistoryAction action = new(
                 HistoryActionKind.LogIn,

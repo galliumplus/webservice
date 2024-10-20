@@ -1,9 +1,7 @@
-﻿using GalliumPlus.Core;
-using GalliumPlus.Core.Exceptions;
+﻿using GalliumPlus.Core.Exceptions;
 using GalliumPlus.Core.Security;
-using GalliumPlus.Core.Users;
 
-namespace GalliumPlus.WebApi.Core.Users;
+namespace GalliumPlus.Core.Users;
 
 public class UserTest
 {
@@ -16,7 +14,7 @@ public class UserTest
     [Fact]
     public void ConstructorWithoutPasswordInformation()
     {
-        User user = new User(1, "mmansouri", new UserIdentity("Mehdi", "Mansouri", "mehdi.mansouri@iut-dijon.u-bourgogne.fr", "PROF"), profRole, 21.30m, false);
+        User user = new User(1, "mmansouri", new UserIdentity("Mehdi", "Mansouri", "mehdi.mansouri@iut-dijon.u-bourgogne.fr", "PROF"), this.profRole, 21.30m, false);
 
         Assert.Equal(1, user.Iuid);
         Assert.Equal("mmansouri", user.Id);
@@ -31,7 +29,7 @@ public class UserTest
     [Fact]
     public void ConstructorWithPasswordInformation()
     {
-        User user = new User(1, "mmansouri", new UserIdentity("Mehdi", "Mansouri", "mehdi.mansouri@iut-dijon.u-bourgogne.fr", "PROF"), profRole, 21.30m, false, this.password);
+        User user = new User(1, "mmansouri", new UserIdentity("Mehdi", "Mansouri", "mehdi.mansouri@iut-dijon.u-bourgogne.fr", "PROF"), this.profRole, 21.30m, false, this.password);
 
         Assert.Equal(1, user.Iuid);
         Assert.Equal("mmansouri", user.Id);
@@ -47,10 +45,10 @@ public class UserTest
     [Fact]
     public void InvalidItemExceptionThrownOnInvalidUserIdInConstructor()
     {
-        Action userCreationWithPassword = () => new User(1, "@mansouri", new UserIdentity("Mehdi", "Mansouri", "mehdi.mansouri@iut-dijon.u-bourgogne.fr", "PROF"), profRole, 21.30m, false, password);
+        Action userCreationWithPassword = () => new User(1, "@mansouri", new UserIdentity("Mehdi", "Mansouri", "mehdi.mansouri@iut-dijon.u-bourgogne.fr", "PROF"), this.profRole, 21.30m, false, this.password);
         Assert.Throws<InvalidItemException>(userCreationWithPassword);
 
-        Action userCreationWithoutPassword = () => new User(1, "@mansouri", new UserIdentity("Mehdi", "Mansouri", "mehdi.mansouri@iut-dijon.u-bourgogne.fr", "PROF"), profRole, 21.30m, false);
+        Action userCreationWithoutPassword = () => new User(1, "@mansouri", new UserIdentity("Mehdi", "Mansouri", "mehdi.mansouri@iut-dijon.u-bourgogne.fr", "PROF"), this.profRole, 21.30m, false);
         Assert.Throws<InvalidItemException>(userCreationWithoutPassword);
     }
 

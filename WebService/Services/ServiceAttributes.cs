@@ -1,8 +1,6 @@
 using System.Reflection;
-using GalliumPlus.WebApi.Scheduling;
-using Quartz;
 
-namespace GalliumPlus.WebApi.Services
+namespace GalliumPlus.WebService.Services
 {
     /// <summary>
     /// Indique que cette classe doit être enregistrée dans le conteneur d'injection de dépendances.

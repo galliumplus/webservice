@@ -1,4 +1,4 @@
-namespace GalliumPlus.WebApi.Core.Checkout;
+namespace GalliumPlus.Core.Checkout;
 
 public class ItemSellingPrice(int pricingId, decimal price)
 {

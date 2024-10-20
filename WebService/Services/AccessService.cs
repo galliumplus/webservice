@@ -1,20 +1,19 @@
-using GalliumPlus.WebApi.Core.Applications;
-using GalliumPlus.WebApi.Core.Data;
-using GalliumPlus.WebApi.Core.Exceptions;
-using GalliumPlus.WebApi.Core.Users;
-using GalliumPlus.WebApi.Dto;
-using GalliumPlus.WebApi.Middleware;
-using GalliumPlus.WebApi.Middleware.ErrorHandling;
+using GalliumPlus.Core.Applications;
+using GalliumPlus.Core.Data;
+using GalliumPlus.Core.Exceptions;
+using GalliumPlus.Core.Users;
+using GalliumPlus.WebService.Dto.Access;
+using GalliumPlus.WebService.Middleware;
 using JWT.Algorithms;
 using JWT.Builder;
 using Microsoft.AspNetCore.WebUtilities;
 
-namespace GalliumPlus.WebApi.Services;
+namespace GalliumPlus.WebService.Services;
 
 [ScopedService]
 public class AccessService(IClientDao clientDao)
 {
-    public LoggedInThroughSso SameSignOn(Client loginApp, User user, string ssoAppKey, string hostName)
+    public LoggedInThroughSso SameSignOn(User user, string ssoAppKey, string hostName)
     {
         SsoClient ssoApp = clientDao.FindSsoByApiKey(ssoAppKey);
 

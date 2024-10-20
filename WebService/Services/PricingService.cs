@@ -1,6 +1,6 @@
 using GalliumPlus.WebApi.Core.Items;
 
-namespace GalliumPlus.WebApi.Services;
+namespace GalliumPlus.WebService.Services;
 
 [ScopedService]
 public class PricingService

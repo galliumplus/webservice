@@ -45,6 +45,11 @@ namespace GalliumPlus.Data.MariaDb.Implementations
             }
         }
 
+        public SsoClient FindSsoByApiKey(string apiKey)
+        {
+            throw new NotImplementedException();
+        }
+
         public Client FindByApiKey(string apiKey)
         {
             using var connection = this.Connect();

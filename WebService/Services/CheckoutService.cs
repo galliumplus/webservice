@@ -1,7 +1,7 @@
-using GalliumPlus.WebApi.Core.Checkout;
-using GalliumPlus.WebApi.Core.Data;
+using GalliumPlus.Core.Checkout;
+using GalliumPlus.Core.Data;
 
-namespace GalliumPlus.WebApi.Services;
+namespace GalliumPlus.WebService.Services;
 
 [ScopedService]
 public class CheckoutService(IProductDao productDao)

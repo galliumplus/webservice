@@ -1,9 +1,8 @@
 ﻿using GalliumPlus.Core.Exceptions;
-using GalliumPlus.Core.Orders;
 using GalliumPlus.Core.Stocks;
 using GalliumPlus.Data.Fake;
 
-namespace GalliumPlus.WebApi.Core.Orders;
+namespace GalliumPlus.Core.Orders;
 
 public class OrderItemTest
 {

@@ -1,7 +1,6 @@
-﻿using GalliumPlus.Core.Applications;
-using GalliumPlus.Core.Users;
+﻿using GalliumPlus.Core.Users;
 
-namespace GalliumPlus.WebApi.Core.Applications;
+namespace GalliumPlus.Core.Applications;
 
 public class SsoClientTest
 {

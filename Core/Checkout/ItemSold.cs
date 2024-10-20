@@ -1,7 +1,7 @@
 using System.Text.Json.Serialization;
-using GalliumPlus.WebApi.Core.Stocks;
+using GalliumPlus.Core.Stocks;
 
-namespace GalliumPlus.WebApi.Core.Checkout;
+namespace GalliumPlus.Core.Checkout;
 
 public class ItemSold(
     string code,
