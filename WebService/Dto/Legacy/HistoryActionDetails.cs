@@ -1,7 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 using GalliumPlus.Core.History;
 
-namespace GalliumPlus.WebService.Dto
+namespace GalliumPlus.WebService.Dto.Legacy
 {
     public class HistoryActionDetails
     {

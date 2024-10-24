@@ -1,6 +1,6 @@
 ﻿using GalliumPlus.Core.Stocks;
 
-namespace GalliumPlus.WebService.Dto
+namespace GalliumPlus.WebService.Dto.Legacy
 {
     public class ProductDetails
     {

@@ -5,21 +5,26 @@ namespace GalliumPlus.Core.Users;
 
 public class Session
 {
-    private string token;
+    private readonly string token;
+    private readonly DateTime expiration;
+    private readonly User? user;
+    private readonly Client client;
     private DateTime lastUse;
-    private DateTime expiration;
-    private User? user;
-    private Client client;
 
     /// <summary>
-    /// La durée maximum d'une session (24 heures).
+    /// La durée maximum d'une session utilisateur (24 heures).
     /// </summary>
-    public static readonly TimeSpan LIFETIME = TimeSpan.FromHours(24);
+    public static readonly TimeSpan LifetimeForUsers = TimeSpan.FromHours(24);
+    
+    /// <summary>
+    /// La durée maximum d'une session applicative (72 heures).
+    /// </summary>
+    public static readonly TimeSpan LifetimeForApps = TimeSpan.FromHours(72);
 
     /// <summary>
     /// La durée maximum d'une session sans activité (30 minutes).
     /// </summary>
-    public static readonly TimeSpan INACTIVITY_TIMEOUT = TimeSpan.FromMinutes(30);
+    public static readonly TimeSpan InactivityTimeout = TimeSpan.FromMinutes(30);
 
     /// <summary>
     /// L'heure actuelle. 
@@ -70,7 +75,7 @@ public class Session
     /// <summary>
     /// Indique si la session a expiré ou non, en prenant en compte l'inactivité.
     /// </summary>
-    public bool Expired => this.UnusedSince > INACTIVITY_TIMEOUT || this.ExpiresIn < TimeSpan.Zero;
+    public bool Expired => (this.user != null && this.UnusedSince > InactivityTimeout) || this.ExpiresIn < TimeSpan.Zero;
 
     /// <summary>
     /// Crée une session.
@@ -79,6 +84,7 @@ public class Session
     /// <param name="lastUse">La dernière utilisation de la session.</param>
     /// <param name="expiration">Le moment auquel la session expirera.</param>
     /// <param name="user">L'utilisateur qui a ouvert cette session, ou null si c'est une session de bot.</param>
+    /// <param name="client">L'application depuis laquelle la session a été ouverte.</param>
     public Session(string token, DateTime lastUse, DateTime expiration, User? user, Client client)
     {
         this.token = token;
@@ -91,15 +97,15 @@ public class Session
     /// <summary>
     /// Ouvre une nouvelle session.
     /// </summary>
-    /// <param name="token">Le jeton à utiliser pour identifier la session.</param>
+    /// <param name="client">L'application pour laquelle ouvrir la session.</param>
     /// <param name="user">L'utilisateur pour qui ouvrir la session.</param>
-    /// <param name="permissions">Les permissions à donner à l'utilisateur durant cette session.</param>
     /// <returns></returns>
     public static Session LogIn(Client client, User? user = null)
     {
         var rtg = new RandomTextGenerator(new BasicRandomProvider());
         string token = rtg.AlphaNumericString(20);
-        return new(token, Now, Now.Add(LIFETIME), user, client);
+        TimeSpan lifetime = user == null ? LifetimeForApps : LifetimeForUsers;
+        return new Session(token, Now, Now.Add(lifetime), user, client);
     }
 
     /// <summary>

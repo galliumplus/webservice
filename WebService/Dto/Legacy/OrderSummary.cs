@@ -4,7 +4,7 @@ using GalliumPlus.Core.Exceptions;
 using GalliumPlus.Core.Orders;
 using GalliumPlus.Core.Users;
 
-namespace GalliumPlus.WebService.Dto
+namespace GalliumPlus.WebService.Dto.Legacy
 {
     public class OrderSummary
     {

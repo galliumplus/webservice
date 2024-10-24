@@ -3,7 +3,7 @@ using GalliumPlus.Core.Data;
 using GalliumPlus.Core.Exceptions;
 using GalliumPlus.Core.Stocks;
 
-namespace GalliumPlus.WebService.Dto
+namespace GalliumPlus.WebService.Dto.Legacy
 {
     public class ProductSummary
     {

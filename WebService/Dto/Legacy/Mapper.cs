@@ -1,4 +1,4 @@
-﻿namespace GalliumPlus.WebService.Dto
+﻿namespace GalliumPlus.WebService.Dto.Legacy
 {
     public abstract class Mapper<TModel, TDto>
     {

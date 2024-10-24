@@ -2,7 +2,7 @@
 using GalliumPlus.Core.Data;
 using GalliumPlus.Core.Orders;
 
-namespace GalliumPlus.WebService.Dto
+namespace GalliumPlus.WebService.Dto.Legacy
 {
     public class OrderItemSummary
     {

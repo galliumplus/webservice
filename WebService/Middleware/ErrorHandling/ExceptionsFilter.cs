@@ -30,8 +30,7 @@ namespace GalliumPlus.WebService.Middleware.ErrorHandling
                 context.Result = new ErrorResult(
                     permissionDenied.ErrorCode,
                     $"Vous n'avez pas la permission {messageAction}.",
-                    StatusCodes.Status403Forbidden,
-                    new { RequiredPermissions = permissionDenied.Required }
+                    StatusCodes.Status403Forbidden
                 );
                 context.ExceptionHandled = true;
             }
@@ -51,7 +50,7 @@ namespace GalliumPlus.WebService.Middleware.ErrorHandling
             return errorCode switch
             {
                 ErrorCode.ItemNotFound => StatusCodes.Status404NotFound,
-                ErrorCode.PermissionDenied => StatusCodes.Status403Forbidden,
+                ErrorCode.PermissionDenied or ErrorCode.AccessMethodNotAllowed => StatusCodes.Status403Forbidden,
                 ErrorCode.ServiceUnavailable => StatusCodes.Status503ServiceUnavailable,
                 ErrorCode.FailedPrecondition => StatusCodes.Status409Conflict,
                 _ => StatusCodes.Status400BadRequest

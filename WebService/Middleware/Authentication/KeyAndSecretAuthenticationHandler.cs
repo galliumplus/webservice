@@ -61,16 +61,16 @@ namespace GalliumPlus.WebService.Middleware.Authentication
             Client bot;
             try
             {
-                bot = this.clients.FindBotByApiKey(apiKey);
+                bot = this.clients.FindByApiKeyWithAppAccess(apiKey);
             }
             catch (ItemNotFoundException)
             {
                 return AuthenticateResult.Fail("Invalid API key");
             }
 
-            if (!bot.AppAccess!.Secret.Match(secret))
+            if (!bot.AppAccess!.SecretsMatch(secret))
             {
-                return AuthenticateResult.Fail("Secret doesn't match");
+                return AuthenticateResult.Fail("Secrets doesn't match");
             }
 
             this.Context.Items.Add("Client", bot);

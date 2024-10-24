@@ -9,8 +9,13 @@ namespace GalliumPlus.Core.Applications;
 /// </summary>
 public class AppAccess
 {
-    private int id;
-    private OneTimeSecret secret;
+    private readonly int id;
+    private readonly OneTimeSecret secret;
+
+    /// <summary>
+    /// L'identifiant de l'application auquel le code appartient.
+    /// </summary>
+    public int Id => this.id;
 
     /// <summary>
     /// Le code secret servant à authentifier le bot.
@@ -20,7 +25,7 @@ public class AppAccess
     /// <summary>
     /// Crée un code d'accès applicatif existant.
     /// </summary>
-    /// <param name="id">L'identifiant de l'application auquel la code appartient.</param>
+    /// <param name="id">L'identifiant de l'application auquel le code appartient.</param>
     /// <param name="secret">Le code secret.</param>
     public AppAccess(int id, OneTimeSecret secret)
     {
@@ -35,4 +40,6 @@ public class AppAccess
     {
         this.secret = new OneTimeSecret();
     }
+
+    public bool SecretsMatch(string plainSecret) => this.Secret.Match(plainSecret);
 }

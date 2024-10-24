@@ -85,8 +85,8 @@ public class SessionTest
     [Fact]
     public void Expired()
     {
-        DateTime recent = DateTime.UtcNow - (Session.INACTIVITY_TIMEOUT / 2);
-        DateTime notRecent = DateTime.UtcNow - (Session.INACTIVITY_TIMEOUT * 2);
+        DateTime recent = DateTime.UtcNow - (Session.InactivityTimeout / 2);
+        DateTime notRecent = DateTime.UtcNow - (Session.InactivityTimeout * 2);
         DateTime future = DateTime.UtcNow.AddHours(1);
         DateTime past = DateTime.UtcNow.AddHours(-1);
 
@@ -110,7 +110,7 @@ public class SessionTest
     public void LogIn()
     {
         DateTime now = DateTime.UtcNow;
-        DateTime exp = now + Session.LIFETIME;
+        DateTime exp = now + Session.LifetimeForUsers;
 
         Session newSession = Session.LogIn(this.client, this.user);
 
@@ -124,8 +124,8 @@ public class SessionTest
     [Fact]
     public void Refresh()
     {
-        DateTime recent = DateTime.UtcNow - (Session.INACTIVITY_TIMEOUT / 2);
-        DateTime notRecent = DateTime.UtcNow - (Session.INACTIVITY_TIMEOUT * 2);
+        DateTime recent = DateTime.UtcNow - (Session.InactivityTimeout / 2);
+        DateTime notRecent = DateTime.UtcNow - (Session.InactivityTimeout * 2);
         DateTime future = DateTime.UtcNow.AddHours(1);
         DateTime past = DateTime.UtcNow.AddHours(-1);
 

@@ -250,11 +250,11 @@ class AccessTests(TestBase):
             self.history.category_added_action("Catégorie", "eb069420"),
         )
 
-    def test_sso(self):
+    def test_sso_direct(self):
         galliumKey = "test-api-key-normal"
 
         login_data = {
-            "Application": "test-api-key-sso",
+            "Application": "test-api-key-sso-dir",
             "Username": "lomens",
             "Password": "motdepasse",
         }

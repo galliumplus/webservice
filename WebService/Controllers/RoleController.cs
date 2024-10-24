@@ -2,6 +2,7 @@
 using GalliumPlus.Core.History;
 using GalliumPlus.Core.Users;
 using GalliumPlus.WebService.Dto;
+using GalliumPlus.WebService.Dto.Legacy;
 using GalliumPlus.WebService.Middleware.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

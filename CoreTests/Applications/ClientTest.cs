@@ -4,8 +4,8 @@ namespace GalliumPlus.Core.Applications;
 
 public class ClientTest
 {
-    public static readonly Regex RE_API_KEY = new Regex(@"^[A-Za-z0-9]{20}$");
-    public static readonly Regex RE_SECRET = new Regex(@"^([A-Za-z0-9]{8})-([A-Za-z0-9]{12})-([A-Za-z0-9]{8})$");
+    public static readonly Regex ReApiKey = new Regex(@"^[A-Za-z0-9]{20}$");
+    public static readonly Regex ReSecret = new Regex(@"^([A-Za-z0-9]{8})-([A-Za-z0-9]{12})-([A-Za-z0-9]{8})$");
 
     [Fact]
     public void ConstructorExisting()
@@ -25,7 +25,7 @@ public class ClientTest
             Assert.False(client.IsEnabled);
             Assert.Equal(Permissions.SEE_PRODUCTS_AND_CATEGORIES, client.Granted);
             Assert.Equal(Permissions.MANAGE_USERS, client.Revoked);
-            Assert.False(client.AllowUserLogin);
+            Assert.False(client.AllowDirectUserLogin);
         }
 
     [Fact]
@@ -36,12 +36,12 @@ public class ClientTest
                 revoked: Permissions.MANAGE_USERS
             );
 
-            Assert.Matches(RE_API_KEY, client.ApiKey);
+            Assert.Matches(ReApiKey, client.ApiKey);
             Assert.Equal("App", client.Name);
             Assert.True(client.IsEnabled);
             Assert.Equal(Permissions.NONE, client.Granted);
             Assert.Equal(Permissions.MANAGE_USERS, client.Revoked);
-            Assert.True(client.AllowUserLogin);
+            Assert.True(client.AllowDirectUserLogin);
         }
 
     [Fact]
@@ -80,10 +80,10 @@ public class ClientTest
                 revoked: Permissions.NONE
             );
 
-            Assert.True(client1.AllowUserLogin);
-            Assert.False(client2.AllowUserLogin);
-            Assert.False(client2.AllowUserLogin);
-            Assert.False(client4.AllowUserLogin);
+            Assert.True(client1.AllowDirectUserLogin);
+            Assert.False(client2.AllowDirectUserLogin);
+            Assert.False(client2.AllowDirectUserLogin);
+            Assert.False(client4.AllowDirectUserLogin);
         }
 
     [Fact]

@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using GalliumPlus.Core.Users;
 
-namespace GalliumPlus.WebService.Dto
+namespace GalliumPlus.WebService.Dto.Legacy
 {
     public class RoleDetails
     {

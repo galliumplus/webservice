@@ -29,27 +29,6 @@ namespace GalliumPlus.Data.MariaDb.Implementations
             if (!ok) throw new ItemNotFoundException("Cette application");
         }
 
-        public Client FindBotByApiKey(string apiKey)
-        {
-            using var connection = this.Connect();
-            Schema db = new(connection);
-            var found = db.Select<Client>()
-                .WhereAll(db.Column("apiKey") == apiKey, db.Column("appAccess") != SQL.NULL).FetchList();
-            if (found.Count == 1)
-            {
-                return found[0];
-            }
-            else
-            {
-                throw new ItemNotFoundException("Cette application");
-            }
-        }
-
-        public SsoClient FindSsoByApiKey(string apiKey)
-        {
-            throw new NotImplementedException();
-        }
-
         public Client FindByApiKey(string apiKey)
         {
             using var connection = this.Connect();
@@ -61,7 +40,39 @@ namespace GalliumPlus.Data.MariaDb.Implementations
             }
             else
             {
-                throw new ItemNotFoundException("Cette application");
+                throw new ItemNotFoundException();
+            }
+        }
+
+        public Client FindByApiKeyWithAppAccess(string apiKey)
+        {
+            using var connection = this.Connect();
+            Schema db = new(connection);
+            var found = db.Select<Client>()
+                .WhereAll(db.Column("apiKey") == apiKey, db.Column("appAccess") != SQL.NULL).FetchList();
+            if (found.Count == 1)
+            {
+                return found[0];
+            }
+            else
+            {
+                throw new ItemNotFoundException();
+            }
+        }
+
+        public Client FindByApiKeyWithSameSignOn(string apiKey)
+        {
+            using var connection = this.Connect();
+            Schema db = new(connection);
+            var found = db.Select<Client>()
+                .WhereAll(db.Column("apiKey") == apiKey, db.Column("sameSignOn") != SQL.NULL).FetchList();
+            if (found.Count == 1)
+            {
+                return found[0];
+            }
+            else
+            {
+                throw new ItemNotFoundException();
             }
         }
 

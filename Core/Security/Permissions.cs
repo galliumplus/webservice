@@ -102,7 +102,7 @@ public enum Permissions : uint
     /// <summary>
     /// Toutes les permissions
     /// </summary>
-    ALL = 511,
+    ALL = 1023,
 }
 
 public static class PermissionsExtensions
@@ -128,12 +128,12 @@ public static class PermissionsExtensions
     }
 
     /// <summary>
-    /// Enlève <paramref name="other"/> de ces permissions.
+    /// Enlève les permissions non présentes dans <paramref name="other"/> de ces permissions.
     /// </summary>
-    /// <param name="other">Les permissions à enlever.</param>
+    /// <param name="other">Les permissions à garder.</param>
     /// <returns>Les permissions restantes.</returns>
-    public static Permissions Revoke(this Permissions @this, Permissions other)
+    public static Permissions Mask(this Permissions @this, Permissions other)
     {
-        return @this & ~other;
+        return @this & other;
     }
 }

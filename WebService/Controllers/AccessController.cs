@@ -4,6 +4,7 @@ using GalliumPlus.Core.Exceptions;
 using GalliumPlus.Core.History;
 using GalliumPlus.Core.Users;
 using GalliumPlus.WebService.Dto;
+using GalliumPlus.WebService.Dto.Access;
 using GalliumPlus.WebService.Middleware.ErrorHandling;
 using GalliumPlus.WebService.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -15,8 +16,6 @@ namespace GalliumPlus.WebService.Controllers
     [ApiController]
     public class AccessController(AccessService service, ISessionDao sessionDao, IHistoryDao historyDao) : Controller
     {
-        private LoggedIn.Mapper mapper = new();
-
         [HttpPost("login")]
         [Authorize(AuthenticationSchemes = "Basic")]
         public IActionResult LogIn()
@@ -24,35 +23,23 @@ namespace GalliumPlus.WebService.Controllers
             Client app = this.Client!;
             User user = this.User!;
 
-            if (!app.AllowUserLogin)
+            LoggedIn? loggedIn = service.LogIn(app, user);
+
+            if (loggedIn == null)
             {
-                return new ErrorResult(
-                   ErrorCode.PermissionDenied,
-                   $"Vous ne pouvez pas vous connecter directement à {app.Name}.",
-                   StatusCodes.Status403Forbidden,
-                   new { AppEnabled = app.IsEnabled, UserLoginAllowed = app.AllowUserLogin }
-               );
+                return this.StatusCode(StatusCodes.Status503ServiceUnavailable);
             }
-
-            for (int tries = 10; tries > 0; tries--)
+            else
             {
-                try
-                {
-                    Session session = Session.LogIn(app, user);
-                    sessionDao.Create(session);
+                HistoryAction action = new(
+                    HistoryActionKind.LogIn,
+                    $"Connexion à {app.Name}",
+                    user.Id
+                );
+                historyDao.AddEntry(action);
 
-                    HistoryAction action = new(
-                        HistoryActionKind.LogIn,
-                        $"Connexion à {app.Name}",
-                        user.Id
-                    );
-                    historyDao.AddEntry(action);
-
-                    return this.Json(this.mapper.FromModel(session));
-                }
-                catch (DuplicateItemException) { }
+                return this.Json(loggedIn);
             }
-            return this.StatusCode(StatusCodes.Status503ServiceUnavailable);
         }
 
         [HttpPost("connect")]
@@ -61,24 +48,22 @@ namespace GalliumPlus.WebService.Controllers
         {
             Client bot = this.Client!;
 
-            for (int tries = 10; tries > 0; tries--)
+            LoggedIn? loggedIn = service.ConnectApplication(bot);
+
+            if (loggedIn == null)
             {
-                try
-                {
-                    Session session = Session.LogIn(bot);
-                    sessionDao.Create(session);
-
-                    HistoryAction action = new(
-                        HistoryActionKind.LogIn,
-                        $"Connexion de {bot.Name}"
-                    );
-                    historyDao.AddEntry(action);
-
-                    return this.Json(this.mapper.FromModel(session));
-                }
-                catch (DuplicateItemException) { }
+                return this.StatusCode(StatusCodes.Status503ServiceUnavailable);
             }
-            return this.StatusCode(StatusCodes.Status503ServiceUnavailable);
+            else
+            {
+                HistoryAction action = new(
+                    HistoryActionKind.LogIn,
+                    $"Connexion de {bot.Name}"
+                );
+                historyDao.AddEntry(action);
+
+                return this.Json(loggedIn);
+            }
         }
 
         [HttpPost("same-sign-on")]

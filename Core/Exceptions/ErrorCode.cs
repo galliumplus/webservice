@@ -9,4 +9,5 @@ public enum ErrorCode
     PermissionDenied,
     ServiceUnavailable,
     FailedPrecondition,
+    AccessMethodNotAllowed,
 }

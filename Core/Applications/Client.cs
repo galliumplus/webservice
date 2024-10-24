@@ -15,11 +15,14 @@ public class Client
     private string apiKey;
     private string name;
     private Permissions granted;
-    private Permissions revoked;
+    private Permissions allowed;
     private bool isEnabled;
 
     [HasOne("id")]
     private AppAccess? appAccess;
+
+    [HasOne("id")]
+    private SameSignOn? sameSignOn;
 
     /// <summary>
     /// L'identifiant de l'application.
@@ -49,21 +52,21 @@ public class Client
     }
 
     /// <summary>
+    /// Les permissions autorisées aux utilisateurs de l'application.
+    /// </summary>
+    public Permissions Allowed
+    {
+        get => this.allowed;
+        set => this.allowed = value;
+    }
+
+    /// <summary>
     /// Les permissions données à tous les utilisteurs de l'application.
     /// </summary>
     public Permissions Granted
     {
         get => this.granted;
         set => this.granted = value;
-    }
-
-    /// <summary>
-    /// Les permissions enlevées à tous les utilisateurs de l'application.
-    /// </summary>
-    public Permissions Revoked
-    {
-        get => this.revoked;
-        set => this.revoked = value;
     }
 
     /// <summary>
@@ -76,10 +79,10 @@ public class Client
     }
 
     /// <summary>
-    /// Indique si des utilisateurs peuvent se connecter via l'application.
+    /// Indique si des utilisateurs peuvent se connecter directement via l'application.
     /// </summary>
     [JsonIgnore]
-    public virtual bool AllowUserLogin => this.IsEnabled && !this.HasAppAccess;
+    public bool AllowDirectUserLogin => this.IsEnabled && !this.HasAppAccess && !this.HasSameSignOn;
 
     /// <summary>
     /// La clé d'accès applicatif de ce client, ou <see langword="null"/> s'il n'en a pas.
@@ -93,29 +96,39 @@ public class Client
     public bool HasAppAccess => this.appAccess != null;
     
     /// <summary>
+    /// Le paramétrage SSO de ce client, ou <see langword="null"/> s'il ne l'utilise pas.
+    /// </summary>
+    public SameSignOn? SameSignOn { get => this.sameSignOn; set => this.sameSignOn = value; }
+    
+    /// <summary>
+    /// Indique si un paramétrage SSO est présent.
+    /// </summary>
+    public bool HasSameSignOn => this.sameSignOn != null;
+
+    /// <summary>
     /// Crée une application existante.
     /// </summary>
     /// <param name="id">L'identifiant de l'application.</param>
     /// <param name="apiKey">La clé d'API.</param>
     /// <param name="name">Le nom affiché de l'application.</param>
     /// <param name="isEnabled">Si l'application est active ou non.</param>
-    /// <param name="granted">Les permissions accordées à tous les utilisateurs.</param>
-    /// <param name="revoked">Les permissions refusées à tous les utilisateurs.</param>
+    /// <param name="allowed">Les permissions autorisées à tous les utilisateurs.</param>
+    /// <param name="granted">Les permissions données à tous les utilisateurs.</param>
     [PersistenceConstructor]
     public Client(
         int id,
         string apiKey,
         string name,
         bool isEnabled,
-        Permissions granted,
-        Permissions revoked
+        Permissions allowed,
+        Permissions granted
     )
     {
         this.id = id;
         this.apiKey = apiKey;
         this.name = name;
         this.granted = granted;
-        this.revoked = revoked;
+        this.allowed = allowed;
         this.isEnabled = isEnabled;
     }
 
@@ -124,13 +137,13 @@ public class Client
     /// </summary>
     /// <param name="name">Le nom affiché de l'application.</param>
     /// <param name="isEnabled">Si l'application est active ou non.</param>
-    /// <param name="granted">Les permissions accordées à tous les utilisateurs.</param>
-    /// <param name="revoked">Les permissions refusées à tous les utilisateurs.</param>
+    /// <param name="allowed">Les permissions autorisées à tous les utilisateurs.</param>
+    /// <param name="granted">Les permissions données à tous les utilisateurs.</param>
     public Client(
         string name,
         bool isEnabled = true,
-        Permissions granted = Permissions.NONE,
-        Permissions revoked = Permissions.NONE
+        Permissions allowed = Permissions.NONE,
+        Permissions granted = Permissions.NONE
     )
     {
         var rtg = new RandomTextGenerator(new BasicRandomProvider());
@@ -138,19 +151,19 @@ public class Client
 
         this.name = name;
         this.granted = granted;
-        this.revoked = revoked;
+        this.allowed = allowed;
         this.isEnabled = isEnabled;
     }
 
     /// <summary>
     /// Applique les filtres de permissions.
     /// Les ajouts (<see cref="Granted"/>) sont appliqués avant
-    /// les restrictions (<see cref="Revoked"/>).
+    /// les restrictions (<see cref="Allowed"/>).
     /// </summary>
     /// <param name="permissions">Les permissions à filtrer.</param>
     /// <returns>Les permission restantes.</returns>
     public Permissions Filter(Permissions permissions)
     {
-        return permissions.Grant(this.granted).Revoke(this.revoked);
+        return permissions.Grant(this.granted).Mask(this.allowed);
     }
 }

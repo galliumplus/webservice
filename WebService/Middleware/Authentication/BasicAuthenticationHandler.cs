@@ -103,15 +103,23 @@ namespace GalliumPlus.WebService.Middleware.Authentication
             }
 
             User user;
-            Client app;
             try
             {
                 user = this.users.Read(credentials.Username);
+            }
+            catch (ItemNotFoundException)
+            {
+                return AuthenticateResult.Fail("User not found");
+            }
+            
+            Client app;
+            try
+            {
                 app = this.clients.FindByApiKey(apiKey);
             }
             catch (ItemNotFoundException)
             {
-                return AuthenticateResult.Fail("Invalid API key / user not found");
+                return AuthenticateResult.Fail("Unknown API key");
             }
 
             if (!user.Password!.Match(credentials.Password))
@@ -119,11 +127,11 @@ namespace GalliumPlus.WebService.Middleware.Authentication
                 return AuthenticateResult.Fail("Passwords don't match");
             }
 
-            Context.Items.Add("User", user);
-            Context.Items.Add("Client", app);
-            if (credentials.Application != null) Context.Items.Add("SsoClientKey", credentials.Application);
+            this.Context.Items.Add("User", user);
+            this.Context.Items.Add("Client", app);
+            if (credentials.Application != null) this.Context.Items.Add("SsoClientKey", credentials.Application);
 
-            return AuthenticateResult.Success(new EmptyTicket(Scheme));
+            return AuthenticateResult.Success(new EmptyTicket(this.Scheme));
         }
     }
 
