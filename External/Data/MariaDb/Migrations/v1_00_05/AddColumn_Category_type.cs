@@ -15,6 +15,6 @@ public class AddColumn_Category_type : Migration
 
     public override void Down()
     {
-        this.Delete.Column("event").FromTable("Category");
+        this.Delete.Column("type").FromTable("Category");
     }
 }
