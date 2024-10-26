@@ -49,7 +49,12 @@ namespace GalliumPlus.Data.MariaDb.Implementations
             using var connection = this.Connect();
             Schema db = new(connection);
             var found = db.Select<Client>()
-                .WhereAll(db.Column("apiKey") == apiKey, db.Column("appAccess") != SQL.NULL).FetchList();
+                .Where(client => SQL.AND(
+                    client.Attribute("apiKey") == apiKey,
+                    client.Attribute("appAccess.id") != SQL.NULL
+                ))
+                .FetchList();
+            
             if (found.Count == 1)
             {
                 return found[0];
@@ -65,7 +70,12 @@ namespace GalliumPlus.Data.MariaDb.Implementations
             using var connection = this.Connect();
             Schema db = new(connection);
             var found = db.Select<Client>()
-                .WhereAll(db.Column("apiKey") == apiKey, db.Column("sameSignOn") != SQL.NULL).FetchList();
+                .Where(client => SQL.AND(
+                    client.Attribute("apiKey") == apiKey,
+                    client.Attribute("sameSignOn.id") != SQL.NULL
+                ))
+                .FetchList();
+
             if (found.Count == 1)
             {
                 return found[0];

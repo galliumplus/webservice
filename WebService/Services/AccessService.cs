@@ -21,14 +21,10 @@ public class AccessService(IClientDao clientDao, ISessionDao sessionDao)
     private const string JWT_CLAIM_EMAIL = "g-email";
     private const string JWT_CLAIM_ROLE = "g-role";
     private const string JWT_CLAIM_ROLE_PERMISSIONS = "g-perms";
-    
-    public LoggedIn? LogIn(Client app, User user)
-    {
-        if (!app.AllowDirectUserLogin)
-        {
-            throw AccessMethodNotAllowedException.Direct(app);
-        }
+    private const string JWT_CLAIM_API_TOKEN = "g-token";
 
+    private LoggedIn? OpenSessionFor(Client app, User? user = null)
+    {
         LoggedIn? result = null;
         for (var tries = 10; tries > 0; tries--)
         {
@@ -47,25 +43,27 @@ public class AccessService(IClientDao clientDao, ISessionDao sessionDao)
         return result;
     }
 
-    public LoggedIn? ConnectApplication(Client bot)
+    public LoggedIn? LogIn(Client app, User user)
     {
-        LoggedIn? result = null;
-        for (int tries = 10; tries > 0; tries--)
+        if (!app.AllowDirectUserLogin)
         {
-            try
-            {
-                Session session = Session.LogIn(bot);
-                sessionDao.Create(session);
-
-                result = new LoggedIn(session);
-            }
-            catch (DuplicateItemException) { }
+            throw AccessMethodNotAllowedException.Direct(app);
         }
 
-        return result;
+        return this.OpenSessionFor(app, user);
     }
 
-    public LoggedInThroughSso SameSignOn(User user, string ssoAppKey, string hostName)
+    public LoggedIn? ConnectApplication(Client app)
+    {
+        if (!app.HasAppAccess)
+        {
+            throw AccessMethodNotAllowedException.Applicative(app);
+        }
+        
+        return this.OpenSessionFor(app);
+    }
+
+    public LoggedInThroughSso? SameSignOn(User user, string ssoAppKey, string hostName)
     {
         Client ssoApp = clientDao.FindByApiKeyWithSameSignOn(ssoAppKey);
 
@@ -82,7 +80,7 @@ public class AccessService(IClientDao clientDao, ISessionDao sessionDao)
         // configuration de la signature
         switch (ssoApp.SameSignOn!.SignatureMethod)
         {
-        case SignatureMethod.SymmetricHS256:
+        case SignatureMethod.HS256:
             jwtBuilder
                 .WithAlgorithm(new HMACSHA256Algorithm())
                 .WithSecret(ssoApp.SameSignOn.Secret);
@@ -107,10 +105,12 @@ public class AccessService(IClientDao clientDao, ISessionDao sessionDao)
                 .AddClaim(JWT_CLAIM_FIRST_NAME, user.Identity.FirstName)
                 .AddClaim(JWT_CLAIM_LAST_NAME, user.Identity.LastName);
         }
+
         if (ssoApp.SameSignOn.Scope.Includes(SameSignOnScopes.Email))
         {
             jwtBuilder.AddClaim(JWT_CLAIM_EMAIL, user.Identity.Email);
         }
+
         if (ssoApp.SameSignOn.Scope.Includes(SameSignOnScopes.Role))
         {
             jwtBuilder
@@ -118,9 +118,16 @@ public class AccessService(IClientDao clientDao, ISessionDao sessionDao)
                 .AddClaim(JWT_CLAIM_ROLE_PERMISSIONS, user.Role.Permissions);
         }
 
+        if (ssoApp.SameSignOn.RequiresApiKey)
+        {
+            LoggedIn? session = this.OpenSessionFor(ssoApp, user);
+            if (session == null) return null;
+            jwtBuilder.AddClaim(JWT_CLAIM_API_TOKEN, session.Token);
+        }
+
         string token = jwtBuilder.Encode();
         string fullRedirectUrl = QueryHelpers.AddQueryString(ssoApp.SameSignOn.RedirectUrl, "token", token);
 
-        return new LoggedInThroughSso(token, ssoApp.SameSignOn.RedirectUrl, fullRedirectUrl);
+        return new LoggedInThroughSso(ssoApp, token, ssoApp.SameSignOn.RedirectUrl, fullRedirectUrl);
     }
 }

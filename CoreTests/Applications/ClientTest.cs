@@ -16,7 +16,7 @@ public class ClientTest
                 name: "App",
                 isEnabled: false,
                 granted: Permissions.SEE_PRODUCTS_AND_CATEGORIES,
-                revoked: Permissions.MANAGE_USERS
+                allowed: Permissions.MANAGE_USERS
             );
 
             Assert.Equal(123, client.Id);
@@ -24,7 +24,7 @@ public class ClientTest
             Assert.Equal("App", client.Name);
             Assert.False(client.IsEnabled);
             Assert.Equal(Permissions.SEE_PRODUCTS_AND_CATEGORIES, client.Granted);
-            Assert.Equal(Permissions.MANAGE_USERS, client.Revoked);
+            Assert.Equal(Permissions.MANAGE_USERS, client.Allowed);
             Assert.False(client.AllowDirectUserLogin);
         }
 
@@ -33,19 +33,19 @@ public class ClientTest
     {
             Client client = new(
                 name: "App",
-                revoked: Permissions.MANAGE_USERS
+                allowed: Permissions.MANAGE_USERS
             );
 
             Assert.Matches(ReApiKey, client.ApiKey);
             Assert.Equal("App", client.Name);
             Assert.True(client.IsEnabled);
             Assert.Equal(Permissions.NONE, client.Granted);
-            Assert.Equal(Permissions.MANAGE_USERS, client.Revoked);
+            Assert.Equal(Permissions.MANAGE_USERS, client.Allowed);
             Assert.True(client.AllowDirectUserLogin);
         }
 
     [Fact]
-    public void AllowUserLogin()
+    public void AllowDirectUserLogin()
     {
             Client client1 = new(
                 id: 123,
@@ -53,7 +53,7 @@ public class ClientTest
                 name: "App",
                 isEnabled: true,
                 granted: Permissions.NONE,
-                revoked: Permissions.NONE
+                allowed: Permissions.NONE
             );
             Client client2 = new(
                 id: 123,
@@ -61,7 +61,7 @@ public class ClientTest
                 name: "App",
                 isEnabled: false,
                 granted: Permissions.NONE,
-                revoked: Permissions.NONE
+                allowed: Permissions.NONE
             );
             Client client3 = new(
                 id: 123,
@@ -69,7 +69,7 @@ public class ClientTest
                 name: "App",
                 isEnabled: true,
                 granted: Permissions.NONE,
-                revoked: Permissions.NONE
+                allowed: Permissions.NONE
             );
             Client client4 = new(
                 id: 123,
@@ -77,12 +77,12 @@ public class ClientTest
                 name: "App",
                 isEnabled: false,
                 granted: Permissions.NONE,
-                revoked: Permissions.NONE
+                allowed: Permissions.NONE
             );
 
             Assert.True(client1.AllowDirectUserLogin);
             Assert.False(client2.AllowDirectUserLogin);
-            Assert.False(client2.AllowDirectUserLogin);
+            Assert.False(client3.AllowDirectUserLogin);
             Assert.False(client4.AllowDirectUserLogin);
         }
 
@@ -97,7 +97,7 @@ public class ClientTest
             Client client1 = new Client(
                 name: "App 1",
                 granted: Permissions.MANAGE_PRODUCTS,
-                revoked: Permissions.SEE_ALL_USERS_AND_ROLES
+                allowed: Permissions.SEE_ALL_USERS_AND_ROLES
             );
             Permissions after1 = client1.Filter(before1);
 
@@ -110,7 +110,7 @@ public class ClientTest
             Client client2 = new Client(
                 name: "App 2",
                 granted: Permissions.SEE_PRODUCTS_AND_CATEGORIES,
-                revoked: Permissions.MANAGE_PRODUCTS // écrase la permission donnée précedemment
+                allowed: Permissions.MANAGE_PRODUCTS // écrase la permission donnée précedemment
             );
             Permissions after2 = client2.Filter(before2);
 

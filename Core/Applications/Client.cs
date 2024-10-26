@@ -103,6 +103,7 @@ public class Client
     /// <summary>
     /// Indique si un paramétrage SSO est présent.
     /// </summary>
+    [JsonIgnore]
     public bool HasSameSignOn => this.sameSignOn != null;
 
     /// <summary>

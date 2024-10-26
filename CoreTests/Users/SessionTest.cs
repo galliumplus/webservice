@@ -43,7 +43,7 @@ public class SessionTest
         var client1 = new Client(
             name: "App 1",
             granted: Permissions.MANAGE_PRODUCTS,
-            revoked: Permissions.SEE_ALL_USERS_AND_ROLES
+            allowed: Permissions.MANAGE_PRODUCTS
         );
         Session session1 = Session.LogIn(client1, this.user);
 
@@ -53,7 +53,7 @@ public class SessionTest
         var client2 = new Client(
             name: "App 2",
             granted: Permissions.SEE_PRODUCTS_AND_CATEGORIES,
-            revoked: Permissions.MANAGE_PRODUCTS // écrase la permission donnée précedemment
+            allowed: Permissions.NONE // écrase la permission donnée précedemment
         );
         Session session2 = Session.LogIn(client2, this.user);
 

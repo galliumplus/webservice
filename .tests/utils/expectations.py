@@ -64,9 +64,19 @@ class Expectations:
 
     def a(self, type):
         if self.negation:
-            self.test_case.assertNotIsInstance(self.value, type)
+            if self.nullable:
+                self.test_case.assertNotIsInstance(self.value, type)
+                self.test_case.assertIsNotNone(self.value)
+            else:
+                self.test_case.assertNotIsInstance(self.value, type)
         else:
-            self.test_case.assertIsInstance(self.value, type)
+            if self.nullable:
+                self.test_case.assertTrue(
+                    self.value is None or isinstance(self.value, type),
+                    f"{self.value} is neither None or an instance of {type}",
+                )
+            else:
+                self.test_case.assertIsInstance(self.value, type)
 
         return Expectations(self.test_case, self.value)
 
@@ -92,6 +102,14 @@ class Expectations:
             self.test_case.assertNotEqual(self.value, other)
         else:
             self.test_case.assertEqual(self.value, other)
+
+        return Expectations(self.test_case, self.value)
+
+    def one_of(self, *possible_values):
+        if self.negation:
+            self.test_case.assertNotIn(self.value, possible_values)
+        else:
+            self.test_case.assertIn(self.value, possible_values)
 
         return Expectations(self.test_case, self.value)
 

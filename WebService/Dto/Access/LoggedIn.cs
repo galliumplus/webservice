@@ -3,20 +3,12 @@ using GalliumPlus.WebService.Dto.Legacy;
 
 namespace GalliumPlus.WebService.Dto.Access;
 
-public class LoggedIn
+public class LoggedIn(string token, DateTime expiration, UserDetails? user, uint permissions)
 {
-    public string Token { get; }
-    public DateTime Expiration { get; }
-    public UserDetails? User { get; }
-    public uint Permissions { get; }
-
-    public LoggedIn(string token, DateTime expiration, UserDetails? user, uint permissions)
-    {
-        this.Token = token;
-        this.Expiration = expiration;
-        this.User = user;
-        this.Permissions = permissions;
-    }
+    public string Token { get; } = token;
+    public DateTime Expiration { get; } = expiration;
+    public UserDetails? User { get; } = user;
+    public uint Permissions { get; } = permissions;
 
     public LoggedIn(Session session)
         : this(

@@ -92,7 +92,7 @@ class AccessTests(TestBase):
                 self.expect(president_session)
                 .to.have.an_item("permissions")
                 .of.type(int)
-                .that._is.equal_to(511)  # president, full permissions
+                .that._is.equal_to(1023)  # president, full permissions
             )
 
             member_token = self.expect(member_session).to.have.an_item("token").value
@@ -216,7 +216,7 @@ class AccessTests(TestBase):
                 self.expect(president_session)
                 .to.have.an_item("permissions")
                 .of.type(int)
-                .that._is.equal_to(511)  # president, full permissions
+                .that._is.equal_to(1023)  # president, full permissions
             )
 
             member_token = self.expect(member_session).to.have.an_item("token").value
@@ -272,11 +272,19 @@ class AccessTests(TestBase):
         payload = jwt.decode(token, "test-sso-secret", algorithms=["HS256"])
 
         self.expect(payload).to.have.an_item("exp").of.type(int)
-        self.expect(payload).to.have.an_item("gallium.usr").that.is_.equal_to("lomens")
-        iuid = self.expect(payload).to.have.an_item("gallium.iuid").of.type(int).value
+        self.expect(payload).to.have.an_item("g-user").that.is_.equal_to("lomens")
+        iuid = self.expect(payload).to.have.an_item("g-iuid").of.type(int).value
         self.expect(payload).to.have.an_item("iat").of.type(int)
         self.expect(payload).to.have.an_item("iss").of.type(str)
         self.expect(payload).to.have.an_item("sub").that.is_.equal_to(str(iuid))
+
+        self.expect(payload)._not.to.have.an_item("g-fname")
+        self.expect(payload)._not.to.have.an_item("g-lname")
+        self.expect(payload)._not.to.have.an_item("g-email")
+        self.expect(payload)._not.to.have.an_item("g-role")
+        self.expect(payload)._not.to.have.an_item("g-perms")
+
+        galliumToken = self.expect(payload).to.have.an_item("g-token").value
 
         redirect_url = (
             self.expect(session).to.have.an_item("redirectUrl").of.type(str).value
@@ -289,9 +297,128 @@ class AccessTests(TestBase):
 
         self.history.expect_entries(
             self.history.login_sso_action(
-                "Tests (normal)", "https://example.app/login", "lomens"
+                "Tests (normal)",
+                "Tests (SSO, direct)",
+                "https://example.app/login",
+                "lomens",
             )
         )
+
+        # utilisation du token...
+        response = self.get("users/@me", auth=BearerAuth(galliumToken))
+        self.expect(response.status_code).to.be.equal_to(200)
+
+    def test_sso_external(self):
+        galliumKey = "test-api-key-normal"
+
+        login_data = {
+            "Application": "test-api-key-sso-ext",
+            "Username": "lomens",
+            "Password": "motdepasse",
+        }
+
+        with self.history.watch():
+            response = self.post(
+                "same-sign-on", json=login_data, headers={"X-Api-Key": galliumKey}
+            )
+
+        self.expect(response.status_code).to.be.equal_to(200)
+
+        session = response.json()
+
+        token = self.expect(session).to.have.an_item("jwt").of.type(str).value
+        payload = jwt.decode(token, "test-sso-secret", algorithms=["HS256"])
+
+        self.expect(payload).to.have.an_item("exp").of.type(int)
+        self.expect(payload).to.have.an_item("g-user").that.is_.equal_to("lomens")
+        iuid = self.expect(payload).to.have.an_item("g-iuid").of.type(int).value
+        self.expect(payload).to.have.an_item("iat").of.type(int)
+        self.expect(payload).to.have.an_item("iss").of.type(str)
+        self.expect(payload).to.have.an_item("sub").that.is_.equal_to(str(iuid))
+
+        self.expect(payload).to.have.an_item("g-fname")
+        self.expect(payload).to.have.an_item("g-lname")
+        self.expect(payload)._not.to.have.an_item("g-email")
+        self.expect(payload)._not.to.have.an_item("g-role")
+        self.expect(payload)._not.to.have.an_item("g-perms")
+        self.expect(payload)._not.to.have.an_item("g-token")
+
+        redirect_url = (
+            self.expect(session).to.have.an_item("redirectUrl").of.type(str).value
+        )
+
+        full_redirect_url = (
+            self.expect(session).to.have.an_item("fullRedirectUrl").of.type(str).value
+        )
+        self.expect(full_redirect_url).to.be.equal_to(f"{redirect_url}?token={token}")
+
+        self.history.expect_entries(
+            self.history.login_sso_action(
+                "Tests (normal)",
+                "Tests (SSO, externe)",
+                "https://example.app/login",
+                "lomens",
+            )
+        )
+
+    def test_sso_and_bot(self):
+        galliumKey = "test-api-key-normal"
+
+        login_data = {
+            "Application": "test-api-key-sso-bot",
+            "Username": "lomens",
+            "Password": "motdepasse",
+        }
+
+        with self.history.watch():
+            response = self.post(
+                "same-sign-on", json=login_data, headers={"X-Api-Key": galliumKey}
+            )
+
+        self.expect(response.status_code).to.be.equal_to(200)
+
+        session = response.json()
+
+        token = self.expect(session).to.have.an_item("jwt").of.type(str).value
+        payload = jwt.decode(token, "test-sso-secret", algorithms=["HS256"])
+
+        self.expect(payload).to.have.an_item("exp").of.type(int)
+        self.expect(payload).to.have.an_item("g-user").that.is_.equal_to("lomens")
+        iuid = self.expect(payload).to.have.an_item("g-iuid").of.type(int).value
+        self.expect(payload).to.have.an_item("iat").of.type(int)
+        self.expect(payload).to.have.an_item("iss").of.type(str)
+        self.expect(payload).to.have.an_item("sub").that.is_.equal_to(str(iuid))
+
+        self.expect(payload)._not.to.have.an_item("g-fname")
+        self.expect(payload)._not.to.have.an_item("g-lname")
+        self.expect(payload)._not.to.have.an_item("g-email")
+        self.expect(payload)._not.to.have.an_item("g-role")
+        self.expect(payload)._not.to.have.an_item("g-perms")
+        self.expect(payload)._not.to.have.an_item("g-token")
+
+        redirect_url = (
+            self.expect(session).to.have.an_item("redirectUrl").of.type(str).value
+        )
+
+        full_redirect_url = (
+            self.expect(session).to.have.an_item("fullRedirectUrl").of.type(str).value
+        )
+        self.expect(full_redirect_url).to.be.equal_to(f"{redirect_url}?token={token}")
+
+        self.history.expect_entries(
+            self.history.login_sso_action(
+                "Tests (normal)",
+                "Tests (SSO, applicatif)",
+                "https://example.app/login",
+                "lomens",
+            )
+        )
+
+        app_auth = SecretKeyAuth("motdepasse")
+        key = "test-api-key-sso-bot"
+
+        response = self.post("connect", auth=app_auth, headers={"X-Api-Key": key})
+        self.expect(response.status_code).to.be.equal_to(200)
 
     def test_login_app(self):
         with self.history.watch():

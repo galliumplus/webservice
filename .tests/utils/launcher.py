@@ -94,8 +94,12 @@ options specific to gallium tests:
         try:
             result = unittest.main(exit=False).result
             success = result.wasSuccessful()
+            if not success:
+                print(
+                    f"{cls.ANSI_RED}Some tests failed, see above for details{cls.ANSI_RESET}"
+                )
         except Exception as e:
-            print(f"{cls.ANSI_RED}Tests failed: {e}{cls.ANSI_RESET}")
+            print(f"{cls.ANSI_RED}Failed to run tests: {e}{cls.ANSI_RESET}")
 
         print(
             f"({TestBase.request_count()} requests sent with an average latency of {TestBase.average_latency()} ms)"

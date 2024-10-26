@@ -56,8 +56,8 @@ INSERT INTO `SameSignOn` VALUES
 INSERT INTO `Role` VALUES
 	(1, 'Adhérent', 0),
 	(2, 'CA', 27),
-	(3, 'Président', 511);
-"https://example.app/static/logo.png"
+	(3, 'Président', 1023);
+
 INSERT INTO `User` VALUES
 	(1, 'lomens', 'Nicolas', 'RESIN', 'nicolas.resin@iut-dijon.u-bourgogne.fr', 1, 'PROF', 20.00, 1, 0x6ff1904d29b818007ccbf05954bc1cd50f70148e41265cb823d54e2e3312b095, 'sel', NOW(), 0, 1, '2099-12-31'),
 	(2, 'mf187870', 'Matéo', 'FAVARD', 'mateo.favard@iut-dijon.u-bourgogne.fr', 2, '3A', 9999.99, 1, 0x6ff1904d29b818007ccbf05954bc1cd50f70148e41265cb823d54e2e3312b095, 'sel', NOW(), 0, 1, '2099-12-31'),

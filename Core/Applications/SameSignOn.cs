@@ -1,5 +1,7 @@
-﻿using GalliumPlus.Core.Random;
+﻿using System.Text.Json.Serialization;
+using GalliumPlus.Core.Random;
 using GalliumPlus.Core.Users;
+using KiwiQuery.Mapped;
 using Multiflag;
 
 namespace GalliumPlus.Core.Applications;
@@ -20,11 +22,13 @@ public class SameSignOn
     /// <summary>
     /// L'identifiant de l'application auquel les informations appartiennent.
     /// </summary>
+    [JsonIgnore]
     public int Id => this.id;
 
     /// <summary>
     /// Le code secret utilisé pour signer les jeton d'authentification
     /// </summary>
+    [JsonIgnore]
     public string Secret => this.secret;
 
     /// <summary>
@@ -67,6 +71,7 @@ public class SameSignOn
     /// <param name="displayName">Le nom à afficher pour présenter l'application.</param>
     /// <param name="redirectUrl">L'url de redirection une fois l'authentification terminée.</param>
     /// <param name="logoUrl">L'url du logo de l'application.</param>
+    [PersistenceConstructor]
     public SameSignOn(
         int id,
         string secret,
@@ -98,7 +103,7 @@ public class SameSignOn
         string redirectUrl,
         string? displayName = null,
         string? logoUrl = null
-    ) : this(-1, "", SignatureMethod.SymmetricHS256, scope, displayName, redirectUrl, logoUrl)
+    ) : this(-1, "", SignatureMethod.HS256, scope, displayName, redirectUrl, logoUrl)
     {
     }
 
@@ -113,7 +118,7 @@ public class SameSignOn
         
         switch (method)
         {
-        case SignatureMethod.SymmetricHS256:
+        case SignatureMethod.HS256:
             var rtg = new RandomTextGenerator(new CryptoRandomProvider());
             this.secret = rtg.SecretKey();
             break;

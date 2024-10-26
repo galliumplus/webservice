@@ -8,4 +8,7 @@ public class AccessMethodNotAllowedException(string message) : GalliumException(
 
     public static AccessMethodNotAllowedException Direct(Client client) =>
         new($"Vous ne pouvez pas vous connecter directement à {client.Name}.");
+
+    public static AccessMethodNotAllowedException Applicative(Client client) =>
+        new($"Vous ne pouvez pas vous connecter à {client.Name} en mode applicatif.");
 }

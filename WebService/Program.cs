@@ -133,8 +133,9 @@ builder.Services.Configure<JsonOptions>(options =>
     options.JsonSerializerOptions.AllowTrailingCommas = true;
     // garde les noms de propriétés tels quels
     options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-    // sérialise les permissions sous forme numérique
+    // sérialise les permissions et les portées sous forme numérique
     options.JsonSerializerOptions.Converters.Add(new PermissionsCodeConverter());
+    options.JsonSerializerOptions.Converters.Add(new SameSignOnScopesCodeConverter());
     // et les autres énumérations sous forme de texte
     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });

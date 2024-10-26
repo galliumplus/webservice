@@ -59,7 +59,7 @@ class HistoryTestHelpers:
     def login_sso_action(self, portal_name, app_name, app_url, user_id):
         return {
             "actionKind": "LogIn",
-            "text": f"Connexion à {app_name} ({app_url}) via le portail de {app_name}",
+            "text": f"Connexion à {app_name} ({app_url}) via le portail de {portal_name}",
             "actor": user_id,
         }
 

@@ -1,6 +1,8 @@
 namespace GalliumPlus.Core.Applications;
 
+
 public enum SignatureMethod
 {
-    SymmetricHS256 = 1,
+    // ReSharper disable InconsistentNaming stfu
+    HS256 = 1,
 }

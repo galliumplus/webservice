@@ -52,5 +52,5 @@ public class SameSignOnScopes
     public static readonly FlagEnum<SameSignOnScope> Role = new(SameSignOnScope.Role);
     
     /// <inheritdoc cref="SameSignOnScope.Gallium"/>
-    public static readonly FlagEnum<SameSignOnScope> Gallium = new(SameSignOnScope.Gallium, Identity, Email, Role);
+    public static readonly FlagEnum<SameSignOnScope> Gallium = new(SameSignOnScope.Gallium);
 }

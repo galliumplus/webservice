@@ -1,4 +1,5 @@
 ﻿using GalliumPlus.Core;
+using GalliumPlus.Core;
 using GalliumPlus.Core.Applications;
 using GalliumPlus.Core.Data;
 using GalliumPlus.Core.Exceptions;
@@ -69,7 +70,7 @@ namespace GalliumPlus.Data.Fake
             ssoClient1.SameSignOn = new SameSignOn(
                 id: 0,
                 secret: "test-sso-secret",
-                signatureMethod: SignatureMethod.SymmetricHS256,
+                signatureMethod: SignatureMethod.HS256,
                 scope: SameSignOnScope.Gallium,
                 displayName: null,
                 redirectUrl: "https://example.app/login",
@@ -88,7 +89,7 @@ namespace GalliumPlus.Data.Fake
             ssoClient2.SameSignOn = new SameSignOn(
                 id: 0,
                 secret: "test-sso-secret",
-                signatureMethod: SignatureMethod.SymmetricHS256,
+                signatureMethod: SignatureMethod.HS256,
                 scope: SameSignOnScope.Identity,
                 displayName: "Appli Externe",
                 redirectUrl: "https://example.app/login",
@@ -107,7 +108,7 @@ namespace GalliumPlus.Data.Fake
             ssoClient3.SameSignOn = new SameSignOn(
                 id: 0,
                 secret: "test-sso-secret",
-                signatureMethod: SignatureMethod.SymmetricHS256,
+                signatureMethod: SignatureMethod.HS256,
                 scope: SameSignOnScope.Minimum,
                 displayName: null,
                 redirectUrl: "https://example.app/login",
