@@ -20,7 +20,7 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet build --no-restore /warnaserror -c Release
+      run: dotnet build WebService --no-restore /warnaserror -c Release
     - name: Setup Python
       uses: actions/setup-python@v4.7.1
       with:
@@ -52,7 +52,7 @@ jobs:
       with:
         dotnet-version: 8.0.x
     - name: Run unit tests
-      run: dotnet test
+      run: dotnet test CoreTests
   
   api-tests:
     runs-on: ubuntu-latest
