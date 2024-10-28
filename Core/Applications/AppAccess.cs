@@ -1,6 +1,4 @@
 ﻿using GalliumPlus.Core.Security;
-using GalliumPlus.Core.Users;
-using KiwiQuery.Mapped;
 
 namespace GalliumPlus.Core.Applications;
 

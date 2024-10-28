@@ -1,6 +1,4 @@
-﻿using GalliumPlus.Core.Users;
-
-namespace GalliumPlus.Core.Applications;
+﻿namespace GalliumPlus.Core.Applications;
 
 public class SameSignOnTest
 {

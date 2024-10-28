@@ -1,5 +1,4 @@
 ﻿using GalliumPlus.Core.Data.LogsSearch;
-using GalliumPlus.Core.Exceptions;
 using GalliumPlus.Core.Logs;
 
 namespace GalliumPlus.Core.Data;

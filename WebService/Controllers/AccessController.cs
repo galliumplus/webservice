@@ -1,11 +1,8 @@
 using GalliumPlus.Core.Applications;
 using GalliumPlus.Core.Data;
-using GalliumPlus.Core.Exceptions;
 using GalliumPlus.Core.Logs;
 using GalliumPlus.Core.Users;
-using GalliumPlus.WebService.Dto;
 using GalliumPlus.WebService.Dto.Access;
-using GalliumPlus.WebService.Middleware.ErrorHandling;
 using GalliumPlus.WebService.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

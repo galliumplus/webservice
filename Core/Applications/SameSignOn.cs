@@ -1,6 +1,5 @@
 ﻿using System.Text.Json.Serialization;
 using GalliumPlus.Core.Random;
-using GalliumPlus.Core.Users;
 using KiwiQuery.Mapped;
 using Multiflag;
 

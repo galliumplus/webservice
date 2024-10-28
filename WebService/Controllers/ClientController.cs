@@ -6,7 +6,6 @@ using GalliumPlus.WebService.Middleware.Authorization;
 using GalliumPlus.WebService.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Multiflag;
 
 namespace GalliumPlus.WebService.Controllers
 {

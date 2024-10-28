@@ -1,5 +1,4 @@
-﻿using GalliumPlus.Data;
-#if !TEST
+﻿#if !TEST
 using GalliumPlus.Data.MariaDb;
 using GalliumPlus.Email.MailKit;
 #endif

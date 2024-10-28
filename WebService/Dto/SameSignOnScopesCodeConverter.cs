@@ -1,7 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using GalliumPlus.Core.Applications;
-using GalliumPlus.Core.Users;
 
 namespace GalliumPlus.WebService.Dto;
 
