@@ -24,14 +24,14 @@ public class User
     /// <summary>
     /// L'identifiant IUT (ou identifiant spécial) de l'utilisateur.
     /// </summary>
-    /// <exception cref="InvalidItemException">Le setter renvoie une erreur si la valeur contient des caractères speciaux</exception>
+    /// <exception cref="InvalidResourceException">Le setter renvoie une erreur si la valeur contient des caractères speciaux</exception>
     public string Id
     {
         get => this.id;
         set
         {
             if (value.Any(c => !char.IsLetterOrDigit(c)))
-                throw new InvalidItemException("Un identifiant ne peut pas contenir de caractères spéciaux.");
+                throw new InvalidResourceException("Un identifiant ne peut pas contenir de caractères spéciaux.");
             else
                 this.id = value.ToLower();
         }
@@ -93,7 +93,7 @@ public class User
     /// <param name="role">Le rôle de l'utilisateur.</param>
     /// <param name="deposit">L'acompte de l'utilisateur en euros.</param>
     /// <param name="isMember"> <see langword="true"/> si l'utilisateur est adhérent.</param>
-    /// <exception cref="InvalidItemException">Renvoie une erreur si User.Id contient des caractères spéciaux.</exception>
+    /// <exception cref="InvalidResourceException">Renvoie une erreur si User.Id contient des caractères spéciaux.</exception>
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     public User(int immutableId, string id, UserIdentity identity, Role role, decimal? deposit, bool isMember)
     {
@@ -117,7 +117,7 @@ public class User
     /// <param name="deposit">L'acompte de l'utilisateur en euros.</param>
     /// <param name="isMember"> <see langword="true"/> si l'utilisateur est adhérent.</param>
     /// <param name="password">Le mot de passe de l'utilisateur.</param>
-    /// <exception cref="InvalidItemException">Renvoie une erreur si User.Id contient des caractères speciaux</exception>
+    /// <exception cref="InvalidResourceException">Renvoie une erreur si User.Id contient des caractères speciaux</exception>
     public User(
         int immutableId,
         string id,

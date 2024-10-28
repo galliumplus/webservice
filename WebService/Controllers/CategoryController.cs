@@ -1,5 +1,5 @@
 ﻿using GalliumPlus.Core.Data;
-using GalliumPlus.Core.History;
+using GalliumPlus.Core.Logs;
 using GalliumPlus.Core.Stocks;
 using GalliumPlus.Core.Users;
 using GalliumPlus.WebService.Dto;
@@ -13,7 +13,7 @@ namespace GalliumPlus.WebService.Controllers
     [Route("v1/categories")]
     [Authorize]
     [ApiController]
-    public class CategoryController : Controller
+    public class CategoryController : GalliumController
     {
         private ICategoryDao categoryDao;
         private IHistoryDao historyDao;

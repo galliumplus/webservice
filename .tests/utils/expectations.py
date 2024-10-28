@@ -62,6 +62,14 @@ class Expectations:
 
         return Expectations(self.test_case, self.value)
 
+    def none(self):
+        if self.negation:
+            self.test_case.assertIsNotNone(self.value)
+        else:
+            self.test_case.assertIsNone(self.value)
+
+        return Expectations(self.test_case, self.value)
+
     def a(self, type):
         if self.negation:
             if self.nullable:

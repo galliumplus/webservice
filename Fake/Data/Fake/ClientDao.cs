@@ -1,6 +1,4 @@
-﻿using GalliumPlus.Core;
-using GalliumPlus.Core;
-using GalliumPlus.Core.Applications;
+﻿using GalliumPlus.Core.Applications;
 using GalliumPlus.Core.Data;
 using GalliumPlus.Core.Exceptions;
 using GalliumPlus.Core.Security;
@@ -70,7 +68,7 @@ namespace GalliumPlus.Data.Fake
             ssoClient1.SameSignOn = new SameSignOn(
                 id: 0,
                 secret: "test-sso-secret",
-                signatureMethod: SignatureMethod.HS256,
+                signatureType: SignatureType.HS256,
                 scope: SameSignOnScope.Gallium,
                 displayName: null,
                 redirectUrl: "https://example.app/login",
@@ -89,7 +87,7 @@ namespace GalliumPlus.Data.Fake
             ssoClient2.SameSignOn = new SameSignOn(
                 id: 0,
                 secret: "test-sso-secret",
-                signatureMethod: SignatureMethod.HS256,
+                signatureType: SignatureType.HS256,
                 scope: SameSignOnScope.Identity,
                 displayName: "Appli Externe",
                 redirectUrl: "https://example.app/login",
@@ -108,7 +106,7 @@ namespace GalliumPlus.Data.Fake
             ssoClient3.SameSignOn = new SameSignOn(
                 id: 0,
                 secret: "test-sso-secret",
-                signatureMethod: SignatureMethod.HS256,
+                signatureType: SignatureType.HS256,
                 scope: SameSignOnScope.Minimum,
                 displayName: null,
                 redirectUrl: "https://example.app/login",
@@ -152,6 +150,48 @@ namespace GalliumPlus.Data.Fake
             {
                 throw new ItemNotFoundException();
             }
+        }
+
+        public void CreateAppAccess(int clientId)
+        {
+            Client client = this.Read(clientId);
+            client.AppAccess = new AppAccess();
+            this.Update(clientId, client);
+        }
+
+        public void UpdateAppAccess(int clientId, AppAccess appAccess)
+        {
+            Client client = this.Read(clientId);
+            client.AppAccess = appAccess;
+            this.Update(clientId, client);
+        }
+
+        public void DeleteAppAccess(int clientId)
+        {
+            Client client = this.Read(clientId);
+            client.AppAccess = null;
+            this.Update(clientId, client);
+        }
+
+        public void CreateSameSignOn(int clientId, SameSignOn sameSignOn)
+        {
+            Client client = this.Read(clientId);
+            client.SameSignOn = sameSignOn;
+            this.Update(clientId, client);
+        }
+
+        public void UpdateSameSignOn(int clientId, SameSignOn sameSignOn)
+        {
+            Client client = this.Read(clientId);
+            client.SameSignOn = sameSignOn;
+            this.Update(clientId, client);
+        }
+
+        public void DeleteSameSignOn(int clientId)
+        {
+            Client client = this.Read(clientId);
+            client.SameSignOn = null;
+            this.Update(clientId, client);
         }
 
         protected override int GetKey(Client item) => item.Id;

@@ -42,9 +42,9 @@ public class PaymentMethodFactoryTest
     {
             var factory = new PaymentMethodFactory(new UserDao(new RoleDao()));
 
-            Assert.Throws<InvalidItemException>(() => factory.Create("DEPOSIT", null));
+            Assert.Throws<InvalidResourceException>(() => factory.Create("DEPOSIT", null));
 
-            Assert.Throws<InvalidItemException>(() => factory.Create("DEPOSIT", "@anonymousmember"));
+            Assert.Throws<InvalidResourceException>(() => factory.Create("DEPOSIT", "@anonymousmember"));
 
             var withRealCustomer = factory.Create("DEPOSIT", "lomens");
             var withFakeCustomer = factory.Create("DEPOSIT", "jj000000");

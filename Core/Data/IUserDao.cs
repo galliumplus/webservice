@@ -25,7 +25,7 @@ public interface IUserDao : IBasicDao<string, User>
     /// <param name="id">L'identifiant de l'utilisateur.</param>
     /// <param name="money">La somme à ajouter.</param>
     /// <exception cref="ItemNotFoundException"></exception>
-    /// <exception cref="InvalidItemException"></exception>
+    /// <exception cref="InvalidResourceException"></exception>
     public void AddToDeposit(string id, decimal money);
 
     /// <summary>

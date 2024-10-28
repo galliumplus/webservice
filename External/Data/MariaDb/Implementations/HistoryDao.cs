@@ -1,8 +1,8 @@
 ﻿using System.Data;
 using GalliumPlus.Core.Data;
-using GalliumPlus.Core.Data.HistorySearch;
+using GalliumPlus.Core.Data.LogsSearch;
 using GalliumPlus.Core.Exceptions;
-using GalliumPlus.Core.History;
+using GalliumPlus.Core.Logs;
 using KiwiQuery;
 using MySqlConnector;
 
@@ -112,7 +112,7 @@ namespace GalliumPlus.Data.MariaDb.Implementations
             );
         }
 
-        public IEnumerable<HistoryAction> Read(IHistorySearchCriteria criteria, Pagination pagination)
+        public IEnumerable<HistoryAction> Read(ILogsSearchCriteria criteria, Pagination pagination)
         {
             using var connection = this.Connect();
             Schema db = new(connection);
@@ -129,7 +129,7 @@ namespace GalliumPlus.Data.MariaDb.Implementations
                 .From(actionTable)
                 .LeftJoin(actorAliasedTable, actionTable.Column("actor"), actorTable.Column("id"))
                 .LeftJoin(targetAliasedTable, actionTable.Column("target"), targetTable.Column("id"))
-                .Where(new KiwiQueryHistorySearch(db).CriteriaToPredicate(criteria))
+                .Where(new KiwiQueryLogsSearch(db).CriteriaToPredicate(criteria))
                 .Limit(pagination.PageSize).Offset(pagination.StartIndex)
                 .Fetch<MySqlDataReader>();
 

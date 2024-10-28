@@ -82,7 +82,7 @@ public class ClientTest
 
             Assert.True(client1.AllowDirectUserLogin);
             Assert.False(client2.AllowDirectUserLogin);
-            Assert.False(client3.AllowDirectUserLogin);
+            Assert.True(client3.AllowDirectUserLogin);
             Assert.False(client4.AllowDirectUserLogin);
         }
 
@@ -96,8 +96,8 @@ public class ClientTest
 
             Client client1 = new Client(
                 name: "App 1",
-                granted: Permissions.MANAGE_PRODUCTS,
-                allowed: Permissions.SEE_ALL_USERS_AND_ROLES
+                allowed: Permissions.MANAGE_PRODUCTS,
+                granted: Permissions.MANAGE_PRODUCTS
             );
             Permissions after1 = client1.Filter(before1);
 
@@ -110,7 +110,7 @@ public class ClientTest
             Client client2 = new Client(
                 name: "App 2",
                 granted: Permissions.SEE_PRODUCTS_AND_CATEGORIES,
-                allowed: Permissions.MANAGE_PRODUCTS // écrase la permission donnée précedemment
+                allowed: Permissions.READ_LOGS // écrase la permission donnée précedemment
             );
             Permissions after2 = client2.Filter(before2);
 

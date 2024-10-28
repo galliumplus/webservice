@@ -68,7 +68,8 @@ builder.Services.AddGalliumServices();
 // ajout en singleton, sinon les données ne sont pas gardées d'une requête à l'autre
 builder.Services.AddSingleton<ICategoryDao, CategoryDao>();
 builder.Services.AddSingleton<IClientDao, ClientDao>();
-builder.Services.AddSingleton<IHistoryDao, HistoryDao>();
+builder.Services.AddSingleton<IHistoryDao, LogsDao>();
+builder.Services.AddSingleton<ILogsDao, LogsDao>();
 builder.Services.AddSingleton<IProductDao, ProductDao>();
 builder.Services.AddSingleton<IRoleDao, RoleDao>();
 builder.Services.AddSingleton<ISessionDao, SessionDao>();

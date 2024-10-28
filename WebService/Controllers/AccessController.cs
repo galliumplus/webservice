@@ -1,7 +1,7 @@
 using GalliumPlus.Core.Applications;
 using GalliumPlus.Core.Data;
 using GalliumPlus.Core.Exceptions;
-using GalliumPlus.Core.History;
+using GalliumPlus.Core.Logs;
 using GalliumPlus.Core.Users;
 using GalliumPlus.WebService.Dto;
 using GalliumPlus.WebService.Dto.Access;
@@ -14,7 +14,7 @@ namespace GalliumPlus.WebService.Controllers;
 
 [Route("v1")]
 [ApiController]
-public class AccessController(AccessService service, ISessionDao sessionDao, IHistoryDao historyDao) : Controller
+public class AccessController(AccessService service, ISessionDao sessionDao, IHistoryDao historyDao) : GalliumController
 {
     [HttpPost("login")]
     [Authorize(AuthenticationSchemes = "Basic")]

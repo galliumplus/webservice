@@ -1,9 +1,9 @@
-﻿namespace GalliumPlus.Core.Data.HistorySearch;
+﻿namespace GalliumPlus.Core.Data.LogsSearch;
 
 /// <summary>
 /// Un critère de recherche qui requiert que l'action ait été effectuée <em>avant</em> une certaine date.
 /// </summary>
-public class ToCriteria : IHistorySearchCriteria
+public class ToCriteria : ILogsSearchCriteria
 {
     private DateTime date;
 
@@ -21,5 +21,5 @@ public class ToCriteria : IHistorySearchCriteria
         this.date = date;
     }
 
-    public void Accept(IHistorySearchCriteriaVisitor visitor) => visitor.Visit(this);
+    public void Accept(ILogsSearchCriteriaVisitor visitor) => visitor.Visit(this);
 }

@@ -1,5 +1,5 @@
 ﻿using GalliumPlus.Core.Data;
-using GalliumPlus.Core.History;
+using GalliumPlus.Core.Logs;
 using GalliumPlus.Core.Users;
 using GalliumPlus.WebService.Dto;
 using GalliumPlus.WebService.Dto.Legacy;
@@ -12,7 +12,7 @@ namespace GalliumPlus.WebService.Controllers
     [Route("v1/roles")]
     [Authorize]
     [ApiController]
-    public class RoleController : Controller
+    public class RoleController : GalliumController
     {
         private IRoleDao roleDao;
         private IHistoryDao historyDao;

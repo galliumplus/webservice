@@ -12,9 +12,9 @@ public class OrderItemTest
             var products = new ProductDao(new CategoryDao());
             Product product = products.Read(1);
 
-            Assert.Throws<InvalidItemException>(() => new OrderItem(product, 0));
+            Assert.Throws<InvalidResourceException>(() => new OrderItem(product, 0));
 
-            Assert.Throws<InvalidItemException>(() => new OrderItem(product, -3));
+            Assert.Throws<InvalidResourceException>(() => new OrderItem(product, -3));
 
             OrderItem item = new OrderItem(product, 3);
 

@@ -1,4 +1,4 @@
-﻿using GalliumPlus.Core.History;
+﻿using GalliumPlus.Core.Logs;
 
 namespace GalliumPlus.Data.Fake.HistorySearch
 {
@@ -22,6 +22,11 @@ namespace GalliumPlus.Data.Fake.HistorySearch
         public bool Matches(HistoryAction action)
         {
             return this.predicates.All(predicate => predicate.Matches(action));
+        }
+
+        public bool Matches(AuditLog entry)
+        {
+            return this.predicates.All(predicate => predicate.Matches(entry));
         }
     }
 }

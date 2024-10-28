@@ -1,5 +1,5 @@
 ﻿using GalliumPlus.Core.Data;
-using GalliumPlus.Core.History;
+using GalliumPlus.Core.Logs;
 using GalliumPlus.Core.Stocks;
 using GalliumPlus.Core.Users;
 using GalliumPlus.WebService.Dto;
@@ -14,7 +14,7 @@ namespace GalliumPlus.WebService.Controllers
     [Route("v1/products")]
     [Authorize]
     [ApiController]
-    public class ProductController : Controller
+    public class ProductController : GalliumController
     {
         private IProductDao productDao;
         private IHistoryDao historyDao;

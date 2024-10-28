@@ -78,9 +78,9 @@ public class AccessService(IClientDao clientDao, ISessionDao sessionDao)
         var jwtBuilder = JwtBuilder.Create();
 
         // configuration de la signature
-        switch (ssoApp.SameSignOn!.SignatureMethod)
+        switch (ssoApp.SameSignOn!.SignatureType)
         {
-        case SignatureMethod.HS256:
+        case SignatureType.HS256:
             jwtBuilder
                 .WithAlgorithm(new HMACSHA256Algorithm())
                 .WithSecret(ssoApp.SameSignOn.Secret);

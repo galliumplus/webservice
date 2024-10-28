@@ -1,5 +1,5 @@
 ﻿using GalliumPlus.Core.Data;
-using GalliumPlus.Core.History;
+using GalliumPlus.Core.Logs;
 using GalliumPlus.Core.Orders;
 using GalliumPlus.Core.Users;
 using GalliumPlus.WebService.Dto;
@@ -13,7 +13,7 @@ namespace GalliumPlus.WebService.Controllers
     [Route("v1/orders")]
     [Authorize]
     [ApiController]
-    public class OrderController : Controller
+    public class OrderController : GalliumController
     {
         private OrderSummary.Mapper mapper;
         private IProductDao productDao;

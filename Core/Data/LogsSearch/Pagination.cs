@@ -1,4 +1,4 @@
-﻿namespace GalliumPlus.Core.Data.HistorySearch;
+﻿namespace GalliumPlus.Core.Data.LogsSearch;
 
 /// <summary>
 /// Décris la position d'une vue dans une liste.

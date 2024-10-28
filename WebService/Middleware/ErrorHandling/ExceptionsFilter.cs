@@ -1,4 +1,5 @@
-﻿using GalliumPlus.Core.Exceptions;
+﻿using FluentValidation;
+using GalliumPlus.Core.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
@@ -43,6 +44,17 @@ namespace GalliumPlus.WebService.Middleware.ErrorHandling
                 );
                 context.ExceptionHandled = true;
             }
+            else if (context.Exception is ValidationException validationException)
+            {
+                this.logger.LogDebug($"ValidationException capturée à la sortie de {context.HttpContext.Request.Method} {context.HttpContext.Request.Path}");
+                context.Result = new ErrorResult(
+                    ErrorCode.InvalidResource,
+                    "Une ou plusieurs erreurs de validation ont été détectées.",
+                    StatusCodes.Status400BadRequest,
+                    validationException.Errors
+                );
+                context.ExceptionHandled = true;
+            }
         }
 
         private static int ErrorCodeToStatusCode(ErrorCode errorCode)
@@ -71,7 +83,7 @@ namespace GalliumPlus.WebService.Middleware.ErrorHandling
                 }
                 
                 return new ErrorResult(
-                    ErrorCode.InvalidItem,
+                    ErrorCode.InvalidResource,
                     "Le format de cette ressource est invalide.",
                     400,
                     new { ModelStateErrors = modelStateErrors }

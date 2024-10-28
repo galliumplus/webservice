@@ -102,7 +102,7 @@ class ProductTests(TestBase):
         response = self.post("products", invalid_product)
         self.expect(response.status_code).to.be.equal_to(400)
         self.expect(response.json()).to.have.an_item("code").that._is.equal_to(
-            "InvalidItem"
+            "InvalidResource"
         )
 
         # Informations manquantes
@@ -116,7 +116,7 @@ class ProductTests(TestBase):
         response = self.post("products", invalid_product)
         self.expect(response.status_code).to.be.equal_to(400)
         self.expect(response.json()).to.have.an_item("code").that._is.equal_to(
-            "InvalidItem"
+            "InvalidResource"
         )
 
         # Mauvais types de données
@@ -132,7 +132,7 @@ class ProductTests(TestBase):
         response = self.post("products", invalid_product)
         self.expect(response.status_code).to.be.equal_to(400)
         self.expect(response.json()).to.have.an_item("code").that._is.equal_to(
-            "InvalidItem"
+            "InvalidResource"
         )
 
         # Disponibilité invalide
@@ -148,7 +148,7 @@ class ProductTests(TestBase):
         response = self.post("products", invalid_product)
         self.expect(response.status_code).to.be.equal_to(400)
         self.expect(response.json()).to.have.an_item("code").that._is.equal_to(
-            "InvalidItem"
+            "InvalidResource"
         )
 
     def test_product_edit(self):
@@ -189,7 +189,7 @@ class ProductTests(TestBase):
         response = self.put(location, invalid_product)
         self.expect(response.status_code).to.be.equal_to(400)
         self.expect(response.json()).to.have.an_item("code").that._is.equal_to(
-            "InvalidItem"
+            "InvalidResource"
         )
 
         # Informations manquantes
@@ -203,7 +203,7 @@ class ProductTests(TestBase):
         response = self.put(location, invalid_product)
         self.expect(response.status_code).to.be.equal_to(400)
         self.expect(response.json()).to.have.an_item("code").that._is.equal_to(
-            "InvalidItem"
+            "InvalidResource"
         )
 
         # Mauvais types de données
@@ -219,7 +219,7 @@ class ProductTests(TestBase):
         response = self.put(location, invalid_product)
         self.expect(response.status_code).to.be.equal_to(400)
         self.expect(response.json()).to.have.an_item("code").that._is.equal_to(
-            "InvalidItem"
+            "InvalidResource"
         )
 
         # Disponibilité invalide
@@ -235,7 +235,7 @@ class ProductTests(TestBase):
         response = self.put(location, invalid_product)
         self.expect(response.status_code).to.be.equal_to(400)
         self.expect(response.json()).to.have.an_item("code").that._is.equal_to(
-            "InvalidItem"
+            "InvalidResource"
         )
 
     def test_product_delete(self):

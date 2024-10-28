@@ -4,7 +4,7 @@ public enum ErrorCode
 {
     CantSell,
     DuplicateItem,
-    InvalidItem,
+    InvalidResource,
     ItemNotFound,
     PermissionDenied,
     ServiceUnavailable,

@@ -1,5 +1,5 @@
 ﻿using System.Text.Json.Serialization;
-using GalliumPlus.Core.History;
+using GalliumPlus.Core.Logs;
 
 namespace GalliumPlus.WebService.Dto.Legacy
 {

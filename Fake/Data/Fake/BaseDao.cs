@@ -21,7 +21,7 @@ namespace GalliumPlus.Data.Fake
             {
                 if (!this.CheckConstraints(client))
                 {
-                    throw new InvalidItemException("Custom constraints violated");
+                    throw new InvalidResourceException("Custom constraints violated");
                 }
 
                 TKey key = this.GetKey(client);
@@ -69,7 +69,7 @@ namespace GalliumPlus.Data.Fake
             {
                 if (!this.CheckConstraints(item))
                 {
-                    throw new InvalidItemException("Custom constraints violated");
+                    throw new InvalidResourceException("Custom constraints violated");
                 }
 
                 if (!this.items.ContainsKey(key)) throw new ItemNotFoundException();

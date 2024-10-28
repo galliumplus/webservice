@@ -35,7 +35,7 @@ public interface IBasicDao<TKey, TItem>
     /// <param name="key">La clé de l'item.</param>
     /// <param name="item">Le nouvel item.</param>
     /// <exception cref="ItemNotFoundException"></exception>
-    /// <exception cref="InvalidItemException"></exception>
+    /// <exception cref="InvalidResourceException"></exception>
     public TItem Update(TKey key, TItem item);
 
     /// <summary>

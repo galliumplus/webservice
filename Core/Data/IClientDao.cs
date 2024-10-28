@@ -28,4 +28,43 @@ public interface IClientDao : IBasicDao<int, Client>
     /// <returns>Le <see cref="Client"/> correspondant. Il aura forcément un paramétrage <see cref="SameSignOn"/>.</returns>
     /// <exception cref="ItemNotFoundException"/>
     public Client FindByApiKeyWithSameSignOn(string apiKey);
+
+    /// <summary>
+    /// Active l'accès applicatif d'un client.
+    /// </summary>
+    /// <param name="clientId">L'identifiant du client.</param>
+    void CreateAppAccess(int clientId);
+
+    /// <summary>
+    /// Mets à jour l'accès applicatif d'un client.
+    /// </summary>
+    /// <param name="clientId">L'identifiant du client.</param>
+    /// <param name="appAccess">Les nouveaux paramètres.</param>
+    void UpdateAppAccess(int clientId, AppAccess appAccess);
+
+    /// <summary>
+    /// Retire l'accès applicatif d'un client.
+    /// </summary>
+    /// <param name="clientId">L'identifiant du client.</param>
+    void DeleteAppAccess(int clientId);
+
+    /// <summary>
+    /// Ajoute un paramétrage SSO à un client.
+    /// </summary>
+    /// <param name="clientId">L'identifiant du client.</param>
+    /// <param name="sameSignOn">Les nouveaux paramètres.</param>
+    void CreateSameSignOn(int clientId, SameSignOn sameSignOn);
+
+    /// <summary>
+    /// Mets à jour le paramétrage SSO d'un client.
+    /// </summary>
+    /// <param name="clientId">L'identifiant du client.</param>
+    /// <param name="sameSignOn">Les nouveaux paramètres.</param>
+    void UpdateSameSignOn(int clientId, SameSignOn sameSignOn);
+
+    /// <summary>
+    /// Retire le paramétrage SSO d'un client.
+    /// </summary>
+    /// <param name="clientId">L'identifiant du client.</param>
+    void DeleteSameSignOn(int clientId);
 }

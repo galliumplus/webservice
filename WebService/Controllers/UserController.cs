@@ -2,7 +2,7 @@
 using GalliumPlus.Core.Data;
 using GalliumPlus.Core.Email.TemplateViews;
 using GalliumPlus.Core.Exceptions;
-using GalliumPlus.Core.History;
+using GalliumPlus.Core.Logs;
 using GalliumPlus.Core.Security;
 using GalliumPlus.Core.Users;
 using GalliumPlus.WebService.Dto;
@@ -19,7 +19,7 @@ namespace GalliumPlus.WebService.Controllers
     [Route("v1/users")]
     [Authorize]
     [ApiController]
-    public class UserController : Controller
+    public class UserController : GalliumController
     {
         private IUserDao userDao;
         private IHistoryDao historyDao;
@@ -172,7 +172,7 @@ namespace GalliumPlus.WebService.Controllers
         {
             if (!this.User!.Password!.Match(passwordModification.CurrentPassword ?? ""))
             {
-                throw new InvalidItemException("Le mot de passe actuel ne corresponds pas.");
+                throw new InvalidResourceException("Le mot de passe actuel ne corresponds pas.");
             }
 
             PasswordInformation newPassword = PasswordInformation.FromPassword(passwordModification.NewPassword);
@@ -202,7 +202,7 @@ namespace GalliumPlus.WebService.Controllers
 
             if (passwordModification.ResetToken is null)
             {
-                throw new InvalidItemException("Jeton de réinitialisation manquant.");
+                throw new InvalidResourceException("Jeton de réinitialisation manquant.");
             }
 
             (string token, string secret) = PasswordResetToken.Unpack(passwordModification.ResetToken);
@@ -211,12 +211,12 @@ namespace GalliumPlus.WebService.Controllers
 
             if (!prt.MatchesSecret(secret))
             {
-                throw new InvalidItemException("Jeton de réinitialisation invalide.");
+                throw new InvalidResourceException("Jeton de réinitialisation invalide.");
             }
 
             if (prt.Expired)
             {
-                throw new InvalidItemException("Ce jeton de réinitialisation est expiré.");
+                throw new InvalidResourceException("Ce jeton de réinitialisation est expiré.");
             }
 
             PasswordInformation newPassword = PasswordInformation.FromPassword(passwordModification.NewPassword);

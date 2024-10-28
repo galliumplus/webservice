@@ -1,23 +1,23 @@
-﻿using GalliumPlus.Core.Data.HistorySearch;
+﻿using GalliumPlus.Core.Data.LogsSearch;
 using KiwiQuery;
 using KiwiQuery.Expressions.Predicates;
 
 namespace GalliumPlus.Data.MariaDb
 {
-    internal class KiwiQueryHistorySearch : IHistorySearchCriteriaVisitor
+    internal class KiwiQueryLogsSearch : ILogsSearchCriteriaVisitor
     {
         private Schema schema;
         private Predicate? result;
 
         public Predicate Result => this.result ?? throw new InvalidOperationException("No criteria visited yet.");
 
-        public KiwiQueryHistorySearch(Schema schema)
+        public KiwiQueryLogsSearch(Schema schema)
         {
             this.schema = schema;
             this.result = null;
         }
 
-        public Predicate CriteriaToPredicate(IHistorySearchCriteria criteria)
+        public Predicate CriteriaToPredicate(ILogsSearchCriteria criteria)
         {
             criteria.Accept(this);
             return this.Result;
@@ -25,7 +25,7 @@ namespace GalliumPlus.Data.MariaDb
 
         public void Visit(AndCriteria andCriteria)
         {
-            KiwiQueryHistorySearch subVisitor = new(this.schema);
+            KiwiQueryLogsSearch subVisitor = new(this.schema);
             
             this.result = SQL.AND(
                 andCriteria.Criteria

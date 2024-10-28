@@ -53,7 +53,7 @@ namespace GalliumPlus.WebService.Dto.Legacy
                 }
                 catch (ItemNotFoundException)
                 {
-                    throw new InvalidItemException("La catégorie associée n'existe pas");
+                    throw new InvalidResourceException("La catégorie associée n'existe pas");
                 }
 
                 return new Product(

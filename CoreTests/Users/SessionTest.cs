@@ -57,7 +57,7 @@ public class SessionTest
         );
         Session session2 = Session.LogIn(client2, this.user);
 
-        Assert.Equal(Permissions.READ_LOGS, session2.Permissions);
+        Assert.Equal(Permissions.NONE, session2.Permissions);
     }
 
     [Fact]

@@ -1,19 +1,18 @@
-﻿using GalliumPlus.Core.History;
+﻿using GalliumPlus.Core.Logs;
 
 namespace GalliumPlus.Data.Fake.HistorySearch
 {
-    internal class ClosurePredicate : IHistorySearchPredicate
+    internal class ClosurePredicate(Predicate<HistoryAction> legacyPredicate, Predicate<AuditLog> predicate)
+        : IHistorySearchPredicate
     {
-        private Predicate<HistoryAction> predicate;
-
-        public ClosurePredicate(Predicate<HistoryAction> predicate)
-        {
-            this.predicate = predicate;
-        }
-
         public bool Matches(HistoryAction action)
         {
-            return this.predicate.Invoke(action);
+            return legacyPredicate.Invoke(action);
+        }
+
+        public bool Matches(AuditLog entry)
+        {
+            return predicate.Invoke(entry);
         }
     }
 }

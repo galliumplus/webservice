@@ -1,6 +1,6 @@
-﻿using GalliumPlus.Core.Data.HistorySearch;
+﻿using GalliumPlus.Core.Data.LogsSearch;
 using GalliumPlus.Core.Exceptions;
-using GalliumPlus.Core.History;
+using GalliumPlus.Core.Logs;
 
 namespace GalliumPlus.Core.Data;
 
@@ -29,8 +29,6 @@ public interface IHistoryDao
     /// Récupère une page des entrées de l'historique qui correspondent à certains critères.
     /// </summary>
     /// <param name="criteria">Les critères de recherche.</param>
-    /// <param name="pageIndex">L'index de la page à récupérer (commence à 0).</param>
-    /// <param name="pageSize">La taille de page à lire.</param>
-    /// <returns></returns>
-    IEnumerable<HistoryAction> Read(IHistorySearchCriteria criteria, Pagination pagination);
+    /// <param name="pagination">La page de logs à lire.</param>
+    IEnumerable<HistoryAction> Read(ILogsSearchCriteria criteria, Pagination pagination);
 }

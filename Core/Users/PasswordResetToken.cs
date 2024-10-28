@@ -132,13 +132,13 @@ public class PasswordResetToken
     /// </summary>
     /// <param name="packedPrt">Les données empaquetées.</param>
     /// <returns>Le jeton et le code secret, respectivement.</returns>
-    /// <exception cref="InvalidItemException"/>
+    /// <exception cref="InvalidResourceException"/>
     public static (string, string) Unpack(string packedPrt)
     {
         string[] parts = packedPrt.Split(':');
         if (parts.Length != 2)
         {
-            throw new InvalidItemException("Jeton de réinitialisation invalide.");
+            throw new InvalidResourceException("Jeton de réinitialisation invalide.");
         }
         return (parts[0], parts[1]);
     }

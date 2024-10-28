@@ -46,10 +46,10 @@ public class UserTest
     public void InvalidItemExceptionThrownOnInvalidUserIdInConstructor()
     {
         Action userCreationWithPassword = () => new User(1, "@mansouri", new UserIdentity("Mehdi", "Mansouri", "mehdi.mansouri@iut-dijon.u-bourgogne.fr", "PROF"), this.profRole, 21.30m, false, this.password);
-        Assert.Throws<InvalidItemException>(userCreationWithPassword);
+        Assert.Throws<InvalidResourceException>(userCreationWithPassword);
 
         Action userCreationWithoutPassword = () => new User(1, "@mansouri", new UserIdentity("Mehdi", "Mansouri", "mehdi.mansouri@iut-dijon.u-bourgogne.fr", "PROF"), this.profRole, 21.30m, false);
-        Assert.Throws<InvalidItemException>(userCreationWithoutPassword);
+        Assert.Throws<InvalidResourceException>(userCreationWithoutPassword);
     }
 
     [Fact]
@@ -67,14 +67,14 @@ public class UserTest
             {
                 user.Id = id;
             }
-            catch (InvalidItemException)
+            catch (InvalidResourceException)
             {
                 Assert.Fail($"{id} est censé etre accepté par le setter de User.Id");
             }
         }
 
         foreach (string id in this.invalidIdList)
-            Assert.Throws<InvalidItemException>(() => user.Id = id);
+            Assert.Throws<InvalidResourceException>(() => user.Id = id);
 
     }
 }

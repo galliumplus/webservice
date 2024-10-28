@@ -1,13 +1,13 @@
-﻿namespace GalliumPlus.Core.Data.HistorySearch;
+﻿namespace GalliumPlus.Core.Data.LogsSearch;
 
 /// <summary>
 /// Un critère de recherche dans l'historique.
 /// </summary>
-public interface IHistorySearchCriteria
+public interface ILogsSearchCriteria
 {
     /// <summary>
     /// Déclenche l'action correspondante sur le visiteur.
     /// </summary>
     /// <param name="visitor"></param>
-    void Accept(IHistorySearchCriteriaVisitor visitor);
+    void Accept(ILogsSearchCriteriaVisitor visitor);
 }

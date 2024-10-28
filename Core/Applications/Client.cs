@@ -106,6 +106,9 @@ public class Client
     [JsonIgnore]
     public bool HasSameSignOn => this.sameSignOn != null;
 
+    [JsonIgnore]
+    public string DisplayName => this.SameSignOn?.DisplayName ?? this.Name;
+
     /// <summary>
     /// Crée une application existante.
     /// </summary>

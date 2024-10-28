@@ -23,7 +23,7 @@ public class PaymentMethodFactory
         case "deposit":
             if (customer == null || customer == "@anonymousmember")
             {
-                throw new InvalidItemException(
+                throw new InvalidResourceException(
                     "L'identifiant de l'adhérent est obligatoire pour les paiments par acompte."
                 );
             }
@@ -37,7 +37,7 @@ public class PaymentMethodFactory
             return new PaymentInCash();
 
         default:
-            throw new InvalidItemException($"Type de paiement « {method} » invalide");
+            throw new InvalidResourceException($"Type de paiement « {method} » invalide");
         }
     }
 }

@@ -56,7 +56,7 @@ namespace GalliumPlus.WebService.Dto.Legacy
                     }
                     catch (ItemNotFoundException)
                     {
-                        throw new InvalidItemException($"L'utilisateur « {dto.Customer} » n'existe pas");
+                        throw new InvalidResourceException($"L'utilisateur « {dto.Customer} » n'existe pas");
                     }
                 }
 

@@ -62,7 +62,7 @@ namespace GalliumPlus.WebService.Dto.Legacy
                 }
                 catch (ItemNotFoundException)
                 {
-                    throw new InvalidItemException("Le rôle associé n'existe pas");
+                    throw new InvalidResourceException("Le rôle associé n'existe pas");
                 }
 
                 return new User(

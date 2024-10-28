@@ -15,13 +15,13 @@ public static class MonetaryValue
     /// Une description de la valeur à vérifier, utilisée pour générer des messages d'erreurs plus précis.
     /// </param>
     /// <returns>Exactement la valeur passée en entrée.</returns>
-    /// <exception cref="InvalidItemException"></exception>
+    /// <exception cref="InvalidResourceException"></exception>
     public static decimal Check(decimal euros, string description = "Une valeur en Euros")
     {
         decimal cents = euros * 100;
         if (cents % 1 != 0)
         {
-            throw new InvalidItemException($"{description} ne peux pas avoir des fractions de centimes.");
+            throw new InvalidResourceException($"{description} ne peux pas avoir des fractions de centimes.");
         }
         return euros;
     }
@@ -34,12 +34,12 @@ public static class MonetaryValue
     /// Une description de la valeur à vérifier, utilisée pour générer des messages d'erreurs plus précis.
     /// </param>
     /// <returns>Exactement la valeur passée en entrée.</returns>
-    /// <exception cref="InvalidItemException"></exception>
+    /// <exception cref="InvalidResourceException"></exception>
     public static decimal CheckNonNegative(decimal euros, string description)
     {
         if (euros < 0)
         {
-            throw new InvalidItemException($"{description} ne peux pas être négatif.");
+            throw new InvalidResourceException($"{description} ne peux pas être négatif.");
         }
         return Check(euros, description);
     }

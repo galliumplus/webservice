@@ -10,7 +10,7 @@ public class SameSignOnTest
         SameSignOn sso = new(
             id: 123,
             secret: "sso-secret",
-            signatureMethod: SignatureMethod.HS256,
+            signatureType: SignatureType.HS256,
             scope: SameSignOnScope.Email,
             displayName: null,
             redirectUrl: "https://etiq-dijon.fr/",
@@ -19,7 +19,7 @@ public class SameSignOnTest
 
         Assert.Equal(123, sso.Id);
         Assert.Equal("sso-secret", sso.Secret);
-        Assert.Equal(SignatureMethod.HS256, sso.SignatureMethod);
+        Assert.Equal(SignatureType.HS256, sso.SignatureType);
         Assert.Equal(SameSignOnScope.Email, sso.Scope);
         Assert.Null(sso.DisplayName);
         Assert.Equal("https://etiq-dijon.fr/", sso.RedirectUrl);
@@ -36,7 +36,7 @@ public class SameSignOnTest
         );
 
         Assert.Equal("", sso.Secret);
-        Assert.Equal(SignatureMethod.HS256, sso.SignatureMethod);
+        Assert.Equal(SignatureType.HS256, sso.SignatureType);
         Assert.Equal(SameSignOnScope.Email, sso.Scope);
         Assert.Null(sso.DisplayName);
         Assert.Equal("https://etiq-dijon.fr/", sso.RedirectUrl);
@@ -56,13 +56,13 @@ public class SameSignOnTest
         Assert.Equal("", sso.Secret);
         
         // première génération (HS256)
-        sso.GenerateNewSecret(SignatureMethod.HS256);
+        sso.GenerateNewSecret(SignatureType.HS256);
         Assert.Matches(ClientTest.ReSecret, sso.Secret);
-        Assert.Equal(SignatureMethod.HS256, sso.SignatureMethod);
+        Assert.Equal(SignatureType.HS256, sso.SignatureType);
 
         // seconde génération (HS256)
         string previousSecret = sso.Secret;
-        sso.GenerateNewSecret(SignatureMethod.HS256);
+        sso.GenerateNewSecret(SignatureType.HS256);
         Assert.NotEqual(previousSecret, sso.Secret);
     }
 }

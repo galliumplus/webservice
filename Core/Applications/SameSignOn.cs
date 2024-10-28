@@ -13,7 +13,7 @@ public class SameSignOn
 {
     private int id;
     private string secret;
-    private SignatureMethod signatureMethod;
+    private SignatureType signatureType;
     private SameSignOnScope scope;
     private string? displayName;
     private string redirectUrl;
@@ -34,7 +34,7 @@ public class SameSignOn
     /// <summary>
     /// La méthode de signature utilisée (symétrique/asymétrique).
     /// </summary>
-    public SignatureMethod SignatureMethod => this.signatureMethod;
+    public SignatureType SignatureType => this.signatureType;
 
     /// <summary>
     /// La portée de l'accès aux informations des utilisateurs.
@@ -66,7 +66,7 @@ public class SameSignOn
     /// </summary>
     /// <param name="id">L'identifiant de l'application auquel les informations appartiennent.</param>
     /// <param name="secret">Le code secret utilisé pour signer les jeton d'authentification</param>
-    /// <param name="signatureMethod">La méthode de signature utilisée.</param>
+    /// <param name="signatureType">La méthode de signature utilisée.</param>
     /// <param name="scope">La portée de l'accès aux informations des utilisateurs.</param>
     /// <param name="displayName">Le nom à afficher pour présenter l'application.</param>
     /// <param name="redirectUrl">L'url de redirection une fois l'authentification terminée.</param>
@@ -75,7 +75,7 @@ public class SameSignOn
     public SameSignOn(
         int id,
         string secret,
-        SignatureMethod signatureMethod,
+        SignatureType signatureType,
         SameSignOnScope scope,
         string? displayName,
         string redirectUrl,
@@ -84,7 +84,7 @@ public class SameSignOn
     {
         this.id = id;
         this.secret = secret;
-        this.signatureMethod = signatureMethod;
+        this.signatureType = signatureType;
         this.scope = scope;
         this.displayName = displayName;
         this.redirectUrl = redirectUrl;
@@ -103,7 +103,7 @@ public class SameSignOn
         string redirectUrl,
         string? displayName = null,
         string? logoUrl = null
-    ) : this(-1, "", SignatureMethod.HS256, scope, displayName, redirectUrl, logoUrl)
+    ) : this(-1, "", SignatureType.HS256, scope, displayName, redirectUrl, logoUrl)
     {
     }
 
@@ -112,13 +112,13 @@ public class SameSignOn
     /// </summary>
     /// <param name="method">La méthode de signature à utiliser pour les JWT.</param>
     /// <exception cref="ArgumentException">Si la méthode n'est pas prise en charge.</exception>
-    public void GenerateNewSecret(SignatureMethod method)
+    public void GenerateNewSecret(SignatureType method)
     {
-        this.signatureMethod = method;
+        this.signatureType = method;
         
         switch (method)
         {
-        case SignatureMethod.HS256:
+        case SignatureType.HS256:
             var rtg = new RandomTextGenerator(new CryptoRandomProvider());
             this.secret = rtg.SecretKey();
             break;

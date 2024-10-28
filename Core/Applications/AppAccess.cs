@@ -42,4 +42,6 @@ public class AppAccess
     }
 
     public bool SecretsMatch(string plainSecret) => this.Secret.Match(plainSecret);
+
+    public string RegenerateSecret() => this.Secret.Regenerate();
 }
