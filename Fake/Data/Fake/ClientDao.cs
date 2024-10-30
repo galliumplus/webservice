@@ -54,8 +54,8 @@ namespace GalliumPlus.Data.Fake
                 allowed: Permissions.SEE_PRODUCTS_AND_CATEGORIES,
                 granted: Permissions.SEE_PRODUCTS_AND_CATEGORIES
             );
-            botClient.AppAccess = new AppAccess(0, new OneTimeSecret(botKey.Hash, botKey.Salt));
             this.Create(botClient);
+            botClient.AppAccess = new AppAccess(botClient.Id, new OneTimeSecret(botKey.Hash, botKey.Salt));
 
             var ssoClient1 = new Client(
                 id: 0,
@@ -65,8 +65,9 @@ namespace GalliumPlus.Data.Fake
                 allowed: Permissions.ALL,
                 granted: Permissions.NONE
             );
+            this.Create(ssoClient1);
             ssoClient1.SameSignOn = new SameSignOn(
-                id: 0,
+                id: ssoClient1.Id,
                 secret: "test-sso-secret",
                 signatureType: SignatureType.HS256,
                 scope: SameSignOnScope.Gallium,
@@ -74,7 +75,6 @@ namespace GalliumPlus.Data.Fake
                 redirectUrl: "https://example.app/login",
                 logoUrl: "https://example.app/static/logo.png"
             );
-            this.Create(ssoClient1);
 
             var ssoClient2 = new Client(
                 id: 0,
@@ -84,8 +84,9 @@ namespace GalliumPlus.Data.Fake
                 allowed: Permissions.ALL,
                 granted: Permissions.NONE
             );
+            this.Create(ssoClient2);
             ssoClient2.SameSignOn = new SameSignOn(
-                id: 0,
+                id: ssoClient2.Id,
                 secret: "test-sso-secret",
                 signatureType: SignatureType.HS256,
                 scope: SameSignOnScope.Identity,
@@ -93,7 +94,6 @@ namespace GalliumPlus.Data.Fake
                 redirectUrl: "https://example.app/login",
                 logoUrl: "https://example.app/static/logo.png"
             );
-            this.Create(ssoClient2);
 
             var ssoClient3 = new Client(
                 id: 0,
@@ -103,8 +103,9 @@ namespace GalliumPlus.Data.Fake
                 allowed: Permissions.ALL,
                 granted: Permissions.NONE
             );
+            this.Create(ssoClient3);
             ssoClient3.SameSignOn = new SameSignOn(
-                id: 0,
+                id: ssoClient3.Id,
                 secret: "test-sso-secret",
                 signatureType: SignatureType.HS256,
                 scope: SameSignOnScope.Minimum,
@@ -112,8 +113,7 @@ namespace GalliumPlus.Data.Fake
                 redirectUrl: "https://example.app/login",
                 logoUrl: null
             );
-            ssoClient3.AppAccess = new AppAccess(0, new OneTimeSecret(botKey.Hash, botKey.Salt));
-            this.Create(ssoClient3);
+            ssoClient3.AppAccess = new AppAccess(ssoClient3.Id, new OneTimeSecret(botKey.Hash, botKey.Salt));
         }
 
         public Client FindByApiKey(string apiKey)
