@@ -78,6 +78,7 @@ builder.Services.AddSingleton<IUserDao, UserDao>();
 builder.Services.AddScoped<ICategoryDao, CategoryDao>();
 builder.Services.AddScoped<IClientDao, ClientDao>();
 builder.Services.AddScoped<IHistoryDao, HistoryDao>();
+builder.Services.AddSingleton<ILogsDao, HistoryDao>();
 builder.Services.AddScoped<IProductDao, ProductDao>();
 builder.Services.AddScoped<IRoleDao, RoleDao>();
 builder.Services.AddScoped<ISessionDao, SessionDao>();

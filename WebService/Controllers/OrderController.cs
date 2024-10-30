@@ -40,7 +40,7 @@ namespace GalliumPlus.WebService.Controllers
             HistoryAction action = new(
                 HistoryActionKind.Purchase,
                 $"Achat {order.PaymentMethod.Description} de : {order.ItemsDescription}",
-                this.User!.Id,
+                this.User?.Id,
                 customerId,
                 order.TotalPrice()
             );

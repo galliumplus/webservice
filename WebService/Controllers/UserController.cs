@@ -90,7 +90,7 @@ namespace GalliumPlus.WebService.Controllers
             HistoryAction action = new(
                 HistoryActionKind.EditUsersOrRoles,
                 $"Ajout de l'utilisateur {user.Id}",
-                this.User!.Id,
+                this.User?.Id,
                 user.Id
             );
             this.historyDao.AddEntry(action);
@@ -116,7 +116,7 @@ namespace GalliumPlus.WebService.Controllers
             HistoryAction action = new(
                 HistoryActionKind.EditUsersOrRoles,
                 $"Modification de l'utilisateur {updatedUser.Id}",
-                this.User!.Id,
+                this.User?.Id,
                 updatedUser.Id
             );
             this.historyDao.AddEntry(action);
@@ -140,7 +140,7 @@ namespace GalliumPlus.WebService.Controllers
             HistoryAction action = new(
                 HistoryActionKind.EditUsersOrRoles,
                 $"Supression de l'utilisateur {userToDelete.Id}",
-                this.User!.Id,
+                this.User?.Id,
                 userToDelete.Id
             );
             this.historyDao.AddEntry(action);
@@ -157,7 +157,7 @@ namespace GalliumPlus.WebService.Controllers
             HistoryAction action = new(
                 HistoryActionKind.Deposit,
                 $"Rechargement de l'acompte de l'utilisateur {id}",
-                this.User!.Id,
+                this.User?.Id,
                 id,
                 added
             );

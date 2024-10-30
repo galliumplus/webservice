@@ -62,6 +62,14 @@ namespace GalliumPlus.Data.Fake
             this.Delete(session.Token);
         }
 
+        public void DeleteByClientId(int clientId)
+        {
+            foreach (Session session in this.Read().Where(session => session.Client.Id == clientId))
+            {
+                this.Delete(session.Token);
+            }
+        }
+
         protected override string GetKey(Session item) => item.Token;
 
         protected override void SetKey(ref Session item, string key)

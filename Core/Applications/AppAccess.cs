@@ -1,4 +1,5 @@
 ﻿using GalliumPlus.Core.Security;
+using KiwiQuery.Mapped;
 
 namespace GalliumPlus.Core.Applications;
 
@@ -7,6 +8,7 @@ namespace GalliumPlus.Core.Applications;
 /// </summary>
 public class AppAccess
 {
+    [Key]
     private readonly int id;
     private readonly OneTimeSecret secret;
 
@@ -25,6 +27,7 @@ public class AppAccess
     /// </summary>
     /// <param name="id">L'identifiant de l'application auquel le code appartient.</param>
     /// <param name="secret">Le code secret.</param>
+    [PersistenceConstructor]
     public AppAccess(int id, OneTimeSecret secret)
     {
         this.id = id;
@@ -34,8 +37,10 @@ public class AppAccess
     /// <summary>
     /// Crée un nouveau code d'accès applicatif.
     /// </summary>
-    public AppAccess()
+    /// <param name="id">L'identifiant de l'application auquel le code appartient.</param>
+    public AppAccess(int id)
     {
+        this.id = id;
         this.secret = new OneTimeSecret();
     }
 

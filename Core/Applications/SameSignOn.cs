@@ -10,7 +10,8 @@ namespace GalliumPlus.Core.Applications;
 /// </summary>
 public class SameSignOn
 {
-    private int id;
+    [Key]
+    private readonly int id;
     private string secret;
     private SignatureType signatureType;
     private SameSignOnScope scope;
@@ -93,16 +94,18 @@ public class SameSignOn
     /// <summary>
     /// Crée un nouveau paramétrage SSO.
     /// </summary>
+    /// <param name="id">L'identifiant de l'application auquel les informations appartiennent.</param>
     /// <param name="scope">La portée de l'accès aux informations des utilisateurs.</param>
     /// <param name="displayName">Le nom à afficher pour présenter l'application.</param>
     /// <param name="redirectUrl">L'url de redirection une fois l'authentification terminée.</param>
     /// <param name="logoUrl">L'url du logo de l'application.</param>
     public SameSignOn(
+        int id,
         SameSignOnScope scope,
         string redirectUrl,
         string? displayName = null,
         string? logoUrl = null
-    ) : this(-1, "", SignatureType.HS256, scope, displayName, redirectUrl, logoUrl)
+    ) : this(id, "", SignatureType.HS256, scope, displayName, redirectUrl, logoUrl)
     {
     }
 

@@ -59,7 +59,7 @@ namespace GalliumPlus.WebService.Controllers
             HistoryAction action = new(
                 HistoryActionKind.EditProductsOrCategories,
                 $"Ajout du produit {product.Name}",
-                this.User!.Id
+                this.User?.Id
             );
             this.historyDao.AddEntry(action);
 
@@ -75,7 +75,7 @@ namespace GalliumPlus.WebService.Controllers
             HistoryAction action = new(
                 HistoryActionKind.EditProductsOrCategories,
                 $"Modification du produit {updatedProduct.Name}",
-                this.User!.Id
+                this.User?.Id
             );
             this.historyDao.AddEntry(action);
 
@@ -94,7 +94,7 @@ namespace GalliumPlus.WebService.Controllers
             HistoryAction action = new(
                 HistoryActionKind.EditProductsOrCategories,
                 $"Modification de l'image du produit {productName}",
-                this.User!.Id
+                this.User?.Id
             );
             this.historyDao.AddEntry(action);
 
@@ -111,7 +111,7 @@ namespace GalliumPlus.WebService.Controllers
             HistoryAction action = new(
                 HistoryActionKind.EditProductsOrCategories,
                 $"Suppression du produit {productName}",
-                this.User!.Id
+                this.User?.Id
             );
             this.historyDao.AddEntry(action);
 
@@ -128,7 +128,7 @@ namespace GalliumPlus.WebService.Controllers
             HistoryAction action = new(
                 HistoryActionKind.EditProductsOrCategories,
                 $"Suppression de l'image du produit {productName}",
-                this.User!.Id
+                this.User?.Id
             );
             this.historyDao.AddEntry(action);
 

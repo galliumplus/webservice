@@ -118,6 +118,7 @@ public class Client
     /// <param name="isEnabled">Si l'application est active ou non.</param>
     /// <param name="allowed">Les permissions autorisées à tous les utilisateurs.</param>
     /// <param name="granted">Les permissions données à tous les utilisateurs.</param>
+    /// <param name="deleted">Si l'application a été supprimée ou non.</param>
     [PersistenceConstructor]
     public Client(
         int id,

@@ -12,7 +12,8 @@ namespace GalliumPlus.WebService.Controllers
     [Route("v1/clients")]
     [Authorize]
     [ApiController]
-    public class ClientController(ClientService clientService, AuditService auditService) : GalliumController
+    public class ClientController(ClientService clientService, AuditService auditService, AccessService accessService)
+        : GalliumController
     {
         [HttpGet]
         [RequiresPermissions(Permissions.MANAGE_CLIENTS)]
@@ -75,6 +76,7 @@ namespace GalliumPlus.WebService.Controllers
         {
             new PartialClient.Validator().ValidateAndThrow(clientUpdate);
             Client client = clientService.Update(id, clientUpdate);
+            accessService.UpdateSessionsOfClient(client);
             auditService.AddEntry(
                 entry => entry.Client(client).Modified().By(this.Client!, this.User)
             );

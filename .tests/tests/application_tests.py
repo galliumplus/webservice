@@ -1,6 +1,7 @@
 import re
+import jwt
 from utils.test_base import TestBase
-from utils.auth import BearerAuth
+from utils.auth import BearerAuth, BasicAuth, SecretKeyAuth
 from .audit_tests_helpers import AuditTestHelpers
 
 
@@ -387,15 +388,27 @@ class ApplicationTests(TestBase):
     def test_client_delete(self):
         client = {
             "name": "EtiCaca",
-            "allowed": 1,
-            "granted": 9,
+            "allowed": 7,
+            "granted": 7,
             "isEnabled": True,
             "hasAppAccess": True,
             "sameSignOn": None,
         }
         response = self.post("clients", client)
         location = response.headers["Location"]
-        client_id = response.json()["id"]
+        client = response.json()
+        client_id = client["id"]
+
+        # On effectue des opération journalisées avec le client
+        secret = self.post(f"clients/{client_id}/new-app-access-secret").json()[
+            "secret"
+        ]
+        token = self.post(
+            "connect",
+            auth=SecretKeyAuth(secret),
+            headers={"X-Api-Key": client["apiKey"]},
+        ).json()["token"]
+        self.post("categories", {"name": "Coucou"}, auth=BearerAuth(token))
 
         # On supprime le client
 
@@ -414,6 +427,194 @@ class ApplicationTests(TestBase):
 
         response = self.delete(location)
         self.expect(response.status_code).to.be.equal_to(404)
+
+    def test_client_access(self):
+        client = {
+            "name": "EtiCoursier",
+            "allowed": 1,
+            "granted": 9,
+            "isEnabled": False,
+            "hasAppAccess": False,
+            "sameSignOn": None,
+        }
+        response = self.post("clients", client)
+        client = response.json()
+        client_id = client["id"]
+
+        user_auth = BasicAuth("lomens", "motdepasse")
+        app_auth = SecretKeyAuth("motdepasse")
+        key = client["apiKey"]
+        sso_auth = {"Application": key, "Username": "lomens", "Password": "motdepasse"}
+
+        # 1. application désactivée
+        response = self.post("login", auth=user_auth, headers={"X-Api-Key": key})
+        self.expect(response.status_code).to.be.equal_to(403)
+        self.expect(response.json()).to.have.an_item("code").that._is.equal_to(
+            "DisabledApplication"
+        )
+
+        response = self.post("connect", auth=app_auth, headers={"X-Api-Key": key})
+        # on n'a pas encore de clé de connexion
+        self.expect(response.status_code).to.be.equal_to(401)
+
+        response = self.post(
+            "same-sign-on",
+            json=sso_auth,
+            auth=None,
+            headers={"X-Api-Key": "test-api-key-normal"},
+        )
+        self.expect(response.status_code).to.be.equal_to(403)
+        self.expect(response.json()).to.have.an_item("code").that._is.equal_to(
+            "DisabledApplication"
+        )
+
+        # 2. connexion directe / sans SSO
+        client.update(isEnabled=True)
+        self.put(f"clients/{client_id}", client)
+
+        response = self.post("login", auth=user_auth, headers={"X-Api-Key": key})
+        self.expect(response.status_code).to.be.equal_to(200)
+        token_2 = BearerAuth(response.json()["token"])
+
+        response = self.post("connect", auth=app_auth, headers={"X-Api-Key": key})
+        # on n'a pas encore de clé de connexion
+        self.expect(response.status_code).to.be.equal_to(401)
+
+        response = self.post(
+            "same-sign-on",
+            json=sso_auth,
+            auth=None,
+            headers={"X-Api-Key": "test-api-key-normal"},
+        )
+        self.expect(response.status_code).to.be.equal_to(403)
+        self.expect(response.json()).to.have.an_item("code").that._is.equal_to(
+            "AccessMethodNotAllowed"
+        )
+
+        response = self.get("users/@me", auth=token_2)
+        self.expect(response.status_code).to.be.equal_to(200)
+
+        # 3. désactivation de l'application => fermeture des sessions
+        client.update(isEnabled=False)
+        self.put(f"clients/{client_id}", client)
+
+        response = self.get("users/@me", auth=token_2)
+        self.expect(response.status_code).to.be.equal_to(401)
+
+        # 4. connexion externe / avec SSO
+        client.update(
+            isEnabled=True,
+            sameSignOn={
+                "scope": 0,
+                "displayName": None,
+                "logoUrl": None,
+                "redirectUrl": "https://example.app/login",
+            },
+        )
+        self.put(f"clients/{client_id}", client)
+        response = self.post(
+            f"clients/{client_id}/new-sso-secret", {"signatureType": "HS256"}
+        )
+        secret_4 = response.json()["secret"]
+
+        response = self.post("login", auth=user_auth, headers={"X-Api-Key": key})
+        self.expect(response.status_code).to.be.equal_to(403)
+        self.expect(response.json()).to.have.an_item("code").that._is.equal_to(
+            "AccessMethodNotAllowed"
+        )
+
+        response = self.post("connect", auth=app_auth, headers={"X-Api-Key": key})
+        # on n'a pas encore de clé de connexion
+        self.expect(response.status_code).to.be.equal_to(401)
+
+        response = self.post(
+            "same-sign-on",
+            json=sso_auth,
+            auth=None,
+            headers={"X-Api-Key": "test-api-key-normal"},
+        )
+        self.expect(response.status_code).to.be.equal_to(200)
+        token_4 = response.json()["jwt"]
+        payload = jwt.decode(token_4, secret_4, algorithms=["HS256"])
+        self.expect(payload).to.have.an_item("g-user").that.is_.equal_to("lomens")
+
+        # 5. connexion applicative / avec SSO
+        client.update(hasAppAccess=True)
+        self.put(f"clients/{client_id}", client)
+        response = self.post(f"clients/{client_id}/new-app-access-secret")
+        app_auth = SecretKeyAuth(response.json()["secret"])
+
+        response = self.post("login", auth=user_auth, headers={"X-Api-Key": key})
+        self.expect(response.status_code).to.be.equal_to(403)
+        self.expect(response.json()).to.have.an_item("code").that._is.equal_to(
+            "AccessMethodNotAllowed"
+        )
+
+        response = self.post("connect", auth=app_auth, headers={"X-Api-Key": key})
+        self.expect(response.status_code).to.be.equal_to(200)
+        token_5a = BearerAuth(response.json()["token"])
+
+        response = self.post(
+            "same-sign-on",
+            json=sso_auth,
+            auth=None,
+            headers={"X-Api-Key": "test-api-key-normal"},
+        )
+        self.expect(response.status_code).to.be.equal_to(200)
+        token_5b = response.json()["jwt"]
+        payload = jwt.decode(token_5b, secret_4, algorithms=["HS256"])
+        self.expect(payload).to.have.an_item("g-user").that.is_.equal_to("lomens")
+
+        response = self.get("products", auth=token_5a)
+        self.expect(response.status_code).to.be.equal_to(200)
+
+        # 6. connexion applicative / sans SSO
+        client.update(sameSignOn=None)
+        self.put(f"clients/{client_id}", client)
+
+        response = self.post("login", auth=user_auth, headers={"X-Api-Key": key})
+        self.expect(response.status_code).to.be.equal_to(403)
+        self.expect(response.json()).to.have.an_item("code").that._is.equal_to(
+            "AccessMethodNotAllowed"
+        )
+
+        response = self.post("connect", auth=app_auth, headers={"X-Api-Key": key})
+        self.expect(response.status_code).to.be.equal_to(200)
+
+        response = self.post(
+            "same-sign-on",
+            json=sso_auth,
+            auth=None,
+            headers={"X-Api-Key": "test-api-key-normal"},
+        )
+        self.expect(response.status_code).to.be.equal_to(403)
+        self.expect(response.json()).to.have.an_item("code").that._is.equal_to(
+            "AccessMethodNotAllowed"
+        )
+
+        # suppression de l'accès appli => connexion perdue
+        client.update(hasAppAccess=False)
+        self.put(f"clients/{client_id}", client)
+
+        # 7. application supprimée
+        self.delete(f"clients/{client_id}")
+
+        response = self.post("login", auth=user_auth, headers={"X-Api-Key": key})
+        self.expect(response.status_code).to.be.equal_to(401)
+
+        response = self.post("connect", auth=app_auth, headers={"X-Api-Key": key})
+        self.expect(response.status_code).to.be.equal_to(401)
+
+        response = self.post(
+            "same-sign-on",
+            json=sso_auth,
+            auth=None,
+            headers={"X-Api-Key": "test-api-key-normal"},
+        )
+        self.expect(response.status_code).to.be.equal_to(404)
+        self.expect(response.json()).to.have.an_item("code").that._is.equal_to(
+            "ItemNotFound"
+        )
 
     def test_client_no_authentification(self):
         self.unset_authentication()

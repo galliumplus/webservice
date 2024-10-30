@@ -32,15 +32,14 @@ public interface IClientDao : IBasicDao<int, Client>
     /// <summary>
     /// Active l'accès applicatif d'un client.
     /// </summary>
-    /// <param name="clientId">L'identifiant du client.</param>
-    void CreateAppAccess(int clientId);
+    /// <param name="appAccess">Les nouveaux paramètres.</param>
+    void CreateAppAccess(AppAccess appAccess);
 
     /// <summary>
     /// Mets à jour l'accès applicatif d'un client.
     /// </summary>
-    /// <param name="clientId">L'identifiant du client.</param>
     /// <param name="appAccess">Les nouveaux paramètres.</param>
-    void UpdateAppAccess(int clientId, AppAccess appAccess);
+    void UpdateAppAccess(AppAccess appAccess);
 
     /// <summary>
     /// Retire l'accès applicatif d'un client.
@@ -51,16 +50,14 @@ public interface IClientDao : IBasicDao<int, Client>
     /// <summary>
     /// Ajoute un paramétrage SSO à un client.
     /// </summary>
-    /// <param name="clientId">L'identifiant du client.</param>
     /// <param name="sameSignOn">Les nouveaux paramètres.</param>
-    void CreateSameSignOn(int clientId, SameSignOn sameSignOn);
+    void CreateSameSignOn(SameSignOn sameSignOn);
 
     /// <summary>
     /// Mets à jour le paramétrage SSO d'un client.
     /// </summary>
-    /// <param name="clientId">L'identifiant du client.</param>
     /// <param name="sameSignOn">Les nouveaux paramètres.</param>
-    void UpdateSameSignOn(int clientId, SameSignOn sameSignOn);
+    void UpdateSameSignOn(SameSignOn sameSignOn);
 
     /// <summary>
     /// Retire le paramétrage SSO d'un client.

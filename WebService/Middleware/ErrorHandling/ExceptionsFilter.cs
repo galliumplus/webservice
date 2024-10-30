@@ -61,10 +61,18 @@ namespace GalliumPlus.WebService.Middleware.ErrorHandling
         {
             return errorCode switch
             {
-                ErrorCode.ItemNotFound => StatusCodes.Status404NotFound,
-                ErrorCode.PermissionDenied or ErrorCode.AccessMethodNotAllowed => StatusCodes.Status403Forbidden,
-                ErrorCode.ServiceUnavailable => StatusCodes.Status503ServiceUnavailable,
-                ErrorCode.FailedPrecondition => StatusCodes.Status409Conflict,
+                ErrorCode.ItemNotFound
+                    => StatusCodes.Status404NotFound,
+                
+                ErrorCode.PermissionDenied or ErrorCode.DisabledApplication or ErrorCode.AccessMethodNotAllowed
+                    => StatusCodes.Status403Forbidden,
+                
+                ErrorCode.ServiceUnavailable
+                    => StatusCodes.Status503ServiceUnavailable,
+                
+                ErrorCode.FailedPrecondition
+                    => StatusCodes.Status409Conflict,
+                
                 _ => StatusCodes.Status400BadRequest
             };
         }

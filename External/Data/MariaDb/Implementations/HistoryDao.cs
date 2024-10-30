@@ -4,13 +4,16 @@ using GalliumPlus.Core.Data.LogsSearch;
 using GalliumPlus.Core.Exceptions;
 using GalliumPlus.Core.Logs;
 using KiwiQuery;
+using KiwiQuery.Mapped;
 using MySqlConnector;
 
 namespace GalliumPlus.Data.MariaDb.Implementations
 {
-    public class HistoryDao : Dao, IHistoryDao
+    public class HistoryDao : Dao, IHistoryDao, ILogsDao
     {
-        public HistoryDao(DatabaseConnector connector) : base(connector) { }
+        public HistoryDao(DatabaseConnector connector) : base(connector)
+        {
+        }
 
         public void AddEntry(HistoryAction action)
         {
@@ -22,13 +25,13 @@ namespace GalliumPlus.Data.MariaDb.Implementations
             int? targetId = action.Target is { } target ? this.EnsureUserIsInHistory(target, db) : null;
 
             db.InsertInto("HistoryAction")
-              .Value("text", action.Text)
-              .Value("time", action.Time)
-              .Value("kind", (int)action.ActionKind)
-              .Value("actor", actorId)
-              .Value("target", targetId)
-              .Value("numericValue", action.NumericValue)
-              .Apply();
+                .Value("text", action.Text)
+                .Value("time", action.Time)
+                .Value("kind", (int)action.ActionKind)
+                .Value("actor", actorId)
+                .Value("target", targetId)
+                .Value("numericValue", action.NumericValue)
+                .Apply();
         }
 
         private bool FindHistoryUserId(string userId, Schema db, out int id)
@@ -77,7 +80,8 @@ namespace GalliumPlus.Data.MariaDb.Implementations
 
             if (this.FindHistoryUserId(userId, new Schema(connection), out int _))
             {
-                throw new DuplicateItemException("Un autre utilisateur avec cet identifiant existe déjà dans l'historique.");
+                throw new DuplicateItemException(
+                    "Un autre utilisateur avec cet identifiant existe déjà dans l'historique.");
             }
         }
 
@@ -85,7 +89,7 @@ namespace GalliumPlus.Data.MariaDb.Implementations
         {
             using var connection = this.Connect();
             Schema db = new(connection);
-            
+
             try
             {
                 db.Update("HistoryUser").Set("userId", newId).Where(db.Column("userId") == oldId);
@@ -94,7 +98,8 @@ namespace GalliumPlus.Data.MariaDb.Implementations
             {
                 if (error.ErrorCode == MySqlErrorCode.DuplicateKeyEntry)
                 {
-                    throw new DuplicateItemException("Un autre utilisateur avec cet identifiant existe déjà dans l'historique.");
+                    throw new DuplicateItemException(
+                        "Un autre utilisateur avec cet identifiant existe déjà dans l'historique.");
                 }
                 else throw;
             }
@@ -110,6 +115,23 @@ namespace GalliumPlus.Data.MariaDb.Implementations
                 target: row.IsDBNull("targetUserId") ? null : row.GetString("targetUserId"),
                 numericValue: row.IsDBNull("numericValue") ? null : row.GetDecimal("numericValue")
             );
+        }
+
+        public void AddEntry(AuditLog entry)
+        {
+            using var connection = this.Connect();
+            Schema db = new(connection);
+            db.Table<int, AuditLog>().InsertOne(entry);
+        }
+
+        IEnumerable<AuditLog> ILogsDao.Read(ILogsSearchCriteria criteria, Pagination pagination)
+        {
+            using var connection = this.Connect();
+            Schema db = new(connection);
+            return db.Table<int, AuditLog>().Select()
+                .Where(new KiwiQueryLogsSearch(db).CriteriaToPredicate(criteria))
+                .Limit(pagination.PageSize).Offset(pagination.StartIndex)
+                .FetchList();
         }
 
         public IEnumerable<HistoryAction> Read(ILogsSearchCriteria criteria, Pagination pagination)

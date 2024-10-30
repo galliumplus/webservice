@@ -5,7 +5,7 @@ namespace GalliumPlus.Core.Exceptions
     /// </summary>
     public class DisabledApplicationException : GalliumException
     {
-        public override ErrorCode ErrorCode => ErrorCode.PermissionDenied;
+        public override ErrorCode ErrorCode => ErrorCode.DisabledApplication;
         
         /// <summary>
         /// Instancie l'exception.

@@ -79,7 +79,7 @@ public class AccessController(AccessService service, ISessionDao sessionDao, IHi
             HistoryAction action = new(
                 HistoryActionKind.LogIn,
                 $"Connexion à {session.App.Name} ({session.RedirectUrl}) via le portail de {this.Client!.Name}",
-                this.User!.Id
+                this.User?.Id
             );
             historyDao.AddEntry(action);
 

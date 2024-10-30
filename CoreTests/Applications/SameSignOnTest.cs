@@ -29,6 +29,7 @@ public class SameSignOnTest
     public void ConstructorNew()
     {
         SameSignOn sso = new(
+            id: 0,
             scope: SameSignOnScope.Email,
             redirectUrl: "https://etiq-dijon.fr/"
         );
@@ -46,6 +47,7 @@ public class SameSignOnTest
     public void RegenerateSecret()
     {
         SameSignOn sso = new(
+            id: 0,
             scope: SameSignOnScope.Email,
             redirectUrl: "https://etiq-dijon.fr/"
         );

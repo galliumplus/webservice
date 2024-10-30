@@ -37,8 +37,14 @@ public interface ISessionDao
     public void UpdateLastUse(Session session);
 
     /// <summary>
-    /// Supprimme une session.
+    /// Supprime une session.
     /// </summary>
     /// <param name="session">La session à supprimer.</param>
     public void Delete(Session session);
+
+    /// <summary>
+    /// Supprime toutes les sessions ouverte depuis une application spécifique.
+    /// </summary>
+    /// <param name="clientId">L'identifiant de l'application.</param>
+    public void DeleteByClientId(int clientId);
 }

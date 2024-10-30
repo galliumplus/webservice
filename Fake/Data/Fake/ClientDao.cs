@@ -152,18 +152,18 @@ namespace GalliumPlus.Data.Fake
             }
         }
 
-        public void CreateAppAccess(int clientId)
+        public void CreateAppAccess(AppAccess appAccess)
         {
-            Client client = this.Read(clientId);
-            client.AppAccess = new AppAccess();
-            this.Update(clientId, client);
+            Client client = this.Read(appAccess.Id);
+            client.AppAccess = appAccess;
+            this.Update(appAccess.Id, client);
         }
 
-        public void UpdateAppAccess(int clientId, AppAccess appAccess)
+        public void UpdateAppAccess(AppAccess appAccess)
         {
-            Client client = this.Read(clientId);
+            Client client = this.Read(appAccess.Id);
             client.AppAccess = appAccess;
-            this.Update(clientId, client);
+            this.Update(appAccess.Id, client);
         }
 
         public void DeleteAppAccess(int clientId)
@@ -173,18 +173,18 @@ namespace GalliumPlus.Data.Fake
             this.Update(clientId, client);
         }
 
-        public void CreateSameSignOn(int clientId, SameSignOn sameSignOn)
+        public void CreateSameSignOn(SameSignOn sameSignOn)
         {
-            Client client = this.Read(clientId);
+            Client client = this.Read(sameSignOn.Id);
             client.SameSignOn = sameSignOn;
-            this.Update(clientId, client);
+            this.Update(sameSignOn.Id, client);
         }
 
-        public void UpdateSameSignOn(int clientId, SameSignOn sameSignOn)
+        public void UpdateSameSignOn(SameSignOn sameSignOn)
         {
-            Client client = this.Read(clientId);
+            Client client = this.Read(sameSignOn.Id);
             client.SameSignOn = sameSignOn;
-            this.Update(clientId, client);
+            this.Update(sameSignOn.Id, client);
         }
 
         public void DeleteSameSignOn(int clientId)

@@ -47,7 +47,7 @@ namespace GalliumPlus.WebService.Controllers
             HistoryAction action = new(
                 HistoryActionKind.EditUsersOrRoles,
                 $"Ajout du rôle {role.Name}",
-                this.User!.Id
+                this.User?.Id
             );
             this.historyDao.AddEntry(action);
 
@@ -63,7 +63,7 @@ namespace GalliumPlus.WebService.Controllers
             HistoryAction action = new(
                 HistoryActionKind.EditUsersOrRoles,
                 $"Modification du rôle {updatedRole.Name}",
-                this.User!.Id
+                this.User?.Id
             );
             this.historyDao.AddEntry(action);
 
@@ -80,7 +80,7 @@ namespace GalliumPlus.WebService.Controllers
             HistoryAction action = new(
                 HistoryActionKind.EditUsersOrRoles,
                 $"Suppression du rôle {roleName}",
-                this.User!.Id
+                this.User?.Id
             );
             this.historyDao.AddEntry(action);
 

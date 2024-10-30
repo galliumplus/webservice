@@ -6,9 +6,9 @@ namespace GalliumPlus.Core.Logs;
 
 public enum LoggedAction : uint
 {
-    // CategoryAdded = 0x111,
-    // CategoryModified = 0x112,
-    // CategoryDeleted = 0x113,
+    CategoryAdded = 0x111,
+    CategoryModified = 0x112,
+    CategoryDeleted = 0x113,
 
     ClientAdded = 0x121,
     ClientModified = 0x122,

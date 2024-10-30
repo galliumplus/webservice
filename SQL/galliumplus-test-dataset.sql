@@ -27,6 +27,7 @@ INSERT INTO `Price` VALUES
     (5, 999.99, 0, '2024-01-01', NULL, 0, 1, 3),
     (6, 500.00, 0, '2024-01-01', NULL, 0, 2, 3);
    
+DELETE FROM `AuditLog`;
 DELETE FROM `User`;
 DELETE FROM `Role`;
 DELETE FROM `SameSignOn`;

@@ -15,6 +15,6 @@ public class AddColumn_SameSignOn_signatureType : Migration
 
     public override void Down()
     {
-        this.Delete.Column("signatureType").FromTable("SameSignOn");
+        this.Delete.Column("signatureMethod").FromTable("SameSignOn");
     }
 }

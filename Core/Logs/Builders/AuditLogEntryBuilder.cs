@@ -1,6 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using GalliumPlus.Core.Applications;
+using GalliumPlus.Core.Stocks;
 using GalliumPlus.Core.Users;
 
 namespace GalliumPlus.Core.Logs.Builders;
@@ -35,4 +36,14 @@ public partial class AuditLogEntryBuilder
     }
 
     public IAuditLogClientEntryBuilder Client(Client client) => new AuditLogClientEntryBuilder(client, this);
+
+    public IAuditLogGenericEntryBuilder Category(Category category)
+        => new AuditLogGenericEntryBuilder(
+            this,
+            LoggedAction.CategoryAdded, LoggedAction.CategoryModified, LoggedAction.CategoryDeleted,
+            root => {
+                root.details.Add("id", category.Id);
+                root.details.Add("name", category.Name);
+            }
+        );
 }

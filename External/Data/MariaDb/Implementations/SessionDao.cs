@@ -59,6 +59,13 @@ namespace GalliumPlus.Data.MariaDb.Implementations
             if (!ok) throw new ItemNotFoundException("Cette session");
         }
 
+        public void DeleteByClientId(int clientId)
+        {
+            using var connection = this.Connect();
+            Schema db = new(connection);
+            db.DeleteFrom("Session").Where(db.Column("client") == clientId).Apply();
+        }
+
         public Session Read(string token)
         {
             using var connection = this.Connect();

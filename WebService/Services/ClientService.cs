@@ -37,18 +37,20 @@ public class ClientService(IClientDao clientDao)
 
         if (newClient.HasAppAccess)
         {
-            clientDao.CreateAppAccess(client.Id);
+            client.AppAccess = new AppAccess(client.Id);
+            clientDao.CreateAppAccess(client.AppAccess);
         }
 
         if (newClient.SameSignOn != null)
         {
             client.SameSignOn = new SameSignOn(
+                client.Id,
                 (SameSignOnScope)newClient.SameSignOn.Scope,
                 newClient.SameSignOn.RedirectUrl,
                 newClient.SameSignOn.DisplayName,
                 newClient.SameSignOn.LogoUrl
             );
-            clientDao.CreateSameSignOn(client.Id, client.SameSignOn);
+            clientDao.CreateSameSignOn(client.SameSignOn);
         }
 
         return client;
@@ -64,7 +66,7 @@ public class ClientService(IClientDao clientDao)
         }
 
         string newSecret = client.AppAccess!.RegenerateSecret();
-        clientDao.UpdateAppAccess(client.Id, client.AppAccess);
+        clientDao.UpdateAppAccess(client.AppAccess);
 
         return new GeneratedSecret(newSecret);
     }
@@ -87,7 +89,7 @@ public class ClientService(IClientDao clientDao)
             throw new InvalidResourceException("Ce type de signature n'est pas pris en charge.");
         }
 
-        clientDao.UpdateSameSignOn(client.Id, client.SameSignOn);
+        clientDao.UpdateSameSignOn(client.SameSignOn);
 
         return new GeneratedSecret(client.SameSignOn.Secret, client.SameSignOn.SignatureType);
     }
@@ -104,7 +106,8 @@ public class ClientService(IClientDao clientDao)
 
         if (clientUpdate.HasAppAccess && !client.HasAppAccess)
         {
-            clientDao.CreateAppAccess(id);
+            client.AppAccess = new AppAccess(client.Id);
+            clientDao.CreateAppAccess(client.AppAccess);
         }
         else if (!clientUpdate.HasAppAccess && client.HasAppAccess)
         {
@@ -116,12 +119,13 @@ public class ClientService(IClientDao clientDao)
             if (!client.HasSameSignOn)
             {
                 client.SameSignOn = new SameSignOn(
+                    id,
                     (SameSignOnScope)clientUpdate.SameSignOn.Scope,
                     clientUpdate.SameSignOn.RedirectUrl,
                     clientUpdate.SameSignOn.DisplayName,
                     clientUpdate.SameSignOn.LogoUrl
                 );
-                clientDao.CreateSameSignOn(id, client.SameSignOn);
+                clientDao.CreateSameSignOn(client.SameSignOn);
             }
             else
             {
@@ -129,7 +133,7 @@ public class ClientService(IClientDao clientDao)
                 client.SameSignOn!.RedirectUrl = clientUpdate.SameSignOn.RedirectUrl;
                 client.SameSignOn!.DisplayName = clientUpdate.SameSignOn.DisplayName;
                 client.SameSignOn!.LogoUrl = clientUpdate.SameSignOn.LogoUrl;
-                clientDao.UpdateSameSignOn(id, client.SameSignOn);
+                clientDao.UpdateSameSignOn(client.SameSignOn);
             }
         }
         else if (client.HasSameSignOn)

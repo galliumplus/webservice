@@ -45,6 +45,10 @@ public class AccessService(IClientDao clientDao, ISessionDao sessionDao)
 
     public LoggedIn? LogIn(Client app, User user)
     {
+        if (!app.IsEnabled)
+        {
+            throw new DisabledApplicationException(app.Name);
+        }
         if (!app.AllowDirectUserLogin)
         {
             throw AccessMethodNotAllowedException.Direct(app);
@@ -55,6 +59,10 @@ public class AccessService(IClientDao clientDao, ISessionDao sessionDao)
 
     public LoggedIn? ConnectApplication(Client app)
     {
+        if (!app.IsEnabled)
+        {
+            throw new DisabledApplicationException(app.Name);
+        }
         if (!app.HasAppAccess)
         {
             throw AccessMethodNotAllowedException.Applicative(app);
@@ -65,11 +73,15 @@ public class AccessService(IClientDao clientDao, ISessionDao sessionDao)
 
     public LoggedInThroughSso? SameSignOn(User user, string ssoAppKey, string hostName)
     {
-        Client ssoApp = clientDao.FindByApiKeyWithSameSignOn(ssoAppKey);
+        Client app = clientDao.FindByApiKey(ssoAppKey);
 
-        if (!ssoApp.IsEnabled)
+        if (!app.IsEnabled)
         {
-            throw new DisabledApplicationException(ssoApp.Name);
+            throw new DisabledApplicationException(app.Name);
+        }
+        if (!app.HasSameSignOn)
+        {
+            throw AccessMethodNotAllowedException.Applicative(app);
         }
 
         var now = DateTimeOffset.UtcNow;
@@ -78,12 +90,12 @@ public class AccessService(IClientDao clientDao, ISessionDao sessionDao)
         var jwtBuilder = JwtBuilder.Create();
 
         // configuration de la signature
-        switch (ssoApp.SameSignOn!.SignatureType)
+        switch (app.SameSignOn!.SignatureType)
         {
         case SignatureType.HS256:
             jwtBuilder
                 .WithAlgorithm(new HMACSHA256Algorithm())
-                .WithSecret(ssoApp.SameSignOn.Secret);
+                .WithSecret(app.SameSignOn.Secret);
             break;
         }
 
@@ -99,35 +111,43 @@ public class AccessService(IClientDao clientDao, ISessionDao sessionDao)
             .AddClaim(JWT_CLAIM_USER_ID, user.Id)
             .AddClaim(JWT_CLAIM_IMMUTABLE_UID, user.Iuid);
         // autres portées
-        if (ssoApp.SameSignOn.Scope.Includes(SameSignOnScopes.Identity))
+        if (app.SameSignOn.Scope.Includes(SameSignOnScopes.Identity))
         {
             jwtBuilder
                 .AddClaim(JWT_CLAIM_FIRST_NAME, user.Identity.FirstName)
                 .AddClaim(JWT_CLAIM_LAST_NAME, user.Identity.LastName);
         }
 
-        if (ssoApp.SameSignOn.Scope.Includes(SameSignOnScopes.Email))
+        if (app.SameSignOn.Scope.Includes(SameSignOnScopes.Email))
         {
             jwtBuilder.AddClaim(JWT_CLAIM_EMAIL, user.Identity.Email);
         }
 
-        if (ssoApp.SameSignOn.Scope.Includes(SameSignOnScopes.Role))
+        if (app.SameSignOn.Scope.Includes(SameSignOnScopes.Role))
         {
             jwtBuilder
                 .AddClaim(JWT_CLAIM_ROLE, user.Role.Id)
                 .AddClaim(JWT_CLAIM_ROLE_PERMISSIONS, user.Role.Permissions);
         }
 
-        if (ssoApp.SameSignOn.RequiresApiKey)
+        if (app.SameSignOn.RequiresApiKey)
         {
-            LoggedIn? session = this.OpenSessionFor(ssoApp, user);
+            LoggedIn? session = this.OpenSessionFor(app, user);
             if (session == null) return null;
             jwtBuilder.AddClaim(JWT_CLAIM_API_TOKEN, session.Token);
         }
 
         string token = jwtBuilder.Encode();
-        string fullRedirectUrl = QueryHelpers.AddQueryString(ssoApp.SameSignOn.RedirectUrl, "token", token);
+        string fullRedirectUrl = QueryHelpers.AddQueryString(app.SameSignOn.RedirectUrl, "token", token);
 
-        return new LoggedInThroughSso(ssoApp, token, ssoApp.SameSignOn.RedirectUrl, fullRedirectUrl);
+        return new LoggedInThroughSso(app, token, app.SameSignOn.RedirectUrl, fullRedirectUrl);
+    }
+
+    public void UpdateSessionsOfClient(Client client)
+    {
+        if (!client.IsEnabled)
+        {
+            sessionDao.DeleteByClientId(client.Id);
+        }
     }
 }
