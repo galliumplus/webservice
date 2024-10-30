@@ -74,7 +74,7 @@ class CategoryTests(TestBase):
         response = self.post("users", invalid_category)
         self.expect(response.status_code).to.be.equal_to(400)
         self.expect(response.json()).to.have.an_item("code").that._is.equal_to(
-            "InvalidItem"
+            "InvalidResource"
         )
 
         # Informations non valides
@@ -83,7 +83,7 @@ class CategoryTests(TestBase):
         response = self.post("users", invalid_category)
         self.expect(response.status_code).to.be.equal_to(400)
         self.expect(response.json()).to.have.an_item("code").that._is.equal_to(
-            "InvalidItem"
+            "InvalidResource"
         )
 
     def test_category_edit(self):
@@ -113,7 +113,7 @@ class CategoryTests(TestBase):
         response = self.put(f"categories/{category_id}", invalid_category)
         self.expect(response.status_code).to.be.equal_to(400)
         self.expect(response.json()).to.have.an_item("code").that._is.equal_to(
-            "InvalidItem"
+            "InvalidResource"
         )
 
         # Informations non valides
@@ -122,7 +122,7 @@ class CategoryTests(TestBase):
         response = self.put(f"categories/{category_id}", invalid_category)
         self.expect(response.status_code).to.be.equal_to(400)
         self.expect(response.json()).to.have.an_item("code").that._is.equal_to(
-            "InvalidItem"
+            "InvalidResource"
         )
 
     def test_category_delete(self):

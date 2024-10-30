@@ -1,9 +1,8 @@
-﻿namespace GalliumPlus.WebApi.Core.Orders
-{
-    public class PaymentByCreditCard : PaymentMethod
-    {
-        public override string Description => "par carte bancaire";
+﻿namespace GalliumPlus.Core.Orders;
 
-        protected override string ProcessPayment(decimal _) => "OK";
-    }
+public class PaymentByCreditCard : PaymentMethod
+{
+    public override string Description => "par carte bancaire";
+
+    protected override string ProcessPayment(decimal _) => "OK";
 }

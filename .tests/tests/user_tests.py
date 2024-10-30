@@ -126,7 +126,7 @@ class UserTests(TestBase):
         response = self.post("users", invalid_user)
         self.expect(response.status_code).to.be.equal_to(400)
         self.expect(response.json()).to.have.an_item("code").that._is.equal_to(
-            "InvalidItem"
+            "InvalidResource"
         )
 
         # Informations manquantes
@@ -142,7 +142,7 @@ class UserTests(TestBase):
         response = self.post("users", invalid_user)
         self.expect(response.status_code).to.be.equal_to(400)
         self.expect(response.json()).to.have.an_item("code").that._is.equal_to(
-            "InvalidItem"
+            "InvalidResource"
         )
 
         # Mauvais types de données
@@ -160,7 +160,7 @@ class UserTests(TestBase):
         response = self.post("users", invalid_user)
         self.expect(response.status_code).to.be.equal_to(400)
         self.expect(response.json()).to.have.an_item("code").that._is.equal_to(
-            "InvalidItem"
+            "InvalidResource"
         )
 
         # Existe déjà
@@ -233,7 +233,7 @@ class UserTests(TestBase):
         response = self.put("users/jj000000", invalid_user)
         self.expect(response.status_code).to.be.equal_to(400)
         self.expect(response.json()).to.have.an_item("code").that._is.equal_to(
-            "InvalidItem"
+            "InvalidResource"
         )
 
         # Informations manquantes
@@ -248,7 +248,7 @@ class UserTests(TestBase):
         response = self.put("users/jj000000", invalid_user)
         self.expect(response.status_code).to.be.equal_to(400)
         self.expect(response.json()).to.have.an_item("code").that._is.equal_to(
-            "InvalidItem"
+            "InvalidResource"
         )
 
         # Mauvais types de données
@@ -266,7 +266,7 @@ class UserTests(TestBase):
         response = self.put("users/jj000000", invalid_user)
         self.expect(response.status_code).to.be.equal_to(400)
         self.expect(response.json()).to.have.an_item("code").that._is.equal_to(
-            "InvalidItem"
+            "InvalidResource"
         )
 
         # Existe déjà

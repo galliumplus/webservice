@@ -3,12 +3,13 @@ BDD-style assertions for unittest
 """
 
 import re
+from unittest import TestCase
 
 
 class Expectations:
     __property = property
 
-    def __init__(self, test_case, value):
+    def __init__(self, test_case: TestCase, value):
         self.test_case = test_case
         self.value = value
         self.negation = False
@@ -61,11 +62,29 @@ class Expectations:
 
         return Expectations(self.test_case, self.value)
 
+    def none(self):
+        if self.negation:
+            self.test_case.assertIsNotNone(self.value)
+        else:
+            self.test_case.assertIsNone(self.value)
+
+        return Expectations(self.test_case, self.value)
+
     def a(self, type):
         if self.negation:
-            self.test_case.assertNotIsInstance(self.value, type)
+            if self.nullable:
+                self.test_case.assertNotIsInstance(self.value, type)
+                self.test_case.assertIsNotNone(self.value)
+            else:
+                self.test_case.assertNotIsInstance(self.value, type)
         else:
-            self.test_case.assertIsInstance(self.value, type)
+            if self.nullable:
+                self.test_case.assertTrue(
+                    self.value is None or isinstance(self.value, type),
+                    f"{self.value} is neither None or an instance of {type}",
+                )
+            else:
+                self.test_case.assertIsInstance(self.value, type)
 
         return Expectations(self.test_case, self.value)
 
@@ -94,6 +113,14 @@ class Expectations:
 
         return Expectations(self.test_case, self.value)
 
+    def one_of(self, *possible_values):
+        if self.negation:
+            self.test_case.assertNotIn(self.value, possible_values)
+        else:
+            self.test_case.assertIn(self.value, possible_values)
+
+        return Expectations(self.test_case, self.value)
+
     def empty(self):
         self.__check_measurable()
 
@@ -119,6 +146,7 @@ class Expectations:
 
         if self.negation:
             self.test_case.assertNotIn(key, self.value)
+            return self
         else:
             self.test_case.assertIn(key, self.value)
             return Expectations(self.test_case, self.value[key])

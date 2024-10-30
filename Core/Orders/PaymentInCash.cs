@@ -1,9 +1,8 @@
-﻿namespace GalliumPlus.WebApi.Core.Orders
-{
-    public class PaymentInCash : PaymentMethod
-    {
-        public override string Description => "en liquide";
+﻿namespace GalliumPlus.Core.Orders;
 
-        protected override string ProcessPayment(decimal _) => "OK";
-    }
+public class PaymentInCash : PaymentMethod
+{
+    public override string Description => "en liquide";
+
+    protected override string ProcessPayment(decimal _) => "OK";
 }

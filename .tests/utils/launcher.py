@@ -58,7 +58,7 @@ options specific to gallium tests:
         # start test server
         if auto:
             print("Starting server in TEST mode...")
-            args = ["dotnet", "run", "--project", "GalliumWebService", "-c", "Test"]
+            args = ["dotnet", "run", "--project", "WebService", "-c", "Test"]
             if no_restore:
                 args.append("--no-restore")
             server = subprocess.Popen(args)
@@ -94,8 +94,12 @@ options specific to gallium tests:
         try:
             result = unittest.main(exit=False).result
             success = result.wasSuccessful()
+            if not success:
+                print(
+                    f"{cls.ANSI_RED}Some tests failed, see above for details{cls.ANSI_RESET}"
+                )
         except Exception as e:
-            print(f"{cls.ANSI_RED}Tests failed: {e}{cls.ANSI_RESET}")
+            print(f"{cls.ANSI_RED}Failed to run tests: {e}{cls.ANSI_RESET}")
 
         print(
             f"({TestBase.request_count()} requests sent with an average latency of {TestBase.average_latency()} ms)"

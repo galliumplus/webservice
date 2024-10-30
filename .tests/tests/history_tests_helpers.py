@@ -56,6 +56,13 @@ class HistoryTestHelpers:
             "actor": None,
         }
 
+    def login_sso_action(self, portal_name, app_name, app_url, user_id):
+        return {
+            "actionKind": "LogIn",
+            "text": f"Connexion à {app_name} ({app_url}) via le portail de {portal_name}",
+            "actor": user_id,
+        }
+
     def category_added_action(self, category_name, user_id):
         return {
             "actionKind": "EditProductsOrCategories",
