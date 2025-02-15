@@ -83,7 +83,7 @@ public class AccessController(AccessService service, ISessionDao sessionDao, IHi
             );
             historyDao.AddEntry(action);
 
-            return Json(session);
+            return this.Json(session);
         }
     }
 

@@ -82,6 +82,7 @@ class ApplicationTests(TestBase):
         self.expect(sso).to.have.an_item("redirectUrl").of.type(str)
 
     def test_client_get_public_info(self):
+        self.unset_authentication()
         response = self.get(f"clients/sso-public/test-api-key-sso-dir")
         self.expect(response.status_code).to.be.equal_to(200)
 
@@ -318,7 +319,7 @@ class ApplicationTests(TestBase):
 
         with self.audit.watch():
             response = self.post(
-                f"clients/{client_with_app_access['id']}/new-app-access-secret"
+                f"clients/{client_with_app_access['id']}/app-access-secret"
             )
         self.expect(response.status_code).to.be.equal_to(200)
 
@@ -339,7 +340,7 @@ class ApplicationTests(TestBase):
         ][0]
 
         response = self.post(
-            f"clients/{client_without_app_access['id']}/new-app-access-secret"
+            f"clients/{client_without_app_access['id']}/app-access-secret"
         )
         self.expect(response.status_code).to.be.equal_to(409)
         self.expect(response.json()).to.have.an_item("code").that._is.equal_to(
@@ -356,7 +357,7 @@ class ApplicationTests(TestBase):
 
         with self.audit.watch():
             response = self.post(
-                f"clients/{client_with_sso['id']}/new-sso-secret",
+                f"clients/{client_with_sso['id']}/sso-secret",
                 {"signatureType": "HS256"},
             )
         self.expect(response.status_code).to.be.equal_to(200)
@@ -377,7 +378,7 @@ class ApplicationTests(TestBase):
         ][0]
 
         response = self.post(
-            f"clients/{client_without_sso['id']}/new-sso-secret",
+            f"clients/{client_without_sso['id']}/sso-secret",
             {"signatureType": "HS256"},
         )
         self.expect(response.status_code).to.be.equal_to(409)
@@ -400,9 +401,7 @@ class ApplicationTests(TestBase):
         client_id = client["id"]
 
         # On effectue des opération journalisées avec le client
-        secret = self.post(f"clients/{client_id}/new-app-access-secret").json()[
-            "secret"
-        ]
+        secret = self.post(f"clients/{client_id}/app-access-secret").json()["secret"]
         token = self.post(
             "connect",
             auth=SecretKeyAuth(secret),
@@ -513,7 +512,7 @@ class ApplicationTests(TestBase):
         )
         self.put(f"clients/{client_id}", client)
         response = self.post(
-            f"clients/{client_id}/new-sso-secret", {"signatureType": "HS256"}
+            f"clients/{client_id}/sso-secret", {"signatureType": "HS256"}
         )
         secret_4 = response.json()["secret"]
 
@@ -541,7 +540,7 @@ class ApplicationTests(TestBase):
         # 5. connexion applicative / avec SSO
         client.update(hasAppAccess=True)
         self.put(f"clients/{client_id}", client)
-        response = self.post(f"clients/{client_id}/new-app-access-secret")
+        response = self.post(f"clients/{client_id}/app-access-secret")
         app_auth = SecretKeyAuth(response.json()["secret"])
 
         response = self.post("login", auth=user_auth, headers={"X-Api-Key": key})
@@ -627,9 +626,9 @@ class ApplicationTests(TestBase):
         self.expect(response.status_code).to.be.equal_to(401)
         response = self.put("clients/1", {})
         self.expect(response.status_code).to.be.equal_to(401)
-        response = self.post("clients/1/new-app-access-secret")
+        response = self.post("clients/1/app-access-secret")
         self.expect(response.status_code).to.be.equal_to(401)
-        response = self.post("clients/1/new-sso-secret", {})
+        response = self.post("clients/1/sso-secret", {})
         self.expect(response.status_code).to.be.equal_to(401)
         response = self.delete("clients/1")
         self.expect(response.status_code).to.be.equal_to(401)
@@ -647,9 +646,9 @@ class ApplicationTests(TestBase):
         self.expect(response.status_code).to.be.equal_to(403)
         response = self.put("clients/1", {})
         self.expect(response.status_code).to.be.equal_to(403)
-        response = self.post("clients/1/new-app-access-secret")
+        response = self.post("clients/1/app-access-secret")
         self.expect(response.status_code).to.be.equal_to(403)
-        response = self.post("clients/1/new-sso-secret", {})
+        response = self.post("clients/1/sso-secret", {})
         self.expect(response.status_code).to.be.equal_to(403)
         response = self.delete("clients/1")
         self.expect(response.status_code).to.be.equal_to(403)

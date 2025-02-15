@@ -30,7 +30,7 @@ namespace GalliumPlus.WebService.Controllers
         }
         
         [HttpGet("sso-public/{apiKey}")]
-        [RequiresPermissions(Permissions.MANAGE_CLIENTS)]
+        [AllowAnonymous]
         public IActionResult GetSsoPublicInfo(string apiKey)
         {
             return this.Json(clientService.GetPublicInfoByApiKey(apiKey));
@@ -46,7 +46,7 @@ namespace GalliumPlus.WebService.Controllers
             return this.Created("client", client.Id, client);
         }
 
-        [HttpPost("{id:int}/new-app-access-secret")]
+        [HttpPost("{id:int}/app-access-secret")]
         [RequiresPermissions(Permissions.MANAGE_CLIENTS)]
         public IActionResult PostNewAppAccessSecret(int id)
         {
@@ -58,7 +58,7 @@ namespace GalliumPlus.WebService.Controllers
             return this.Json(secret);
         }
 
-        [HttpPost("{id:int}/new-sso-secret")]
+        [HttpPost("{id:int}/sso-secret")]
         [RequiresPermissions(Permissions.MANAGE_CLIENTS)]
         public IActionResult PostNewSsoSecret(int id, SameSignOnSecretParameters parameters)
         {
