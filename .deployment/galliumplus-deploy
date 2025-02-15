@@ -11,10 +11,22 @@ DEPLOY_PASSWORD = os.environ["DEPLOY_PASSWORD"]
 
 ssh_client = paramiko.SSHClient()
 ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+
+
+def partial_mask(s):
+    num_to_replace = max(1, (len(s) + 1) // 2)
+    start = len(s) // 2 - num_to_replace // 2
+    return s[:start] + "*" * num_to_replace + s[start + num_to_replace :]
+
+
+hostname_mask = partial_mask(DEPLOY_HOSTNAME)
+username_mask = partial_mask(DEPLOY_USERNAME)
 password_mask = "".join(["*" for _ in DEPLOY_PASSWORD])
+
 print(
-    f"Connexion en tant que {DEPLOY_USERNAME}@{DEPLOY_HOSTNAME} with password {password_mask}"
+    f"Connexion en tant que {username_mask}@{hostname_mask} with password {password_mask}"
 )
+exit(1)
 ssh_client.connect(
     hostname=DEPLOY_HOSTNAME,
     username=DEPLOY_USERNAME,
