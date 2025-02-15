@@ -26,7 +26,6 @@ password_mask = "".join(["*" for _ in DEPLOY_PASSWORD])
 print(
     f"Connexion en tant que {username_mask}@{hostname_mask} with password {password_mask}"
 )
-exit(1)
 ssh_client.connect(
     hostname=DEPLOY_HOSTNAME,
     username=DEPLOY_USERNAME,
