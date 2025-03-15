@@ -10,21 +10,7 @@ public class Session
     private readonly User? user;
     private readonly Client client;
     private DateTime lastUse;
-
-    /// <summary>
-    /// La durée maximum d'une session utilisateur (24 heures).
-    /// </summary>
-    public static readonly TimeSpan LifetimeForUsers = TimeSpan.FromHours(24);
-    
-    /// <summary>
-    /// La durée maximum d'une session applicative (72 heures).
-    /// </summary>
-    public static readonly TimeSpan LifetimeForApps = TimeSpan.FromHours(72);
-
-    /// <summary>
-    /// La durée maximum d'une session sans activité (30 minutes).
-    /// </summary>
-    public static readonly TimeSpan InactivityTimeout = TimeSpan.FromMinutes(30);
+    private SessionConfig sessionConfig;
 
     /// <summary>
     /// L'heure actuelle. 
@@ -75,7 +61,7 @@ public class Session
     /// <summary>
     /// Indique si la session a expiré ou non, en prenant en compte l'inactivité.
     /// </summary>
-    public bool Expired => (this.user != null && this.UnusedSince > InactivityTimeout) || this.ExpiresIn < TimeSpan.Zero;
+    public bool Expired => (this.user != null && this.UnusedSince > sessionConfig.InactivityTimeout) || this.ExpiresIn < TimeSpan.Zero;
 
     /// <summary>
     /// Crée une session.
@@ -85,27 +71,29 @@ public class Session
     /// <param name="expiration">Le moment auquel la session expirera.</param>
     /// <param name="user">L'utilisateur qui a ouvert cette session, ou null si c'est une session de bot.</param>
     /// <param name="client">L'application depuis laquelle la session a été ouverte.</param>
-    public Session(string token, DateTime lastUse, DateTime expiration, User? user, Client client)
+    public Session(string token, DateTime lastUse, DateTime expiration, User? user, Client client, SessionConfig sessionConfig)
     {
         this.token = token;
         this.lastUse = lastUse;
         this.expiration = expiration;
         this.user = user;
         this.client = client;
+        this.sessionConfig = sessionConfig;
     }
 
     /// <summary>
     /// Ouvre une nouvelle session.
     /// </summary>
     /// <param name="client">L'application pour laquelle ouvrir la session.</param>
+    /// <param name="sessionConfig"></param>
     /// <param name="user">L'utilisateur pour qui ouvrir la session.</param>
     /// <returns></returns>
-    public static Session LogIn(Client client, User? user = null)
+    public static Session LogIn(Client client, SessionConfig sessionConfig, User? user = null)
     {
         var rtg = new RandomTextGenerator(new BasicRandomProvider());
         string token = rtg.AlphaNumericString(20);
-        TimeSpan lifetime = user == null ? LifetimeForApps : LifetimeForUsers;
-        return new Session(token, Now, Now.Add(lifetime), user, client);
+        TimeSpan lifetime = user == null ? sessionConfig.LifetimeForApps : sessionConfig.LifetimeForUsers;
+        return new Session(token, Now, Now.Add(lifetime), user, client, sessionConfig);
     }
 
     /// <summary>

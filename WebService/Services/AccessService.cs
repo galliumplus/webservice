@@ -12,7 +12,7 @@ using Multiflag;
 namespace GalliumPlus.WebService.Services;
 
 [ScopedService]
-public class AccessService(IClientDao clientDao, ISessionDao sessionDao)
+public class AccessService(IClientDao clientDao, ISessionDao sessionDao, SessionConfig config)
 {
     private const string JWT_CLAIM_USER_ID = "g-user";
     private const string JWT_CLAIM_IMMUTABLE_UID = "g-iuid";
@@ -22,6 +22,7 @@ public class AccessService(IClientDao clientDao, ISessionDao sessionDao)
     private const string JWT_CLAIM_ROLE = "g-role";
     private const string JWT_CLAIM_ROLE_PERMISSIONS = "g-perms";
     private const string JWT_CLAIM_API_TOKEN = "g-token";
+    private readonly SessionConfig config = config;
 
     private LoggedIn? OpenSessionFor(Client app, User? user = null)
     {
@@ -30,7 +31,7 @@ public class AccessService(IClientDao clientDao, ISessionDao sessionDao)
         {
             try
             {
-                Session session = Session.LogIn(app, user);
+                Session session = Session.LogIn(app, this.config, user);
                 sessionDao.Create(session);
                 result = new LoggedIn(session);
             }
