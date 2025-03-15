@@ -13,15 +13,18 @@ namespace GalliumPlus.WebService.Middleware.Authentication
     public class BearerAuthenticationHandler : AuthenticationHandler<AuthenticationSchemeOptions>
     {
         private ISessionDao sessions;
+        private readonly GalliumOptions galliumOptions;
 
         public BearerAuthenticationHandler(
             IOptionsMonitor<AuthenticationSchemeOptions> options,
             ILoggerFactory logger,
             UrlEncoder encoder,
-            ISessionDao sessions)
+            ISessionDao sessions,
+            GalliumOptions galliumOptions)
         : base(options, logger, encoder)
         {
             this.sessions = sessions;
+            this.galliumOptions = galliumOptions;
         }
 
         protected bool TryParseHeader(out string token)
@@ -67,7 +70,7 @@ namespace GalliumPlus.WebService.Middleware.Authentication
                 return AuthenticateResult.Fail("Session not found");
             }
 
-            if (!session.Refresh())
+            if (!session.Refresh(this.galliumOptions.Session))
             {
                 this.sessions.Delete(session);
                 return AuthenticateResult.Fail("Session expired");

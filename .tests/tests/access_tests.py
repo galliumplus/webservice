@@ -92,7 +92,7 @@ class AccessTests(TestBase):
                 self.expect(president_session)
                 .to.have.an_item("permissions")
                 .of.type(int)
-                .that._is.equal_to(1023)  # president, full permissions
+                .that._is.equal_to(2047)  # president, full permissions
             )
 
             member_token = self.expect(member_session).to.have.an_item("token").value
@@ -216,7 +216,7 @@ class AccessTests(TestBase):
                 self.expect(president_session)
                 .to.have.an_item("permissions")
                 .of.type(int)
-                .that._is.equal_to(1023)  # president, full permissions
+                .that._is.equal_to(2047)  # president, full permissions
             )
 
             member_token = self.expect(member_session).to.have.an_item("token").value

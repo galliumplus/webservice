@@ -102,7 +102,7 @@ public enum Permissions : uint
     /// <summary>
     /// Toutes les permissions
     /// </summary>
-    ALL = 1023,
+    ALL = 2047,
 }
 
 public static class PermissionsExtensions

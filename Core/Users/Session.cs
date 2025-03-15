@@ -12,21 +12,6 @@ public class Session
     private DateTime lastUse;
 
     /// <summary>
-    /// La durée maximum d'une session utilisateur (24 heures).
-    /// </summary>
-    public static readonly TimeSpan LifetimeForUsers = TimeSpan.FromHours(24);
-    
-    /// <summary>
-    /// La durée maximum d'une session applicative (72 heures).
-    /// </summary>
-    public static readonly TimeSpan LifetimeForApps = TimeSpan.FromHours(72);
-
-    /// <summary>
-    /// La durée maximum d'une session sans activité (30 minutes).
-    /// </summary>
-    public static readonly TimeSpan InactivityTimeout = TimeSpan.FromMinutes(30);
-
-    /// <summary>
     /// L'heure actuelle. 
     /// Cette propriété sert à être sûr de toujours utiliser le temps UTC.
     /// </summary>
@@ -73,9 +58,12 @@ public class Session
     public Permissions Permissions => this.client.Filter(this.user?.Role.Permissions ?? Permissions.NONE);
 
     /// <summary>
-    /// Indique si la session a expiré ou non, en prenant en compte l'inactivité.
+    /// Indique si la session est expirée ou non, en prenant en compte l'inactivité.
     /// </summary>
-    public bool Expired => (this.user != null && this.UnusedSince > InactivityTimeout) || this.ExpiresIn < TimeSpan.Zero;
+    public bool IsExpired(SessionOptions options)
+    {
+        return (this.user != null && this.UnusedSince > options.InactivityTimeout) || this.ExpiresIn < TimeSpan.Zero;
+    }
 
     /// <summary>
     /// Crée une session.
@@ -97,29 +85,36 @@ public class Session
     /// <summary>
     /// Ouvre une nouvelle session.
     /// </summary>
+    /// <param name="options">Les règles à suivre sur les durées de vie des sessions.</param>
     /// <param name="client">L'application pour laquelle ouvrir la session.</param>
     /// <param name="user">L'utilisateur pour qui ouvrir la session.</param>
     /// <returns></returns>
-    public static Session LogIn(Client client, User? user = null)
+    public static Session LogIn(SessionOptions options, Client client, User? user = null)
     {
         var rtg = new RandomTextGenerator(new BasicRandomProvider());
         string token = rtg.AlphaNumericString(20);
-        TimeSpan lifetime = user == null ? LifetimeForApps : LifetimeForUsers;
+        TimeSpan lifetime = user == null ? options.LifetimeForApps : options.LifetimeForUsers;
         return new Session(token, Now, Now.Add(lifetime), user, client);
     }
 
     /// <summary>
     /// Mets à jour l'heure d'accès de la session.
     /// </summary>
+    /// <param name="options">Les règles à suivre sur les durées de vie des sessions.</param>
     /// <returns>
     /// <see langword="true"/> si la session à bien été mise à jour,
     /// ou <see langword="false"/> si la session a expiré depuis le dernier accès.
     /// </returns>
-    public bool Refresh()
+    public bool Refresh(SessionOptions options)
     {
-        if (this.Expired) return false;
-
-        this.lastUse = Now;
-        return true;
+        if (this.IsExpired(options))
+        {
+            return false;
+        }
+        else
+        {
+            this.lastUse = Now;
+            return true;
+        }
     }
 }

@@ -20,15 +20,7 @@ namespace GalliumPlus.Data.Fake
             );
             this.Create(
                 new Role(0, "Président",
-                    Permissions.MANAGE_PRODUCTS
-                    | Permissions.SEE_ALL_USERS_AND_ROLES
-                    | Permissions.SELL
-                    | Permissions.MANAGE_CATEGORIES
-                    | Permissions.READ_LOGS
-                    | Permissions.MANAGE_ROLES
-                    | Permissions.MANAGE_USERS
-                    | Permissions.RESET_MEMBERSHIPS
-                    | Permissions.MANAGE_CLIENTS
+                    Permissions.ALL
                 )
             );
         }
