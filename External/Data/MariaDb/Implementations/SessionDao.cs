@@ -9,8 +9,6 @@ namespace GalliumPlus.Data.MariaDb.Implementations
 {
     public class SessionDao : Dao, ISessionDao
     {
-        private readonly SessionConfig config;
-        
         public SessionDao(DatabaseConnector connector) : base(connector) { }
 
         public IUserDao Users => new UserDao(this.Connector);
@@ -94,7 +92,7 @@ namespace GalliumPlus.Data.MariaDb.Implementations
             return new Session(
                 token, lastUse, expiration,
                 userId.HasValue ? UserDao.Read(userId.Value, connection) : null,
-                ClientDao.Read(clientId, connection), this.config
+                ClientDao.Read(clientId, connection)
             );
         }
 

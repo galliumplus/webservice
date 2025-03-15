@@ -25,6 +25,8 @@ namespace GalliumPlus.WebService
         
         public string PreferredWebApplicationHost { get; set; } = "gallium-plus-preview.netlify.app";
 
+        public GalliumPlus.Core.Users.SessionOptions Session { get; set; } = new();
+
 #if !TEST
         public MailKitOptions MailKit { get; set; } = new();
 

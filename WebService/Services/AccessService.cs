@@ -8,11 +8,12 @@ using JWT.Algorithms;
 using JWT.Builder;
 using Microsoft.AspNetCore.WebUtilities;
 using Multiflag;
+using SessionOptions = GalliumPlus.Core.Users.SessionOptions;
 
 namespace GalliumPlus.WebService.Services;
 
 [ScopedService]
-public class AccessService(IClientDao clientDao, ISessionDao sessionDao, SessionConfig config)
+public class AccessService(IClientDao clientDao, ISessionDao sessionDao, GalliumOptions options)
 {
     private const string JWT_CLAIM_USER_ID = "g-user";
     private const string JWT_CLAIM_IMMUTABLE_UID = "g-iuid";
@@ -22,7 +23,6 @@ public class AccessService(IClientDao clientDao, ISessionDao sessionDao, Session
     private const string JWT_CLAIM_ROLE = "g-role";
     private const string JWT_CLAIM_ROLE_PERMISSIONS = "g-perms";
     private const string JWT_CLAIM_API_TOKEN = "g-token";
-    private readonly SessionConfig config = config;
 
     private LoggedIn? OpenSessionFor(Client app, User? user = null)
     {
@@ -31,7 +31,7 @@ public class AccessService(IClientDao clientDao, ISessionDao sessionDao, Session
         {
             try
             {
-                Session session = Session.LogIn(app, this.config, user);
+                Session session = Session.LogIn(options.Session, app, user);
                 sessionDao.Create(session);
                 result = new LoggedIn(session);
             }

@@ -9,18 +9,18 @@ namespace GalliumPlus.Data.Fake
     {
         private IUserDao users;
         private IClientDao clients;
-        private readonly SessionConfig config;
+        private readonly SessionOptions options;
 
         public IUserDao Users => this.users;
 
         public IClientDao Clients => this.clients;
 
         
-        public SessionDao(IUserDao users, IClientDao clients, SessionConfig config)
+        public SessionDao(IUserDao users, IClientDao clients, SessionOptions options)
         {
             this.users = users;
             this.clients = clients;
-            this.config = config;
+            this.options = options;
 
             User lomens = this.Users.Read("lomens");
             Client testApp = this.clients.Read(1);
@@ -30,8 +30,7 @@ namespace GalliumPlus.Data.Fake
                     DateTime.UtcNow,
                     new DateTime(2099, 12, 31),
                     lomens,
-                    testApp,
-                    this.config
+                    testApp
                 )
             );
 
@@ -42,8 +41,7 @@ namespace GalliumPlus.Data.Fake
                     DateTime.UtcNow,
                     new DateTime(2099, 12, 31),
                     eb069420,
-                    testApp,
-                    this.config
+                    testApp
                 )
             );
         }
