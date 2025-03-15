@@ -14,6 +14,7 @@ namespace GalliumPlus.Data.Fake
 
         public IClientDao Clients => this.clients;
 
+        
         public SessionDao(IUserDao users, IClientDao clients)
         {
             this.users = users;
