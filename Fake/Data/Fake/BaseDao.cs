@@ -1,4 +1,5 @@
-﻿using GalliumPlus.Core.Data;
+﻿using System.Reflection;
+using GalliumPlus.Core.Data;
 using GalliumPlus.Core.Exceptions;
 
 namespace GalliumPlus.Data.Fake
@@ -75,8 +76,22 @@ namespace GalliumPlus.Data.Fake
                 if (!this.items.ContainsKey(key)) throw new ItemNotFoundException();
 
                 this.SetKey(ref item, key);
-                this.items[key] = item;
+                AssignObject(this.items[key], item);
                 return item;
+            }
+        }
+
+        private static void AssignObject<T>(T destination, T source)
+        {
+            if (destination == null || source == null) return;
+            
+            var fields = destination.GetType().GetFields(
+                BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic
+            );
+
+            foreach (FieldInfo field in fields)
+            {
+                field.SetValue(destination, field.GetValue(source));
             }
         }
 
