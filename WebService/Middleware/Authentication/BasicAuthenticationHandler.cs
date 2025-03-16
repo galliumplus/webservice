@@ -91,6 +91,10 @@ public class BasicAuthenticationHandler : AuthenticationHandler<AuthenticationSc
             if (await this.ParseBodyAsync() is { } creds)
             {
                 credentials = creds;
+                if (credentials == null)
+                {
+                    return AuthenticateResult.Fail("Informations are empty, reconnect yourself");
+                }
             }
             else
             {
@@ -98,7 +102,7 @@ public class BasicAuthenticationHandler : AuthenticationHandler<AuthenticationSc
             }
 
         }
-
+        
         if (!ApiKey.Find(out string? apiKey, this.Request.Headers))
         {
             return AuthenticateResult.Fail("Missing API key");
@@ -112,6 +116,11 @@ public class BasicAuthenticationHandler : AuthenticationHandler<AuthenticationSc
         catch (ItemNotFoundException)
         {
             return AuthenticateResult.Fail("User not found");
+        }
+        catch (Exception e)
+        {
+            Logger.LogError(e, "Unexpected error while reading user");
+            return AuthenticateResult.Fail("Error 500");
         }
             
         Client app;
@@ -128,7 +137,7 @@ public class BasicAuthenticationHandler : AuthenticationHandler<AuthenticationSc
         {
             return AuthenticateResult.Fail("Passwords don't match");
         }
-
+        
         this.Context.Items.Add("User", user);
         this.Context.Items.Add("Client", app);
         if (credentials.Application != null) this.Context.Items.Add("SsoClientKey", credentials.Application);

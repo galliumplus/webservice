@@ -69,7 +69,17 @@ namespace GalliumPlus.WebService.Middleware.Authentication
             {
                 return AuthenticateResult.Fail("Session not found");
             }
+            catch (Exception e)
+            {
+                Logger.LogError(e, "Unexpected error while reading session");
+                return AuthenticateResult.Fail("Error 500");
+            }
 
+            if (session.Token == null)
+            {
+                return AuthenticateResult.NoResult();
+            }
+            
             if (!session.Refresh(this.galliumOptions.Session))
             {
                 this.sessions.Delete(session);
