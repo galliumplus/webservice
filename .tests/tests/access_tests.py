@@ -449,3 +449,8 @@ class AccessTests(TestBase):
         self.history.expect_entries(
             self.history.app_login_action("Tests (bot)"),
         )
+
+    def test_invalid_authentication(self):
+        empty_bearer_token = BearerAuth("")
+        response = self.get("products", auth=empty_bearer_token)
+        self.expect(response.status_code).to.be.equal_to(401)

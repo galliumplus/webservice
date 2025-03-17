@@ -10,36 +10,30 @@ using Microsoft.Extensions.Options;
 
 namespace GalliumPlus.WebService.Middleware.Authentication
 {
-    public class BearerAuthenticationHandler : AuthenticationHandler<AuthenticationSchemeOptions>
+    public class BearerAuthenticationHandler(
+        IOptionsMonitor<AuthenticationSchemeOptions> options,
+        ILoggerFactory logger,
+        UrlEncoder encoder,
+        ISessionDao sessions,
+        GalliumOptions galliumOptions)
+        : AuthenticationHandler<AuthenticationSchemeOptions>(options, logger, encoder)
     {
-        private ISessionDao sessions;
-        private readonly GalliumOptions galliumOptions;
-
-        public BearerAuthenticationHandler(
-            IOptionsMonitor<AuthenticationSchemeOptions> options,
-            ILoggerFactory logger,
-            UrlEncoder encoder,
-            ISessionDao sessions,
-            GalliumOptions galliumOptions)
-        : base(options, logger, encoder)
-        {
-            this.sessions = sessions;
-            this.galliumOptions = galliumOptions;
-        }
-
-        protected bool TryParseHeader(out string token)
+        private bool TryParseHeader(out string token)
         {
             token = "";
 
             try
             {
                 var authHeader = AuthenticationHeaderValue.Parse(this.Request.Headers.Authorization.ToString());
-
-                if (authHeader.Scheme != "Bearer") return false;
-
-                token = authHeader.Parameter!;
-
-                return true;
+                if (authHeader.Scheme != "Bearer")
+                {
+                    return false;
+                }
+                else
+                {
+                    token = authHeader.Parameter ?? "";
+                    return true;
+                }
             }
             catch
             {
@@ -54,8 +48,7 @@ namespace GalliumPlus.WebService.Middleware.Authentication
                 return AuthenticateResult.Fail("Missing Authorization header");
             }
 
-            string token;
-            if (!this.TryParseHeader(out token))
+            if (!this.TryParseHeader(out string token))
             {
                 return AuthenticateResult.Fail("Invalid header format");
             }
@@ -63,29 +56,19 @@ namespace GalliumPlus.WebService.Middleware.Authentication
             Session session;
             try
             {
-                session = this.sessions.Read(token);
+                session = sessions.Read(token);
             }
             catch (ItemNotFoundException)
             {
                 return AuthenticateResult.Fail("Session not found");
             }
-            catch (Exception e)
-            {
-                Logger.LogError(e, "Unexpected error while reading session");
-                return AuthenticateResult.Fail("Error 500");
-            }
-
-            if (session.Token == null)
-            {
-                return AuthenticateResult.NoResult();
-            }
             
-            if (!session.Refresh(this.galliumOptions.Session))
+            if (!session.Refresh(galliumOptions.Session))
             {
-                this.sessions.Delete(session);
+                sessions.Delete(session);
                 return AuthenticateResult.Fail("Session expired");
             }
-            this.sessions.UpdateLastUse(session);
+            sessions.UpdateLastUse(session);
 
             this.Context.Items.Add("Session", session);
             this.Context.Items.Add("User", session.User);
