@@ -2,6 +2,7 @@
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using GalliumPlus.Core.Applications;
 using GalliumPlus.Core.Data;
 using GalliumPlus.Core.Exceptions;
@@ -11,24 +12,15 @@ using Microsoft.Extensions.Options;
 
 namespace GalliumPlus.WebService.Middleware.Authentication;
 
-public class BasicAuthenticationHandler : AuthenticationHandler<AuthenticationSchemeOptions>
+public class BasicAuthenticationHandler(
+    IOptionsMonitor<AuthenticationSchemeOptions> options,
+    ILoggerFactory logger,
+    UrlEncoder encoder,
+    IUserDao users,
+    IClientDao clients)
+    : AuthenticationHandler<AuthenticationSchemeOptions>(options, logger, encoder)
 {
     private static readonly JsonSerializerOptions JsonOptions = new() { PropertyNameCaseInsensitive = true };
-        
-    private IUserDao users;
-    private IClientDao clients;
-
-    public BasicAuthenticationHandler(
-        IOptionsMonitor<AuthenticationSchemeOptions> options,
-        ILoggerFactory logger,
-        UrlEncoder encoder,
-        IUserDao users,
-        IClientDao clients)
-        : base(options, logger, encoder)
-    {
-        this.users = users;
-        this.clients = clients;
-    }
 
     private readonly record struct Credentials(string Username, string Password, string? Application);
 
@@ -61,7 +53,10 @@ public class BasicAuthenticationHandler : AuthenticationHandler<AuthenticationSc
             var result = await JsonSerializer
                 .DeserializeAsync<Credentials>(this.Request.Body, JsonOptions);
 
+            // Pas d'attribut [JsonRequired] dans le record, on doit vérifier à la main ici.
+            // ReSharper disable ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
             if (result.Username == null || result.Password == null)
+            // ReSharper enable ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
             {
                 return null;
             }
@@ -88,19 +83,14 @@ public class BasicAuthenticationHandler : AuthenticationHandler<AuthenticationSc
         }
         else
         {
-            if (await this.ParseBodyAsync() is { } creds)
+            if (await this.ParseBodyAsync() is { } bodyCredentials)
             {
-                credentials = creds;
-                if (credentials == null)
-                {
-                    return AuthenticateResult.Fail("Informations are empty, reconnect yourself");
-                }
+                credentials = bodyCredentials;
             }
             else
             {
                 return AuthenticateResult.Fail("Missing header, Invalid body format");
             }
-
         }
         
         if (!ApiKey.Find(out string? apiKey, this.Request.Headers))
@@ -111,22 +101,17 @@ public class BasicAuthenticationHandler : AuthenticationHandler<AuthenticationSc
         User user;
         try
         {
-            user = this.users.Read(credentials.Username);
+            user = users.Read(credentials.Username);
         }
         catch (ItemNotFoundException)
         {
             return AuthenticateResult.Fail("User not found");
         }
-        catch (Exception e)
-        {
-            Logger.LogError(e, "Unexpected error while reading user");
-            return AuthenticateResult.Fail("Error 500");
-        }
             
         Client app;
         try
         {
-            app = this.clients.FindByApiKey(apiKey);
+            app = clients.FindByApiKey(apiKey);
         }
         catch (ItemNotFoundException)
         {

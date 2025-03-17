@@ -3,6 +3,7 @@ import jwt
 from utils.test_base import TestBase
 from utils.auth import BearerAuth, BasicAuth, SecretKeyAuth
 from .history_tests_helpers import HistoryTestHelpers
+import base64
 
 RE_DATE_FORMAT = re.compile(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{1,9}Z")
 
@@ -450,7 +451,40 @@ class AccessTests(TestBase):
             self.history.app_login_action("Tests (bot)"),
         )
 
+    @staticmethod
+    def header_not_base64(request):
+        request.headers["Authorization"] = "Basic &@%*!:/"
+        return request
+
+    @staticmethod
+    def header_no_separator(request):
+        auth = base64.b64encode("username+password".encode("utf-8")).decode("ascii")
+        request.headers["Authorization"] = f"Basic {auth}"
+        return request
+
     def test_invalid_authentication(self):
         empty_bearer_token = BearerAuth("")
         response = self.get("products", auth=empty_bearer_token)
+        self.expect(response.status_code).to.be.equal_to(401)
+
+        key = "test-api-key-normal"
+
+        response = self.post(
+            "login", auth=AccessTests.header_not_base64, headers={"X-Api-Key": key}
+        )
+        self.expect(response.status_code).to.be.equal_to(401)
+
+        response = self.post(
+            "login", auth=AccessTests.header_no_separator, headers={"X-Api-Key": key}
+        )
+        self.expect(response.status_code).to.be.equal_to(401)
+
+        response = self.post(
+            "login", json={"username": "username"}, headers={"X-Api-Key": key}
+        )
+        self.expect(response.status_code).to.be.equal_to(401)
+
+        response = self.post(
+            "login", json={"password": "password"}, headers={"X-Api-Key": key}
+        )
         self.expect(response.status_code).to.be.equal_to(401)
