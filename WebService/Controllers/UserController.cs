@@ -132,7 +132,7 @@ namespace GalliumPlus.WebService.Controllers
 
             if (!userToDelete.MayBeDeleted)
             {
-                throw new PermissionDeniedException(Permissions.NONE);
+                throw new CantDeleteException("L'acompte n'est pas vide");
             }
 
             this.userDao.Delete(id);
