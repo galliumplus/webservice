@@ -224,6 +224,16 @@ class UserTests(TestBase):
         modified_user = new_id.json()
         self.expect(modified_user["firstName"]).to.be.equal_to("Joe")
 
+        # Champ acompte en lecture seule ?
+
+        # user.update(deposit=5)
+
+        # response = self.put(f"users/{user_id}", user)
+        # self.expect(response.status_code).to.be.equal_to(200)
+
+        # modified_user = self.get(f"/users/{user_id}").json()
+        # self.expect(modified_user["deposit"]).to.be.equal_to(7001.01)
+
         # Tests avec des utilisateurs non valides
 
         # Role inexistant
@@ -289,7 +299,7 @@ class UserTests(TestBase):
         user["role"] = user["role"]["id"]
         response = self.put(f"users/{user_id}", user)
 
-        # Valeur OK
+        # Ajout
 
         response = self.post(f"users/{user_id}/deposit", 4.87)
         self.expect(response.status_code).to.be.equal_to(200)
@@ -297,21 +307,66 @@ class UserTests(TestBase):
         deposit = self.get(f"users/{user_id}").json()["deposit"]
         self.expect(deposit).to.be.equal_to(6.20)
 
+        # Retrait
+
+        response = self.post(f"users/{user_id}/deposit", -2)
+        self.expect(response.status_code).to.be.equal_to(200)
+
+        deposit = self.get(f"users/{user_id}").json()["deposit"]
+        self.expect(deposit).to.be.equal_to(4.20)
+
         # Fraction de centimes 😱
 
         response = self.post(f"users/{user_id}/deposit", 4.873)
         self.expect(response.status_code).to.be.equal_to(400)
 
         deposit = self.get(f"users/{user_id}").json()["deposit"]
-        self.expect(deposit).to.be.equal_to(6.20)
+        self.expect(deposit).to.be.equal_to(4.20)
 
         # Acompte négatif 😡
 
-        response = self.post(f"users/{user_id}/deposit", -4.87)
+        response = self.post(f"users/{user_id}/deposit", -10)
         self.expect(response.status_code).to.be.equal_to(400)
 
         deposit = self.get(f"users/{user_id}").json()["deposit"]
-        self.expect(deposit).to.be.equal_to(6.20)
+        self.expect(deposit).to.be.equal_to(4.20)
+
+        # Impossible de désactiver tant que le montant n'est pas à zéro
+
+        response = self.delete(f"users/{user_id}/deposit")
+        self.expect(response.status_code).to.be.equal_to(409)
+
+        deposit = self.get(f"users/{user_id}").json()["deposit"]
+        self.expect(deposit).to.be.equal_to(4.20)
+
+        # Désactivation de l'acompte
+
+        response = self.post(f"users/{user_id}/deposit", -4.20)
+        response = self.delete(f"users/{user_id}/deposit")
+        self.expect(response.status_code).to.be.equal_to(200)
+
+        deposit = self.get(f"users/{user_id}").json()["deposit"]
+        self.expect(deposit).to.be.equal_to(None)
+
+        # Mettre de l'argent dessus le réactive
+
+        response = self.post(f"users/{user_id}/deposit", 5)
+        self.expect(response.status_code).to.be.equal_to(409)
+
+        deposit = self.get(f"users/{user_id}").json()["deposit"]
+        self.expect(deposit).to.be.equal_to(5)
+
+        # Mettre zéro euros le réactive aussi
+
+        response = self.post(f"users/{user_id}/deposit", -5)
+        response = self.delete(f"users/{user_id}/deposit")
+        self.expect(deposit).to.be.equal_to(None)
+
+        response = self.post(f"users/{user_id}/deposit", 0)
+        self.expect(response.status_code).to.be.equal_to(200)
+
+        deposit = self.get(f"users/{user_id}").json()["deposit"]
+        self.expect(deposit).to.be.equal_to(0)
 
     def test_user_delete(self):
         role = self.get("roles").json()[0]
@@ -335,7 +390,7 @@ class UserTests(TestBase):
         # On ne peut pas le supprimer : il a un acompte non vide
 
         response = self.delete("users/ar113926")
-        self.expect(response.status_code).to.be.equal_to(403)
+        self.expect(response.status_code).to.be.equal_to(409)
 
         # On retire l'argent de son acompte
 
