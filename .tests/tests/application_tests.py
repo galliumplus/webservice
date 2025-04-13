@@ -145,7 +145,9 @@ class ApplicationTests(TestBase):
         new_client_count = len(self.get("clients").json())
         self.expect(new_client_count).to.be.equal_to(previous_client_count + 1)
 
-        self.audit.expect_entries(self.audit.client_added(new_id, "EtiCoursier"))
+        self.audit.expect_entries(
+            self.audit.entry("ClientAdded", id=new_id, name="EtiCoursier")
+        )
 
         # Informations manquantes
 
@@ -231,7 +233,9 @@ class ApplicationTests(TestBase):
         self.expect(edited_client["name"]).to.be.equal_to("eti-coursier")
         self.expect(edited_client["allowed"]).to.be.equal_to(14)
 
-        self.audit.expect_entries(self.audit.client_modified(client_id, "eti-coursier"))
+        self.audit.expect_entries(
+            self.audit.entry("ClientModified", id=client_id, name="eti-coursier")
+        )
 
         # ajout du sso
         valid_client.update(
@@ -327,10 +331,11 @@ class ApplicationTests(TestBase):
         self.expect(payload).to.have.an_item("secret").of.type(str)
 
         self.audit.expect_entries(
-            self.audit.client_new_secret_generated(
-                client_with_app_access["id"],
-                client_with_app_access["name"],
-                "AppAccess",
+            self.audit.entry(
+                "ClientNewSecretGenerated",
+                id=client_with_app_access["id"],
+                name=client_with_app_access["name"],
+                purpose="AppAccess",
             )
         )
 
@@ -367,8 +372,11 @@ class ApplicationTests(TestBase):
         self.expect(payload).to.have.an_item("signatureType").that.is_.equal_to("HS256")
 
         self.audit.expect_entries(
-            self.audit.client_new_secret_generated(
-                client_with_sso["id"], client_with_sso["name"], "SameSignOn"
+            self.audit.entry(
+                "ClientNewSecretGenerated",
+                id=client_with_sso["id"],
+                name=client_with_sso["name"],
+                purpose="SameSignOn",
             )
         )
 
@@ -415,7 +423,9 @@ class ApplicationTests(TestBase):
             response = self.delete(location)
         self.expect(response.status_code).to.be.equal_to(200)
 
-        self.audit.expect_entries(self.audit.client_deleted(client_id, "EtiCaca"))
+        self.audit.expect_entries(
+            self.audit.entry("ClientDeleted", id=client_id, name="EtiCaca")
+        )
 
         # Le client n'existe plus
 

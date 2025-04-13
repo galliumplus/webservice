@@ -5,40 +5,42 @@ namespace GalliumPlus.Core.Logs.Builders;
 
 public partial class AuditLogEntryBuilder
 {
-    public interface IAuditLogGenericEntryBuilder
+    public interface IGenericEntryBuilder
     {
         AuditLogEntryBuilder Added();
         AuditLogEntryBuilder Modified();
         AuditLogEntryBuilder Deleted();
     }
 
-    private class AuditLogGenericEntryBuilder(
+    private class GenericEntryBuilder(
         AuditLogEntryBuilder root,
         LoggedAction addedAction,
         LoggedAction modifiedAction,
         LoggedAction deletedAction,
         Action<AuditLogEntryBuilder> detailsConfig
-    ) : IAuditLogGenericEntryBuilder
+    ) : IGenericEntryBuilder
     {
+        protected AuditLogEntryBuilder Root => root;
+        
         public AuditLogEntryBuilder Added()
         {
-            root.action = addedAction;
-            detailsConfig.Invoke(root);
-            return root;
+            this.Root.action = addedAction;
+            detailsConfig.Invoke(this.Root);
+            return this.Root;
         }
 
         public AuditLogEntryBuilder Modified()
         {
-            root.action = modifiedAction;
-            detailsConfig.Invoke(root);
-            return root;
+            this.Root.action = modifiedAction;
+            detailsConfig.Invoke(this.Root);
+            return this.Root;
         }
         
         public AuditLogEntryBuilder Deleted()
         {
-            root.action = deletedAction;
-            detailsConfig.Invoke(root);
-            return root;
+            this.Root.action = deletedAction;
+            detailsConfig.Invoke(this.Root);
+            return this.Root;
         }
     }
 }

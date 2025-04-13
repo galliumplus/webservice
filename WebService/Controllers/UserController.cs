@@ -9,6 +9,7 @@ using GalliumPlus.WebService.Dto.Legacy;
 using GalliumPlus.WebService.Middleware.Authorization;
 using GalliumPlus.WebService.Scheduling;
 using GalliumPlus.WebService.Scheduling.Jobs;
+using GalliumPlus.WebService.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Quartz;
@@ -18,35 +19,22 @@ namespace GalliumPlus.WebService.Controllers
     [Route("v1/users")]
     [Authorize]
     [ApiController]
-    public class UserController : GalliumController
+    public class UserController(
+        IUserDao userDao,
+        IHistoryDao historyDao,
+        ISchedulerFactory schedulerFactory,
+        GalliumOptions options,
+        AuditService auditService
+    ) : GalliumController
     {
-        private IUserDao userDao;
-        private IHistoryDao historyDao;
-        private UserSummary.Mapper summaryMapper;
-        private UserDetails.Mapper detailsMapper;
-        private ISchedulerFactory schedulerFactory;
-        private GalliumOptions options;
-
-        public UserController(
-            IUserDao userDao,
-            IHistoryDao historyDao,
-            ISchedulerFactory schedulerFactory,
-            GalliumOptions options
-        )
-        {
-            this.userDao = userDao;
-            this.historyDao = historyDao;
-            this.summaryMapper = new(userDao.Roles);
-            this.detailsMapper = new();
-            this.schedulerFactory = schedulerFactory;
-            this.options = options;
-        }
+        private UserSummary.Mapper summaryMapper = new(userDao.Roles);
+        private UserDetails.Mapper detailsMapper = new();
 
         [HttpGet]
         [RequiresPermissions(Permissions.SEE_ALL_USERS_AND_ROLES)]
         public IActionResult Get()
         {
-            return this.Json(this.summaryMapper.FromModel(this.userDao.Read()));
+            return this.Json(this.summaryMapper.FromModel(userDao.Read()));
         }
 
         [HttpGet("{id}", Name = "user")]
@@ -56,7 +44,8 @@ namespace GalliumPlus.WebService.Controllers
             {
                 this.RequirePermissions(Permissions.SEE_ALL_USERS_AND_ROLES);
             }
-            return this.Json(this.detailsMapper.FromModel(this.userDao.Read(id)));
+
+            return this.Json(this.detailsMapper.FromModel(userDao.Read(id)));
         }
 
         [HttpGet("@me", Order = -1)]
@@ -76,15 +65,21 @@ namespace GalliumPlus.WebService.Controllers
         [RequiresPermissions(Permissions.MANAGE_USERS)]
         public async Task<IActionResult> Post(UserSummary newUser)
         {
-            this.historyDao.CheckUserNotInHistory(newUser.Id);
+            historyDao.CheckUserNotInHistory(newUser.Id);
+            
+            User user = this.summaryMapper.ToModel(newUser);
+            if (!this.Session!.Permissions.Includes(Permissions.FORCE_DEPOSIT_MODIFICATION))
+            {
+                user.Deposit = null;
+            }
 
-            User user = this.userDao.Create(this.summaryMapper.ToModel(newUser));
+            user = userDao.Create(user);
 
             PasswordResetToken prt = PasswordResetToken.New(user.Id);
             string packedPrt = prt.GenerateSecretAndPack();
-            this.userDao.CreatePasswordResetToken(prt);
+            userDao.CreatePasswordResetToken(prt);
 
-            IScheduler scheduler = await this.schedulerFactory.GetScheduler();
+            IScheduler scheduler = await schedulerFactory.GetScheduler();
             await scheduler.TriggerJobWithArgs(EmailSendingJob.JobKey, this.PrepareInitEmail(user, prt, packedPrt));
 
             HistoryAction action = new(
@@ -93,7 +88,7 @@ namespace GalliumPlus.WebService.Controllers
                 this.User?.Id,
                 user.Id
             );
-            this.historyDao.AddEntry(action);
+            historyDao.AddEntry(action);
 
             return this.Created("user", user.Id, this.detailsMapper.FromModel(user));
         }
@@ -104,22 +99,30 @@ namespace GalliumPlus.WebService.Controllers
         {
             if (updatedUser.Id != id)
             {
-                this.historyDao.CheckUserNotInHistory(updatedUser.Id);
+                historyDao.CheckUserNotInHistory(updatedUser.Id);
             }
 
-            this.userDao.Update(id, this.summaryMapper.ToModel(updatedUser));
+            if (this.Session!.Permissions.Includes(Permissions.FORCE_DEPOSIT_MODIFICATION))
+            { 
+                userDao.UpdateForcingDepositModification(id, this.summaryMapper.ToModel(updatedUser));
+            }
+            else
+            {
+                userDao.Update(id, this.summaryMapper.ToModel(updatedUser));
+            }
 
             if (updatedUser.Id != id)
             {
-                this.historyDao.UpdateUserId(id, updatedUser.Id);
+                historyDao.UpdateUserId(id, updatedUser.Id);
             }
+
             HistoryAction action = new(
                 HistoryActionKind.EditUsersOrRoles,
                 $"Modification de l'utilisateur {updatedUser.Id}",
                 this.User?.Id,
                 updatedUser.Id
             );
-            this.historyDao.AddEntry(action);
+            historyDao.AddEntry(action);
 
             return this.Ok();
         }
@@ -128,14 +131,14 @@ namespace GalliumPlus.WebService.Controllers
         [RequiresPermissions(Permissions.MANAGE_USERS)]
         public IActionResult Delete(string id)
         {
-            User userToDelete = this.userDao.Read(id);
+            User userToDelete = userDao.Read(id);
 
             if (!userToDelete.MayBeDeleted)
             {
-                throw new CantDeleteException("L'acompte n'est pas vide");
+                throw FailedPreconditionException.DepositIsNotEmpty();
             }
 
-            this.userDao.Delete(id);
+            userDao.Delete(id);
 
             HistoryAction action = new(
                 HistoryActionKind.EditUsersOrRoles,
@@ -143,25 +146,46 @@ namespace GalliumPlus.WebService.Controllers
                 this.User?.Id,
                 userToDelete.Id
             );
-            this.historyDao.AddEntry(action);
+            historyDao.AddEntry(action);
 
             return this.Ok();
         }
 
         [HttpPost("{id}/deposit")]
         [RequiresPermissions(Permissions.MANAGE_DEPOSITS)]
-        public IActionResult PutDeposit(string id, [FromBody] decimal added)
+        public IActionResult PostDeposit(string id, [FromBody] decimal added)
         {
-            this.userDao.AddToDeposit(id, MonetaryValue.CheckNonNegative(added, "Un rechargement d'acompte"));
+            userDao.AddToDeposit(id, MonetaryValue.Check(added, "Un rechargement d'acompte"));
 
             HistoryAction action = new(
                 HistoryActionKind.Deposit,
-                $"Rechargement de l'acompte de l'utilisateur {id}",
+                added > 0
+                    ? $"Rechargement de l'acompte de l'utilisateur {id}"
+                    : $"Retrait d'acompte pour l'utilisateur {id}",
                 this.User?.Id,
                 id,
                 added
             );
-            this.historyDao.AddEntry(action);
+            historyDao.AddEntry(action);
+
+            return this.Ok();
+        }
+
+        [HttpDelete("{id}/deposit")]
+        [RequiresPermissions(Permissions.MANAGE_DEPOSITS)]
+        public IActionResult PostDeposit(string id)
+        {
+            User user = userDao.Read(id);
+
+            if (user.Deposit != 0)
+            {
+                throw FailedPreconditionException.DepositIsNotEmpty();
+            }
+
+            user.Deposit = null;
+            userDao.Update(id, user);
+
+            auditService.AddEntry(entry => entry.User(user).DepositClosed().By(this.Client!, this.User));
 
             return this.Ok();
         }
@@ -176,7 +200,7 @@ namespace GalliumPlus.WebService.Controllers
 
             PasswordInformation newPassword = PasswordInformation.FromPassword(passwordModification.NewPassword);
 
-            this.userDao.ChangePassword(this.User.Id, newPassword);
+            userDao.ChangePassword(this.User.Id, newPassword);
 
             HistoryAction action = new(
                 HistoryActionKind.EditUsersOrRoles,
@@ -184,7 +208,7 @@ namespace GalliumPlus.WebService.Controllers
                 this.User.Id,
                 this.User.Id
             );
-            this.historyDao.AddEntry(action);
+            historyDao.AddEntry(action);
 
             return this.Ok();
         }
@@ -206,7 +230,7 @@ namespace GalliumPlus.WebService.Controllers
 
             (string token, string secret) = PasswordResetToken.Unpack(passwordModification.ResetToken);
 
-            PasswordResetToken prt = this.userDao.ReadPasswordResetToken(token);
+            PasswordResetToken prt = userDao.ReadPasswordResetToken(token);
 
             if (!prt.MatchesSecret(secret))
             {
@@ -220,8 +244,8 @@ namespace GalliumPlus.WebService.Controllers
 
             PasswordInformation newPassword = PasswordInformation.FromPassword(passwordModification.NewPassword);
 
-            this.userDao.ChangePassword(prt.UserId, newPassword);
-            this.userDao.DeletePasswordResetToken(prt.Token);
+            userDao.ChangePassword(prt.UserId, newPassword);
+            userDao.DeletePasswordResetToken(prt.Token);
 
             HistoryAction action = new(
                 HistoryActionKind.EditUsersOrRoles,
@@ -229,7 +253,7 @@ namespace GalliumPlus.WebService.Controllers
                 prt.UserId,
                 prt.UserId
             );
-            this.historyDao.AddEntry(action);
+            historyDao.AddEntry(action);
 
             return this.Ok();
         }
@@ -238,7 +262,7 @@ namespace GalliumPlus.WebService.Controllers
         [AllowAnonymous]
         public IActionResult CanResetPassword(string id)
         {
-            User user = this.userDao.Read(id);
+            User user = userDao.Read(id);
 
             bool canResetPassword = user.Identity.Email.Length > 0 && user.Identity.Email != "UKN";
 
@@ -249,11 +273,11 @@ namespace GalliumPlus.WebService.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> AskForPasswordReset(string id, bool retryInit)
         {
-            User user = this.userDao.Read(id);
+            User user = userDao.Read(id);
 
             PasswordResetToken prt = PasswordResetToken.New(id);
             string packedPrt = prt.GenerateSecretAndPack();
-            this.userDao.CreatePasswordResetToken(prt);
+            userDao.CreatePasswordResetToken(prt);
 
             EmailSendingJob.Args emailArgs;
             if (retryInit)
@@ -265,7 +289,7 @@ namespace GalliumPlus.WebService.Controllers
                 emailArgs = this.PrepareResetEmail(user, prt, packedPrt);
             }
 
-            IScheduler scheduler = await this.schedulerFactory.GetScheduler();
+            IScheduler scheduler = await schedulerFactory.GetScheduler();
             await scheduler.TriggerJobWithArgs(EmailSendingJob.JobKey, emailArgs);
 
             return this.Ok();
@@ -278,7 +302,7 @@ namespace GalliumPlus.WebService.Controllers
                 subject: "Bienvenue au sein de l'ETIQ",
                 template: "initpass.html",
                 view: new InitOrResetPassword(
-                    $"https://{this.options.PreferredWebApplicationHost}/password/init?user={recipient.Id}&pprt={packedPrt}",
+                    $"https://{options.PreferredWebApplicationHost}/password/init?user={recipient.Id}&pprt={packedPrt}",
                     prt.Expiration
                 )
             );
@@ -291,7 +315,7 @@ namespace GalliumPlus.WebService.Controllers
                 subject: "Réinitialiser votre mot de passe",
                 template: "resetpass.html",
                 view: new InitOrResetPassword(
-                    $"https://{this.options.PreferredWebApplicationHost}/password/reset?user={recipient.Id}&pprt={packedPrt}",
+                    $"https://{options.PreferredWebApplicationHost}/password/reset?user={recipient.Id}&pprt={packedPrt}",
                     prt.Expiration
                 )
             );

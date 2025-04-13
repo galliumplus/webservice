@@ -10,6 +10,5 @@ public enum ErrorCode
     ServiceUnavailable,
     FailedPrecondition,
     AccessMethodNotAllowed,
-    DisabledApplication,
-    CantDelete,
+    DisabledApplication
 }

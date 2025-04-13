@@ -2,6 +2,46 @@ from itertools import zip_longest
 from utils.auth import BearerAuth
 
 
+ACTION_CODE_MAP = {
+    "CategoryAdded": 0x111,
+    "CategoryModified": 0x112,
+    "CategoryDeleted": 0x113,
+    "ClientAdded": 0x121,
+    "ClientModified": 0x122,
+    "ClientDeleted": 0x123,
+    "ClientNewSecretGenerated": 0x124,
+    "EventAdded": 0x131,
+    "EventModified": 0x132,
+    "EventDeleted": 0x133,
+    "ItemAdded": 0x141,
+    "ItemModified": 0x142,
+    "ItemDeleted": 0x143,
+    "PaymentMethodAdded": 0x151,
+    "PaymentMethodModified": 0x152,
+    "PaymentMethodDeleted": 0x153,
+    "PriceAdded": 0x161,
+    "PriceModified": 0x162,
+    "PriceDeleted": 0x163,
+    "PricingTypeAdded": 0x171,
+    "PricingTypeModified": 0x172,
+    "PricingTypeDeleted": 0x173,
+    "RoleAdded": 0x181,
+    "RoleModified": 0x182,
+    "RoleDeleted": 0x183,
+    "ThirdPartyAdded": 0x191,
+    "ThirdPartyModified": 0x192,
+    "ThirdPartyDeleted": 0x193,
+    "UnitAdded": 0x1A1,
+    "UnitModified": 0x1A2,
+    "UnitDeleted": 0x1A3,
+    "UserAdded": 0x1B1,
+    "UserModified": 0x1B2,
+    "UserDeleted": 0x1B3,
+    "UserDepositOpen": 0x1B4,
+    "UserDepositClosed": 0x1B5,
+}
+
+
 class AuditTestHelpers:
     def __init__(self, test_suite, client_id=None, user_id=None):
         self.history = []
@@ -25,7 +65,7 @@ class AuditTestHelpers:
         self.history = updated_history
 
     def watch(self):
-        return HistoryTestContext(self)
+        return AuditingTestContext(self)
 
     def expect_entries(self, *actions):
         for actual, expected in zip_longest(self.diff, actions):
@@ -36,7 +76,7 @@ class AuditTestHelpers:
                 expected, "There were more actions logged than expected"
             )
 
-            self.test_suite.assertEqual(actual["action"], expected["action"])
+            self.test_suite.assertEqual(actual["actionCode"], expected["actionCode"])
             self.test_suite.assertEqual(actual["clientId"], expected["clientId"])
             self.test_suite.assertEqual(actual["userId"], expected["userId"])
             self.test_suite.assertEqual(actual["details"], expected["details"])
@@ -57,63 +97,22 @@ class AuditTestHelpers:
         else:
             raise RuntimeError("missing user ID")
 
-    def client_added(
-        self, new_client_id, new_client_name, client_id=None, user_id=None
-    ):
+    def entry(self, action, client_id=None, user_id=None, **details):
         return {
-            "action": "ClientAdded",
+            "actionCode": ACTION_CODE_MAP[action],
             "clientId": self.resolve_client_id(client_id),
             "userId": self.resolve_user_id(user_id),
-            "details": {"id": new_client_id, "name": new_client_name},
-        }
-
-    def client_modified(
-        self, modified_client_id, modified_client_name, client_id=None, user_id=None
-    ):
-        return {
-            "action": "ClientModified",
-            "clientId": self.resolve_client_id(client_id),
-            "userId": self.resolve_user_id(user_id),
-            "details": {"id": modified_client_id, "name": modified_client_name},
-        }
-
-    def client_deleted(
-        self, deleted_client_id, deleted_client_name, client_id=None, user_id=None
-    ):
-        return {
-            "action": "ClientDeleted",
-            "clientId": self.resolve_client_id(client_id),
-            "userId": self.resolve_user_id(user_id),
-            "details": {"id": deleted_client_id, "name": deleted_client_name},
-        }
-
-    def client_new_secret_generated(
-        self,
-        modified_client_id,
-        modified_client_name,
-        purpose,
-        client_id=None,
-        user_id=None,
-    ):
-        return {
-            "action": "ClientNewSecretGenerated",
-            "clientId": self.resolve_client_id(client_id),
-            "userId": self.resolve_user_id(user_id),
-            "details": {
-                "id": modified_client_id,
-                "name": modified_client_name,
-                "purpose": purpose,
-            },
+            "details": details,
         }
 
 
-class HistoryTestContext:
-    def __init__(self, history):
-        self.history = history
+class AuditingTestContext:
+    def __init__(self, auditLog):
+        self.auditLog = auditLog
 
     def __enter__(self):
-        self.history.fetch()
+        self.auditLog.fetch()
         return self
 
     def __exit__(self, exc_type, exc_value, trace):
-        self.history.fetch()
+        self.auditLog.fetch()

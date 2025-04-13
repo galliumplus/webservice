@@ -12,16 +12,20 @@ namespace GalliumPlus.WebService.Middleware.ErrorHandling
     {
         // priorité haute, on veut qu'il s'applique juste après le contrôleur
         public int Order => 1_000_000;
-        
+
         private readonly ILogger<ExceptionsFilter> logger = loggerFactory.CreateLogger<ExceptionsFilter>();
 
         public void OnException(ExceptionContext context)
         {
             if (context.Exception is PermissionDeniedException permissionDenied)
             {
-                this.logger.LogDebug($"PermissionDeniedException capturée à la sortie de {context.HttpContext.Request.Method} {context.HttpContext.Request.Path}");
+                this.logger.LogDebug(
+                    "PermissionDeniedException capturée à la sortie de {} {}",
+                    context.HttpContext.Request.Method,
+                    context.HttpContext.Request.Path
+                );
                 this.logger.LogDebug("Les permissions requises étaient {}", permissionDenied.Required);
-                
+
                 string messageAction = context.HttpContext.Request.Method switch
                 {
                     "GET" or "HEAD" => "d'accéder à cette ressource",
@@ -37,7 +41,13 @@ namespace GalliumPlus.WebService.Middleware.ErrorHandling
             }
             else if (context.Exception is GalliumException galliumException)
             {
-                this.logger.LogDebug($"{galliumException.GetType().Name} capturée à la sortie de {context.HttpContext.Request.Method} {context.HttpContext.Request.Path}");
+                this.logger.LogDebug(
+                    "{} capturée à la sortie de {} {}",
+                    galliumException.GetType().Name,
+                    context.HttpContext.Request.Method,
+                    context.HttpContext.Request.Path
+                );
+                this.logger.LogDebug("Message: {}", galliumException.Message);
                 context.Result = new ErrorResult(
                     galliumException,
                     ErrorCodeToStatusCode(galliumException.ErrorCode)
@@ -46,7 +56,11 @@ namespace GalliumPlus.WebService.Middleware.ErrorHandling
             }
             else if (context.Exception is ValidationException validationException)
             {
-                this.logger.LogDebug($"ValidationException capturée à la sortie de {context.HttpContext.Request.Method} {context.HttpContext.Request.Path}");
+                this.logger.LogDebug(
+                    "ValidationException capturée à la sortie de {} {}",
+                    context.HttpContext.Request.Method,
+                    context.HttpContext.Request.Path
+                );
                 context.Result = new ErrorResult(
                     ErrorCode.InvalidResource,
                     "Une ou plusieurs erreurs de validation ont été détectées.",
@@ -63,16 +77,16 @@ namespace GalliumPlus.WebService.Middleware.ErrorHandling
             {
                 ErrorCode.ItemNotFound
                     => StatusCodes.Status404NotFound,
-                
+
                 ErrorCode.PermissionDenied or ErrorCode.DisabledApplication or ErrorCode.AccessMethodNotAllowed
                     => StatusCodes.Status403Forbidden,
-                
+
                 ErrorCode.ServiceUnavailable
                     => StatusCodes.Status503ServiceUnavailable,
-                
+
                 ErrorCode.FailedPrecondition
                     => StatusCodes.Status409Conflict,
-                
+
                 _ => StatusCodes.Status400BadRequest
             };
         }
@@ -89,7 +103,7 @@ namespace GalliumPlus.WebService.Middleware.ErrorHandling
                         modelStateErrors.Add(error.ErrorMessage);
                     }
                 }
-                
+
                 return new ErrorResult(
                     ErrorCode.InvalidResource,
                     "Le format de cette ressource est invalide.",

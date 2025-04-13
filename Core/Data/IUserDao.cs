@@ -27,6 +27,13 @@ public interface IUserDao : IBasicDao<string, User>
     /// <exception cref="ItemNotFoundException"></exception>
     /// <exception cref="InvalidResourceException"></exception>
     public void AddToDeposit(string id, decimal money);
+    
+    /// <inheritdoc cref="IBasicDao{TKey, TItem}.Update" />
+    /// <remarks>
+    /// Contrairement à Update, cette méthode doit mettre à jour la valeur de l'acompte. Elle sert à garder la
+    /// compatibilité avec la manière dont Gallium V2 gère les acomptes.
+    /// </remarks>
+    void UpdateForcingDepositModification(string key, User item);
 
     /// <summary>
     /// Modifie le mot de passe de l'utilisateur.

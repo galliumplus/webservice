@@ -66,13 +66,14 @@ namespace GalliumPlus.Data.Fake
                 )
             );
         }
-
-        override public User Update(string key, User item)
+        
+        private User Update(string key, User item, bool forceDepositModification)
         {
             try
             {
                 User old = this.Items[key];
                 item.Password = old.Password;
+                if (!forceDepositModification) item.Deposit = old.Deposit;
                 if (this.GetKey(item) == key)
                 {
                     if (!this.Items.ContainsKey(key)) throw new ItemNotFoundException();
@@ -93,6 +94,10 @@ namespace GalliumPlus.Data.Fake
             }
         }
 
+        public override User Update(string key, User item) => this.Update(key, item, false);
+
+        public void UpdateForcingDepositModification(string key, User item) => this.Update(key, item, true);
+
         public decimal? ReadDeposit(string id)
         {
             return this.Read(id).Deposit;
@@ -101,8 +106,9 @@ namespace GalliumPlus.Data.Fake
         public void AddToDeposit(string id, decimal money)
         {
             User user = this.Read(id);
-            if (user.Deposit + money < 0) throw new InvalidResourceException("L'acompte ne peut pas être négatif.");
-            user.Deposit += money;
+            decimal newAmount = (user.Deposit ?? 0) + money;
+            if (newAmount < 0) throw new InvalidResourceException("L'acompte ne peut pas être négatif.");
+            user.Deposit = newAmount;
             this.Update(id, user);
         }
 

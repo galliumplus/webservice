@@ -1,11 +1,13 @@
 from utils.test_base import TestBase
 from utils.auth import BearerAuth, BasicAuth
+from .audit_tests_helpers import AuditTestHelpers
 
 
 class UserTests(TestBase):
     def setUp(self):
         super().setUp()
         self.set_authentication(BearerAuth("09876543210987654321"))
+        self.audit = AuditTestHelpers(self, 1, 3)
 
     def tearDown(self):
         self.unset_authentication()
@@ -95,7 +97,6 @@ class UserTests(TestBase):
             "email": "caca@gmail.com",
             "role": existing_role["id"],
             "year": "2A",
-            "deposit": 7001.01,
             "isMember": False,
         }
 
@@ -120,7 +121,6 @@ class UserTests(TestBase):
             "email": "caca@gmail.com",
             "role": 123,
             "year": "2A",
-            "deposit": 7001.01,
             "isMember": False,
         }
         response = self.post("users", invalid_user)
@@ -154,7 +154,6 @@ class UserTests(TestBase):
             "email": "caca@gmail.com",
             "role": "Président",
             "year": 2,
-            "deposit": 7001.01,
             "isMember": "yes",
         }
         response = self.post("users", invalid_user)
@@ -172,7 +171,6 @@ class UserTests(TestBase):
             "email": "caca@gmail.com",
             "role": existing_role["id"],
             "year": "2A",
-            "deposit": 7001.01,
             "isMember": False,
         }
         response = self.post("users", invalid_user)
@@ -191,7 +189,6 @@ class UserTests(TestBase):
             "email": "caca@gmail.com",
             "role": role["id"],
             "year": "2A",
-            "deposit": 7001.01,
             "isMember": False,
         }
         self.post("users", user)
@@ -223,16 +220,6 @@ class UserTests(TestBase):
         self.expect(new_id.status_code).to.be.equal_to(200)
         modified_user = new_id.json()
         self.expect(modified_user["firstName"]).to.be.equal_to("Joe")
-
-        # Champ acompte en lecture seule ?
-
-        # user.update(deposit=5)
-
-        # response = self.put(f"users/{user_id}", user)
-        # self.expect(response.status_code).to.be.equal_to(200)
-
-        # modified_user = self.get(f"/users/{user_id}").json()
-        # self.expect(modified_user["deposit"]).to.be.equal_to(7001.01)
 
         # Tests avec des utilisateurs non valides
 
@@ -270,7 +257,6 @@ class UserTests(TestBase):
             "email": "caca@gmail.com",
             "role": "Président",
             "year": 2,
-            "deposit": 7001.01,
             "isMember": "yes",
         }
         response = self.put("users/jj000000", invalid_user)
@@ -292,12 +278,11 @@ class UserTests(TestBase):
         self.expect(response.status_code).to.be.equal_to(200)
 
     def test_user_edit_deposit(self):
-        user_id = self.get("users").json()[0]["id"]
+        user = self.get("users").json()[0]
+        user_id = user["id"]
 
-        user = self.get(f"users/{user_id}").json()
-        user["deposit"] = 1.33
-        user["role"] = user["role"]["id"]
-        response = self.put(f"users/{user_id}", user)
+        existing_deposit = user["deposit"]
+        response = self.post(f"users/{user_id}/deposit", 1.33 - existing_deposit)
 
         # Ajout
 
@@ -342,8 +327,10 @@ class UserTests(TestBase):
         # Désactivation de l'acompte
 
         response = self.post(f"users/{user_id}/deposit", -4.20)
-        response = self.delete(f"users/{user_id}/deposit")
+        with self.audit.watch():
+            response = self.delete(f"users/{user_id}/deposit")
         self.expect(response.status_code).to.be.equal_to(200)
+        self.audit.expect_entries(self.audit.entry("UserDepositClosed", id=user_id))
 
         deposit = self.get(f"users/{user_id}").json()["deposit"]
         self.expect(deposit).to.be.equal_to(None)
@@ -351,7 +338,7 @@ class UserTests(TestBase):
         # Mettre de l'argent dessus le réactive
 
         response = self.post(f"users/{user_id}/deposit", 5)
-        self.expect(response.status_code).to.be.equal_to(409)
+        self.expect(response.status_code).to.be.equal_to(200)
 
         deposit = self.get(f"users/{user_id}").json()["deposit"]
         self.expect(deposit).to.be.equal_to(5)
@@ -360,6 +347,7 @@ class UserTests(TestBase):
 
         response = self.post(f"users/{user_id}/deposit", -5)
         response = self.delete(f"users/{user_id}/deposit")
+        deposit = self.get(f"users/{user_id}").json()["deposit"]
         self.expect(deposit).to.be.equal_to(None)
 
         response = self.post(f"users/{user_id}/deposit", 0)
@@ -367,6 +355,79 @@ class UserTests(TestBase):
 
         deposit = self.get(f"users/{user_id}").json()["deposit"]
         self.expect(deposit).to.be.equal_to(0)
+
+    def test_user_edit_deposit_manually(self):
+        auth = BasicAuth("eb069420", "motdepasse")
+        session = self.post(
+            "login", auth=auth, headers={"X-Api-Key": "test-api-key-macompf"}
+        ).json()
+        self.set_authentication(BearerAuth(session["token"]))
+
+        # Possibilité de fixer le montant de l'acompte à la création
+
+        role = self.get("roles").json()[0]
+        user = {
+            "id": "ar113927",
+            "firstName": "Aimeric",
+            "lastName": "ROURA",
+            "email": "caca@gmail.com",
+            "role": role["id"],
+            "year": "2A",
+            "deposit": 20,
+            "isMember": False,
+        }
+        self.post("users", user)
+
+        created_user = self.get(f"/users/ar113927").json()
+        self.expect(created_user["deposit"]).to.be.equal_to(20)
+
+        # ou à la modification
+
+        user.update(deposit=5)
+        response = self.put(f"users/ar113927", user)
+        self.expect(response.status_code).to.be.equal_to(200)
+
+        modified_user = self.get(f"/users/ar113927").json()
+        self.expect(modified_user["deposit"]).to.be.equal_to(5)
+
+        # on s'enlève le rôle de modification forcée
+
+        client = self.get(f"clients/4").json()
+        client.update(granted=0)
+        response = self.put("clients/4", client)
+        self.expect(response.status_code).to.be.equal_to(200)
+
+        session = self.post(
+            "login", auth=auth, headers={"X-Api-Key": "test-api-key-macompf"}
+        ).json()
+        self.set_authentication(BearerAuth(session["token"]))
+
+        # plus possible de modifier (la propriété passe en lecture)
+
+        user.update(deposit=0, email="canstill@bemodfi.ed")
+        response = self.put(f"users/ar113927", user)
+        self.expect(response.status_code).to.be.equal_to(200)
+
+        modified_user = self.get(f"/users/ar113927").json()
+        self.expect(modified_user["deposit"]).to.be.equal_to(5)
+        self.expect(modified_user["email"]).to.be.equal_to("canstill@bemodfi.ed")
+
+        # bloqué aussi au moment de la création
+
+        user = {
+            "id": "ar113928",
+            "firstName": "Aimeric",
+            "lastName": "ROURA",
+            "email": "caca@gmail.com",
+            "role": role["id"],
+            "year": "2A",
+            "deposit": 20,
+            "isMember": False,
+        }
+        self.post("users", user)
+
+        created_user = self.get(f"/users/ar113928").json()
+        self.expect(created_user["deposit"]).to.be.equal_to(None)
 
     def test_user_delete(self):
         role = self.get("roles").json()[0]
@@ -377,10 +438,10 @@ class UserTests(TestBase):
             "email": "caca@gmail.com",
             "role": role["id"],
             "year": "2A",
-            "deposit": 7001.01,
             "isMember": False,
         }
         self.post("users", user)
+        self.post("users/ar113926/deposit", 700)
 
         # L'utilisateur existe
 
@@ -394,8 +455,7 @@ class UserTests(TestBase):
 
         # On retire l'argent de son acompte
 
-        user["deposit"] = 0
-        self.put("users/ar113926", user)
+        self.post("users/ar113926/deposit", -700)
 
         # Cette fois-ci, on peut bien le supprimer
 
@@ -493,7 +553,6 @@ class UserTests(TestBase):
             "email": "caca@gmail.com",
             "role": role["id"],
             "year": "2A",
-            "deposit": 7001.01,
             "isMember": False,
         }
 

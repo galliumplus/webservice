@@ -35,10 +35,8 @@ public partial class AuditLogEntryBuilder
         return this;
     }
 
-    public IAuditLogClientEntryBuilder Client(Client client) => new AuditLogClientEntryBuilder(client, this);
-
-    public IAuditLogGenericEntryBuilder Category(Category category)
-        => new AuditLogGenericEntryBuilder(
+    public IGenericEntryBuilder Category(Category category)
+        => new GenericEntryBuilder(
             this,
             LoggedAction.CategoryAdded, LoggedAction.CategoryModified, LoggedAction.CategoryDeleted,
             root => {
@@ -46,4 +44,8 @@ public partial class AuditLogEntryBuilder
                 root.details.Add("name", category.Name);
             }
         );
+
+    public IClientEntryBuilder Client(Client client) => new ClientEntryBuilder(client, this);
+
+    public IUserEntryBuilder User(User user) => new UserEntryBuilder(user, this);
 }

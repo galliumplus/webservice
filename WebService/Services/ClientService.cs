@@ -60,9 +60,7 @@ public class ClientService(IClientDao clientDao)
     {
         if (!client.HasAppAccess)
         {
-            throw new FailedPreconditionException(
-                "Impossible de générer un jeton de connexion pour une application sans accès applicatif."
-            );
+            throw FailedPreconditionException.DoesntHaveAppAccess();
         }
 
         string newSecret = client.AppAccess!.RegenerateSecret();
@@ -75,9 +73,7 @@ public class ClientService(IClientDao clientDao)
     {
         if (!client.HasSameSignOn)
         {
-            throw new FailedPreconditionException(
-                "Impossible de générer une clé de signature pour une application sans Same Sign-On configuré."
-            );
+            throw FailedPreconditionException.DoesntHaveSameSignOn();
         }
 
         try
