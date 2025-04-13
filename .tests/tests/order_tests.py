@@ -331,9 +331,7 @@ class OrderTests(TestBase):
 
     def set_deposit(self, user_id, amount):
         user = self.get(f"users/{user_id}").json()
-        user["deposit"] = amount
-        user["role"] = user["role"]["id"]
-        response = self.put(f"users/{user_id}", user)
+        self.post(f"users/{user_id}/deposit", amount - Decimal(user["deposit"]))
 
     def revoke_membership(self, user_id):
         user = self.get(f"users/{user_id}").json()

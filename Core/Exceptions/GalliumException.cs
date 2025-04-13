@@ -3,18 +3,18 @@
 public abstract class GalliumException : Exception
 {
     /// <summary>
-    /// Code de l'erreur levée 
+    /// Code de l'erreur levée.
     /// </summary>
     public abstract ErrorCode ErrorCode { get; }
 
     /// <summary>
-    /// Constructeur par défaut
+    /// Constructeur d'une exception Gallium sans message.
     /// </summary>
-    public GalliumException() : base() { }
+    protected GalliumException() { }
 
     /// <summary>
-    /// Constructeur d'une GalliumException avec un message
+    /// Constructeur d'une exception Gallium avec un message.
     /// </summary>
-    /// <param name="message">String decrivant la raison </param>
-    public GalliumException(string message) : base(message) { }
+    /// <param name="message">String décrivant la raison.</param>
+    protected GalliumException(string message) : base(message) { }
 }

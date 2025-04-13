@@ -37,27 +37,28 @@ DELETE FROM `Session`;
 delete from `PasswordResetToken`;
 
 INSERT INTO `Client` VALUES
-	(1, 'test-api-key-normal',  'Tests (normal)',          0, 1023, 1, 0),
-	(2, 'test-api-key-restric', 'Tests (restricted)',      0,  137, 1, 0),
-	(3, 'test-api-key-minimum', 'Tests (minimum)',         1, 1023, 1, 0),
-	(4, 'test-api-key-bot',     'Tests (bot)',             1,    1, 1, 0),
-	(5, 'test-api-key-sso-dir', 'Tests (SSO, direct)',     0, 1023, 1, 0),
-	(6, 'test-api-key-sso-ext', 'Tests (SSO, externe)',    0, 1023, 1, 0),
-	(7, 'test-api-key-sso-bot', 'Tests (SSO, applicatif)', 0, 1023, 1, 0);
+	(1, 'test-api-key-normal',  'Tests (normal)',                        0,       2047, 1, 0),
+	(2, 'test-api-key-restric', 'Tests (restricted)',                    0,        137, 1, 0),
+	(3, 'test-api-key-minimum', 'Tests (minimum)',                       1,       2047, 1, 0),
+	(4, 'test-api-key-macompf', 'Tests (Modif acompte forcée)', 1073741824, 1073743871, 1, 0),
+	(5, 'test-api-key-bot',     'Tests (bot)',                           1,          1, 1, 0),
+	(6, 'test-api-key-sso-dir', 'Tests (SSO, direct)',                   0,       2047, 1, 0),
+	(7, 'test-api-key-sso-ext', 'Tests (SSO, externe)',                  0,       2047, 1, 0),
+	(8, 'test-api-key-sso-bot', 'Tests (SSO, applicatif)',               0,       2047, 1, 0);
 
 INSERT INTO `AppAccess`  VALUES
-    (4, 0x6ff1904d29b818007ccbf05954bc1cd50f70148e41265cb823d54e2e3312b095, 'sel'),
-    (7, 0x6ff1904d29b818007ccbf05954bc1cd50f70148e41265cb823d54e2e3312b095, 'sel');
+    (5, 0x6ff1904d29b818007ccbf05954bc1cd50f70148e41265cb823d54e2e3312b095, 'sel'),
+    (8, 0x6ff1904d29b818007ccbf05954bc1cd50f70148e41265cb823d54e2e3312b095, 'sel');
 
 INSERT INTO `SameSignOn` VALUES
-    (5, 'test-sso-secret', 'https://example.app/login', 'https://example.app/static/logo.png', 1, 256, NULL           ),
-    (6, 'test-sso-secret', 'https://example.app/login', 'https://example.app/static/logo.png', 1,   1, 'Appli Externe'),
-    (7, 'test-sso-secret', 'https://example.app/login', 'https://example.app/static/logo.png', 1,   0, NULL           );
+    (6, 'test-sso-secret', 'https://example.app/login', 'https://example.app/static/logo.png', 1, 256, NULL           ),
+    (7, 'test-sso-secret', 'https://example.app/login', 'https://example.app/static/logo.png', 1,   1, 'Appli Externe'),
+    (8, 'test-sso-secret', 'https://example.app/login', 'https://example.app/static/logo.png', 1,   0, NULL           );
 
 INSERT INTO `Role` VALUES
 	(1, 'Adhérent', 0),
 	(2, 'CA', 27),
-	(3, 'Président', 1023);
+	(3, 'Président', 2047);
 
 INSERT INTO `User` VALUES
 	(1, 'lomens', 'Nicolas', 'RESIN', 'nicolas.resin@iut-dijon.u-bourgogne.fr', 1, 'PROF', 20.00, 1, 0x6ff1904d29b818007ccbf05954bc1cd50f70148e41265cb823d54e2e3312b095, 'sel', NOW(), 0, 1, '2099-12-31'),

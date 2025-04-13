@@ -45,6 +45,17 @@ namespace GalliumPlus.Data.Fake
                 )
             );
 
+            this.Create(
+                new Client(
+                    id: 0,
+                    name: "Tests (Modif acompte forcée)",
+                    apiKey: "test-api-key-macompf",
+                    isEnabled: true,
+                    allowed: Permissions.ALL | Permissions.FORCE_DEPOSIT_MODIFICATION,
+                    granted: Permissions.FORCE_DEPOSIT_MODIFICATION
+                )
+            );
+
             PasswordInformation botKey = PasswordInformation.FromPassword("motdepasse");
             var botClient = new Client(
                 id: 0,

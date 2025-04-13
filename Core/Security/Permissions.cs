@@ -85,6 +85,21 @@ public enum Permissions : uint
 
     NOT_MANAGE_CLIENTS = 512,
 
+    /// <summary>
+    /// Permission d'utiliser les différents outils de développement associés à Gallium.
+    /// </summary>
+    USE_DEVELOPER_TOOLS = 1024,
+
+    NOT_USE_DEVELOPER_TOOLS = 1024,
+
+    /// <summary>
+    /// Permission de modifier les acomptes manuellement. Cette permission ne doit pas pouvoir être donnée à quiconque,
+    /// elle sert uniquement à garder la compatibilité avec Gallium V2.
+    /// </summary>
+    FORCE_DEPOSIT_MODIFICATION = 1073741824,
+
+    NOT_FORCE_DEPOSIT_MODIFICATION = 1073741824,
+
     //=== PERMISSIONS COMPOSÉES ===//
 
     /// <summary>

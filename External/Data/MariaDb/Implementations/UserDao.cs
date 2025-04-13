@@ -193,7 +193,6 @@ namespace GalliumPlus.Data.MariaDb.Implementations
                     .Set("email", item.Identity.Email)
                     .Set("year", item.Identity.Year)
                     .Set("role", item.Role.Id)
-                    .Set("deposit", item.Deposit)
                     .Set("isMember", item.IsMember)
                     .Set("registration", DateTime.UtcNow)
                     .Where(db.Column("userId") == key)
@@ -211,13 +210,42 @@ namespace GalliumPlus.Data.MariaDb.Implementations
             return item;
         }
 
-        public void AddToDeposit(string id, decimal money)
+        public void UpdateForcingDepositModification(string key, User item)
         {
             using var connection = this.Connect();
             Schema db = new(connection);
 
-            bool ok = db.Update("User").Set("deposit", db.Column("deposit") + money).Where(db.Column("userId") == id)
-                .Apply();
+            try
+            {
+                db.Update("User")
+                    .Set("userId", item.Id)
+                    .Set("firstName", item.Identity.FirstName)
+                    .Set("lastName", item.Identity.LastName)
+                    .Set("email", item.Identity.Email)
+                    .Set("year", item.Identity.Year)
+                    .Set("role", item.Role.Id)
+                    .Set("deposit", item.Deposit)
+                    .Set("isMember", item.IsMember)
+                    .Set("registration", DateTime.UtcNow)
+                    .Where(db.Column("userId") == key)
+                    .Apply();
+            }
+            catch (MySqlException error)
+            {
+                if (error.ErrorCode == MySqlErrorCode.DuplicateKeyEntry)
+                {
+                    throw new DuplicateItemException("Un utilisateur avec cet identifiant existe déjà.");
+                }
+                else throw;
+            }
+        }
+
+        public void UpdateDeposit(string id, decimal? money)
+        {
+            using var connection = this.Connect();
+            Schema db = new(connection);
+
+            bool ok = db.Update("User").Set("deposit", money).Where(db.Column("userId") == id).Apply();
 
             if (!ok) throw new ItemNotFoundException("Cet utilisateur");
         }
