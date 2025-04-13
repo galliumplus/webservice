@@ -103,12 +103,10 @@ namespace GalliumPlus.Data.Fake
             return this.Read(id).Deposit;
         }
 
-        public void AddToDeposit(string id, decimal money)
+        public void UpdateDeposit(string id, decimal? money)
         {
             User user = this.Read(id);
-            decimal newAmount = (user.Deposit ?? 0) + money;
-            if (newAmount < 0) throw new InvalidResourceException("L'acompte ne peut pas être négatif.");
-            user.Deposit = newAmount;
+            user.Deposit = money;
             this.Update(id, user);
         }
 

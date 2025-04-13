@@ -20,13 +20,13 @@ public interface IUserDao : IBasicDao<string, User>
     public decimal? ReadDeposit(string id);
 
     /// <summary>
-    /// Ajoute une certaine somme à l'acompte d'un utilisateur.
+    /// Modifie le solde de l'acompte d'un utilisateur.
     /// </summary>
     /// <param name="id">L'identifiant de l'utilisateur.</param>
-    /// <param name="money">La somme à ajouter.</param>
+    /// <param name="money">Le nouveau solde.</param>
     /// <exception cref="ItemNotFoundException"></exception>
     /// <exception cref="InvalidResourceException"></exception>
-    public void AddToDeposit(string id, decimal money);
+    public void UpdateDeposit(string id, decimal? money);
     
     /// <inheritdoc cref="IBasicDao{TKey, TItem}.Update" />
     /// <remarks>

@@ -96,9 +96,9 @@ public enum Permissions : uint
     /// Permission de modifier les acomptes manuellement. Cette permission ne doit pas pouvoir être donnée à quiconque,
     /// elle sert uniquement à garder la compatibilité avec Gallium V2.
     /// </summary>
-    FORCE_DEPOSIT_MODIFICATION = 2147483648,
+    FORCE_DEPOSIT_MODIFICATION = 1073741824,
 
-    NOT_FORCE_DEPOSIT_MODIFICATION = 2147483648,
+    NOT_FORCE_DEPOSIT_MODIFICATION = 1073741824,
 
     //=== PERMISSIONS COMPOSÉES ===//
 

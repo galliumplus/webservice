@@ -60,7 +60,7 @@ public class PaymentByDeposit : PaymentMethod
             );
         }
 
-        this.userDao.AddToDeposit(this.depositId, -amount);
+        this.userDao.UpdateDeposit(this.depositId, currentDeposit - amount);
 
         return string.Format(
             currencyFormat.Value,
