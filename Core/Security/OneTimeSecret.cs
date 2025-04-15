@@ -10,11 +10,33 @@ public class OneTimeSecret
 {
     private PasswordInformation innerPassword;
 
-    public byte[] Hash => this.innerPassword.Hash;
+    /// <summary>
+    /// Propriété de récupération du hachage pour le mot de passe
+    /// </summary>
+    /// <exception cref="BadOrEmptyCredentials"></exception>
+    public byte[] Hash => this.innerPassword != null 
+                          ? this.innerPassword.Hash 
+                          : throw new BadOrEmptyCredentials("Une des informations pour le mot de passe n'a pas été fourni");
 
-    public string Salt => this.innerPassword.Salt;
+    /// <summary>
+    /// Propriété de récupération du sel utilisé pour le hachage
+    /// </summary>
+    /// <exception cref="BadOrEmptyCredentials"></exception>
+    public string Salt => this.innerPassword != null && !string.IsNullOrEmpty(this.innerPassword.Salt)
+                          ? this.innerPassword.Salt
+                          : throw new BadOrEmptyCredentials("Une des informations pour le mot de passe n'a pas été fourni");
 
-    public bool Match(string otherSecret) => this.innerPassword.Match(otherSecret);
+    public bool Match(string otherSecret)
+    {
+        if (this.innerPassword == null)
+            throw new BadOrEmptyCredentials("Le mot de passe n'a pas été récupéré");
+
+        var res = this.innerPassword.Match(otherSecret);
+        if (!res)
+            throw new BadOrEmptyCredentials("Mot de passe invalide");
+
+        return res;
+    }
 
     /// <summary>
     /// Crée un code depuis des données existantes.
@@ -31,21 +53,19 @@ public class OneTimeSecret
     /// </summary>
     public OneTimeSecret()
     {
-        this.innerPassword = PasswordInformation.FromPassword("");
+        this.innerPassword = null;
     }
 
     /// <summary>
     /// Re-génère le code secret.
     /// </summary>
-    /// <exception cref="NotBuildException">Code généré ratée</exception>
+    /// <exception cref="BadOrEmptyCredentials">Code généré ratée</exception>
     /// <returns>Le code secret en clair. Une fois cette valeur oubliée, le code secret ne peut plus être vu.</returns>
     public string Regenerate()
     {
         var rtg = new RandomTextGenerator(new CryptoRandomProvider());
         string newSecret = rtg.SecretKey();
         this.innerPassword = PasswordInformation.FromPassword(newSecret);
-        if (newSecret == null)
-            throw new NotBuildException("Le code n'a pas été généré");
         return newSecret;
     }
 }

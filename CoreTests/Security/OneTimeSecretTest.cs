@@ -10,9 +10,9 @@ public class OneTimeSecretTest
     {
         var ots = new OneTimeSecret();
 
-        Assert.Throws<NotBuildException>(() => ots.Hash);
-        Assert.Throws<NotBuildException>(() => ots.Salt);
-        Assert.Throws<NotBuildException>(() => ots.Match(""));
+        Assert.Throws<BadOrEmptyCredentials>(() => ots.Hash);
+        Assert.Throws<BadOrEmptyCredentials>(() => ots.Salt);
+        Assert.Throws<BadOrEmptyCredentials>(() => ots.Match(""));
 
         string secret = ots.Regenerate();
         Assert.True(ots.Match(secret));
