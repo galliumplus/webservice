@@ -39,6 +39,7 @@ jobs:
   
   unit-tests:
     runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
     env:
       GALLIUM_ENV: test
       GALLIUM_HTTP: 5080
@@ -56,6 +57,7 @@ jobs:
   
   api-tests:
     runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
     env:
       GALLIUM_ENV: test
       GALLIUM_HTTP: 5080
@@ -77,6 +79,8 @@ jobs:
       run: python3 -m pip install -r .tests/requirements.txt
     - name: Run API behavior tests
       run: python3 .tests/main.py --long-timeout
+    - name: Run version check
+      run: python3 .tests/check-version.py
 
       
 
