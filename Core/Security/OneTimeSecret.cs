@@ -8,7 +8,7 @@ namespace GalliumPlus.Core.Security;
 /// </summary>
 public class OneTimeSecret
 {
-    private PasswordInformation innerPassword;
+    private PasswordInformation? innerPassword;
 
     /// <summary>
     /// Propriété de récupération du hachage pour le mot de passe
