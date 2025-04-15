@@ -9,6 +9,9 @@ public class PasswordInformation
     private byte[] hash;
     private string salt;
 
+    /// <summary>
+    /// Le hachage
+    /// </summary>
     public byte[] Hash => this.hash;
 
     public string Salt => this.salt;

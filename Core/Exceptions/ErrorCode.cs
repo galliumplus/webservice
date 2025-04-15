@@ -11,5 +11,4 @@ public enum ErrorCode
     FailedPrecondition,
     AccessMethodNotAllowed,
     DisabledApplication,
-    NotBuild,
 }

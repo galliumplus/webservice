@@ -17,4 +17,15 @@ public class OneTimeSecretTest
         string secret = ots.Regenerate();
         Assert.True(ots.Match(secret));
     }
+
+    [Fact]
+    public void Match()
+    {
+        var ots = new OneTimeSecret();
+        
+        string secret = ots.Regenerate();
+        
+        Assert.True(ots.Match(secret));
+        Assert.False(ots.Match("prout"));
+    }
 }

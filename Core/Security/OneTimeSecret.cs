@@ -13,27 +13,39 @@ public class OneTimeSecret
     /// <summary>
     /// Propriété de récupération du hachage pour le mot de passe
     /// </summary>
-    /// <exception cref="BadOrEmptyCredentials"></exception>
-    public byte[] Hash => this.innerPassword != null 
-                          ? this.innerPassword.Hash 
-                          : throw new BadOrEmptyCredentials("Une des informations pour le mot de passe n'a pas été fourni");
+    /// <inheritdoc cref="PasswordInformation"/>
+    /// <exception cref="BadOrEmptyCredentials">
+    /// Retourne une exception format anonyme sur l'information manquante pour le mot de passe
+    /// </exception>
+    public byte[] Hash => this.innerPassword != null
+        ? this.innerPassword.Hash
+        : throw new BadOrEmptyCredentials("Une des informations pour le mot de passe n'a pas été fourni");
 
     /// <summary>
     /// Propriété de récupération du sel utilisé pour le hachage
     /// </summary>
-    /// <exception cref="BadOrEmptyCredentials"></exception>
+    /// <inheritdoc cref="PasswordInformation"/>
+    /// <exception cref="BadOrEmptyCredentials">
+    /// Retourne une exception format anonyme sur l'information manquante pour le mot de passe
+    /// </exception>
     public string Salt => this.innerPassword != null && !string.IsNullOrEmpty(this.innerPassword.Salt)
-                          ? this.innerPassword.Salt
-                          : throw new BadOrEmptyCredentials("Une des informations pour le mot de passe n'a pas été fourni");
+        ? this.innerPassword.Salt
+        : throw new BadOrEmptyCredentials("Une des informations pour le mot de passe n'a pas été fourni");
 
+    /// <summary>
+    /// Fais correspondre le code avec le mot de passe fourni
+    /// </summary>
+    /// <param name="otherSecret">Code de comparaison</param>
+    /// <returns>Un état booléen suite à la comparaison</returns>
+    /// <exception cref="BadOrEmptyCredentials">Si un mot de passe n'a pas été récupéré</exception>
     public bool Match(string otherSecret)
     {
         if (this.innerPassword == null)
             throw new BadOrEmptyCredentials("Le mot de passe n'a pas été récupéré");
 
-        var res = this.innerPassword.Match(otherSecret);
+        bool res = this.innerPassword.Match(otherSecret);
         if (!res)
-            throw new BadOrEmptyCredentials("Mot de passe invalide");
+            res = false;
 
         return res;
     }
@@ -59,7 +71,6 @@ public class OneTimeSecret
     /// <summary>
     /// Re-génère le code secret.
     /// </summary>
-    /// <exception cref="BadOrEmptyCredentials">Code généré ratée</exception>
     /// <returns>Le code secret en clair. Une fois cette valeur oubliée, le code secret ne peut plus être vu.</returns>
     public string Regenerate()
     {
