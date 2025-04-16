@@ -11,43 +11,33 @@ public class OneTimeSecret
     private PasswordInformation? innerPassword;
 
     /// <summary>
-    /// Propriété de récupération du hachage pour le mot de passe
+    /// Le code secret haché.
     /// </summary>
-    /// <inheritdoc cref="PasswordInformation"/>
-    /// <exception cref="BadOrEmptyCredentials">
-    /// Retourne une exception format anonyme sur l'information manquante pour le mot de passe
+    /// <exception cref="BlankSecretException">
+    /// Si cette propriété est utilisée avant le premier appel à <see cref="Regenerate"/>.
     /// </exception>
-    public byte[] Hash => this.innerPassword != null
-        ? this.innerPassword.Hash
-        : throw new BadOrEmptyCredentials("Une des informations pour le mot de passe n'a pas été fourni");
+    public byte[] Hash => this.innerPassword != null ? this.innerPassword.Hash : throw new BlankSecretException();
 
     /// <summary>
-    /// Propriété de récupération du sel utilisé pour le hachage
+    /// Le sel concaténé au mot de passe avant hachage.
     /// </summary>
-    /// <inheritdoc cref="PasswordInformation"/>
-    /// <exception cref="BadOrEmptyCredentials">
-    /// Retourne une exception format anonyme sur l'information manquante pour le mot de passe
+    /// <exception cref="BlankSecretException">
+    /// Si cette propriété est utilisée avant le premier appel à <see cref="Regenerate"/>.
     /// </exception>
-    public string Salt => this.innerPassword != null && !string.IsNullOrEmpty(this.innerPassword.Salt)
-        ? this.innerPassword.Salt
-        : throw new BadOrEmptyCredentials("Une des informations pour le mot de passe n'a pas été fourni");
+    public string Salt => this.innerPassword != null ? this.innerPassword.Salt : throw new BlankSecretException();
 
     /// <summary>
     /// Fais correspondre le code avec le mot de passe fourni
     /// </summary>
-    /// <param name="otherSecret">Code de comparaison</param>
-    /// <returns>Un état booléen suite à la comparaison</returns>
-    /// <exception cref="BadOrEmptyCredentials">Si un mot de passe n'a pas été récupéré</exception>
+    /// <param name="otherSecret">Le code à comparer</param>
+    /// <returns><c>true</c> si les codes correspondent, sinon <c>false</c></returns>
+    /// <exception cref="BlankSecretException">
+    /// Si cette propriété est utilisée avant le premier appel à <see cref="Regenerate"/>.
+    /// </exception>
     public bool Match(string otherSecret)
     {
-        if (this.innerPassword == null)
-            throw new BadOrEmptyCredentials("Le mot de passe n'a pas été récupéré");
-
-        bool res = this.innerPassword.Match(otherSecret);
-        if (!res)
-            res = false;
-
-        return res;
+        if (this.innerPassword == null) throw new BlankSecretException();
+        return this.innerPassword.Match(otherSecret);
     }
 
     /// <summary>

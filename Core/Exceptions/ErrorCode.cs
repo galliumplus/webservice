@@ -10,5 +10,5 @@ public enum ErrorCode
     ServiceUnavailable,
     FailedPrecondition,
     AccessMethodNotAllowed,
-    DisabledApplication,
+    DisabledApplication
 }
