@@ -38,6 +38,7 @@ public class ClientService(IClientDao clientDao)
         if (newClient.HasAppAccess)
         {
             client.AppAccess = new AppAccess(client.Id);
+            client.AppAccess.RegenerateSecret();
             clientDao.CreateAppAccess(client.AppAccess);
         }
 
@@ -103,6 +104,7 @@ public class ClientService(IClientDao clientDao)
         if (clientUpdate.HasAppAccess && !client.HasAppAccess)
         {
             client.AppAccess = new AppAccess(client.Id);
+            client.AppAccess.RegenerateSecret();
             clientDao.CreateAppAccess(client.AppAccess);
         }
         else if (!clientUpdate.HasAppAccess && client.HasAppAccess)

@@ -1,4 +1,5 @@
-﻿using GalliumPlus.Core.Random;
+﻿using GalliumPlus.Core.Exceptions;
+using GalliumPlus.Core.Random;
 
 namespace GalliumPlus.Core.Security;
 
@@ -7,13 +8,37 @@ namespace GalliumPlus.Core.Security;
 /// </summary>
 public class OneTimeSecret
 {
-    private PasswordInformation innerPassword;
+    private PasswordInformation? innerPassword;
 
-    public byte[] Hash => this.innerPassword.Hash;
+    /// <summary>
+    /// Le code secret haché.
+    /// </summary>
+    /// <exception cref="BlankSecretException">
+    /// Si cette propriété est utilisée avant le premier appel à <see cref="Regenerate"/>.
+    /// </exception>
+    public byte[] Hash => this.innerPassword != null ? this.innerPassword.Hash : throw new BlankSecretException();
 
-    public string Salt => this.innerPassword.Salt;
+    /// <summary>
+    /// Le sel concaténé au mot de passe avant hachage.
+    /// </summary>
+    /// <exception cref="BlankSecretException">
+    /// Si cette propriété est utilisée avant le premier appel à <see cref="Regenerate"/>.
+    /// </exception>
+    public string Salt => this.innerPassword != null ? this.innerPassword.Salt : throw new BlankSecretException();
 
-    public bool Match(string otherSecret) => this.innerPassword.Match(otherSecret);
+    /// <summary>
+    /// Fais correspondre le code avec le mot de passe fourni
+    /// </summary>
+    /// <param name="otherSecret">Le code à comparer</param>
+    /// <returns><c>true</c> si les codes correspondent, sinon <c>false</c></returns>
+    /// <exception cref="BlankSecretException">
+    /// Si cette propriété est utilisée avant le premier appel à <see cref="Regenerate"/>.
+    /// </exception>
+    public bool Match(string otherSecret)
+    {
+        if (this.innerPassword == null) throw new BlankSecretException();
+        return this.innerPassword.Match(otherSecret);
+    }
 
     /// <summary>
     /// Crée un code depuis des données existantes.
@@ -30,7 +55,7 @@ public class OneTimeSecret
     /// </summary>
     public OneTimeSecret()
     {
-        this.innerPassword = PasswordInformation.FromPassword("");
+        this.innerPassword = null;
     }
 
     /// <summary>

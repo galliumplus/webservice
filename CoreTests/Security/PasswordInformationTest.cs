@@ -1,6 +1,4 @@
-﻿using GalliumPlus.Core.Security;
-
-namespace GalliumPlus.Core.Users;
+﻿namespace GalliumPlus.Core.Security;
 
 public class PasswordInformationTest
 {
