@@ -6,11 +6,17 @@ namespace GalliumPlus.Core.Security;
 
 public class PasswordInformation
 {
-    private byte[] hash;
-    private string salt;
+    private readonly byte[] hash;
+    private readonly string salt;
 
+    /// <summary>
+    /// Le mot de passe haché.
+    /// </summary>
     public byte[] Hash => this.hash;
 
+    /// <summary>
+    /// Le sel concaténé au mot de passe avant hachage.
+    /// </summary>
     public string Salt => this.salt;
 
     public PasswordInformation(byte[] hash, string salt)
