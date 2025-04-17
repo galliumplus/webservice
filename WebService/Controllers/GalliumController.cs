@@ -1,5 +1,6 @@
 ﻿using GalliumPlus.Core.Applications;
 using GalliumPlus.Core.Exceptions;
+using GalliumPlus.Core.Security;
 using GalliumPlus.Core.Users;
 using Microsoft.AspNetCore.Mvc;
 

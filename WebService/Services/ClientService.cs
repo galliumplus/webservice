@@ -1,7 +1,7 @@
 using GalliumPlus.Core.Applications;
 using GalliumPlus.Core.Data;
 using GalliumPlus.Core.Exceptions;
-using GalliumPlus.Core.Users;
+using GalliumPlus.Core.Security;
 using GalliumPlus.WebService.Dto.Access;
 using GalliumPlus.WebService.Dto.Applications;
 

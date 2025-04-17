@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 using GalliumPlus.Core.Applications;
-using GalliumPlus.Core.Users;
+using GalliumPlus.Core.Security;
 using GalliumPlus.WebService.Dto.Applications;
 using GalliumPlus.WebService.Middleware.Authorization;
 using GalliumPlus.WebService.Services;

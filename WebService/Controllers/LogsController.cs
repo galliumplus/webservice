@@ -1,7 +1,7 @@
 ﻿using GalliumPlus.Core.Data;
 using GalliumPlus.Core.Data.LogsSearch;
 using GalliumPlus.Core.Exceptions;
-using GalliumPlus.Core.Users;
+using GalliumPlus.Core.Security;
 using GalliumPlus.WebService.Dto.Legacy;
 using GalliumPlus.WebService.Middleware.Authorization;
 using Microsoft.AspNetCore.Authorization;

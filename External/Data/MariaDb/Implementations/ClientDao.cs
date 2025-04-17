@@ -3,7 +3,6 @@ using GalliumPlus.Core.Data;
 using GalliumPlus.Core.Exceptions;
 using KiwiQuery;
 using KiwiQuery.Mapped;
-using KiwiQuery.Mapped.Exceptions;
 using MySqlConnector;
 
 namespace GalliumPlus.Data.MariaDb.Implementations

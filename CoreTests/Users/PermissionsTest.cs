@@ -1,4 +1,6 @@
-﻿namespace GalliumPlus.Core.Users;
+﻿using GalliumPlus.Core.Security;
+
+namespace GalliumPlus.Core.Users;
 
 using P = Permissions;
 

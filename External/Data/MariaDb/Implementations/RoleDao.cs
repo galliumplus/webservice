@@ -1,5 +1,6 @@
 ﻿using GalliumPlus.Core.Data;
 using GalliumPlus.Core.Exceptions;
+using GalliumPlus.Core.Security;
 using GalliumPlus.Core.Users;
 using KiwiQuery;
 using MySqlConnector;

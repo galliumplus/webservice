@@ -1,4 +1,5 @@
 ﻿using GalliumPlus.Core.Exceptions;
+using GalliumPlus.Core.Security;
 using GalliumPlus.Core.Users;
 using GalliumPlus.WebService.Middleware.ErrorHandling;
 using Microsoft.AspNetCore.Mvc.Abstractions;

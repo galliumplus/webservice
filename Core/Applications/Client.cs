@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 using GalliumPlus.Core.Random;
-using GalliumPlus.Core.Users;
+using GalliumPlus.Core.Security;
 using KiwiQuery.Mapped;
 
 namespace GalliumPlus.Core.Applications;

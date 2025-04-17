@@ -7,7 +7,7 @@
  * RÉFLÉCHISSEZ AUSSI AVANT DE RENOMMER/CHANGER LA SIGNIFICATION D'UNE PERMISSION
  */
 
-namespace GalliumPlus.Core.Users;
+namespace GalliumPlus.Core.Security;
 
 /// <summary>
 /// Permissions spéciales attribuées aux rôles.

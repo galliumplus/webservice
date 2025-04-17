@@ -1,4 +1,4 @@
-using GalliumPlus.WebApi.Core.Items;
+using GalliumPlus.Core.Items;
 
 namespace GalliumPlus.WebService.Services;
 

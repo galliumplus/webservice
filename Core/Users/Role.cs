@@ -1,3 +1,5 @@
+using GalliumPlus.Core.Security;
+
 namespace GalliumPlus.Core.Users;
 
 /// <summary>

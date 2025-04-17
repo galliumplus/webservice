@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using KiwiQuery.Mapped;
 
-namespace GalliumPlus.WebApi.Core.Items;
+namespace GalliumPlus.Core.Items;
 
 /// <summary>
 /// Représente un tarif, comme le tarif adhérent ou le tarif non-adhérent. 

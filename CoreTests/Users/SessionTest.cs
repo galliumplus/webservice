@@ -1,4 +1,5 @@
 ﻿using GalliumPlus.Core.Applications;
+using GalliumPlus.Core.Security;
 
 namespace GalliumPlus.Core.Users;
 

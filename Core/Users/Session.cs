@@ -1,5 +1,6 @@
 ﻿using GalliumPlus.Core.Applications;
 using GalliumPlus.Core.Random;
+using GalliumPlus.Core.Security;
 
 namespace GalliumPlus.Core.Users;
 

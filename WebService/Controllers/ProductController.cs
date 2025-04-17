@@ -1,7 +1,7 @@
 ﻿using GalliumPlus.Core.Data;
 using GalliumPlus.Core.Logs;
+using GalliumPlus.Core.Security;
 using GalliumPlus.Core.Stocks;
-using GalliumPlus.Core.Users;
 using GalliumPlus.WebService.Dto.Legacy;
 using GalliumPlus.WebService.Middleware;
 using GalliumPlus.WebService.Middleware.Authorization;

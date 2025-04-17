@@ -8,7 +8,6 @@ using JWT.Algorithms;
 using JWT.Builder;
 using Microsoft.AspNetCore.WebUtilities;
 using Multiflag;
-using SessionOptions = GalliumPlus.Core.Users.SessionOptions;
 
 namespace GalliumPlus.WebService.Services;
 

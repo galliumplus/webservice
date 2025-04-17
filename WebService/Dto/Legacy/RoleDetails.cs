@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using GalliumPlus.Core.Security;
 using GalliumPlus.Core.Users;
 
 namespace GalliumPlus.WebService.Dto.Legacy
