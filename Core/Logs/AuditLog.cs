@@ -9,7 +9,7 @@ namespace GalliumPlus.Core.Logs;
 /// </summary>
 public class AuditLog
 {
-    [Key]
+    [PrimaryKey]
     private readonly int id;
 
     private readonly LoggedAction action;

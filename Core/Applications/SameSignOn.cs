@@ -10,7 +10,7 @@ namespace GalliumPlus.Core.Applications;
 /// </summary>
 public class SameSignOn
 {
-    [Key]
+    [PrimaryKey]
     private readonly int id;
     private string secret;
     private SignatureType signatureType;

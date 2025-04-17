@@ -10,7 +10,7 @@ namespace GalliumPlus.Core.Applications;
 /// </summary>
 public class Client
 {
-    [Key]
+    [PrimaryKey]
     private int id;
     private string apiKey;
     private string name;
