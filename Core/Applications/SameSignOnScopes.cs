@@ -40,7 +40,7 @@ public enum SameSignOnScope
 /// <summary>
 /// La portée de l'accès Same Sign-On.
 /// </summary>
-public class SameSignOnScopes
+public static class SameSignOnScopes
 {
     /// <inheritdoc cref="SameSignOnScope.Identity"/>
     public static readonly FlagEnum<SameSignOnScope> Identity = new(SameSignOnScope.Identity);

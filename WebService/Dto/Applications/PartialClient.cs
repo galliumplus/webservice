@@ -16,7 +16,7 @@ public class PartialClient
     {
         public Validator()
         {
-            this.RuleFor(client => client.Name).NotNull().NotEmpty().MaxLength(50);
+            this.RuleFor(client => client.Name).NotEmpty().MaxLength(50);
             this.RuleFor(client => client.SameSignOn).SetValidator(new PartialSameSignOn.Validator()!);
         }
     }
