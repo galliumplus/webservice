@@ -71,7 +71,7 @@ class CategoryTests(TestBase):
         # Informations manquantes
 
         invalid_category = {}
-        response = self.post("users", invalid_category)
+        response = self.post("categories", invalid_category)
         self.expect(response.status_code).to.be.equal_to(400)
         self.expect(response.json()).to.have.an_item("code").that._is.equal_to(
             "InvalidResource"
@@ -80,7 +80,7 @@ class CategoryTests(TestBase):
         # Informations non valides
 
         invalid_category = {"name": ""}
-        response = self.post("users", invalid_category)
+        response = self.post("categories", invalid_category)
         self.expect(response.status_code).to.be.equal_to(400)
         self.expect(response.json()).to.have.an_item("code").that._is.equal_to(
             "InvalidResource"

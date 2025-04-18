@@ -62,7 +62,7 @@ builder.Services.AddGalliumServices();
 
 #endregion
 
-#region Base de données (Fake & MariaDB)
+#region Base de données
 
 #if FAKE_DB
 // ajout en singleton, sinon les données ne sont pas gardées d'une requête à l'autre
@@ -208,7 +208,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
-ServerInfo.Current.SetVersion(1, 2, 1, "beta");
+ServerInfo.Current.SetVersion(1, 3, 0, "beta");
 Console.WriteLine(ServerInfo.Current);
 
 #if !FAKE_DB
