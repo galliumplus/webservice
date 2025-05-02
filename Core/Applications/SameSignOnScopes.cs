@@ -40,17 +40,29 @@ public enum SameSignOnScope
 /// <summary>
 /// La portée de l'accès Same Sign-On.
 /// </summary>
-public static class SameSignOnScopes
+public class SameSignOnScopes : EnumBitflagSet<SameSignOnScope>
 {
+    private static SameSignOnScopes? current;
+
+    public static SameSignOnScopes Current => current ??= new SameSignOnScopes();
+
     /// <inheritdoc cref="SameSignOnScope.Identity"/>
-    public static readonly FlagEnum<SameSignOnScope> Identity = new(SameSignOnScope.Identity);
-    
+    public Flag<SameSignOnScope> Identity { get; }
+
     /// <inheritdoc cref="SameSignOnScope.Email"/>
-    public static readonly FlagEnum<SameSignOnScope> Email = new(SameSignOnScope.Email);
-    
+    public Flag<SameSignOnScope> Email { get; }
+
     /// <inheritdoc cref="SameSignOnScope.Role"/>
-    public static readonly FlagEnum<SameSignOnScope> Role = new(SameSignOnScope.Role);
-    
+    public Flag<SameSignOnScope> Role { get; }
+
     /// <inheritdoc cref="SameSignOnScope.Gallium"/>
-    public static readonly FlagEnum<SameSignOnScope> Gallium = new(SameSignOnScope.Gallium);
+    public Flag<SameSignOnScope> Gallium { get; }
+
+    private SameSignOnScopes()
+    {
+        this.Identity = this.Flag(SameSignOnScope.Identity);
+        this.Email = this.Flag(SameSignOnScope.Email);
+        this.Role = this.Flag(SameSignOnScope.Role);
+        this.Gallium = this.Flag(SameSignOnScope.Gallium);
+    }
 }

@@ -59,7 +59,7 @@ public class SameSignOn
     /// <summary>
     /// Si l'application a besoin ou non d'une clé d'API à la connexion.
     /// </summary>
-    public bool RequiresApiKey => this.scope.Includes(SameSignOnScopes.Gallium);
+    public bool RequiresApiKey => SameSignOnScopes.Current.Gallium.IsIn(this.scope);
 
     /// <summary>
     /// Crée un paramétrage SSO existant.
