@@ -29,7 +29,7 @@ public class LogsController(ILogsDao logsDao, IHistoryDao historyDao) : GalliumC
     }
     
     [HttpGet("logs")]
-    [RequiresPermissions(Permissions.READ_LOGS)]
+    [RequiresPermissions(Permission.ReadLogs)]
     public IActionResult GetLogs(
         int pageSize = 50,
         int pageIndex = 0,
@@ -47,7 +47,7 @@ public class LogsController(ILogsDao logsDao, IHistoryDao historyDao) : GalliumC
     }
 
     [HttpGet("history")]
-    [RequiresPermissions(Permissions.READ_LOGS)]
+    [RequiresPermissions(Permission.ReadLogs)]
     public IActionResult GetLegacyHistory(
         int pageSize = 50,
         int pageIndex = 0,

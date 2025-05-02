@@ -31,7 +31,7 @@ namespace GalliumPlus.WebService.Dto.Legacy
 
             public override Role ToModel(RoleDetails dto)
             {
-                return new Role(dto.Id, dto.Name, (Permissions)dto.Permissions!.Value);
+                return new Role(dto.Id, dto.Name, (Permission)dto.Permissions!.Value);
             }
         }
     }

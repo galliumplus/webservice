@@ -30,8 +30,8 @@ public class ClientService(IClientDao clientDao)
             new Client(
                 newClient.Name,
                 newClient.IsEnabled,
-                (Permissions)newClient.Allowed,
-                (Permissions)newClient.Granted
+                (Permission)newClient.Allowed,
+                (Permission)newClient.Granted
             )
         );
 
@@ -96,8 +96,8 @@ public class ClientService(IClientDao clientDao)
         Client client = clientDao.Read(id);
 
         client.Name = clientUpdate.Name;
-        client.Allowed = (Permissions)clientUpdate.Allowed;
-        client.Granted = (Permissions)clientUpdate.Granted;
+        client.Allowed = (Permission)clientUpdate.Allowed;
+        client.Granted = (Permission)clientUpdate.Granted;
         client.IsEnabled = clientUpdate.IsEnabled;
         clientDao.Update(id, client);
 

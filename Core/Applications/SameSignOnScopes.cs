@@ -11,22 +11,22 @@ public enum SameSignOnScope
     /// <summary>
     /// Accès au strict minimum (identifiant utilisateur et identifiant immuable)
     /// </summary>
-    Minimum = 0x00,
+    Minimum = 0x0,
 
     /// <summary>
     /// Accès au profil de l'utilisateur (nom et prénom).
     /// </summary>
-    Identity = 0x01,
+    Identity = 0x1,
 
     /// <summary>
     /// Accès à l'adresse mail de l'utilisateur.
     /// </summary>
-    Email = 0x02,
+    Email = 0x2,
 
     /// <summary>
     /// Accès au rôle de l'utilisateur.
     /// </summary>
-    Role = 0x04,
+    Role = 0x4,
 
     /// <summary>
     /// Accès à l'API Gallium en tant que l'utilisateur connecté.

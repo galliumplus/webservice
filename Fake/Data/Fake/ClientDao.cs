@@ -15,8 +15,8 @@ namespace GalliumPlus.Data.Fake
                     name: "Tests (normal)",
                     apiKey: "test-api-key-normal",
                     isEnabled: true,
-                    allowed: Permissions.ALL,
-                    granted: Permissions.NONE
+                    allowed: Permission.All,
+                    granted: Permission.None
                 )
             );
 
@@ -26,10 +26,10 @@ namespace GalliumPlus.Data.Fake
                     name: "Tests (restricted)",
                     apiKey: "test-api-key-restric",
                     isEnabled: true,
-                    allowed: Permissions.SEE_PRODUCTS_AND_CATEGORIES
-                             | Permissions.SEE_ALL_USERS_AND_ROLES
-                             | Permissions.READ_LOGS,
-                    granted: Permissions.NONE
+                    allowed: Permission.SeeProductsAndCategories
+                             | Permission.SeeAllUsersAndRoles
+                             | Permission.ReadLogs,
+                    granted: Permission.None
                 )
             );
 
@@ -39,8 +39,8 @@ namespace GalliumPlus.Data.Fake
                     name: "Tests (minimum)",
                     apiKey: "test-api-key-minimum",
                     isEnabled: true,
-                    allowed: Permissions.ALL,
-                    granted: Permissions.SEE_PRODUCTS_AND_CATEGORIES
+                    allowed: Permission.All,
+                    granted: Permission.SeeProductsAndCategories
                 )
             );
 
@@ -50,8 +50,8 @@ namespace GalliumPlus.Data.Fake
                     name: "Tests (Modif acompte forcée)",
                     apiKey: "test-api-key-macompf",
                     isEnabled: true,
-                    allowed: Permissions.ALL | Permissions.FORCE_DEPOSIT_MODIFICATION,
-                    granted: Permissions.FORCE_DEPOSIT_MODIFICATION
+                    allowed: Permission.All | Permission.ForceDepositModification,
+                    granted: Permission.ForceDepositModification
                 )
             );
 
@@ -61,8 +61,8 @@ namespace GalliumPlus.Data.Fake
                 name: "Tests (bot)",
                 apiKey: "test-api-key-bot",
                 isEnabled: true,
-                allowed: Permissions.SEE_PRODUCTS_AND_CATEGORIES,
-                granted: Permissions.SEE_PRODUCTS_AND_CATEGORIES
+                allowed: Permission.SeeProductsAndCategories,
+                granted: Permission.SeeProductsAndCategories
             );
             this.Create(botClient);
             botClient.AppAccess = new AppAccess(botClient.Id, new OneTimeSecret(botKey.Hash, botKey.Salt));
@@ -72,8 +72,8 @@ namespace GalliumPlus.Data.Fake
                 name: "Tests (SSO, direct)",
                 apiKey: "test-api-key-sso-dir",
                 isEnabled: true,
-                allowed: Permissions.ALL,
-                granted: Permissions.NONE
+                allowed: Permission.All,
+                granted: Permission.None
             );
             this.Create(ssoClient1);
             ssoClient1.SameSignOn = new SameSignOn(
@@ -91,8 +91,8 @@ namespace GalliumPlus.Data.Fake
                 name: "Tests (SSO, externe)",
                 apiKey: "test-api-key-sso-ext",
                 isEnabled: true,
-                allowed: Permissions.ALL,
-                granted: Permissions.NONE
+                allowed: Permission.All,
+                granted: Permission.None
             );
             this.Create(ssoClient2);
             ssoClient2.SameSignOn = new SameSignOn(
@@ -110,8 +110,8 @@ namespace GalliumPlus.Data.Fake
                 name: "Tests (SSO, applicatif)",
                 apiKey: "test-api-key-sso-bot",
                 isEnabled: true,
-                allowed: Permissions.ALL,
-                granted: Permissions.NONE
+                allowed: Permission.All,
+                granted: Permission.None
             );
             this.Create(ssoClient3);
             ssoClient3.SameSignOn = new SameSignOn(

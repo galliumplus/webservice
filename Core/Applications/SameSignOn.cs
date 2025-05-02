@@ -65,7 +65,7 @@ public class SameSignOn
     /// Crée un paramétrage SSO existant.
     /// </summary>
     /// <param name="id">L'identifiant de l'application auquel les informations appartiennent.</param>
-    /// <param name="secret">Le code secret utilisé pour signer les jeton d'authentification</param>
+    /// <param name="secret">Le code secret utilisé pour signer les jetons d'authentification</param>
     /// <param name="signatureType">La méthode de signature utilisée.</param>
     /// <param name="scope">La portée de l'accès aux informations des utilisateurs.</param>
     /// <param name="displayName">Le nom à afficher pour présenter l'application.</param>

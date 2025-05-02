@@ -14,8 +14,8 @@ public class Client
     private int id;
     private string apiKey;
     private string name;
-    private Permissions granted;
-    private Permissions allowed;
+    private Permission granted;
+    private Permission allowed;
     private bool isEnabled;
 
     [HasOne("id")]
@@ -54,7 +54,7 @@ public class Client
     /// <summary>
     /// Les permissions autorisées aux utilisateurs de l'application.
     /// </summary>
-    public Permissions Allowed
+    public Permission Allowed
     {
         get => this.allowed;
         set => this.allowed = value;
@@ -63,7 +63,7 @@ public class Client
     /// <summary>
     /// Les permissions données à tous les utilisteurs de l'application.
     /// </summary>
-    public Permissions Granted
+    public Permission Granted
     {
         get => this.granted;
         set => this.granted = value;
@@ -125,8 +125,8 @@ public class Client
         string apiKey,
         string name,
         bool isEnabled,
-        Permissions allowed,
-        Permissions granted
+        Permission allowed,
+        Permission granted
     )
     {
         this.id = id;
@@ -147,8 +147,8 @@ public class Client
     public Client(
         string name,
         bool isEnabled = true,
-        Permissions allowed = Permissions.NONE,
-        Permissions granted = Permissions.NONE
+        Permission allowed = Permission.None,
+        Permission granted = Permission.None
     )
     {
         var rtg = new RandomTextGenerator(new BasicRandomProvider());
@@ -162,13 +162,16 @@ public class Client
 
     /// <summary>
     /// Applique les filtres de permissions.
-    /// Les ajouts (<see cref="Granted"/>) sont appliqués avant
-    /// les restrictions (<see cref="Allowed"/>).
+    /// Les restrictions (<see cref="Allowed"/>) sont appliquées par-dessus
+    /// les ajouts (<see cref="Granted"/>).
     /// </summary>
     /// <param name="permissions">Les permissions à filtrer.</param>
     /// <returns>Les permission restantes.</returns>
-    public Permissions Filter(Permissions permissions)
+    public Permission Filter(Permission permissions)
     {
-        return permissions.Grant(this.granted).Mask(this.allowed);
+        permissions = Permissions.Current.Minimum(permissions);
+        permissions = Permissions.Current.Union(permissions, this.granted);
+        permissions = Permissions.Current.Intersection(permissions, this.allowed);
+        return permissions;
     }
 }

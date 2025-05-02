@@ -8,18 +8,18 @@ namespace GalliumPlus.WebService.Middleware.Authorization
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
     public class RequiresPermissionsAttribute : Attribute
     {
-        private Permissions required;
+        private Permission required;
 
         /// <summary>
         /// Les permissions requises.
         /// </summary>
-        public Permissions Required => this.required;
+        public Permission Required => this.required;
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="required"></param>
-        public RequiresPermissionsAttribute(Permissions required)
+        public RequiresPermissionsAttribute(Permission required)
         {
             this.required = required;
         }

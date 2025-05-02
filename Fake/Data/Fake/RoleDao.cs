@@ -9,19 +9,19 @@ namespace GalliumPlus.Data.Fake
         public RoleDao()
         {
             this.Create(
-                new Role(0, "Adhérent", Permissions.NONE)
+                new Role(0, "Adhérent", Permission.None)
             );
             this.Create(
                 new Role(0, "CA",
-                    Permissions.MANAGE_PRODUCTS
-                    | Permissions.SEE_ALL_USERS_AND_ROLES
-                    | Permissions.SELL
-                    | Permissions.MANAGE_DEPOSITS
+                    Permission.ManageProducts
+                    | Permission.SeeAllUsersAndRoles
+                    | Permission.Sell
+                    | Permission.ManageDeposits
                 )
             );
             this.Create(
                 new Role(0, "Président",
-                    Permissions.ALL
+                    Permission.All
                 )
             );
         }

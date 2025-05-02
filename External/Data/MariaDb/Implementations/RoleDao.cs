@@ -36,7 +36,7 @@ namespace GalliumPlus.Data.MariaDb.Implementations
             return new Role(
                 row.GetInt32("id"),
                 row.GetString("name"),
-                (Permissions)row.GetInt32("permissions")
+                (Permission)row.GetInt32("permissions")
             );
         }
 

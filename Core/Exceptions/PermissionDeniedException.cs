@@ -8,12 +8,12 @@ namespace GalliumPlus.Core.Exceptions;
 /// </summary>
 public class PermissionDeniedException : GalliumException
 {
-    private Permissions required;
+    private readonly Permission required;
 
     /// <summary>
-    /// Les permissions qu étaient requises.
+    /// Les permissions qui étaient requises.
     /// </summary>
-    public Permissions Required { get => this.required; }
+    public Permission Required => this.required;
 
     public override ErrorCode ErrorCode => ErrorCode.PermissionDenied;
         
@@ -21,7 +21,7 @@ public class PermissionDeniedException : GalliumException
     /// Instancie l'exception.
     /// </summary>
     /// <param name="required">Les permissions requises pour effectuer l'action.</param>
-    public PermissionDeniedException(Permissions required)
+    public PermissionDeniedException(Permission required)
     {
         this.required = required;
     }

@@ -16,14 +16,14 @@ namespace GalliumPlus.WebService.Controllers
         : GalliumController
     {
         [HttpGet]
-        [RequiresPermissions(Permissions.MANAGE_CLIENTS)]
+        [RequiresPermissions(Permission.ManageClients)]
         public IActionResult Get()
         {
             return this.Json(clientService.GetAll());
         } 
 
         [HttpGet("{id:int}", Name = "client")]
-        [RequiresPermissions(Permissions.MANAGE_CLIENTS)]
+        [RequiresPermissions(Permission.ManageClients)]
         public IActionResult Get(int id)
         {
             return this.Json(clientService.GetById(id));
@@ -37,7 +37,7 @@ namespace GalliumPlus.WebService.Controllers
         }
 
         [HttpPost]
-        [RequiresPermissions(Permissions.MANAGE_CLIENTS)]
+        [RequiresPermissions(Permission.ManageClients)]
         public IActionResult Post(PartialClient newClient)
         {
             new PartialClient.Validator().ValidateAndThrow(newClient);
@@ -47,7 +47,7 @@ namespace GalliumPlus.WebService.Controllers
         }
 
         [HttpPost("{id:int}/app-access-secret")]
-        [RequiresPermissions(Permissions.MANAGE_CLIENTS)]
+        [RequiresPermissions(Permission.ManageClients)]
         public IActionResult PostNewAppAccessSecret(int id)
         {
             Client client = clientService.GetById(id);
@@ -59,7 +59,7 @@ namespace GalliumPlus.WebService.Controllers
         }
 
         [HttpPost("{id:int}/sso-secret")]
-        [RequiresPermissions(Permissions.MANAGE_CLIENTS)]
+        [RequiresPermissions(Permission.ManageClients)]
         public IActionResult PostNewSsoSecret(int id, SameSignOnSecretParameters parameters)
         {
             Client client = clientService.GetById(id);
@@ -71,7 +71,7 @@ namespace GalliumPlus.WebService.Controllers
         }
 
         [HttpPut("{id}")]
-        [RequiresPermissions(Permissions.MANAGE_CLIENTS)]
+        [RequiresPermissions(Permission.ManageClients)]
         public IActionResult Put(int id, PartialClient clientUpdate)
         {
             new PartialClient.Validator().ValidateAndThrow(clientUpdate);
@@ -84,7 +84,7 @@ namespace GalliumPlus.WebService.Controllers
         }
 
         [HttpDelete("{id}")]
-        [RequiresPermissions(Permissions.MANAGE_CLIENTS)]
+        [RequiresPermissions(Permission.ManageClients)]
         public IActionResult Delete(int id)
         {
             Client client = clientService.Delete(id);

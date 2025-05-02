@@ -28,7 +28,7 @@ namespace GalliumPlus.WebService.Controllers
         }
 
         [HttpPost]
-        [RequiresPermissions(Permissions.SELL)]
+        [RequiresPermissions(Permission.Sell)]
         public IActionResult Post(OrderSummary newOrder)
         {
             Order order = this.mapper.ToModel(newOrder);

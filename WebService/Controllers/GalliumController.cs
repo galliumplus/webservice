@@ -93,9 +93,9 @@ public class GalliumController : ControllerBase
         => this.Created(route, new { id }, value);
 
     [NonAction]
-    public void RequirePermissions(Permissions required)
+    public void RequirePermissions(Permission required)
     {
-        if (!this.Session!.Permissions.Includes(required))
+        if (!Permissions.Current.IsSupersetOf(this.Session!.Permissions, Permissions.Current.Maximum(required)))
         {
             throw new PermissionDeniedException(required);
         }

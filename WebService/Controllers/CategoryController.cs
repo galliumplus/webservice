@@ -18,21 +18,21 @@ namespace GalliumPlus.WebService.Controllers
         private CategoryDetails.Mapper mapper = new();
 
         [HttpGet]
-        [RequiresPermissions(Permissions.SEE_PRODUCTS_AND_CATEGORIES)]
+        [RequiresPermissions(Permission.SeeProductsAndCategories)]
         public IActionResult Get()
         {
             return this.Json(this.mapper.FromModel(categoryDao.Read()));
         }
 
         [HttpGet("{id}", Name = "category")]
-        [RequiresPermissions(Permissions.SEE_PRODUCTS_AND_CATEGORIES)]
+        [RequiresPermissions(Permission.SeeProductsAndCategories)]
         public IActionResult Get(int id)
         {
             return this.Json(this.mapper.FromModel(categoryDao.Read(id)));
         }
 
         [HttpPost]
-        [RequiresPermissions(Permissions.MANAGE_CATEGORIES)]
+        [RequiresPermissions(Permission.ManageCategories)]
         public IActionResult Post(CategoryDetails newCategory)
         {
             Category category = categoryDao.Create(this.mapper.ToModel(newCategory));
@@ -49,7 +49,7 @@ namespace GalliumPlus.WebService.Controllers
         }
 
         [HttpPut("{id}")]
-        [RequiresPermissions(Permissions.MANAGE_CATEGORIES)]
+        [RequiresPermissions(Permission.ManageCategories)]
         public IActionResult Put(int id, CategoryDetails updatedCategory)
         {
             categoryDao.Update(id, this.mapper.ToModel(updatedCategory));
@@ -65,7 +65,7 @@ namespace GalliumPlus.WebService.Controllers
         }
 
         [HttpDelete("{id}")]
-        [RequiresPermissions(Permissions.MANAGE_CATEGORIES)]
+        [RequiresPermissions(Permission.ManageCategories)]
         public IActionResult Delete(int id)
         {
             string categoryName = categoryDao.Read(id).Name;
