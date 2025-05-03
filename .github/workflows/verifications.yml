@@ -7,36 +7,6 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
-      with:
-        submodules: recursive
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: 8.0.x
-    - name: Restore dependencies
-      run: dotnet restore
-    - name: Build
-      run: dotnet build WebService --no-restore /warnaserror -c Release
-    - name: Setup Python
-      uses: actions/setup-python@v4.7.1
-      with:
-        python-version: '3.11'
-      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    - name: Install Paramiko
-      run: python3 -m pip install paramiko
-      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    - name: Deploy build
-      env:
-        DEPLOY_HOSTNAME: ${{ secrets.DEPLOY_HOSTNAME }}
-        DEPLOY_USERNAME: ${{ secrets.DEPLOY_USERNAME }}
-        DEPLOY_PASSWORD: ${{ secrets.DEPLOY_PASSWORD }}
-      run: python3 .deployment/galliumplus-deploy
-      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-  
   unit-tests:
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
@@ -51,7 +21,11 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: 8.0.x
+        dotnet-version: 8.x
+    - name: Restore dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build WebService --no-restore /warnaserror -c Release
     - name: Run unit tests
       run: dotnet test CoreTests
   
