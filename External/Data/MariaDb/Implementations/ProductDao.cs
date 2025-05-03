@@ -35,7 +35,7 @@ namespace GalliumPlus.Data.MariaDb.Implementations
                 .Value("expirationDate", (object?)null)
                 .Value("expiresUponExhaustion", false)
                 .Value("type",
-                    db.Select("id").From("PricingType").Where(SQL.AND(
+                    db.Select("id").From("PriceList").Where(SQL.AND(
                         db.Column("applicableDuring") == 1,
                         db.Column("requiresMembership") == 0
                     ))
@@ -50,7 +50,7 @@ namespace GalliumPlus.Data.MariaDb.Implementations
                 .Value("expirationDate", (object?)null)
                 .Value("expiresUponExhaustion", false)
                 .Value("type",
-                    db.Select("id").From("PricingType").Where(SQL.AND(
+                    db.Select("id").From("PriceList").Where(SQL.AND(
                         db.Column("applicableDuring") == 1,
                         db.Column("requiresMembership") == 1
                     ))
@@ -94,7 +94,7 @@ namespace GalliumPlus.Data.MariaDb.Implementations
             var cmd = connection.CreateCommand();
             cmd.CommandText = @"
                 WITH pv AS (
-                  SELECT p.price, p.item, pt.requiresMembership FROM Price p JOIN PricingType pt ON p.type = pt.id AND pt.applicableDuring = 1
+                  SELECT p.price, p.item, pt.requiresMembership FROM Price p JOIN PriceList pt ON p.type = pt.id AND pt.applicableDuring = 1
                 )
                 SELECT i.id AS productId
                      , i.name AS productName
@@ -123,7 +123,7 @@ namespace GalliumPlus.Data.MariaDb.Implementations
             var cmd = connection.CreateCommand();
             cmd.CommandText = @"
                 WITH pv AS (
-                  SELECT p.price, p.item, pt.requiresMembership FROM Price p JOIN PricingType pt ON p.type = pt.id AND pt.applicableDuring = 1
+                  SELECT p.price, p.item, pt.requiresMembership FROM Price p JOIN PriceList pt ON p.type = pt.id AND pt.applicableDuring = 1
                 )
                 SELECT i.id AS productId
                      , i.name AS productName
@@ -168,7 +168,7 @@ namespace GalliumPlus.Data.MariaDb.Implementations
                 var cmd = connection.CreateCommand();
                 cmd.CommandText = @"
                     UPDATE Price SET price = @price WHERE TYPE IN
-                        (  SELECT id FROM PricingType WHERE 
+                        (  SELECT id FROM PriceList WHERE 
                            applicableDuring = 1 AND
                            requiresMembership <> 1
                         ) AND
@@ -181,7 +181,7 @@ namespace GalliumPlus.Data.MariaDb.Implementations
                 cmd = connection.CreateCommand();
                 cmd.CommandText = @"
                     UPDATE Price SET price = @price WHERE TYPE IN
-                        (  SELECT id FROM PricingType WHERE 
+                        (  SELECT id FROM PriceList WHERE 
                            applicableDuring = 1 AND
                            requiresMembership = 1
                         ) AND

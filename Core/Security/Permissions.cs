@@ -73,6 +73,11 @@ public enum Permission : uint
     /// Permission d'utiliser les différents outils de développement associés à Gallium.
     /// </summary>
     UseDeveloperTools = 0x400,
+    
+    /// <summary>
+    /// Permission de gérer les tarifs des articles.
+    /// </summary>
+    ManagePrices = 0x800,
 
     /// <summary>
     /// Permission de modifier les acomptes manuellement. Cette permission ne doit pas pouvoir être donnée à quiconque,
@@ -97,7 +102,7 @@ public enum Permission : uint
     /// <summary>
     /// Toutes les permissions
     /// </summary>
-    All = 0x7FF,
+    All = 0x7FF
 }
 
 public class Permissions : EnumBitflagSet<Permission>
@@ -111,6 +116,7 @@ public class Permissions : EnumBitflagSet<Permission>
         var seeProductsAndCategories = this.Flag(Permission.SeeProductsAndCategories);
         this.Flag(Permission.ManageProducts, seeProductsAndCategories);
         this.Flag(Permission.ManageCategories, seeProductsAndCategories);
+        this.Flag(Permission.ManagePrices, seeProductsAndCategories);
         
         var seeAllUsersAndRoles = this.Flag(Permission.SeeAllUsersAndRoles);
         var manageDeposits = this.Flag(Permission.ManageDeposits, seeAllUsersAndRoles);

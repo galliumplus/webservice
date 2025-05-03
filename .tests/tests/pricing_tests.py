@@ -1,8 +1,8 @@
 from utils.test_base import TestBase
 from utils.auth import BearerAuth
-from .history_tests_helpers import HistoryTestHelpers
+from .audit_tests_helpers import AuditTestHelpers
 
-INVALID_PRICING_TYPES = [
+INVALID_PRICE_LISTS = [
     {
         "shortName": "EtiSmash",
         "requiresMembership": False,
@@ -62,104 +62,100 @@ class PricingTests(TestBase):
     def tearDown(self):
         self.unset_authentication()
 
-    def test_pricing_type_get_all(self):
-        response = self.get("pricing_types")
+    def test_price_list_get_all(self):
+        response = self.get("price-lists")
         self.expect(response.status_code).to.be.equal_to(200)
 
-        pricing_types = response.json()
-        self.expect(pricing_types).to.be.a(list)._and._not.empty()
+        price_lists = response.json()
+        self.expect(price_lists).to.be.a(list)._and._not.empty()
 
-        pricing_type = pricing_types[0]
-        self.expect(pricing_type).to.have.an_item("id").of.type(int)
-        self.expect(pricing_type).to.have.an_item("longName").of.type(str)
-        self.expect(pricing_type).to.have.an_item("shortName").of.type(str)
-        self.expect(pricing_type).to.have.an_item("requiresMembership").of.type(bool)
+        price_list = price_lists[0]
+        self.expect(price_list).to.have.an_item("id").of.type(int)
+        self.expect(price_list).to.have.an_item("longName").of.type(str)
+        self.expect(price_list).to.have.an_item("shortName").of.type(str)
+        self.expect(price_list).to.have.an_item("requiresMembership").of.type(bool)
 
-    def test_pricing_type_get_one(self):
-        existing_id = self.get("pricing_types").json()[0]["id"]
+    def test_price_list_get_one(self):
+        existing_id = self.get("price-lists").json()[0]["id"]
         invalid_id = 12345
 
         # Test avec un tarif existant
 
-        response = self.get(f"pricing_types/{existing_id}")
+        response = self.get(f"price-lists/{existing_id}")
         self.expect(response.status_code).to.be.equal_to(200)
 
-        pricing_type = response.json()
-        self.expect(pricing_type).to.be.a(dict)
-        self.expect(pricing_type).to.have.an_item("id").of.type(int)
-        self.expect(pricing_type).to.have.an_item("longName").of.type(str)
-        self.expect(pricing_type).to.have.an_item("shortName").of.type(str)
-        self.expect(pricing_type).to.have.an_item("requiresMembership").of.type(bool)
+        price_list = response.json()
+        self.expect(price_list).to.be.a(dict)
+        self.expect(price_list).to.have.an_item("id").of.type(int)
+        self.expect(price_list).to.have.an_item("longName").of.type(str)
+        self.expect(price_list).to.have.an_item("shortName").of.type(str)
+        self.expect(price_list).to.have.an_item("requiresMembership").of.type(bool)
 
         # Test avec un tarif inexistant
 
-        response = self.get(f"pricing_types/{invalid_id}")
+        response = self.get(f"price-lists/{invalid_id}")
         self.expect(response.status_code).to.be.equal_to(404)
 
-    def test_pricing_type_create(self):
-        previous_pricing_type_count = len(self.get("pricing_types").json())
+    def test_price_list_create(self):
+        previous_price_list_count = len(self.get("price-lists").json())
 
-        valid_pricing_type = {
+        valid_price_list = {
             "longName": "Tarif spécial EtiSmash",
             "shortName": "EtiSmash",
             "requiresMembership": False,
         }
 
         with self.audit.watch():
-            response = self.post("pricing_types", valid_pricing_type)
+            response = self.post("price-lists", valid_price_list)
         self.expect(response.status_code).to.be.equal_to(201)
         location = self.expect(response.headers).to.have.an_item("Location").value
 
-        created_pricing_type = response.json()
-        self.expect(created_pricing_type).to.have.an_item("id")
-        self.expect(created_pricing_type["name"]).to.be.equal_to("Jus")
+        created_price_list = response.json()
+        self.expect(created_price_list).to.have.an_item("id")
+        self.expect(created_price_list["name"]).to.be.equal_to("Jus")
 
         response = self.get(location)
         self.expect(response.status_code).to.be.equal_to(200)
-        created_pricing_type = response.json()
-        self.expect(created_pricing_type["name"]).to.be.equal_to("Jus")
+        created_price_list = response.json()
+        self.expect(created_price_list["name"]).to.be.equal_to("Jus")
 
-        new_pricing_type_count = len(self.get("pricing_types").json())
-        self.expect(new_pricing_type_count).to.be.equal_to(
-            previous_pricing_type_count + 1
-        )
+        new_price_list_count = len(self.get("price-lists").json())
+        self.expect(new_price_list_count).to.be.equal_to(previous_price_list_count + 1)
 
-        self.audit.expect_entries(
-            self.audit.pricing_type_added_action("Jus", "eb069420")
-        )
+        self.audit.expect_entries(self.audit.price_list_added_action("Jus", "eb069420"))
 
-        for invalid_pricing_type in INVALID_PRICING_TYPES:
-            response = self.post("pricing_types", invalid_pricing_type)
+        for invalid_price_list in INVALID_PRICE_LISTS:
+            response = self.post("price-lists", invalid_price_list)
             self.expect(response.status_code).to.be.equal_to(400)
             self.expect(response.json()).to.have.an_item("code").that._is.equal_to(
                 "InvalidResource"
             )
 
-    def test_pricing_type_edit(self):
-        valid_pricing_type = self.get("pricing_types").json()[-1]
-        valid_pricing_type.update(Name="Jus")
-        pricing_type_id = valid_pricing_type["id"]
+    def test_price_list_edit(self):
+        valid_price_list = self.get("price-lists").json()[-1]
+        valid_price_list.update(Name="Jus")
+        price_list_id = valid_price_list["id"]
 
         with self.audit.watch():
-            response = self.put(f"pricing_types/{pricing_type_id}", valid_pricing_type)
+            response = self.put(f"price-lists/{price_list_id}", valid_price_list)
         self.expect(response.status_code).to.be.equal_to(200)
 
-        edited_pricing_type = self.get(f"pricing_types/{pricing_type_id}").json()
-        self.expect(edited_pricing_type["name"]).to.be.equal_to("Jus")
+        edited_price_list = self.get(f"price-lists/{price_list_id}").json()
+        self.expect(edited_price_list["name"]).to.be.equal_to("Jus")
 
         self.audit.expect_entries(
-            self.audit.pricing_type_modified_action("Jus", "eb069420")
+            self.audit.price_list_modified_action("Jus", "eb069420")
         )
 
-        # pricing_type qui n'existe pas
+        # price_list qui n'existe pas
 
-        response = self.put("pricing_types/12345", valid_pricing_type)
+        response = self.put("price-lists/12345", valid_price_list)
         self.expect(response.status_code).to.be.equal_to(404)
 
         # Informations manquantes
 
-        invalid_pricing_type = {}
-        response = self.put(f"pricing_types/{pricing_type_id}", invalid_pricing_type)
+        invalid_price_list = {}
+        response = self.put(f"price-lists/{price_list_id}", invalid_price_list)
         self.expect(response.status_code).to.be.equal_to(400)
         self.expect(response.json()).to.have.an_item("code").that._is.equal_to(
             "InvalidResource"
@@ -167,16 +163,16 @@ class PricingTests(TestBase):
 
         # Informations non valides
 
-        invalid_pricing_type = {"name": ""}
-        response = self.put(f"pricing_types/{pricing_type_id}", invalid_pricing_type)
+        invalid_price_list = {"name": ""}
+        response = self.put(f"price-lists/{price_list_id}", invalid_price_list)
         self.expect(response.status_code).to.be.equal_to(400)
         self.expect(response.json()).to.have.an_item("code").that._is.equal_to(
             "InvalidResource"
         )
 
-    def test_pricing_type_delete(self):
-        pricing_type = {"name": "Jus"}
-        location = self.post("pricing_types", pricing_type).headers["Location"]
+    def test_price_list_delete(self):
+        price_list = {"name": "Jus"}
+        location = self.post("price-lists", price_list).headers["Location"]
 
         # On supprimme la catégorie
 
@@ -185,7 +181,7 @@ class PricingTests(TestBase):
         self.expect(response.status_code).to.be.equal_to(200)
 
         self.audit.expect_entries(
-            self.audit.pricing_type_deleted_action("Jus", "eb069420")
+            self.audit.price_list_deleted_action("Jus", "eb069420")
         )
 
         # La catégorie n'existe plus
@@ -198,30 +194,30 @@ class PricingTests(TestBase):
         response = self.delete(location)
         self.expect(response.status_code).to.be.equal_to(404)
 
-    def test_pricing_type_no_authentification(self):
+    def test_price_list_no_authentification(self):
         self.unset_authentication()
 
-        response = self.get("pricing_types")
+        response = self.get("price-lists")
         self.expect(response.status_code).to.be.equal_to(401)
-        response = self.post("pricing_types", {})
+        response = self.post("price-lists", {})
         self.expect(response.status_code).to.be.equal_to(401)
-        response = self.get("pricing_types/1")
+        response = self.get("price-lists/1")
         self.expect(response.status_code).to.be.equal_to(401)
-        response = self.put("pricing_types/1", {})
+        response = self.put("price-lists/1", {})
         self.expect(response.status_code).to.be.equal_to(401)
-        response = self.delete("pricing_types/1")
+        response = self.delete("price-lists/1")
         self.expect(response.status_code).to.be.equal_to(401)
 
-    def test_pricing_type_no_permission(self):
+    def test_price_list_no_permission(self):
         self.set_authentication(BearerAuth("12345678901234567890"))
 
-        response = self.get("pricing_types")
+        response = self.get("price-lists")
         self.expect(response.status_code).to.be.equal_to(403)
-        response = self.post("pricing_types", {"name": "/"})
+        response = self.post("price-lists", {"name": "/"})
         self.expect(response.status_code).to.be.equal_to(403)
-        response = self.get("pricing_types/1")
+        response = self.get("price-lists/1")
         self.expect(response.status_code).to.be.equal_to(403)
-        response = self.put("pricing_types/1", {"name": "/"})
+        response = self.put("price-lists/1", {"name": "/"})
         self.expect(response.status_code).to.be.equal_to(403)
-        response = self.delete("pricing_types/1")
+        response = self.delete("price-lists/1")
         self.expect(response.status_code).to.be.equal_to(403)

@@ -6,7 +6,7 @@ namespace GalliumPlus.Core.Items;
 /// <summary>
 /// Représente un tarif, comme le tarif adhérent ou le tarif non-adhérent. 
 /// </summary>
-public class PricingType
+public class PriceList
 {
     [PrimaryKey(AutoIncrement = true)]
     private readonly long id;
@@ -45,7 +45,7 @@ public class PricingType
     /// <param name="shortName">Le nom abrégé du tarif.</param>
     /// <param name="longName">Le nom complet du tarif.</param>
     /// <param name="requiresMembership">Si le tarif est applicable uniquement aux adhérents.</param>
-    public PricingType(long id, string shortName, string longName, bool requiresMembership)
+    public PriceList(long id, string shortName, string longName, bool requiresMembership)
     {
         this.id = id;
         this.shortName = shortName;
