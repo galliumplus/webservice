@@ -1,0 +1,15 @@
+meta {
+  name: Récupérer tous les rôles
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{base_url}}/roles
+  body: none
+  auth: inherit
+}
+
+assert {
+  res.status: eq 200
+}

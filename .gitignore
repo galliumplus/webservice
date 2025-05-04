@@ -356,3 +356,6 @@ MigrationBackup/
 
 !Core/Logs
 /.idea
+/Bruno/localhost.pem
+/Bruno/results.html
+*.local.bru
