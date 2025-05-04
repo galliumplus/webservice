@@ -1,0 +1,19 @@
+{
+  "version": "1",
+  "name": "Gallium+",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ],
+  "size": 0.00047588348388671875,
+  "filesCount": 4,
+  "clientCertificates": {
+    "enabled": true,
+    "certs": []
+  },
+  "presets": {
+    "requestType": "http",
+    "requestUrl": "{{base_url}}/"
+  }
+}

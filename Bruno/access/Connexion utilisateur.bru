@@ -1,0 +1,36 @@
+meta {
+  name: Connexion utilisateur
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{base_url}}/login
+  body: none
+  auth: basic
+}
+
+headers {
+  X-Api-Key: {{test_api_key}}
+}
+
+auth:basic {
+  username: {{username}}
+  password: {{password}}
+}
+
+body:json {
+  {
+    
+  }
+}
+
+assert {
+  res.status: eq 200
+}
+
+script:post-response {
+  if (bru.getEnvName() != 'tests') {
+    bru.setVar('token', res.body.token)
+  }
+}

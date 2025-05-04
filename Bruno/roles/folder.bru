@@ -1,0 +1,9 @@
+meta {
+  name: Rôles
+}
+
+script:pre-request {
+  if (bru.getEnvName() == 'tests') {
+    bru.setVar('token', '09876543210987654321')
+  }
+}
