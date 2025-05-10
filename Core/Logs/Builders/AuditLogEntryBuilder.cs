@@ -46,6 +46,17 @@ public partial class AuditLogEntryBuilder
         );
 
     public IClientEntryBuilder Client(Client client) => new ClientEntryBuilder(client, this);
+    
+
+    public IGenericEntryBuilder PriceList(PriceList priceList)
+        => new GenericEntryBuilder(
+            this,
+            LoggedAction.PriceListAdded, LoggedAction.PriceListModified, LoggedAction.PriceListDeleted,
+            root => {
+                root.details.Add("id", priceList.Id);
+                root.details.Add("name", priceList.LongName);
+            }
+        );
 
     public IUserEntryBuilder User(User user) => new UserEntryBuilder(user, this);
 }

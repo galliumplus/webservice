@@ -7,8 +7,8 @@ namespace GalliumPlus.Data.Fake
     {
         public PriceListDao()
         {
-            this.Create(id => new PriceList(id, "Adhérent", "Tarif normal adhérent", true));
-            this.Create(id => new PriceList(id, "Non-adhérent", "Tarif normal non-adhérent", false));
+            this.Create(id => new PriceList(id, "NON ADHÉRENT", "Tarif test non-adhérent", false));
+            this.Create(id => new PriceList(id, "ADHÉRENT", "Tarif test adhérent", true));
         }
 
         protected override int GetKey(PriceList item) => item.Id;

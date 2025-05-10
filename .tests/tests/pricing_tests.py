@@ -2,62 +2,12 @@ from utils.test_base import TestBase
 from utils.auth import BearerAuth
 from .audit_tests_helpers import AuditTestHelpers
 
-INVALID_PRICE_LISTS = [
-    {
-        "shortName": "EtiSmash",
-        "requiresMembership": False,
-    },
-    {
-        "longName": "Tarif spécial EtiSmash",
-        "requiresMembership": True,
-    },
-    {
-        "longName": "Tarif spécial EtiSmash",
-        "shortName": "EtiSmash",
-    },
-    {
-        "longName": "",
-        "shortName": "EtiSmash",
-        "requiresMembership": True,
-    },
-    {
-        "longName": "    ",
-        "shortName": "EtiSmash",
-        "requiresMembership": False,
-    },
-    {
-        "longName": "Tarif spécial EtiSmaaaaaaaaaaaaaaaaaaaaaaaaaaaaaash",
-        "shortName": "EtiSmash",
-        "requiresMembership": False,
-    },
-    {
-        "longName": "Tarif spécial EtiSmash",
-        "shortName": "",
-        "requiresMembership": True,
-    },
-    {
-        "longName": "Tarif spécial EtiSmash",
-        "shortName": "   ",
-        "requiresMembership": False,
-    },
-    {
-        "longName": "Tarif spécial EtiSmash",
-        "shortName": "EtiSmaaaaaaaaaash",
-        "requiresMembership": True,
-    },
-    {
-        "longName": "Tarif spécial EtiSmash",
-        "shortName": "EtiSmash",
-        "requiresMembership": 1,
-    },
-]
-
 
 class PricingTests(TestBase):
     def setUp(self):
         super().setUp()
         self.set_authentication(BearerAuth("09876543210987654321"))
-        self.audit = AuditTestHelpers(self)
+        self.audit = AuditTestHelpers(self, 1, 3)
 
     def tearDown(self):
         self.unset_authentication()
@@ -96,44 +46,47 @@ class PricingTests(TestBase):
         response = self.get(f"price-lists/{invalid_id}")
         self.expect(response.status_code).to.be.equal_to(404)
 
-    def test_price_list_create(self):
-        previous_price_list_count = len(self.get("price-lists").json())
+    # A faire quand on gèrera les évènements
 
-        valid_price_list = {
-            "longName": "Tarif spécial EtiSmash",
-            "shortName": "EtiSmash",
-            "requiresMembership": False,
-        }
+    # def test_price_list_create(self):
+    #     previous_price_list_count = len(self.get("price-lists").json())
 
-        with self.audit.watch():
-            response = self.post("price-lists", valid_price_list)
-        self.expect(response.status_code).to.be.equal_to(201)
-        location = self.expect(response.headers).to.have.an_item("Location").value
+    #     valid_price_list = {
+    #         "longName": "Tarif spécial EtiSmash",
+    #         "shortName": "EtiSmash",
+    #         "requiresMembership": False,
+    #         # ajouter le champ "applicableDuring" ici ?
+    #     }
 
-        created_price_list = response.json()
-        self.expect(created_price_list).to.have.an_item("id")
-        self.expect(created_price_list["name"]).to.be.equal_to("Jus")
+    #     with self.audit.watch():
+    #         response = self.post("price-lists", valid_price_list)
+    #     self.expect(response.status_code).to.be.equal_to(201)
+    #     location = self.expect(response.headers).to.have.an_item("Location").value
 
-        response = self.get(location)
-        self.expect(response.status_code).to.be.equal_to(200)
-        created_price_list = response.json()
-        self.expect(created_price_list["name"]).to.be.equal_to("Jus")
+    #     created_price_list = response.json()
+    #     self.expect(created_price_list).to.have.an_item("id")
+    #     self.expect(created_price_list["name"]).to.be.equal_to("Jus")
 
-        new_price_list_count = len(self.get("price-lists").json())
-        self.expect(new_price_list_count).to.be.equal_to(previous_price_list_count + 1)
+    #     response = self.get(location)
+    #     self.expect(response.status_code).to.be.equal_to(200)
+    #     created_price_list = response.json()
+    #     self.expect(created_price_list["name"]).to.be.equal_to("Jus")
 
-        self.audit.expect_entries(self.audit.price_list_added_action("Jus", "eb069420"))
+    #     new_price_list_count = len(self.get("price-lists").json())
+    #     self.expect(new_price_list_count).to.be.equal_to(previous_price_list_count + 1)
 
-        for invalid_price_list in INVALID_PRICE_LISTS:
-            response = self.post("price-lists", invalid_price_list)
-            self.expect(response.status_code).to.be.equal_to(400)
-            self.expect(response.json()).to.have.an_item("code").that._is.equal_to(
-                "InvalidResource"
-            )
+    #     self.audit.expect_entries(self.audit.price_list_added_action("Jus", "eb069420"))
+
+    #     for invalid_price_list in INVALID_PRICE_LISTS:
+    #         response = self.post("price-lists", invalid_price_list)
+    #         self.expect(response.status_code).to.be.equal_to(400)
+    #         self.expect(response.json()).to.have.an_item("code").that._is.equal_to(
+    #             "InvalidResource"
+    #         )
 
     def test_price_list_edit(self):
         valid_price_list = self.get("price-lists").json()[-1]
-        valid_price_list.update(Name="Jus")
+        valid_price_list.update(shortName="TEST")
         price_list_id = valid_price_list["id"]
 
         with self.audit.watch():
@@ -141,13 +94,15 @@ class PricingTests(TestBase):
         self.expect(response.status_code).to.be.equal_to(200)
 
         edited_price_list = self.get(f"price-lists/{price_list_id}").json()
-        self.expect(edited_price_list["name"]).to.be.equal_to("Jus")
+        self.expect(edited_price_list["shortName"]).to.be.equal_to("TEST")
 
         self.audit.expect_entries(
-            self.audit.price_list_modified_action("Jus", "eb069420")
+            self.audit.entry(
+                "PriceListModified", id=price_list_id, name="Tarif test adhérent"
+            )
         )
 
-        # price_list qui n'existe pas
+        # Tarif qui n'existe pas
 
         response = self.put("price-lists/12345", valid_price_list)
         self.expect(response.status_code).to.be.equal_to(404)
@@ -163,49 +118,47 @@ class PricingTests(TestBase):
 
         # Informations non valides
 
-        invalid_price_list = {"name": ""}
+        invalid_price_list = {"shortName": "long comme un lundi"}
         response = self.put(f"price-lists/{price_list_id}", invalid_price_list)
         self.expect(response.status_code).to.be.equal_to(400)
         self.expect(response.json()).to.have.an_item("code").that._is.equal_to(
             "InvalidResource"
         )
 
-    def test_price_list_delete(self):
-        price_list = {"name": "Jus"}
-        location = self.post("price-lists", price_list).headers["Location"]
+    # Pareil que pour test_price_list_create
 
-        # On supprimme la catégorie
+    # def test_price_list_delete(self):
+    #     price_list = {"name": "Jus"}
+    #     location = self.post("price-lists", price_list).headers["Location"]
 
-        with self.audit.watch():
-            response = self.delete(location)
-        self.expect(response.status_code).to.be.equal_to(200)
+    #     # On supprimme la catégorie
 
-        self.audit.expect_entries(
-            self.audit.price_list_deleted_action("Jus", "eb069420")
-        )
+    #     with self.audit.watch():
+    #         response = self.delete(location)
+    #     self.expect(response.status_code).to.be.equal_to(200)
 
-        # La catégorie n'existe plus
+    #     self.audit.expect_entries(
+    #         self.audit.price_list_deleted_action("Jus", "eb069420")
+    #     )
 
-        response = self.get(location)
-        self.expect(response.status_code).to.be.equal_to(404)
+    #     # La catégorie n'existe plus
 
-        # On ne peut plus le supprimer
+    #     response = self.get(location)
+    #     self.expect(response.status_code).to.be.equal_to(404)
 
-        response = self.delete(location)
-        self.expect(response.status_code).to.be.equal_to(404)
+    #     # On ne peut plus le supprimer
+
+    #     response = self.delete(location)
+    #     self.expect(response.status_code).to.be.equal_to(404)
 
     def test_price_list_no_authentification(self):
         self.unset_authentication()
 
         response = self.get("price-lists")
         self.expect(response.status_code).to.be.equal_to(401)
-        response = self.post("price-lists", {})
-        self.expect(response.status_code).to.be.equal_to(401)
         response = self.get("price-lists/1")
         self.expect(response.status_code).to.be.equal_to(401)
         response = self.put("price-lists/1", {})
-        self.expect(response.status_code).to.be.equal_to(401)
-        response = self.delete("price-lists/1")
         self.expect(response.status_code).to.be.equal_to(401)
 
     def test_price_list_no_permission(self):
@@ -213,11 +166,7 @@ class PricingTests(TestBase):
 
         response = self.get("price-lists")
         self.expect(response.status_code).to.be.equal_to(403)
-        response = self.post("price-lists", {"name": "/"})
-        self.expect(response.status_code).to.be.equal_to(403)
         response = self.get("price-lists/1")
         self.expect(response.status_code).to.be.equal_to(403)
-        response = self.put("price-lists/1", {"name": "/"})
-        self.expect(response.status_code).to.be.equal_to(403)
-        response = self.delete("price-lists/1")
+        response = self.put("price-lists/1", {})
         self.expect(response.status_code).to.be.equal_to(403)

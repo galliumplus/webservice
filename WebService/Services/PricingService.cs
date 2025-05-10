@@ -10,4 +10,14 @@ public class PricingService(IPriceListDao priceListDao)
     {
         return priceListDao.Read();
     }
+
+    public PriceList GetPriceList(int id)
+    {
+        return priceListDao.Read(id);
+    }
+
+    public PriceList UpdatePriceList(int id, PriceList modifiedPriceList)
+    {
+        return priceListDao.Update(id, modifiedPriceList);
+    }
 }
