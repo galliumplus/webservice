@@ -6,7 +6,7 @@ namespace GalliumPlus.Core.Applications;
 /// La portée de l'accès Same Sign-On.
 /// </summary>
 [Flags]
-public enum SameSignOnScope
+public enum SameSignOnScope : uint
 {
     /// <summary>
     /// Accès au strict minimum (identifiant utilisateur et identifiant immuable)
