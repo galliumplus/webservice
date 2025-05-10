@@ -27,7 +27,7 @@ namespace GalliumPlus.Data.Fake
 
             protected override string GetKey(PasswordResetToken item) => item.Token;
 
-            protected override void SetKey(ref PasswordResetToken item, string key) => throw new NotImplementedException(); // tkt mon pote
+            protected override PasswordResetToken SetKey(PasswordResetToken item, string key) => throw new NotImplementedException(); // tkt mon pote
         }
         private PrtDao prtDao;
 
@@ -112,7 +112,7 @@ namespace GalliumPlus.Data.Fake
 
         protected override string GetKey(User item) => item.Id;
 
-        protected override void SetKey(ref User item, string key)
+        protected override User SetKey(User item, string key)
         {
             throw new InvalidOperationException("Can't set the user ID automatically");
         }

@@ -4,11 +4,18 @@
     {
         private int nextInsertKey = 1;
 
-        public override TItem Create(TItem client)
+        public override TItem Create(TItem item)
         {
-            this.SetKey(ref client, this.nextInsertKey);
+            item = this.SetKey(item, this.nextInsertKey);
             this.nextInsertKey++;
-            return base.Create(client);
+            return base.Create(item);
+        }
+        
+        public TItem Create(Func<int, TItem> factory)
+        {
+            TItem item = factory.Invoke(this.nextInsertKey);
+            this.nextInsertKey++;
+            return base.Create(item);
         }
     }
 }

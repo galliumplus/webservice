@@ -102,7 +102,7 @@ public enum Permission : uint
     /// <summary>
     /// Toutes les permissions
     /// </summary>
-    All = 0x7FF
+    All = 0xFFF
 }
 
 public class Permissions : EnumBitflagSet<Permission>

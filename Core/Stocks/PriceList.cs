@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using KiwiQuery.Mapped;
 
-namespace GalliumPlus.Core.Items;
+namespace GalliumPlus.Core.Stocks;
 
 /// <summary>
 /// Représente un tarif, comme le tarif adhérent ou le tarif non-adhérent. 
@@ -9,7 +9,7 @@ namespace GalliumPlus.Core.Items;
 public class PriceList
 {
     [PrimaryKey(AutoIncrement = true)]
-    private readonly long id;
+    private readonly int id;
     private readonly string shortName;
     private readonly string longName;
     private readonly bool requiresMembership;
@@ -17,7 +17,7 @@ public class PriceList
     /// <summary>
     /// Le code du tarif.
     /// </summary>
-    public long Id => this.id;
+    public int Id => this.id;
 
     /// <summary>
     /// Le nom du tarif abrégé en un seul mot.
@@ -45,7 +45,7 @@ public class PriceList
     /// <param name="shortName">Le nom abrégé du tarif.</param>
     /// <param name="longName">Le nom complet du tarif.</param>
     /// <param name="requiresMembership">Si le tarif est applicable uniquement aux adhérents.</param>
-    public PriceList(long id, string shortName, string longName, bool requiresMembership)
+    public PriceList(int id, string shortName, string longName, bool requiresMembership)
     {
         this.id = id;
         this.shortName = shortName;

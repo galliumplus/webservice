@@ -46,7 +46,11 @@ namespace GalliumPlus.Data.Fake
 
         protected override int GetKey(Product item) => item.Id;
 
-        protected override void SetKey(ref Product item, int key) => item.Id = key;
+        protected override Product SetKey(Product item, int key)
+        {
+            item.Id = key;
+            return item;
+        }
 
         public override void Delete(int key)
         {

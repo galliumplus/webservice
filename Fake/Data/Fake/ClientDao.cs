@@ -206,7 +206,11 @@ namespace GalliumPlus.Data.Fake
 
         protected override int GetKey(Client item) => item.Id;
 
-        protected override void SetKey(ref Client item, int key) => item.Id = key;
+        protected override Client SetKey(Client item, int key)
+        {
+            item.Id = key;
+            return item;
+        }
 
         protected override bool CheckConstraints(Client item)
         {

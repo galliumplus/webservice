@@ -27,6 +27,11 @@ namespace GalliumPlus.Data.Fake
         }
 
         protected override int GetKey(Role item) => item.Id;
-        protected override void SetKey(ref Role item, int key) => item.Id = key;
+
+        protected override Role SetKey(Role item, int key)
+        {
+            item.Id = key;
+            return item;
+        }
     }
 }

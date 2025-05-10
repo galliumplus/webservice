@@ -7,16 +7,16 @@ namespace GalliumPlus.Data.Fake
     public abstract class BaseDao<TKey, TItem> : IBasicDao<TKey, TItem>
     where TKey : notnull
     {
-        private Dictionary<TKey, TItem> items;
+        private readonly Dictionary<TKey, TItem> items;
 
-        public Dictionary<TKey, TItem> Items => this.items;
+        protected Dictionary<TKey, TItem> Items => this.items;
 
-        public BaseDao()
+        protected BaseDao()
         {
             this.items = new Dictionary<TKey, TItem>();
         }
 
-        virtual public TItem Create(TItem client)
+        public virtual TItem Create(TItem client)
         {
             lock (this.items)
             {
@@ -36,7 +36,7 @@ namespace GalliumPlus.Data.Fake
             }
         }
 
-        virtual public void Delete(TKey key)
+        public virtual void Delete(TKey key)
         {
             lock (this.items)
             {
@@ -47,12 +47,12 @@ namespace GalliumPlus.Data.Fake
             }
         }
 
-        virtual public IEnumerable<TItem> Read()
+        public virtual IEnumerable<TItem> Read()
         {
             return this.items.Values;
         }
 
-        virtual public TItem Read(TKey key)
+        public virtual TItem Read(TKey key)
         {
             try
             {
@@ -64,7 +64,7 @@ namespace GalliumPlus.Data.Fake
             }
         }
 
-        virtual public TItem Update(TKey key, TItem item)
+        public virtual TItem Update(TKey key, TItem item)
         {
             lock (this.items)
             {
@@ -73,11 +73,16 @@ namespace GalliumPlus.Data.Fake
                     throw new InvalidResourceException("Custom constraints violated");
                 }
 
-                if (!this.items.ContainsKey(key)) throw new ItemNotFoundException();
-
-                this.SetKey(ref item, key);
-                AssignObject(this.items[key], item);
-                return item;
+                if (this.items.TryGetValue(key, out TItem? value))
+                {
+                    item = this.SetKey(item, key);
+                    AssignObject(value, item);
+                    return item;
+                }
+                else
+                {
+                    throw new ItemNotFoundException();
+                }
             }
         }
 
@@ -95,10 +100,10 @@ namespace GalliumPlus.Data.Fake
             }
         }
 
-        abstract protected TKey GetKey(TItem item);
+        protected abstract TKey GetKey(TItem item);
 
-        protected abstract void SetKey(ref TItem item, TKey key);
+        protected abstract TItem SetKey(TItem item, TKey key);
 
-        virtual protected bool CheckConstraints(TItem item) => true;
+        protected virtual bool CheckConstraints(TItem item) => true;
     }
 }
