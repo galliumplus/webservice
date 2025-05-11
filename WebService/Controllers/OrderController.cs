@@ -1,7 +1,7 @@
 ﻿using GalliumPlus.Core.Data;
 using GalliumPlus.Core.Logs;
 using GalliumPlus.Core.Orders;
-using GalliumPlus.Core.Users;
+using GalliumPlus.Core.Security;
 using GalliumPlus.WebService.Dto.Legacy;
 using GalliumPlus.WebService.Middleware.Authorization;
 using Microsoft.AspNetCore.Authorization;
@@ -28,7 +28,7 @@ namespace GalliumPlus.WebService.Controllers
         }
 
         [HttpPost]
-        [RequiresPermissions(Permissions.SELL)]
+        [RequiresPermissions(Permission.Sell)]
         public IActionResult Post(OrderSummary newOrder)
         {
             Order order = this.mapper.ToModel(newOrder);

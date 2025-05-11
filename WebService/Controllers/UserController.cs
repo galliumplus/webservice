@@ -31,7 +31,7 @@ public class UserController(
     private UserDetails.Mapper detailsMapper = new();
 
     [HttpGet]
-    [RequiresPermissions(Permissions.SEE_ALL_USERS_AND_ROLES)]
+    [RequiresPermissions(Permission.SeeAllUsersAndRoles)]
     public IActionResult Get()
     {
         return this.Json(this.summaryMapper.FromModel(userDao.Read()));
@@ -42,7 +42,7 @@ public class UserController(
     {
         if (id != this.User!.Id)
         {
-            this.RequirePermissions(Permissions.SEE_ALL_USERS_AND_ROLES);
+            this.RequirePermissions(Permission.SeeAllUsersAndRoles);
         }
 
         return this.Json(this.detailsMapper.FromModel(userDao.Read(id)));
@@ -62,13 +62,16 @@ public class UserController(
     }
 
     [HttpPost]
-    [RequiresPermissions(Permissions.MANAGE_USERS)]
+    [RequiresPermissions(Permission.ManageUsers)]
     public async Task<IActionResult> Post(UserSummary newUser)
     {
         historyDao.CheckUserNotInHistory(newUser.Id);
             
         User user = this.summaryMapper.ToModel(newUser);
-        if (!this.Session!.Permissions.Includes(Permissions.FORCE_DEPOSIT_MODIFICATION))
+        if (!Permissions.Current.IsSupersetOf(
+                this.Session!.Permissions,
+                Permission.ForceDepositModification
+            ))
         {
             user.Deposit = null;
         }
@@ -94,7 +97,7 @@ public class UserController(
     }
 
     [HttpPut("{id}")]
-    [RequiresPermissions(Permissions.MANAGE_USERS)]
+    [RequiresPermissions(Permission.ManageUsers)]
     public IActionResult Put(string id, UserSummary updatedUser)
     {
         if (updatedUser.Id != id)
@@ -102,7 +105,10 @@ public class UserController(
             historyDao.CheckUserNotInHistory(updatedUser.Id);
         }
 
-        if (this.Session!.Permissions.Includes(Permissions.FORCE_DEPOSIT_MODIFICATION))
+        if (Permissions.Current.IsSupersetOf(
+                this.Session!.Permissions,
+                Permission.ForceDepositModification
+            ))
         { 
             userDao.UpdateForcingDepositModification(id, this.summaryMapper.ToModel(updatedUser));
         }
@@ -128,7 +134,7 @@ public class UserController(
     }
 
     [HttpDelete("{id}")]
-    [RequiresPermissions(Permissions.MANAGE_USERS)]
+    [RequiresPermissions(Permission.ManageUsers)]
     public IActionResult Delete(string id)
     {
         User userToDelete = userDao.Read(id);
@@ -152,7 +158,7 @@ public class UserController(
     }
 
     [HttpPost("{id}/deposit")]
-    [RequiresPermissions(Permissions.MANAGE_DEPOSITS)]
+    [RequiresPermissions(Permission.ManageDeposits)]
     public IActionResult PostDeposit(string id, [FromBody] decimal added)
     {
         decimal? currentAmount = userDao.ReadDeposit(id);;
@@ -175,7 +181,7 @@ public class UserController(
     }
 
     [HttpDelete("{id}/deposit")]
-    [RequiresPermissions(Permissions.MANAGE_DEPOSITS)]
+    [RequiresPermissions(Permission.ManageDeposits)]
     public IActionResult PostDeposit(string id)
     {
         User user = userDao.Read(id);

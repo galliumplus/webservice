@@ -1,7 +1,7 @@
 ﻿using GalliumPlus.Core.Data;
 using GalliumPlus.Core.Logs;
+using GalliumPlus.Core.Security;
 using GalliumPlus.Core.Stocks;
-using GalliumPlus.Core.Users;
 using GalliumPlus.WebService.Dto.Legacy;
 using GalliumPlus.WebService.Middleware;
 using GalliumPlus.WebService.Middleware.Authorization;
@@ -29,14 +29,14 @@ namespace GalliumPlus.WebService.Controllers
         }
 
         [HttpGet]
-        [RequiresPermissions(Permissions.SEE_PRODUCTS_AND_CATEGORIES)]
+        [RequiresPermissions(Permission.SeeProductsAndCategories)]
         public IActionResult Get()
         {
             return this.Json(this.summaryMapper.FromModel(this.productDao.Read()));
         }
 
         [HttpGet("{id}", Name = "product")]
-        [RequiresPermissions(Permissions.SEE_PRODUCTS_AND_CATEGORIES)]
+        [RequiresPermissions(Permission.SeeProductsAndCategories)]
         public IActionResult Get(int id)
         {
             return this.Json(this.detailsMapper.FromModel(this.productDao.Read(id)));
@@ -44,14 +44,14 @@ namespace GalliumPlus.WebService.Controllers
 
         [HttpGet("{id}/image")]
         [Produces("image/png")]
-        [RequiresPermissions(Permissions.SEE_PRODUCTS_AND_CATEGORIES)]
+        [RequiresPermissions(Permission.SeeProductsAndCategories)]
         public IActionResult GetImage(int id)
         {
             return this.File(this.productDao.ReadImage(id).Bytes, "image/png");
         }
 
         [HttpPost]
-        [RequiresPermissions(Permissions.MANAGE_PRODUCTS)]
+        [RequiresPermissions(Permission.ManageProducts)]
         public IActionResult Post(ProductSummary newProduct)
         {
             Product product = this.productDao.Create(this.summaryMapper.ToModel(newProduct));
@@ -67,7 +67,7 @@ namespace GalliumPlus.WebService.Controllers
         }
 
         [HttpPut("{id}")]
-        [RequiresPermissions(Permissions.MANAGE_PRODUCTS)]
+        [RequiresPermissions(Permission.ManageProducts)]
         public IActionResult Put(int id, ProductSummary updatedProduct)
         {
             this.productDao.Update(id, this.summaryMapper.ToModel(updatedProduct));
@@ -84,7 +84,7 @@ namespace GalliumPlus.WebService.Controllers
 
         [HttpPut("{id}/image")]
         [ConsumesProductImages]
-        [RequiresPermissions(Permissions.MANAGE_PRODUCTS)]
+        [RequiresPermissions(Permission.ManageProducts)]
         public async Task<IActionResult> PutImage(int id, [FromBody] byte[] image)
         {
             ProductImage normalisedImage = await ProductImage.FromAnyImage(image, this.Request.ContentType ?? "");
@@ -102,7 +102,7 @@ namespace GalliumPlus.WebService.Controllers
         }
 
         [HttpDelete("{id}")]
-        [RequiresPermissions(Permissions.MANAGE_PRODUCTS)]
+        [RequiresPermissions(Permission.ManageProducts)]
         public IActionResult Delete(int id)
         {
             string productName = this.productDao.Read(id).Name;
@@ -119,7 +119,7 @@ namespace GalliumPlus.WebService.Controllers
         }
 
         [HttpDelete("{id}/image")]
-        [RequiresPermissions(Permissions.MANAGE_PRODUCTS)]
+        [RequiresPermissions(Permission.ManageProducts)]
         public IActionResult DeleteImage(int id)
         {
             string productName = this.productDao.Read(id).Name;

@@ -1,6 +1,6 @@
 
 DELETE FROM `Price`;
-DELETE FROM `PricingType`;
+DELETE FROM `PriceList`;
 DELETE FROM `Product`;
 DELETE FROM `Item`;
 DELETE FROM `Category`;
@@ -15,7 +15,7 @@ INSERT INTO `Item` VALUES
 	(2, 'KitKat',      0, 0, 14, 2, NULL, NULL, 0),  
 	(3, 'Pablo',       0, 1,  1, 3, NULL, NULL, 0);
 
-INSERT INTO `PricingType` VALUES
+INSERT INTO `PriceList` VALUES
     (1, 'NON ADHÉRENT', 'Tarif test non-adhérent', 0, 1),
     (2, 'ADHÉRENT',     'Tarif test adhérent',     1, 1);
 	
@@ -37,14 +37,14 @@ DELETE FROM `Session`;
 delete from `PasswordResetToken`;
 
 INSERT INTO `Client` VALUES
-	(1, 'test-api-key-normal',  'Tests (normal)',                        0,       2047, 1, 0),
+	(1, 'test-api-key-normal',  'Tests (normal)',                        0,       4095, 1, 0),
 	(2, 'test-api-key-restric', 'Tests (restricted)',                    0,        137, 1, 0),
-	(3, 'test-api-key-minimum', 'Tests (minimum)',                       1,       2047, 1, 0),
-	(4, 'test-api-key-macompf', 'Tests (Modif acompte forcée)', 1073741824, 1073743871, 1, 0),
+	(3, 'test-api-key-minimum', 'Tests (minimum)',                       1,       4095, 1, 0),
+	(4, 'test-api-key-macompf', 'Tests (Modif acompte forcée)', 1073741824, 1073745919, 1, 0),
 	(5, 'test-api-key-bot',     'Tests (bot)',                           1,          1, 1, 0),
-	(6, 'test-api-key-sso-dir', 'Tests (SSO, direct)',                   0,       2047, 1, 0),
-	(7, 'test-api-key-sso-ext', 'Tests (SSO, externe)',                  0,       2047, 1, 0),
-	(8, 'test-api-key-sso-bot', 'Tests (SSO, applicatif)',               0,       2047, 1, 0);
+	(6, 'test-api-key-sso-dir', 'Tests (SSO, direct)',                   0,       4095, 1, 0),
+	(7, 'test-api-key-sso-ext', 'Tests (SSO, externe)',                  0,       4095, 1, 0),
+	(8, 'test-api-key-sso-bot', 'Tests (SSO, applicatif)',               0,       4095, 1, 0);
 
 INSERT INTO `AppAccess`  VALUES
     (5, 0x6ff1904d29b818007ccbf05954bc1cd50f70148e41265cb823d54e2e3312b095, 'sel'),
@@ -58,7 +58,7 @@ INSERT INTO `SameSignOn` VALUES
 INSERT INTO `Role` VALUES
 	(1, 'Adhérent', 0),
 	(2, 'CA', 27),
-	(3, 'Président', 2047);
+	(3, 'Président', 4095);
 
 INSERT INTO `User` VALUES
 	(1, 'lomens', 'Nicolas', 'RESIN', 'nicolas.resin@iut-dijon.u-bourgogne.fr', 1, 'PROF', 20.00, 1, 0x6ff1904d29b818007ccbf05954bc1cd50f70148e41265cb823d54e2e3312b095, 'sel', NOW(), 0, 1, '2099-12-31'),

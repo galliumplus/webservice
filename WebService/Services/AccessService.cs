@@ -8,7 +8,6 @@ using JWT.Algorithms;
 using JWT.Builder;
 using Microsoft.AspNetCore.WebUtilities;
 using Multiflag;
-using SessionOptions = GalliumPlus.Core.Users.SessionOptions;
 
 namespace GalliumPlus.WebService.Services;
 
@@ -112,19 +111,19 @@ public class AccessService(IClientDao clientDao, ISessionDao sessionDao, Gallium
             .AddClaim(JWT_CLAIM_USER_ID, user.Id)
             .AddClaim(JWT_CLAIM_IMMUTABLE_UID, user.Iuid);
         // autres portées
-        if (app.SameSignOn.Scope.Includes(SameSignOnScopes.Identity))
+        if (SameSignOnScopes.Current.Identity.IsIn(app.SameSignOn.Scope))
         {
             jwtBuilder
                 .AddClaim(JWT_CLAIM_FIRST_NAME, user.Identity.FirstName)
                 .AddClaim(JWT_CLAIM_LAST_NAME, user.Identity.LastName);
         }
 
-        if (app.SameSignOn.Scope.Includes(SameSignOnScopes.Email))
+        if (SameSignOnScopes.Current.Email.IsIn(app.SameSignOn.Scope))
         {
             jwtBuilder.AddClaim(JWT_CLAIM_EMAIL, user.Identity.Email);
         }
 
-        if (app.SameSignOn.Scope.Includes(SameSignOnScopes.Role))
+        if (SameSignOnScopes.Current.Role.IsIn(app.SameSignOn.Scope))
         {
             jwtBuilder
                 .AddClaim(JWT_CLAIM_ROLE, user.Role.Id)

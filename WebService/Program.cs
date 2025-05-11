@@ -62,7 +62,7 @@ builder.Services.AddGalliumServices();
 
 #endregion
 
-#region Base de données (Fake & MariaDB)
+#region Base de données
 
 #if FAKE_DB
 // ajout en singleton, sinon les données ne sont pas gardées d'une requête à l'autre
@@ -70,6 +70,7 @@ builder.Services.AddSingleton<ICategoryDao, CategoryDao>();
 builder.Services.AddSingleton<IClientDao, ClientDao>();
 builder.Services.AddSingleton<IHistoryDao, LogsDao>();
 builder.Services.AddSingleton<ILogsDao, LogsDao>();
+builder.Services.AddSingleton<IPriceListDao, PriceListDao>();
 builder.Services.AddSingleton<IProductDao, ProductDao>();
 builder.Services.AddSingleton<IRoleDao, RoleDao>();
 builder.Services.AddSingleton<ISessionDao, SessionDao>();
@@ -78,7 +79,8 @@ builder.Services.AddSingleton<IUserDao, UserDao>();
 builder.Services.AddScoped<ICategoryDao, CategoryDao>();
 builder.Services.AddScoped<IClientDao, ClientDao>();
 builder.Services.AddScoped<IHistoryDao, HistoryDao>();
-builder.Services.AddSingleton<ILogsDao, HistoryDao>();
+builder.Services.AddScoped<ILogsDao, HistoryDao>();
+builder.Services.AddSingleton<IPriceListDao, PriceListDao>();
 builder.Services.AddScoped<IProductDao, ProductDao>();
 builder.Services.AddScoped<IRoleDao, RoleDao>();
 builder.Services.AddScoped<ISessionDao, SessionDao>();
@@ -136,7 +138,7 @@ builder.Services.Configure<JsonOptions>(options =>
     // garde les noms de propriétés tels quels
     options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
     // sérialise les permissions et les portées sous forme numérique
-    options.JsonSerializerOptions.Converters.Add(new PermissionsCodeConverter());
+    options.JsonSerializerOptions.Converters.Add(new PermissionCodeConverter());
     options.JsonSerializerOptions.Converters.Add(new SameSignOnScopesCodeConverter());
     // et les autres énumérations sous forme de texte
     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
@@ -208,7 +210,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
-ServerInfo.Current.SetVersion(1, 2, 1, "beta");
+ServerInfo.Current.SetVersion(1, 3, 0, "beta");
 Console.WriteLine(ServerInfo.Current);
 
 #if !FAKE_DB

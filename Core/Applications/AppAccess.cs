@@ -8,7 +8,7 @@ namespace GalliumPlus.Core.Applications;
 /// </summary>
 public class AppAccess
 {
-    [Key]
+    [PrimaryKey]
     private readonly int id;
     private readonly OneTimeSecret secret;
 

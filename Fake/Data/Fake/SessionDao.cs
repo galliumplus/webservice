@@ -73,7 +73,7 @@ namespace GalliumPlus.Data.Fake
 
         protected override string GetKey(Session item) => item.Token;
 
-        protected override void SetKey(ref Session item, string key)
+        protected override Session SetKey(Session item, string key)
         {
             throw new InvalidOperationException("A session token is read-only");
         }

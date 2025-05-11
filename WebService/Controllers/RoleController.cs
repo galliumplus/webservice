@@ -1,5 +1,6 @@
 ﻿using GalliumPlus.Core.Data;
 using GalliumPlus.Core.Logs;
+using GalliumPlus.Core.Security;
 using GalliumPlus.Core.Users;
 using GalliumPlus.WebService.Dto.Legacy;
 using GalliumPlus.WebService.Middleware.Authorization;
@@ -25,21 +26,21 @@ namespace GalliumPlus.WebService.Controllers
         }
 
         [HttpGet]
-        [RequiresPermissions(Permissions.SEE_ALL_USERS_AND_ROLES)]
+        [RequiresPermissions(Permission.SeeAllUsersAndRoles)]
         public IActionResult Get()
         {
             return this.Json(this.mapper.FromModel(this.roleDao.Read()));
         }
 
         [HttpGet("{id}", Name = "role")]
-        [RequiresPermissions(Permissions.SEE_ALL_USERS_AND_ROLES)]
+        [RequiresPermissions(Permission.SeeAllUsersAndRoles)]
         public IActionResult Get(int id)
         {
             return this.Json(this.mapper.FromModel(this.roleDao.Read(id)));
         }
 
         [HttpPost]
-        [RequiresPermissions(Permissions.MANAGE_ROLES)]
+        [RequiresPermissions(Permission.ManageRoles)]
         public IActionResult Post(RoleDetails newRole)
         {
             Role role = this.roleDao.Create(this.mapper.ToModel(newRole));
@@ -55,7 +56,7 @@ namespace GalliumPlus.WebService.Controllers
         }
 
         [HttpPut("{id}")]
-        [RequiresPermissions(Permissions.MANAGE_ROLES)]
+        [RequiresPermissions(Permission.ManageRoles)]
         public IActionResult Put(int id, RoleDetails updatedRole)
         {
             this.roleDao.Update(id, this.mapper.ToModel(updatedRole));
@@ -71,7 +72,7 @@ namespace GalliumPlus.WebService.Controllers
         }
 
         [HttpDelete("{id}")]
-        [RequiresPermissions(Permissions.MANAGE_ROLES)]
+        [RequiresPermissions(Permission.ManageRoles)]
         public IActionResult Delete(int id)
         {
             string roleName = this.roleDao.Read(id).Name;

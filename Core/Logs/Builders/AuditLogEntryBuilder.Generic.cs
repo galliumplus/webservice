@@ -1,6 +1,3 @@
-using GalliumPlus.Core.Applications;
-using GalliumPlus.Core.Stocks;
-
 namespace GalliumPlus.Core.Logs.Builders;
 
 public partial class AuditLogEntryBuilder

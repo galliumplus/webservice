@@ -1,4 +1,5 @@
 ﻿using GalliumPlus.Core.Exceptions;
+using GalliumPlus.Core.Security;
 using GalliumPlus.Core.Users;
 using GalliumPlus.WebService.Middleware.ErrorHandling;
 using Microsoft.AspNetCore.Mvc.Abstractions;
@@ -12,11 +13,11 @@ namespace GalliumPlus.WebService.Middleware.Authorization
     public class PermissionsFilter : IAuthorizationFilter
     {
         /// <summary>
-        /// Récupère les permissions requise par une action.
+        /// Récupère les permissions requises par une action.
         /// </summary>
         /// <param name="action">L'action en question.</param>
         /// <returns>Les permissions demandées.</returns>
-        private static Permissions RequiresPermissions(ActionDescriptor action)
+        private static Permission RequiresPermissions(ActionDescriptor action)
         {
             foreach (object metadata in action.EndpointMetadata)
             {
@@ -25,20 +26,20 @@ namespace GalliumPlus.WebService.Middleware.Authorization
                     return permissions.Required;
                 }
             }
-            return Permissions.NONE;
+            return Permission.None;
         }
 
         public void OnAuthorization(AuthorizationFilterContext context)
         {
-            Permissions required = RequiresPermissions(context.ActionDescriptor);
+            Permission required = RequiresPermissions(context.ActionDescriptor);
 
             // OK, aucune permission demandée
-            if (required == Permissions.NONE) return;
+            if (required == Permission.None) return;
 
             Session session = (Session)context.HttpContext.Items["Session"]!;
 
-            // OK, l'utilisateur a toutes les permissions nécéssaires
-            if (session.Permissions.Includes(required)) return;
+            // OK, l'utilisateur a toutes les permissions nécessaires
+            if (Permissions.Current.IsSupersetOf(session.Permissions, required)) return;
 
             string messageAction = context.HttpContext.Request.Method switch
             {

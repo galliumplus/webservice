@@ -1,3 +1,5 @@
+using GalliumPlus.Core.Security;
+
 namespace GalliumPlus.Core.Users;
 
 /// <summary>
@@ -7,7 +9,7 @@ public class Role
 {
     private int id;
     private string name;
-    private Permissions permissions;
+    private Permission permissions;
 
     /// <summary>
     /// L'identifiant du rôle.
@@ -22,7 +24,7 @@ public class Role
     /// <summary>
     /// La somme des permissions attribuées au rôle.
     /// </summary>
-    public Permissions Permissions { get => this.permissions; set => this.permissions = value; }
+    public Permission Permissions { get => this.permissions; set => this.permissions = value; }
 
     /// <summary>
     /// Crée un rôle.
@@ -30,7 +32,7 @@ public class Role
     /// <param name="id">L'identifiant du rôle.</param>
     /// <param name="name">Le nom affiché du rôle.</param>
     /// <param name="permissions">La somme des permissions attribuées au rôle.</param>
-    public Role(int id, string name, Permissions permissions)
+    public Role(int id, string name, Permission permissions)
     {
         this.id = id;
         this.name = name;

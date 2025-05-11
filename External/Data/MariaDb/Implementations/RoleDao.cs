@@ -1,5 +1,6 @@
 ﻿using GalliumPlus.Core.Data;
 using GalliumPlus.Core.Exceptions;
+using GalliumPlus.Core.Security;
 using GalliumPlus.Core.Users;
 using KiwiQuery;
 using MySqlConnector;
@@ -35,7 +36,7 @@ namespace GalliumPlus.Data.MariaDb.Implementations
             return new Role(
                 row.GetInt32("id"),
                 row.GetString("name"),
-                (Permissions)row.GetInt32("permissions")
+                (Permission)row.GetInt32("permissions")
             );
         }
 

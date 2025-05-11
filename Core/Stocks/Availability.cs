@@ -1,22 +1,22 @@
 ﻿namespace GalliumPlus.Core.Stocks;
 
 /// <summary>
-/// Disponiblité d'un produit.
+/// La disponibilité d'un produit.
 /// </summary>
 public enum Availability
 {
     /// <summary>
-    /// Le produit est disponible si il en reste en stock.
+    /// Le produit est disponible s'il en reste en stock.
     /// </summary>
-    AUTO = 0,
+    Auto = 0,
 
     /// <summary>
     /// Le produit est toujours considéré comme disponible.
     /// </summary>
-    ALWAYS = 1,
+    Always = 1,
 
     /// <summary>
     /// Le produit est toujours considéré comme indisponible.
     /// </summary>
-    NEVER = 2,
+    Never = 2,
 }

@@ -8,14 +8,12 @@ namespace GalliumPlus.Data.Fake
         public CategoryDao()
         {
             this.Create(new Category(0, "Boissons"));
-
             this.Create(new Category(0, "Snacks"));
-
             this.Create(new Category(0, "Pablo"));
         }
 
         protected override int GetKey(Category item) => item.Id;
 
-        protected override void SetKey(ref Category item, int key) => item = item.WithId(key);
+        protected override Category SetKey(Category item, int key) => item.WithId(key);
     }
 }

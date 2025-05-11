@@ -2,6 +2,7 @@
 using GalliumPlus.Core.Data;
 using GalliumPlus.Core.Exceptions;
 using GalliumPlus.Core.Orders;
+using GalliumPlus.Core.Security;
 using GalliumPlus.Core.Users;
 
 namespace GalliumPlus.WebService.Dto.Legacy
@@ -73,7 +74,7 @@ namespace GalliumPlus.WebService.Dto.Legacy
                     999999999,
                     "anonymousmember00000000000", // pas possible d'être rentré en BDD
                     new UserIdentity("Anonyme", "", "", ""),
-                    new Role(-1, "Membre anonyme", Permissions.NONE),
+                    new Role(-1, "Membre anonyme", Permission.None),
                     0.00m,
                     true
                 );

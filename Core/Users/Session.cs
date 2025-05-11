@@ -1,5 +1,6 @@
 ﻿using GalliumPlus.Core.Applications;
 using GalliumPlus.Core.Random;
+using GalliumPlus.Core.Security;
 
 namespace GalliumPlus.Core.Users;
 
@@ -55,7 +56,7 @@ public class Session
     /// <summary>
     /// Les permissions accordées pour cette session.
     /// </summary>
-    public Permissions Permissions => this.client.Filter(this.user?.Role.Permissions ?? Permissions.NONE);
+    public Permission Permissions => this.client.Filter(this.user?.Role.Permissions ?? Permission.None);
 
     /// <summary>
     /// Indique si la session est expirée ou non, en prenant en compte l'inactivité.

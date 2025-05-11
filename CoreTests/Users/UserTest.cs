@@ -5,7 +5,7 @@ namespace GalliumPlus.Core.Users;
 
 public class UserTest
 {
-    private readonly Role profRole = new Role(0, "Prof", Permissions.NONE);
+    private readonly Role profRole = new Role(0, "Prof", Permission.None);
     private readonly PasswordInformation password = PasswordInformation.FromPassword("motdepasse123");
 
     private string[] validIdList = new string[] { "am200927", "amdzznzs", "AM200927", "AMDzzNZs", "am200NDs" };

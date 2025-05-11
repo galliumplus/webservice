@@ -53,9 +53,9 @@ public class Product
     /// </summary>
     public bool Available => this.Availability switch
     {
-        Availability.ALWAYS => true,
-        Availability.AUTO => this.Stock > 0,
-        Availability.NEVER => false,
+        Availability.Always => true,
+        Availability.Auto => this.Stock > 0,
+        Availability.Never => false,
 
         // ignore les états invalides
         _ => false,

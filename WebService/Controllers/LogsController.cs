@@ -1,7 +1,7 @@
 ﻿using GalliumPlus.Core.Data;
 using GalliumPlus.Core.Data.LogsSearch;
 using GalliumPlus.Core.Exceptions;
-using GalliumPlus.Core.Users;
+using GalliumPlus.Core.Security;
 using GalliumPlus.WebService.Dto.Legacy;
 using GalliumPlus.WebService.Middleware.Authorization;
 using Microsoft.AspNetCore.Authorization;
@@ -29,7 +29,7 @@ public class LogsController(ILogsDao logsDao, IHistoryDao historyDao) : GalliumC
     }
     
     [HttpGet("logs")]
-    [RequiresPermissions(Permissions.READ_LOGS)]
+    [RequiresPermissions(Permission.ReadLogs)]
     public IActionResult GetLogs(
         int pageSize = 50,
         int pageIndex = 0,
@@ -47,7 +47,7 @@ public class LogsController(ILogsDao logsDao, IHistoryDao historyDao) : GalliumC
     }
 
     [HttpGet("history")]
-    [RequiresPermissions(Permissions.READ_LOGS)]
+    [RequiresPermissions(Permission.ReadLogs)]
     public IActionResult GetLegacyHistory(
         int pageSize = 50,
         int pageIndex = 0,

@@ -70,7 +70,7 @@ namespace GalliumPlus.Data.MariaDb.Implementations
             Role role = new(
                 row.GetInt32("roleId"),
                 row.GetString("roleName"),
-                (Permissions)row.GetInt32("permissions")
+                (Permission)row.GetInt32("permissions")
             );
 
             byte[] passwordBytes = new byte[32];

@@ -14,8 +14,8 @@ public class PartialSameSignOn
         public Validator()
         {
             this.RuleFor(sso => sso.DisplayName).MaxLength(50);
-            this.RuleFor(sso => sso.LogoUrl).MaxLength(120);
-            this.RuleFor(sso => sso.RedirectUrl).NotNull().NotEmpty().MustBeAValidUrl().MaxLength(120);
+            this.RuleFor(sso => sso.LogoUrl).MustBeAValidUrl().MaxLength(120);
+            this.RuleFor(sso => sso.RedirectUrl).NotEmpty().MustBeAValidUrl().MaxLength(120);
         }   
         
     }

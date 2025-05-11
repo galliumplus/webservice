@@ -16,24 +16,11 @@ class Expectations:
         self.nullable = False
 
     def __check_measurable(self):
-        if not (
-            isinstance(self.value, str)
-            or isinstance(self.value, list)
-            or isinstance(self.value, tuple)
-            or isinstance(self.value, dict)
-            or isinstance(self.value, set)
-            or hasattr(self.value, "__len__")
-        ):
+        if not hasattr(self.value, "__len__"):
             raise ValueError(f"Values of type {type(self.value)} have no length")
 
     def __check_collection(self):
-        if not (
-            isinstance(self.value, dict)
-            or isinstance(self.value, list)
-            or isinstance(self.value, tuple)
-            or isinstance(self.value, set)
-            or hasattr(self.value, "__getitem__")
-        ):
+        if not hasattr(self.value, "__getitem__"):
             raise ValueError(f"{type(self.value)} is not a collection type")
 
     # ASSERTIONS

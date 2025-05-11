@@ -10,7 +10,7 @@ namespace GalliumPlus.Core.Applications;
 /// </summary>
 public class SameSignOn
 {
-    [Key]
+    [PrimaryKey]
     private readonly int id;
     private string secret;
     private SignatureType signatureType;
@@ -59,13 +59,13 @@ public class SameSignOn
     /// <summary>
     /// Si l'application a besoin ou non d'une clé d'API à la connexion.
     /// </summary>
-    public bool RequiresApiKey => this.scope.Includes(SameSignOnScopes.Gallium);
+    public bool RequiresApiKey => SameSignOnScopes.Current.Gallium.IsIn(this.scope);
 
     /// <summary>
     /// Crée un paramétrage SSO existant.
     /// </summary>
     /// <param name="id">L'identifiant de l'application auquel les informations appartiennent.</param>
-    /// <param name="secret">Le code secret utilisé pour signer les jeton d'authentification</param>
+    /// <param name="secret">Le code secret utilisé pour signer les jetons d'authentification</param>
     /// <param name="signatureType">La méthode de signature utilisée.</param>
     /// <param name="scope">La portée de l'accès aux informations des utilisateurs.</param>
     /// <param name="displayName">Le nom à afficher pour présenter l'application.</param>

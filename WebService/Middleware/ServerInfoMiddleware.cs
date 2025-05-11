@@ -1,5 +1,6 @@
 ﻿namespace GalliumPlus.WebService.Middleware
 {
+
     public class ServerInfoMiddleware : IMiddleware
     {
         public async Task InvokeAsync(HttpContext context, RequestDelegate next)
@@ -47,7 +48,7 @@
 #endif
 
         public string PrettyVersion => this.prettyVersion;
-        
+
         public string CompactVersion => this.compactVersion;
 
         private ServerInfo() { }
@@ -62,11 +63,11 @@
         public override string ToString()
         {
             return "   ___        _ _ _                   _    \n"
-                 + "  / __|  __ _| | (_)_   _ _ __ ___  _| |_  \n"
-                 + " | |  _ / _` | | | | | | | '_ ` _ \\'_   _|\n"
-                 + " | |_| | (_| | | | | |_| | | | | | | |_|   \n"
-                 + "  \\____|\\__,_|_|_|_|\\__,_|_| |_| |_|    \n"
-                 + $"\n Gallium+ Web API Server v{this.PrettyVersion}\n";
+                   + "  / __|  __ _| | (_)_   _ _ __ ___  _| |_  \n"
+                   + " | |  _ / _` | | | | | | | '_ ` _ \\'_   _|\n"
+                   + " | |_| | (_| | | | | |_| | | | | | | |_|   \n"
+                   + "  \\____|\\__,_|_|_|_|\\__,_|_| |_| |_|    \n"
+                   + $"\n Gallium+ Web API Server v{this.PrettyVersion}\n";
         }
     }
 }

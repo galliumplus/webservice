@@ -1,21 +1,23 @@
-using GalliumPlus.WebApi.Core.Items;
+using GalliumPlus.Core.Data;
+using GalliumPlus.Core.Stocks;
 
 namespace GalliumPlus.WebService.Services;
 
 [ScopedService]
-public class PricingService
+public class PricingService(IPriceListDao priceListDao)
 {
-    public IEnumerable<PricingType> GetActivePricingTypes()
+    public IEnumerable<PriceList> GetActivePriceLists()
     {
-        return new PricingType[]
-        {
-            new(90001, "Adhérent", "Tarif normal adhérent", true),
-            new(90002, "Non-adhérent", "Tarif normal non-adhérent", false),
-        };
+        return priceListDao.Read();
     }
 
-    public IEnumerable<PricingType> GetPricingTypes()
+    public PriceList GetPriceList(int id)
     {
-        return this.GetActivePricingTypes();
+        return priceListDao.Read(id);
+    }
+
+    public PriceList UpdatePriceList(int id, PriceList modifiedPriceList)
+    {
+        return priceListDao.Update(id, modifiedPriceList);
     }
 }

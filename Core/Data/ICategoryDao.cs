@@ -2,6 +2,4 @@
 
 namespace GalliumPlus.Core.Data;
 
-public interface ICategoryDao : IBasicDao<int, Category>
-{
-}
+public interface ICategoryDao : IBasicDao<int, Category>;

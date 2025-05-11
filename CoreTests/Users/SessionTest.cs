@@ -1,4 +1,5 @@
 ﻿using GalliumPlus.Core.Applications;
+using GalliumPlus.Core.Security;
 
 namespace GalliumPlus.Core.Users;
 
@@ -14,7 +15,7 @@ public class SessionTest
         1,
         "mmansouri",
         new UserIdentity("Mehdi", "Mansouri", "mehdi.mansouri@iut-dijon.u-bourgogne.fr", "PROF"),
-        new Role(0, "Adhérent", Permissions.NONE),
+        new Role(0, "Adhérent", Permission.None),
         21.30m,
         false
     );
@@ -39,26 +40,26 @@ public class SessionTest
     [Fact]
     public void PermissionsProperty()
     {
-        this.user.Role.Permissions = Permissions.SEE_PRODUCTS_AND_CATEGORIES
-                                     | Permissions.SEE_ALL_USERS_AND_ROLES;
+        this.user.Role.Permissions = Permission.SeeProductsAndCategories
+                                     | Permission.SeeAllUsersAndRoles;
         var client1 = new Client(
             name: "App 1",
-            granted: Permissions.MANAGE_PRODUCTS,
-            allowed: Permissions.MANAGE_PRODUCTS
+            granted: Permission.ManageProducts,
+            allowed: Permission.ManageProducts
         );
         Session session1 = Session.LogIn(this.sessionOptions, client1, this.user);
 
-        Assert.Equal(Permissions.MANAGE_PRODUCTS, session1.Permissions);
+        Assert.Equal(Permission.ManageProducts, session1.Permissions);
 
-        this.user.Role.Permissions = Permissions.READ_LOGS;
+        this.user.Role.Permissions = Permission.ReadLogs;
         var client2 = new Client(
             name: "App 2",
-            granted: Permissions.SEE_PRODUCTS_AND_CATEGORIES,
-            allowed: Permissions.NONE // écrase la permission donnée précedemment
+            granted: Permission.SeeProductsAndCategories,
+            allowed: Permission.None // écrase la permission donnée précedemment
         );
         Session session2 = Session.LogIn(this.sessionOptions, client2, this.user);
 
-        Assert.Equal(Permissions.NONE, session2.Permissions);
+        Assert.Equal(Permission.None, session2.Permissions);
     }
 
     [Fact]
