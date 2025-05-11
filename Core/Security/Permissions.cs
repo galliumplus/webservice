@@ -128,6 +128,8 @@ public class Permissions : EnumBitflagSet<Permission>
         
         this.Flag(Permission.ManageClients);
         
+        this.Flag(Permission.UseDeveloperTools);
+        
         this.Flag(Permission.ForceDepositModification);
     }
 }
