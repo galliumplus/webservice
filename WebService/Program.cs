@@ -80,6 +80,7 @@ builder.Services.AddScoped<ICategoryDao, CategoryDao>();
 builder.Services.AddScoped<IClientDao, ClientDao>();
 builder.Services.AddScoped<IHistoryDao, HistoryDao>();
 builder.Services.AddScoped<ILogsDao, HistoryDao>();
+builder.Services.AddSingleton<IPriceListDao, PriceListDao>();
 builder.Services.AddScoped<IProductDao, ProductDao>();
 builder.Services.AddScoped<IRoleDao, RoleDao>();
 builder.Services.AddScoped<ISessionDao, SessionDao>();
