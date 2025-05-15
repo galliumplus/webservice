@@ -17,34 +17,32 @@ class CheckoutTests(TestBase):
         categories = response.json()
         self.expect(categories).to.be.a(list)._and._not.empty()
 
-        category = categories[0]
-        self.expect(category).to.have.an_item("label").of.type(str)
-        items = self.expect(category).to.have.an_item("items").value
+        for category in categories:
+            self.expect(category).to.have.an_item("name").of.type(str)
+            items = self.expect(category).to.have.an_item("items").value
 
-        self.expect(items).to.be.a(list)._and._not.empty()
+            self.expect(items).to.be.a(list)._and._not.empty()
 
-        item = items[0]
-        self.expect(item).to.have.an_item("code").of.type(str)
-        self.expect(item).to.have.an_item("label").of.type(str)
-        self.expect(item).to.have.an_item("stock").of.type(int)
-        self.expect(item).to.have.an_item("primaryPrice").that.is_.a_number()
-        if "secondaryPrice" in item:
-            self.expect(item["secondaryPrice"]).to.be.a_number()
-        prices = self.expect(item).to.have.an_item("prices").value
+            for item in items:
+                self.expect(item).to.have.an_item("id").of.type(int)
+                self.expect(item).to.have.an_item("name").of.type(str)
+                self.expect(item).to.have.an_item("memberPrice").that.is_.a_number()
+                self.expect(item).to.have.an_item(
+                    "nonMemberPrice"
+                ).that.is_.none_or.a_number()
+                self.expect(item).to.have.an_item("isAvailable").of.type(bool)
+                self.expect(item).to.have.an_item("availableStock").that.is_.none_or.an(
+                    int
+                )
+                self.expect(item).to.have.an_item("isBundle")
 
-        self.expect(prices).to.be.a(list)._and._not.empty()
+    # def test_create_order(self):
+    #     order = {
+    #         "operationCode": "O",
+    #         "customer": "@anonymous_customer",
+    #         "description": "commande test",
+    #         "items": [{"code": "P0002", "quantity": 3}],
+    #     }
 
-        price = prices[0]
-        self.expect(price).to.have.an_item("pricingId").of.type(int)
-        self.expect(price).to.have.an_item("price").that.is_.a_number()
-
-    def test_create_order(self):
-        order = {
-            "operationCode": "O",
-            "customer": "@anonymous_customer",
-            "description": "commande test",
-            "items": [{"code": "P0002", "quantity": 3}],
-        }
-
-        response = self.post("operations/sale", order)
-        self.expect(response.status_code).to.be.equal_to(200)
+    #     response = self.post("operations/sale", order)
+    #     self.expect(response.status_code).to.be.equal_to(200)

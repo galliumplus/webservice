@@ -80,15 +80,18 @@ class Expectations:
 
     def a_number(self):
         is_a_number = isinstance(self.value, int) or isinstance(self.value, float)
-        is_a_number_or_none = is_a_number or self.value is None
         if self.negation:
             if self.nullable:
-                self.test_case.assertFalse(is_a_number_or_none, f"{self.value} is None")
+                self.test_case.assertFalse(is_a_number, f"{self.value} is a number")
+                self.test_case.assertFalse(self.value is None, f"{self.value} is None")
             else:
                 self.test_case.assertFalse(is_a_number, f"{self.value} is a number")
         else:
             if self.nullable:
-                self.test_case.assertFalse(self.value is None, f"{self.value} is None")
+                self.test_case.assertTrue(
+                    is_a_number or self.value is None,
+                    f"{self.value} isn't a number and isn't None",
+                )
             else:
                 self.test_case.assertTrue(is_a_number, f"{self.value} isn't a number")
 
