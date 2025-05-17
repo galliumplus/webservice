@@ -3,14 +3,14 @@ from decimal import Decimal, getcontext as decimal_context
 
 from utils.test_base import TestBase
 from utils.auth import BearerAuth
-from .history_tests_helpers import HistoryTestHelpers
+from .audit_tests_helpers import AuditTestHelpers
 
 
 class OrderTests(TestBase):
     def setUp(self):
         super().setUp()
         self.set_authentication(BearerAuth("09876543210987654321"))
-        self.history = HistoryTestHelpers(self)
+        self.audit = AuditTestHelpers(self)
 
         self.product_1 = self.get("products/1").json()
         self.product_2 = self.get("products/2").json()
@@ -32,7 +32,7 @@ class OrderTests(TestBase):
         self.set_stock(2, 50)
         self.grant_membership("lomens")
 
-        with self.history.watch():
+        with self.audit.watch():
             self.buy_not_deposit("CASH")
             self.buy_not_deposit("CREDIT_CARD")
             self.buy_not_deposit("PAYPAL")
@@ -58,64 +58,64 @@ class OrderTests(TestBase):
             self.product_1["memberPrice"] * 2 + self.product_2["memberPrice"] * 3
         )
 
-        self.history.expect_entries(
-            self.history.purchase_action(
+        self.audit.expect_entries(
+            self.audit.purchase_action(
                 "en liquide",
                 order_description,
                 "eb069420",
                 None,
                 order_total_non_member,
             ),
-            self.history.purchase_action(
+            self.audit.purchase_action(
                 "par carte bancaire",
                 order_description,
                 "eb069420",
                 None,
                 order_total_non_member,
             ),
-            self.history.purchase_action(
+            self.audit.purchase_action(
                 "par PayPal",
                 order_description,
                 "eb069420",
                 None,
                 order_total_non_member,
             ),
-            self.history.purchase_action(
+            self.audit.purchase_action(
                 "en liquide",
                 order_description,
                 "eb069420",
                 None,
                 order_total_member,
             ),
-            self.history.purchase_action(
+            self.audit.purchase_action(
                 "par carte bancaire",
                 order_description,
                 "eb069420",
                 None,
                 order_total_member,
             ),
-            self.history.purchase_action(
+            self.audit.purchase_action(
                 "par PayPal",
                 order_description,
                 "eb069420",
                 None,
                 order_total_member,
             ),
-            self.history.purchase_action(
+            self.audit.purchase_action(
                 "en liquide",
                 order_description,
                 "eb069420",
                 "lomens",
                 order_total_member,
             ),
-            self.history.purchase_action(
+            self.audit.purchase_action(
                 "par carte bancaire",
                 order_description,
                 "eb069420",
                 "lomens",
                 order_total_member,
             ),
-            self.history.purchase_action(
+            self.audit.purchase_action(
                 "par PayPal",
                 order_description,
                 "eb069420",

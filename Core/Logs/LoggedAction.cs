@@ -65,6 +65,7 @@ public enum LoggedAction : uint
     // AdvanceDeposited = 0x311,
     // AdvanceWithdrawn = 0x313,
     
-    // UserLoggedIn = 0x411
-    // ApplicationConnected = 0x412
+    UserLoggedIn = 0x411,
+    ApplicationConnected = 0x412,
+    SsoUserLoggedIn = 0x413,
 }

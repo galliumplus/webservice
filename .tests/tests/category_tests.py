@@ -1,13 +1,13 @@
 from utils.test_base import TestBase
 from utils.auth import BearerAuth
-from .history_tests_helpers import HistoryTestHelpers
+from .audit_tests_helpers import AuditTestHelpers
 
 
 class CategoryTests(TestBase):
     def setUp(self):
         super().setUp()
         self.set_authentication(BearerAuth("09876543210987654321"))
-        self.history = HistoryTestHelpers(self)
+        self.audit = AuditTestHelpers(self, 1, 3)
 
     def tearDown(self):
         self.unset_authentication()
@@ -47,7 +47,7 @@ class CategoryTests(TestBase):
 
         valid_category = {"name": "Jus"}
 
-        with self.history.watch():
+        with self.audit.watch():
             response = self.post("categories", valid_category)
         self.expect(response.status_code).to.be.equal_to(201)
         location = self.expect(response.headers).to.have.an_item("Location").value
@@ -64,9 +64,7 @@ class CategoryTests(TestBase):
         new_category_count = len(self.get("categories").json())
         self.expect(new_category_count).to.be.equal_to(previous_category_count + 1)
 
-        self.history.expect_entries(
-            self.history.category_added_action("Jus", "eb069420")
-        )
+        self.audit.expect_entries(self.audit.entry("CategoryAdded", name="Jus"))
 
         # Informations manquantes
 
@@ -91,16 +89,14 @@ class CategoryTests(TestBase):
         valid_category.update(Name="Jus")
         category_id = valid_category["id"]
 
-        with self.history.watch():
+        with self.audit.watch():
             response = self.put(f"categories/{category_id}", valid_category)
         self.expect(response.status_code).to.be.equal_to(200)
 
         edited_category = self.get(f"categories/{category_id}").json()
         self.expect(edited_category["name"]).to.be.equal_to("Jus")
 
-        self.history.expect_entries(
-            self.history.category_modified_action("Jus", "eb069420")
-        )
+        self.audit.expect_entries(self.audit.entry("CategoryModified", name="Jus"))
 
         # category qui n'existe pas
 
@@ -131,13 +127,11 @@ class CategoryTests(TestBase):
 
         # On supprimme la catégorie
 
-        with self.history.watch():
+        with self.audit.watch():
             response = self.delete(location)
         self.expect(response.status_code).to.be.equal_to(200)
 
-        self.history.expect_entries(
-            self.history.category_deleted_action("Jus", "eb069420")
-        )
+        self.audit.expect_entries(self.audit.entry("CategoryDeleted", name="Jus"))
 
         # La catégorie n'existe plus
 

@@ -39,12 +39,22 @@ ACTION_CODE_MAP = {
     "UserDeleted": 0x1B3,
     "UserDepositOpen": 0x1B4,
     "UserDepositClosed": 0x1B5,
+    "ForcedStockIn": 0x2F1,
+    "ForcedStockOut": 0x2F3,
+    "AdvanceDeposited": 0x311,
+    "AdvanceWithdrawn": 0x313,
+    "UserLoggedIn": 0x411,
+    "ApplicationConnected": 0x412,
+    "SsoUserLoggedIn": 0x413,
 }
+
+REQUIRED = object()
+DEFAULT = object()
 
 
 class AuditTestHelpers:
-    def __init__(self, test_suite, client_id=None, user_id=None):
-        self.history = []
+    def __init__(self, test_suite, client_id=REQUIRED, user_id=REQUIRED):
+        self.logs = []
         self.diff = []
         self.test_suite = test_suite
         self.client_id = client_id
@@ -56,13 +66,13 @@ class AuditTestHelpers:
         self.test_suite.pop_authentication()
         updated_history = response.json()
 
-        size_diff = len(updated_history) - len(self.history)
+        size_diff = len(updated_history) - len(self.logs)
         if size_diff == 0:
             self.diff = []
         else:
             self.diff = updated_history[-size_diff:]
 
-        self.history = updated_history
+        self.logs = updated_history
 
     def watch(self):
         return AuditingTestContext(self)
@@ -82,22 +92,22 @@ class AuditTestHelpers:
             self.test_suite.assertEqual(actual["details"], expected["details"])
 
     def resolve_client_id(self, arg):
-        if arg is not None:
+        if arg is not DEFAULT:
             return arg
-        elif self.client_id is not None:
+        elif self.client_id is not REQUIRED:
             return self.client_id
         else:
             raise RuntimeError("missing client ID")
 
     def resolve_user_id(self, arg):
-        if arg is not None:
+        if arg is not DEFAULT:
             return arg
-        elif self.user_id is not None:
+        elif self.user_id is not REQUIRED:
             return self.user_id
         else:
             raise RuntimeError("missing user ID")
 
-    def entry(self, action, client_id=None, user_id=None, **details):
+    def entry(self, action, client_id=DEFAULT, user_id=DEFAULT, **details):
         return {
             "actionCode": ACTION_CODE_MAP[action],
             "clientId": self.resolve_client_id(client_id),
@@ -108,11 +118,11 @@ class AuditTestHelpers:
 
 class AuditingTestContext:
     def __init__(self, auditLog):
-        self.auditLog = auditLog
+        self.logsLog = auditLog
 
     def __enter__(self):
-        self.auditLog.fetch()
+        self.logsLog.fetch()
         return self
 
     def __exit__(self, exc_type, exc_value, trace):
-        self.auditLog.fetch()
+        self.logsLog.fetch()

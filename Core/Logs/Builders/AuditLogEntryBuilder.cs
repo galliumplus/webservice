@@ -42,4 +42,24 @@ public partial class AuditLogEntryBuilder
     public IGenericEntryBuilder PriceList(PriceList priceList) => new PriceListEntryBuilder(this, priceList);
 
     public IUserEntryBuilder User(User user) => new UserEntryBuilder(this, user);
+    
+    public AuditLogEntryBuilder UserConnection()
+    {
+        this.action = LoggedAction.UserLoggedIn;
+        return this;
+    }
+    
+    public AuditLogEntryBuilder ApplicationConnection()
+    {
+        this.action = LoggedAction.ApplicationConnected;
+        return this;
+    }
+    
+    public AuditLogEntryBuilder SsoConnectionTo(Client app, string redirectUrl)
+    {
+        this.action = LoggedAction.SsoUserLoggedIn;
+        this.details.Add("app", app.Id);
+        this.details.Add("redirectUrl", redirectUrl);
+        return this;
+    }
 }
