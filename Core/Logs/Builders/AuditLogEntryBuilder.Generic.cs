@@ -9,34 +9,35 @@ public partial class AuditLogEntryBuilder
         AuditLogEntryBuilder Deleted();
     }
 
-    private class GenericEntryBuilder(
+    private abstract class GenericEntryBuilder(
         AuditLogEntryBuilder root,
         LoggedAction addedAction,
         LoggedAction modifiedAction,
-        LoggedAction deletedAction,
-        Action<AuditLogEntryBuilder> detailsConfig
+        LoggedAction deletedAction
     ) : IGenericEntryBuilder
     {
         protected AuditLogEntryBuilder Root => root;
+
+        protected abstract void AddDetails();
         
         public AuditLogEntryBuilder Added()
         {
+            this.AddDetails();
             this.Root.action = addedAction;
-            detailsConfig.Invoke(this.Root);
             return this.Root;
         }
 
         public AuditLogEntryBuilder Modified()
         {
+            this.AddDetails();
             this.Root.action = modifiedAction;
-            detailsConfig.Invoke(this.Root);
             return this.Root;
         }
         
         public AuditLogEntryBuilder Deleted()
         {
+            this.AddDetails();
             this.Root.action = deletedAction;
-            detailsConfig.Invoke(this.Root);
             return this.Root;
         }
     }

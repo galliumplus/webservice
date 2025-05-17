@@ -2,9 +2,13 @@ namespace GalliumPlus.Core.Logs;
 
 // 1xx = paramétrage
 //    deuxième chiffre = resource concernée par l'action
-//    1x1 = créé, 1x2 = modifié, 1x3 = supprimé, 1x4-1xF pour toutes les autres opérations
+//    1x1 = créé, 1x2 = modifié, 1x3 = supprimé
 // 2xx = opérations sur le stock
+//    2x1 = entrée, 2x2 = interne, 2x3 = sortie
 // 3xx = paiements
+// 4xx = connexions
+//    41x = connexions entrantes
+//    42x = connexions sortantes
 
 public enum LoggedAction : uint
 {
@@ -54,7 +58,13 @@ public enum LoggedAction : uint
     UserDeleted = 0x1B3,
     // UserDepositOpen = 0x1B4,
     UserDepositClosed = 0x1B5,
+
+    // ForcedStockIn = 0x2F1
+    // ForcedStockOut = 0x2F3
     
-    // AdvanceDeposited = 0x3XX,
-    // AdvanceWithdrawn = 0x3XX,
+    // AdvanceDeposited = 0x311,
+    // AdvanceWithdrawn = 0x313,
+    
+    // UserLoggedIn = 0x411
+    // ApplicationConnected = 0x412
 }

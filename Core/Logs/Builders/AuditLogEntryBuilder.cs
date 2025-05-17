@@ -27,7 +27,7 @@ public partial class AuditLogEntryBuilder
             details: JsonSerializer.Serialize(this.details)
         );
     }
-    
+
     public AuditLogEntryBuilder By(Client app, User? user = null)
     {
         this.clientId = app.Id;
@@ -35,28 +35,11 @@ public partial class AuditLogEntryBuilder
         return this;
     }
 
-    public IGenericEntryBuilder Category(Category category)
-        => new GenericEntryBuilder(
-            this,
-            LoggedAction.CategoryAdded, LoggedAction.CategoryModified, LoggedAction.CategoryDeleted,
-            root => {
-                root.details.Add("id", category.Id);
-                root.details.Add("name", category.Name);
-            }
-        );
+    public IGenericEntryBuilder Category(Category category) => new CategoryEntryBuilder(this, category);
 
-    public IClientEntryBuilder Client(Client client) => new ClientEntryBuilder(client, this);
+    public IClientEntryBuilder Client(Client client) => new ClientEntryBuilder(this, client);
     
+    public IGenericEntryBuilder PriceList(PriceList priceList) => new PriceListEntryBuilder(this, priceList);
 
-    public IGenericEntryBuilder PriceList(PriceList priceList)
-        => new GenericEntryBuilder(
-            this,
-            LoggedAction.PriceListAdded, LoggedAction.PriceListModified, LoggedAction.PriceListDeleted,
-            root => {
-                root.details.Add("id", priceList.Id);
-                root.details.Add("name", priceList.LongName);
-            }
-        );
-
-    public IUserEntryBuilder User(User user) => new UserEntryBuilder(user, this);
+    public IUserEntryBuilder User(User user) => new UserEntryBuilder(this, user);
 }
