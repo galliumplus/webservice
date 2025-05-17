@@ -37,12 +37,6 @@ public class CategoryController(ICategoryDao categoryDao, IHistoryDao historyDao
     {
         Category category = categoryDao.Create(this.mapper.ToModel(newCategory));
 
-        HistoryAction action = new(
-            HistoryActionKind.EditProductsOrCategories,
-            $"Ajout de la catégorie {category.Name}",
-            this.User?.Id
-        );
-        historyDao.AddEntry(action);
         auditService.AddEntry(entry => entry.Category(category).Added().By(this.Client!, this.User));
 
         return this.Created("category", category.Id, this.mapper.FromModel(category));
@@ -52,14 +46,9 @@ public class CategoryController(ICategoryDao categoryDao, IHistoryDao historyDao
     [RequiresPermissions(Permission.ManageCategories)]
     public IActionResult Put(int id, CategoryDetails updatedCategory)
     {
-        categoryDao.Update(id, this.mapper.ToModel(updatedCategory));
+        Category category = categoryDao.Update(id, this.mapper.ToModel(updatedCategory));
 
-        HistoryAction action = new(
-            HistoryActionKind.EditProductsOrCategories,
-            $"Modification de la catégorie {updatedCategory.Name}",
-            this.User?.Id
-        );
-        historyDao.AddEntry(action);
+        auditService.AddEntry(entry => entry.Category(category).Modified().By(this.Client!, this.User));
 
         return this.Ok();
     }
@@ -68,15 +57,10 @@ public class CategoryController(ICategoryDao categoryDao, IHistoryDao historyDao
     [RequiresPermissions(Permission.ManageCategories)]
     public IActionResult Delete(int id)
     {
-        string categoryName = categoryDao.Read(id).Name;
+        Category category = categoryDao.Read(id);
         categoryDao.Delete(id);
 
-        HistoryAction action = new(
-            HistoryActionKind.EditProductsOrCategories,
-            $"Suppression de la catégorie {categoryName}",
-            this.User?.Id
-        );
-        historyDao.AddEntry(action);
+        auditService.AddEntry(entry => entry.Category(category).Deleted().By(this.Client!, this.User));
 
         return this.Ok();
     }

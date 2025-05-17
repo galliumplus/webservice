@@ -64,7 +64,9 @@ class CategoryTests(TestBase):
         new_category_count = len(self.get("categories").json())
         self.expect(new_category_count).to.be.equal_to(previous_category_count + 1)
 
-        self.audit.expect_entries(self.audit.entry("CategoryAdded", name="Jus"))
+        self.audit.expect_entries(
+            self.audit.entry("CategoryAdded", id=created_category["id"], name="Jus")
+        )
 
         # Informations manquantes
 
@@ -96,7 +98,9 @@ class CategoryTests(TestBase):
         edited_category = self.get(f"categories/{category_id}").json()
         self.expect(edited_category["name"]).to.be.equal_to("Jus")
 
-        self.audit.expect_entries(self.audit.entry("CategoryModified", name="Jus"))
+        self.audit.expect_entries(
+            self.audit.entry("CategoryModified", id=category_id, name="Jus")
+        )
 
         # category qui n'existe pas
 
@@ -123,7 +127,9 @@ class CategoryTests(TestBase):
 
     def test_category_delete(self):
         category = {"name": "Jus"}
-        location = self.post("categories", category).headers["Location"]
+        response = self.post("categories", category)
+        category_id = response.json()["id"]
+        location = response.headers["Location"]
 
         # On supprimme la catégorie
 
@@ -131,7 +137,9 @@ class CategoryTests(TestBase):
             response = self.delete(location)
         self.expect(response.status_code).to.be.equal_to(200)
 
-        self.audit.expect_entries(self.audit.entry("CategoryDeleted", name="Jus"))
+        self.audit.expect_entries(
+            self.audit.entry("CategoryDeleted", id=category_id, name="Jus")
+        )
 
         # La catégorie n'existe plus
 
