@@ -2,7 +2,7 @@ import re
 import jwt
 from utils.test_base import TestBase
 from utils.auth import BearerAuth, BasicAuth, SecretKeyAuth
-from .history_tests_helpers import HistoryTestHelpers
+from .audit_tests_helpers import AuditTestHelpers
 import base64
 
 RE_DATE_FORMAT = re.compile(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{1,9}Z")
@@ -11,13 +11,13 @@ RE_DATE_FORMAT = re.compile(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{1,9}Z")
 class AccessTests(TestBase):
     def setUp(self):
         super().setUp()
-        self.history = HistoryTestHelpers(self)
+        self.audit = AuditTestHelpers(self)
 
     def test_login_id_and_password(self):
         auth = BasicAuth("lomens", "motdepasse")
         key = "test-api-key-normal"
 
-        with self.history.watch():
+        with self.audit.watch():
             response = self.post("login", auth=auth, headers={"X-Api-Key": key})
 
         self.expect(response.status_code).to.be.equal_to(200)
@@ -32,12 +32,10 @@ class AccessTests(TestBase):
         user = self.expect(session).to.have.an_item("user").value
         self.expect(user).to.have.an_item("id").that.is_.equal_to("lomens")
 
-        self.history.expect_entries(
-            self.history.login_action("Tests (normal)", "lomens")
-        )
+        self.audit.expect_entries(self.audit.entry("UserLoggedIn", 1, 1))
 
     def test_login_id_and_password_fail(self):
-        with self.history.watch():
+        with self.audit.watch():
             # missing api key
 
             auth = BasicAuth("lomens", "motdepasse")
@@ -62,10 +60,10 @@ class AccessTests(TestBase):
             response = self.post("login", auth=auth, headers={"X-Api-Key": key})
             self.expect(response.status_code).to.be.equal_to(401)
 
-        self.history.expect_entries()
+        self.audit.expect_entries()
 
     def test_login_permissions_normal(self):
-        with self.history.watch():
+        with self.audit.watch():
             member_auth = BasicAuth("lomens", "motdepasse")
             president_auth = BasicAuth("eb069420", "motdepasse")
             key = "test-api-key-normal"
@@ -120,14 +118,20 @@ class AccessTests(TestBase):
             )
             self.expect(president_edit_response.status_code).to.not_.be.equal_to(403)
 
-        self.history.expect_entries(
-            self.history.login_action("Tests (normal)", "lomens"),
-            self.history.login_action("Tests (normal)", "eb069420"),
-            self.history.category_added_action("Catégorie", "eb069420"),
+        self.audit.expect_entries(
+            self.audit.entry("UserLoggedIn", 1, 1),
+            self.audit.entry("UserLoggedIn", 1, 3),
+            self.audit.entry(
+                "CategoryAdded",
+                1,
+                3,
+                id=president_edit_response.json()["id"],
+                name="Catégorie",
+            ),
         )
 
     def test_login_permissions_restricted(self):
-        with self.history.watch():
+        with self.audit.watch():
             member_auth = BasicAuth("lomens", "motdepasse")
             president_auth = BasicAuth("eb069420", "motdepasse")
             key = "test-api-key-restric"
@@ -183,13 +187,13 @@ class AccessTests(TestBase):
             # forbidden by api key
             self.expect(president_edit_response.status_code).to.be.equal_to(403)
 
-        self.history.expect_entries(
-            self.history.login_action("Tests (restricted)", "lomens"),
-            self.history.login_action("Tests (restricted)", "eb069420"),
+        self.audit.expect_entries(
+            self.audit.entry("UserLoggedIn", 2, 1),
+            self.audit.entry("UserLoggedIn", 2, 3),
         )
 
     def test_login_permissions_minimum(self):
-        with self.history.watch():
+        with self.audit.watch():
             member_auth = BasicAuth("lomens", "motdepasse")
             president_auth = BasicAuth("eb069420", "motdepasse")
             key = "test-api-key-minimum"
@@ -245,10 +249,16 @@ class AccessTests(TestBase):
             )
             self.expect(president_edit_response.status_code).to.not_.be.equal_to(403)
 
-        self.history.expect_entries(
-            self.history.login_action("Tests (minimum)", "lomens"),
-            self.history.login_action("Tests (minimum)", "eb069420"),
-            self.history.category_added_action("Catégorie", "eb069420"),
+        self.audit.expect_entries(
+            self.audit.entry("UserLoggedIn", 3, 1),
+            self.audit.entry("UserLoggedIn", 3, 3),
+            self.audit.entry(
+                "CategoryAdded",
+                3,
+                3,
+                id=president_edit_response.json()["id"],
+                name="Catégorie",
+            ),
         )
 
     def test_sso_direct(self):
@@ -260,7 +270,7 @@ class AccessTests(TestBase):
             "Password": "motdepasse",
         }
 
-        with self.history.watch():
+        with self.audit.watch():
             response = self.post(
                 "same-sign-on", json=login_data, headers={"X-Api-Key": galliumKey}
             )
@@ -296,12 +306,13 @@ class AccessTests(TestBase):
         )
         self.expect(full_redirect_url).to.be.equal_to(f"{redirect_url}?token={token}")
 
-        self.history.expect_entries(
-            self.history.login_sso_action(
-                "Tests (normal)",
-                "Tests (SSO, direct)",
-                "https://example.app/login",
-                "lomens",
+        self.audit.expect_entries(
+            self.audit.entry(
+                "SsoUserLoggedIn",
+                1,
+                iuid,
+                app=6,
+                redirectUrl="https://example.app/login",
             )
         )
 
@@ -318,7 +329,7 @@ class AccessTests(TestBase):
             "Password": "motdepasse",
         }
 
-        with self.history.watch():
+        with self.audit.watch():
             response = self.post(
                 "same-sign-on", json=login_data, headers={"X-Api-Key": galliumKey}
             )
@@ -353,12 +364,13 @@ class AccessTests(TestBase):
         )
         self.expect(full_redirect_url).to.be.equal_to(f"{redirect_url}?token={token}")
 
-        self.history.expect_entries(
-            self.history.login_sso_action(
-                "Tests (normal)",
-                "Tests (SSO, externe)",
-                "https://example.app/login",
-                "lomens",
+        self.audit.expect_entries(
+            self.audit.entry(
+                "SsoUserLoggedIn",
+                1,
+                iuid,
+                app=7,
+                redirectUrl="https://example.app/login",
             )
         )
 
@@ -371,7 +383,7 @@ class AccessTests(TestBase):
             "Password": "motdepasse",
         }
 
-        with self.history.watch():
+        with self.audit.watch():
             response = self.post(
                 "same-sign-on", json=login_data, headers={"X-Api-Key": galliumKey}
             )
@@ -406,12 +418,13 @@ class AccessTests(TestBase):
         )
         self.expect(full_redirect_url).to.be.equal_to(f"{redirect_url}?token={token}")
 
-        self.history.expect_entries(
-            self.history.login_sso_action(
-                "Tests (normal)",
-                "Tests (SSO, applicatif)",
-                "https://example.app/login",
-                "lomens",
+        self.audit.expect_entries(
+            self.audit.entry(
+                "SsoUserLoggedIn",
+                1,
+                iuid,
+                app=8,
+                redirectUrl="https://example.app/login",
             )
         )
 
@@ -422,7 +435,7 @@ class AccessTests(TestBase):
         self.expect(response.status_code).to.be.equal_to(200)
 
     def test_login_app(self):
-        with self.history.watch():
+        with self.audit.watch():
             app_auth = SecretKeyAuth("motdepasse")
             key = "test-api-key-bot"
 
@@ -447,8 +460,8 @@ class AccessTests(TestBase):
             )
             self.expect(edit_response.status_code).to.be.equal_to(403)
 
-        self.history.expect_entries(
-            self.history.app_login_action("Tests (bot)"),
+        self.audit.expect_entries(
+            self.audit.entry("ApplicationConnected", 5, None),
         )
 
     @staticmethod

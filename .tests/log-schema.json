@@ -1,0 +1,22 @@
+{
+	"111": {"id": "int", "name": "string"},
+	"112": {"id": "int", "name": "string"},
+	"113": {"id": "int", "name": "string"},
+
+	"141": {"id": "int", "name": "string"},
+	"142": {"id": "int", "name": "string"},
+
+	"1B1": {"id": "string"},
+	"1B2": {"id": "string"},
+	"1B3": {"id": "string"},
+	"1B4": {"id": "string"},
+	"1B5": {"id": "string"},
+
+	"2F1": {"id": "int", "quantity": "int"},
+	"2F3": {"id": "int", "quantity": "int"},
+
+	"311": {"id": "string", "amount": "number"},
+	"313": {"id": "string", "amount": "number"},
+
+	"411": {}
+}
