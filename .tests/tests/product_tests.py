@@ -78,7 +78,8 @@ class ProductTests(TestBase):
             "category": existing_category,
         }
 
-        response = self.post("products", valid_product)
+        with self.audit.watch():
+            response = self.post("products", valid_product)
         self.expect(response.status_code).to.be.equal_to(201)
         location = self.expect(response.headers).to.have.an_item("Location").value
 
@@ -88,6 +89,12 @@ class ProductTests(TestBase):
         self.expect(new_product_count).to.be.equal_to(previous_product_count + 1)
         self.expect(created_product["name"]).to.be.equal_to("Schweppes Agrumes")
         self.expect(created_product["category"]["name"]).to.be.equal_to("Boissons")
+
+        self.audit.expect_entries(
+            self.audit.entry(
+                "ItemAdded", id=created_product["id"], name="Schweppes Agrumes"
+            )
+        )
 
         # Tests avec des produits non valides
 
@@ -174,13 +181,18 @@ class ProductTests(TestBase):
 
         product.update(stock=399, nonMemberPrice=0.20, memberPrice=0.10)
 
-        response = self.put(location, product)
+        with self.audit.watch():
+            response = self.put(location, product)
         self.expect(response.status_code).to.be.equal_to(200)
 
         modified_product = self.get(location).json()
         self.expect(modified_product["stock"]).to.be.equal_to(399)
         self.expect(modified_product["nonMemberPrice"]).to.be.equal_to(0.20)
         self.expect(modified_product["memberPrice"]).to.be.equal_to(0.10)
+
+        self.audit.expect_entries(
+            self.audit.entry("ItemModified", id=modified_product["id"], name="Malabar")
+        )
 
         # Tests avec des produits non valides
 
@@ -260,11 +272,17 @@ class ProductTests(TestBase):
 
         response = self.get(location)
         self.expect(response.status_code).to.be.equal_to(200)
+        product_id = response.json()["id"]
 
         # On le supprime
 
-        response = self.delete(location)
+        with self.audit.watch():
+            response = self.delete(location)
         self.expect(response.status_code).to.be.equal_to(200)
+
+        self.audit.expect_entries(
+            self.audit.entry("ItemDeleted", id=product_id, name="Schweppes Agrumes")
+        )
 
         # Le produit n'existe plus
 

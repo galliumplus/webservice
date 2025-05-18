@@ -25,9 +25,11 @@ public enum LoggedAction : uint
     // EventModified = 0x132,
     // EventDeleted = 0x133,
     
-    // ItemAdded = 0x141,
-    // ItemModified = 0x142,
-    // ItemDeleted = 0x143,
+    ItemAdded = 0x141,
+    ItemModified = 0x142,
+    ItemDeleted = 0x143,
+    ItemPictureAdded = 0x144,
+    ItemPictureDeleted = 0x145,
     
     // PaymentMethodAdded = 0x151,
     // PaymentMethodModified = 0x152,

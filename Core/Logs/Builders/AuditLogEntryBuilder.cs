@@ -38,6 +38,8 @@ public partial class AuditLogEntryBuilder
     public IGenericEntryBuilder Category(Category category) => new CategoryEntryBuilder(this, category);
 
     public IClientEntryBuilder Client(Client client) => new ClientEntryBuilder(this, client);
+
+    public IItemEntryBuilder Item(Product item) => new ItemEntryBuilder(this, item);
     
     public IGenericEntryBuilder PriceList(PriceList priceList) => new PriceListEntryBuilder(this, priceList);
 
