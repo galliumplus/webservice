@@ -9,4 +9,4 @@ from tests import *
 
 if __name__ == "__main__":
     decimal.DefaultContext.prec = 2
-    Launcher.launch("1.3.0")
+    Launcher.launch("1.3.1")
