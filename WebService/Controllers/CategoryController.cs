@@ -13,7 +13,7 @@ namespace GalliumPlus.WebService.Controllers;
 [Route("v1/categories")]
 [Authorize]
 [ApiController]
-public class CategoryController(ICategoryDao categoryDao, IHistoryDao historyDao, AuditService auditService) : GalliumController
+public class CategoryController(ICategoryDao categoryDao, AuditService auditService) : GalliumController
 {
     private CategoryDetails.Mapper mapper = new();
 
