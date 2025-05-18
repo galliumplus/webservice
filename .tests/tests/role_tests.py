@@ -1,5 +1,6 @@
 from utils.test_base import TestBase
 from utils.auth import BearerAuth
+from .audit_tests_helpers import AuditTestHelpers
 
 
 class Permissions:
@@ -19,6 +20,7 @@ class RoleTests(TestBase):
     def setUp(self):
         super().setUp()
         self.set_authentication(BearerAuth("09876543210987654321"))
+        self.audit = AuditTestHelpers(self, 1, 3)
 
     def tearDown(self):
         self.unset_authentication()
@@ -69,7 +71,8 @@ class RoleTests(TestBase):
 
         valid_role = {"name": "Vice-Trésorier", "permissions": permissions}
 
-        response = self.post("roles", valid_role)
+        with self.audit.watch():
+            response = self.post("roles", valid_role)
         self.expect(response.status_code).to.be.equal_to(201)
         location = self.expect(response.headers).to.have.an_item("Location").value
 
@@ -86,6 +89,10 @@ class RoleTests(TestBase):
 
         new_role_count = len(self.get("roles").json())
         self.expect(new_role_count).to.be.equal_to(previous_role_count + 1)
+
+        self.audit.expect_entries(
+            self.audit.entry("RoleAdded", id=created_role["id"], name="Vice-Trésorier")
+        )
 
         # Informations manquantes
 
@@ -108,12 +115,17 @@ class RoleTests(TestBase):
     def test_role_edit(self):
         valid_role = {"name": "Trésorier", "permissions": 0}
 
-        response = self.put("roles/1", valid_role)
+        with self.audit.watch():
+            response = self.put("roles/1", valid_role)
         self.expect(response.status_code).to.be.equal_to(200)
 
         edited_role = self.get("roles/1").json()
         self.expect(edited_role["name"]).to.be.equal_to("Trésorier")
         self.expect(edited_role["permissions"]).to.be.equal_to(0)
+
+        self.audit.expect_entries(
+            self.audit.entry("RoleModified", id=1, name="Trésorier")
+        )
 
         # Role qui n'existe pas
 
@@ -140,12 +152,21 @@ class RoleTests(TestBase):
 
     def test_role_delete(self):
         role = {"name": "Responsable Communication", "permissions": 0}
-        location = self.post("roles", role).headers["Location"]
+        response = self.post("roles", role)
+        role_id = response.json()["id"]
+        location = response.headers["Location"]
 
         # On supprimme le rôle
 
-        response = self.delete(location)
+        with self.audit.watch():
+            response = self.delete(location)
         self.expect(response.status_code).to.be.equal_to(200)
+
+        self.audit.expect_entries(
+            self.audit.entry(
+                "RoleDeleted", id=role_id, name="Responsable Communication"
+            )
+        )
 
         # Le rôle n'existe plus
 

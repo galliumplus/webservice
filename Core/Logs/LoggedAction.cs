@@ -41,9 +41,9 @@ public enum LoggedAction : uint
     PriceListModified = 0x172,
     PriceListDeleted = 0x173,
     
-    // RoleAdded = 0x181,
-    // RoleModified = 0x182,
-    // RoleDeleted = 0x183,
+    RoleAdded = 0x181,
+    RoleModified = 0x182,
+    RoleDeleted = 0x183,
     
     // ThirdPartyAdded = 0x191,
     // ThirdPartyModified = 0x192,

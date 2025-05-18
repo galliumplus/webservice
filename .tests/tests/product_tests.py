@@ -1,11 +1,13 @@
 from utils.test_base import TestBase
 from utils.auth import BearerAuth
+from .audit_tests_helpers import AuditTestHelpers
 
 
 class ProductTests(TestBase):
     def setUp(self):
         super().setUp()
         self.set_authentication(BearerAuth("09876543210987654321"))
+        self.audit = AuditTestHelpers(self, 1, 3)
 
     def tearDown(self):
         self.unset_authentication()

@@ -41,6 +41,8 @@ public partial class AuditLogEntryBuilder
     
     public IGenericEntryBuilder PriceList(PriceList priceList) => new PriceListEntryBuilder(this, priceList);
 
+    public IGenericEntryBuilder Role(Role role) => new RoleEntryBuilder(this, role);
+    
     public IUserEntryBuilder User(User user) => new UserEntryBuilder(this, user);
     
     public AuditLogEntryBuilder UserConnection()
