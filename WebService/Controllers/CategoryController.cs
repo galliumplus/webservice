@@ -15,40 +15,38 @@ namespace GalliumPlus.WebService.Controllers;
 [ApiController]
 public class CategoryController(ICategoryDao categoryDao, AuditService auditService) : GalliumController
 {
-    private CategoryDetails.Mapper mapper = new();
-
     [HttpGet]
     [RequiresPermissions(Permission.SeeProductsAndCategories)]
     public IActionResult Get()
     {
-        return this.Json(this.mapper.FromModel(categoryDao.Read()));
+        return this.Json(categoryDao.Read());
     }
 
     [HttpGet("{id}", Name = "category")]
     [RequiresPermissions(Permission.SeeProductsAndCategories)]
     public IActionResult Get(int id)
     {
-        return this.Json(this.mapper.FromModel(categoryDao.Read(id)));
+        return this.Json(categoryDao.Read(id));
     }
 
     [HttpPost]
     [RequiresPermissions(Permission.ManageCategories)]
-    public IActionResult Post(CategoryDetails newCategory)
+    public IActionResult Post(Category newCategory)
     {
-        Category category = categoryDao.Create(this.mapper.ToModel(newCategory));
+        Category category = categoryDao.Create(newCategory);
 
-        auditService.AddEntry(entry => entry.Category(category).Added().By(this.Client!, this.User));
+        auditService.AddEntry(entry => entry.Category(category).Added().By(this.RequireSession()));
 
-        return this.Created("category", category.Id, this.mapper.FromModel(category));
+        return this.Created("category", category.Id, category);
     }
 
     [HttpPut("{id}")]
     [RequiresPermissions(Permission.ManageCategories)]
-    public IActionResult Put(int id, CategoryDetails updatedCategory)
+    public IActionResult Put(int id, Category modifiedCategory)
     {
-        Category category = categoryDao.Update(id, this.mapper.ToModel(updatedCategory));
+        Category category = categoryDao.Update(id, modifiedCategory);
 
-        auditService.AddEntry(entry => entry.Category(category).Modified().By(this.Client!, this.User));
+        auditService.AddEntry(entry => entry.Category(category).Modified().By(this.RequireSession()));
 
         return this.Ok();
     }
@@ -60,7 +58,7 @@ public class CategoryController(ICategoryDao categoryDao, AuditService auditServ
         Category category = categoryDao.Read(id);
         categoryDao.Delete(id);
 
-        auditService.AddEntry(entry => entry.Category(category).Deleted().By(this.Client!, this.User));
+        auditService.AddEntry(entry => entry.Category(category).Deleted().By(this.RequireSession()));
 
         return this.Ok();
     }

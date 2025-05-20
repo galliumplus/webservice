@@ -16,6 +16,7 @@ public partial class AuditLogEntryBuilder
         {
             this.Root.details.Add("id", category.Id);
             this.Root.details.Add("name", category.Name);
+            this.Root.details.Add("type", category.Type.ToString());
         }
     }
 }

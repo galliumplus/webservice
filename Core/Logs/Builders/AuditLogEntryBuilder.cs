@@ -35,6 +35,13 @@ public partial class AuditLogEntryBuilder
         return this;
     }
 
+    public AuditLogEntryBuilder By(Session session)
+    {
+        this.clientId = session.Client.Id;
+        this.userId = session.User?.Iuid;
+        return this;
+    }
+
     public IGenericEntryBuilder Category(Category category) => new CategoryEntryBuilder(this, category);
 
     public IClientEntryBuilder Client(Client client) => new ClientEntryBuilder(this, client);

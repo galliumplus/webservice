@@ -127,6 +127,7 @@ class AccessTests(TestBase):
                 3,
                 id=president_edit_response.json()["id"],
                 name="Catégorie",
+                type="Category",
             ),
         )
 
@@ -258,6 +259,7 @@ class AccessTests(TestBase):
                 3,
                 id=president_edit_response.json()["id"],
                 name="Catégorie",
+                type="Category",
             ),
         )
 

@@ -39,7 +39,7 @@ public interface IBasicDao<TKey, TItem>
     public TItem Update(TKey key, TItem item);
 
     /// <summary>
-    /// Supprimme un item.
+    /// Supprime un item.
     /// </summary>
     /// <param name="key">La clé de l'item à supprimer.</param>
     public void Delete(TKey key);
