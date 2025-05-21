@@ -22,6 +22,9 @@ class CategoryTests(TestBase):
         category = categories[0]
         self.expect(category).to.have.an_item("id").of.type(int)
         self.expect(category).to.have.an_item("name").of.type(str)
+        self.expect(category).to.have.an_item("type").that.is_.one_of(
+            "Category", "Group"
+        )
 
     def test_category_get_one(self):
         existing_id = self.get("categories").json()[0]["id"]
@@ -36,6 +39,9 @@ class CategoryTests(TestBase):
         self.expect(category).to.be.a(dict)
         self.expect(category).to.have.an_item("id").of.type(int)
         self.expect(category).to.have.an_item("name").of.type(str)
+        self.expect(category).to.have.an_item("type").that.is_.one_of(
+            "Category", "Group"
+        )
 
         # Test avec une catégorie inexistante
 
@@ -45,27 +51,54 @@ class CategoryTests(TestBase):
     def test_category_create(self):
         previous_category_count = len(self.get("categories").json())
 
-        valid_category = {"name": "Jus"}
+        implicit_type = {"name": "Jus"}
 
         with self.audit.watch():
-            response = self.post("categories", valid_category)
+            response = self.post("categories", implicit_type)
+
         self.expect(response.status_code).to.be.equal_to(201)
         location = self.expect(response.headers).to.have.an_item("Location").value
 
         created_category = response.json()
         self.expect(created_category).to.have.an_item("id")
         self.expect(created_category["name"]).to.be.equal_to("Jus")
+        self.expect(created_category["type"]).to.be.equal_to("Category")
 
         response = self.get(location)
         self.expect(response.status_code).to.be.equal_to(200)
         created_category = response.json()
         self.expect(created_category["name"]).to.be.equal_to("Jus")
+        self.expect(created_category["type"]).to.be.equal_to("Category")
 
         new_category_count = len(self.get("categories").json())
         self.expect(new_category_count).to.be.equal_to(previous_category_count + 1)
 
         self.audit.expect_entries(
-            self.audit.entry("CategoryAdded", id=created_category["id"], name="Jus")
+            self.audit.entry(
+                "CategoryAdded", id=created_category["id"], name="Jus", type="Category"
+            )
+        )
+
+        explicit_type = {"name": "Caca-Cola", "type": "Group"}
+
+        with self.audit.watch():
+            response = self.post("categories", explicit_type)
+
+        self.expect(response.status_code).to.be.equal_to(201)
+        location = self.expect(response.headers).to.have.an_item("Location").value
+
+        created_category = response.json()
+        self.expect(created_category).to.have.an_item("id")
+        self.expect(created_category["name"]).to.be.equal_to("Caca-Cola")
+        self.expect(created_category["type"]).to.be.equal_to("Group")
+
+        self.audit.expect_entries(
+            self.audit.entry(
+                "CategoryAdded",
+                id=created_category["id"],
+                name="Caca-Cola",
+                type="Group",
+            )
         )
 
         # Informations manquantes
@@ -87,22 +120,36 @@ class CategoryTests(TestBase):
         )
 
     def test_category_edit(self):
-        valid_category = self.get("categories").json()[-1]
-        valid_category.update(Name="Jus")
-        category_id = valid_category["id"]
+        valid_category = {"name": "Jus", "type": "Category"}
+        response = self.post("categories", valid_category)
+        category_id = response.json()["id"]
+        location = response.headers["Location"]
+
+        valid_category.update(name="Jus 2")
 
         with self.audit.watch():
-            response = self.put(f"categories/{category_id}", valid_category)
+            response = self.put(location, valid_category)
         self.expect(response.status_code).to.be.equal_to(200)
 
-        edited_category = self.get(f"categories/{category_id}").json()
-        self.expect(edited_category["name"]).to.be.equal_to("Jus")
+        edited_category = self.get(location).json()
+        self.expect(edited_category["name"]).to.be.equal_to("Jus 2")
 
         self.audit.expect_entries(
-            self.audit.entry("CategoryModified", id=category_id, name="Jus")
+            self.audit.entry(
+                "CategoryModified", id=category_id, name="Jus 2", type="Category"
+            )
         )
 
-        # category qui n'existe pas
+        # Changement de type
+
+        valid_category.update(type="Group")
+        response = self.put(location, valid_category)
+        self.expect(response.status_code).to.be.equal_to(200)
+
+        edited_category = self.get(location).json()
+        self.expect(edited_category["type"]).to.be.equal_to("Category")
+
+        # Catégorie qui n'existe pas
 
         response = self.put("categories/12345", valid_category)
         self.expect(response.status_code).to.be.equal_to(404)
@@ -110,7 +157,7 @@ class CategoryTests(TestBase):
         # Informations manquantes
 
         invalid_category = {}
-        response = self.put(f"categories/{category_id}", invalid_category)
+        response = self.put(location, invalid_category)
         self.expect(response.status_code).to.be.equal_to(400)
         self.expect(response.json()).to.have.an_item("code").that._is.equal_to(
             "InvalidResource"
@@ -119,7 +166,7 @@ class CategoryTests(TestBase):
         # Informations non valides
 
         invalid_category = {"name": ""}
-        response = self.put(f"categories/{category_id}", invalid_category)
+        response = self.put(location, invalid_category)
         self.expect(response.status_code).to.be.equal_to(400)
         self.expect(response.json()).to.have.an_item("code").that._is.equal_to(
             "InvalidResource"
@@ -138,7 +185,9 @@ class CategoryTests(TestBase):
         self.expect(response.status_code).to.be.equal_to(200)
 
         self.audit.expect_entries(
-            self.audit.entry("CategoryDeleted", id=category_id, name="Jus")
+            self.audit.entry(
+                "CategoryDeleted", id=category_id, name="Jus", type="Category"
+            )
         )
 
         # La catégorie n'existe plus

@@ -23,7 +23,7 @@ namespace GalliumPlus.WebService.Dto.Legacy
 
             public override Category ToModel(CategoryDetails dto)
             {
-                return new Category(dto.Id, dto.Name);
+                return new Category(dto.Id, dto.Name, CategoryType.Category);
             }
         }
     }
