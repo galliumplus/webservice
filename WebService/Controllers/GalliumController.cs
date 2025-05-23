@@ -40,6 +40,7 @@ public class GalliumController : ControllerBase
     /// </summary>
     public new User? User => this.FindContextItem<User>("User");
 
+    [NonAction]
     public User RequireUser() => this.User 
         ?? throw new MissingIdentificationException("Cette action requiert un utilisateur.");
 
@@ -47,7 +48,8 @@ public class GalliumController : ControllerBase
     /// La session de l'utilisateur qui a émis la requête actuelle.
     /// </summary>
     public Session? Session => this.FindContextItem<Session>("Session");
-
+    
+    [NonAction]
     public Session RequireSession() => this.Session
         ?? throw new MissingIdentificationException("Cette action requiert une session active.");
 
@@ -55,7 +57,8 @@ public class GalliumController : ControllerBase
     /// L'application depuis laquelle la requête actuelle a été émise.
     /// </summary>
     public Client? Client => this.FindContextItem<Client>("Client");
-
+    
+    [NonAction]
     public Client RequireClient() => this.Client
         ?? throw new MissingIdentificationException("Cette action requiert une session active.");
 
