@@ -131,7 +131,7 @@ builder.Services
 
 builder.Services.Configure<JsonOptions>(options =>
 {
-    // accepte uniquement le format nombre JSON pour les entier et les floats
+    // accepte uniquement le format nombre JSON pour les entiers et les floats
     options.JsonSerializerOptions.NumberHandling = JsonNumberHandling.Strict;
     // accepte les virgules en fin de liste / d'objet
     options.JsonSerializerOptions.AllowTrailingCommas = true;
@@ -210,7 +210,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
-ServerInfo.Current.SetVersion(1, 3, 0, "beta");
+ServerInfo.Current.SetVersion(1, 4, 1, "beta");
 Console.WriteLine(ServerInfo.Current);
 
 #if !FAKE_DB

@@ -2,22 +2,62 @@
 using GalliumPlus.Core.Exceptions;
 using GalliumPlus.Core.Stocks;
 using KiwiQuery;
+using KiwiQuery.Mapped;
+using KiwiQuery.Mapped.Exceptions;
 using MySqlConnector;
 
 namespace GalliumPlus.Data.MariaDb.Implementations
 {
     public class CategoryDao : Dao, ICategoryDao
     {
-        public CategoryDao(DatabaseConnector connector) : base(connector) { }
+        public CategoryDao(DatabaseConnector connector) : base(connector)
+        {
+        }
 
-        public Category Create(Category client)
+        public Category Create(Category category)
         {
             using var connection = this.Connect();
             Schema db = new(connection);
             
-            int id = db.InsertInto("Category").Value("name", client.Name).Apply();
+            return db.Table<int, Category>().InsertOne(category);
+        }
 
-            return client.WithId(id);
+        public IEnumerable<Category> Read()
+        {
+            using var connection = this.Connect();
+            Schema db = new(connection);
+            
+            return db.Table<int, Category>().SelectAll();
+        }
+
+        public Category Read(int key)
+        {
+            using var connection = this.Connect();
+            Schema db = new(connection);
+            
+            try
+            {
+                return db.Table<int, Category>().SelectOne(key);
+            }
+            catch (NotFoundException)
+            {
+                throw new ItemNotFoundException("Cette catégorie");
+            }
+        }
+
+        public Category Update(int key, Category category)
+        {
+            using var connection = this.Connect();
+            Schema db = new(connection);
+
+            if (db.Update<Category>().SetOnly(category, "name").Where(db.Column("id") == key).Apply())
+            {
+                return db.Table<int, Category>().SelectOne(key);
+            }
+            else
+            {
+                throw new ItemNotFoundException("Cette catégorie");
+            }
         }
 
         public void Delete(int key)
@@ -25,58 +65,10 @@ namespace GalliumPlus.Data.MariaDb.Implementations
             using var connection = this.Connect();
             Schema db = new(connection);
 
-            bool ok = db.DeleteFrom("Category").Where(db.Column("id") == key).Apply();
-
-            if (!ok) throw new ItemNotFoundException("Cette catégorie");
-        }
-
-        private static Category Hydrate(MySqlDataReader row)
-        {
-            return new Category(
-                row.GetInt32("id"),
-                row.GetString("name")
-            );
-        }
-
-        public IEnumerable<Category> Read()
-        {
-            using var connection = this.Connect();
-            Schema db = new(connection);
-
-            using var results = db
-                .Select("id", "name")
-                .From("Category")
-                .Fetch<MySqlDataReader>();
-
-            return this.ReadResults(results, Hydrate);
-        }
-
-        public Category Read(int key)
-        {
-            using var connection = this.Connect();
-            Schema db = new(connection);
-
-            using var result = db
-                .Select("id", "name")
-                .From("Category")
-                .Where(db.Column("id") == key)
-                .Fetch<MySqlDataReader>();
-
-            if (!result.Read()) throw new ItemNotFoundException("Cette catégorie");
-            
-            return Hydrate(result);
-        }
-
-        public Category Update(int key, Category item)
-        {
-            using var connection = this.Connect();
-            Schema db = new(connection);
-
-            bool ok = db.Update("Category").Set("name", item.Name).Where(db.Column("id") == key).Apply();
-
-            if (!ok) throw new ItemNotFoundException("Cette catégorie");
-
-            return item.WithId(key);
+            if (!db.Table<int, Category>().DeleteOne(key))
+            {
+                throw new ItemNotFoundException("Cette catégorie");
+            }
         }
     }
 }

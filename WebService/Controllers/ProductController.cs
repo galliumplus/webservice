@@ -5,6 +5,7 @@ using GalliumPlus.Core.Stocks;
 using GalliumPlus.WebService.Dto.Legacy;
 using GalliumPlus.WebService.Middleware;
 using GalliumPlus.WebService.Middleware.Authorization;
+using GalliumPlus.WebService.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,33 +14,23 @@ namespace GalliumPlus.WebService.Controllers
     [Route("v1/products")]
     [Authorize]
     [ApiController]
-    public class ProductController : GalliumController
+    public class ProductController(IProductDao productDao, AuditService auditService) : GalliumController
     {
-        private IProductDao productDao;
-        private IHistoryDao historyDao;
-        private ProductSummary.Mapper summaryMapper;
-        private ProductDetails.Mapper detailsMapper;
-
-        public ProductController(IProductDao productDao, IHistoryDao historyDao)
-        {
-            this.productDao = productDao;
-            this.historyDao = historyDao;
-            this.summaryMapper = new(productDao.Categories);
-            this.detailsMapper = new();
-        }
+        private ProductSummary.Mapper summaryMapper = new(productDao.Categories);
+        private ProductDetails.Mapper detailsMapper = new();
 
         [HttpGet]
         [RequiresPermissions(Permission.SeeProductsAndCategories)]
         public IActionResult Get()
         {
-            return this.Json(this.summaryMapper.FromModel(this.productDao.Read()));
+            return this.Json(this.summaryMapper.FromModel(productDao.Read()));
         }
 
         [HttpGet("{id}", Name = "product")]
         [RequiresPermissions(Permission.SeeProductsAndCategories)]
         public IActionResult Get(int id)
         {
-            return this.Json(this.detailsMapper.FromModel(this.productDao.Read(id)));
+            return this.Json(this.detailsMapper.FromModel(productDao.Read(id)));
         }
 
         [HttpGet("{id}/image")]
@@ -47,21 +38,16 @@ namespace GalliumPlus.WebService.Controllers
         [RequiresPermissions(Permission.SeeProductsAndCategories)]
         public IActionResult GetImage(int id)
         {
-            return this.File(this.productDao.ReadImage(id).Bytes, "image/png");
+            return this.File(productDao.ReadImage(id).Bytes, "image/png");
         }
 
         [HttpPost]
         [RequiresPermissions(Permission.ManageProducts)]
         public IActionResult Post(ProductSummary newProduct)
         {
-            Product product = this.productDao.Create(this.summaryMapper.ToModel(newProduct));
+            Product product = productDao.Create(this.summaryMapper.ToModel(newProduct));
 
-            HistoryAction action = new(
-                HistoryActionKind.EditProductsOrCategories,
-                $"Ajout du produit {product.Name}",
-                this.User?.Id
-            );
-            this.historyDao.AddEntry(action);
+            auditService.AddEntry(entry => entry.Item(product).Added().By(this.Client!, this.User));
 
             return this.Created("product", product.Id, this.summaryMapper.FromModel(product));
         }
@@ -70,14 +56,9 @@ namespace GalliumPlus.WebService.Controllers
         [RequiresPermissions(Permission.ManageProducts)]
         public IActionResult Put(int id, ProductSummary updatedProduct)
         {
-            this.productDao.Update(id, this.summaryMapper.ToModel(updatedProduct));
+            Product product = productDao.Update(id, this.summaryMapper.ToModel(updatedProduct));
 
-            HistoryAction action = new(
-                HistoryActionKind.EditProductsOrCategories,
-                $"Modification du produit {updatedProduct.Name}",
-                this.User?.Id
-            );
-            this.historyDao.AddEntry(action);
+            auditService.AddEntry(entry => entry.Item(product).Modified().By(this.Client!, this.User));
 
             return this.Ok();
         }
@@ -87,16 +68,11 @@ namespace GalliumPlus.WebService.Controllers
         [RequiresPermissions(Permission.ManageProducts)]
         public async Task<IActionResult> PutImage(int id, [FromBody] byte[] image)
         {
+            Product product = productDao.Read(id);
             ProductImage normalisedImage = await ProductImage.FromAnyImage(image, this.Request.ContentType ?? "");
-            this.productDao.SetImage(id, normalisedImage);
+            productDao.SetImage(id, normalisedImage);
 
-            string productName = this.productDao.Read(id).Name;
-            HistoryAction action = new(
-                HistoryActionKind.EditProductsOrCategories,
-                $"Modification de l'image du produit {productName}",
-                this.User?.Id
-            );
-            this.historyDao.AddEntry(action);
+            auditService.AddEntry(entry => entry.Item(product).PictureAdded().By(this.Client!, this.User));
 
             return this.Ok();
         }
@@ -105,15 +81,10 @@ namespace GalliumPlus.WebService.Controllers
         [RequiresPermissions(Permission.ManageProducts)]
         public IActionResult Delete(int id)
         {
-            string productName = this.productDao.Read(id).Name;
-            this.productDao.Delete(id);
+            Product product = productDao.Read(id);
+            productDao.Delete(id);
 
-            HistoryAction action = new(
-                HistoryActionKind.EditProductsOrCategories,
-                $"Suppression du produit {productName}",
-                this.User?.Id
-            );
-            this.historyDao.AddEntry(action);
+            auditService.AddEntry(entry => entry.Item(product).Deleted().By(this.Client!, this.User));
 
             return this.Ok();
         }
@@ -122,15 +93,10 @@ namespace GalliumPlus.WebService.Controllers
         [RequiresPermissions(Permission.ManageProducts)]
         public IActionResult DeleteImage(int id)
         {
-            string productName = this.productDao.Read(id).Name;
-            this.productDao.UnsetImage(id);
+            Product product = productDao.Read(id);
+            productDao.UnsetImage(id);
 
-            HistoryAction action = new(
-                HistoryActionKind.EditProductsOrCategories,
-                $"Suppression de l'image du produit {productName}",
-                this.User?.Id
-            );
-            this.historyDao.AddEntry(action);
+            auditService.AddEntry(entry => entry.Item(product).PictureDeleted().By(this.Client!, this.User));
 
             return this.Ok();
         }

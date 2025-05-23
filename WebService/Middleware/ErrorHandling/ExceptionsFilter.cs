@@ -17,15 +17,15 @@ namespace GalliumPlus.WebService.Middleware.ErrorHandling
 
         public void OnException(ExceptionContext context)
         {
-            if (context.Exception is PermissionDeniedException permissionDenied)
+            if (context.Exception is UnauthorisedAccessException unauthorisedAccess)
             {
                 this.logger.LogDebug(
-                    "PermissionDeniedException capturée à la sortie de {} {}",
+                    "{} capturée à la sortie de {} {}",
+                    unauthorisedAccess.GetType().Name,
                     context.HttpContext.Request.Method,
                     context.HttpContext.Request.Path
                 );
-                this.logger.LogDebug("Les permissions requises étaient {}", permissionDenied.Required);
-
+                
                 string messageAction = context.HttpContext.Request.Method switch
                 {
                     "GET" or "HEAD" => "d'accéder à cette ressource",
@@ -33,7 +33,7 @@ namespace GalliumPlus.WebService.Middleware.ErrorHandling
                 };
 
                 context.Result = new ErrorResult(
-                    permissionDenied.ErrorCode,
+                    unauthorisedAccess.ErrorCode,
                     $"Vous n'avez pas la permission {messageAction}.",
                     StatusCodes.Status403Forbidden
                 );

@@ -11,7 +11,7 @@ namespace GalliumPlus.WebService.Controllers;
 
 [Route("v1")]
 [ApiController]
-public class AccessController(AccessService service, ISessionDao sessionDao, IHistoryDao historyDao) : GalliumController
+public class AccessController(AccessService service, AuditService auditService, ISessionDao sessionDao) : GalliumController
 {
     [HttpPost("login")]
     [Authorize(AuthenticationSchemes = "Basic")]
@@ -28,12 +28,7 @@ public class AccessController(AccessService service, ISessionDao sessionDao, IHi
         }
         else
         {
-            HistoryAction action = new(
-                HistoryActionKind.LogIn,
-                $"Connexion à {app.Name}",
-                user.Id
-            );
-            historyDao.AddEntry(action);
+            auditService.AddEntry(entry => entry.UserConnection().By(app, user));
 
             return this.Json(loggedIn);
         }
@@ -53,12 +48,7 @@ public class AccessController(AccessService service, ISessionDao sessionDao, IHi
         }
         else
         {
-            HistoryAction action = new(
-                HistoryActionKind.LogIn,
-                $"Connexion de {bot.Name}"
-            );
-            historyDao.AddEntry(action);
-
+            auditService.AddEntry(entry => entry.ApplicationConnection().By(bot));
             return this.Json(loggedIn);
         }
     }
@@ -76,13 +66,9 @@ public class AccessController(AccessService service, ISessionDao sessionDao, IHi
         }
         else
         {
-            HistoryAction action = new(
-                HistoryActionKind.LogIn,
-                $"Connexion à {session.App.Name} ({session.RedirectUrl}) via le portail de {this.Client!.Name}",
-                this.User?.Id
+            auditService.AddEntry(
+                entry => entry.SsoConnectionTo(session.App, session.RedirectUrl).By(this.Client!, this.User)
             );
-            historyDao.AddEntry(action);
-
             return this.Json(session);
         }
     }

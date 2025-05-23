@@ -6,7 +6,7 @@ namespace GalliumPlus.Core.Exceptions;
 /// Erreur indiquant que l'utilisateur n'a pas les permissions suffisantes
 /// pour effectuer une action.
 /// </summary>
-public class PermissionDeniedException : GalliumException
+public class PermissionDeniedException : UnauthorisedAccessException
 {
     private readonly Permission required;
 

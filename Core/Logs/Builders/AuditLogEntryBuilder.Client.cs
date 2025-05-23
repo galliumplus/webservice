@@ -9,17 +9,20 @@ public partial class AuditLogEntryBuilder
         AuditLogEntryBuilder NewSecretGenerated(string purpose);
     }
 
-    private class ClientEntryBuilder(Client client, AuditLogEntryBuilder root)
+    private class ClientEntryBuilder(AuditLogEntryBuilder root, Client client)
         : GenericEntryBuilder(
             root,
-            LoggedAction.ClientAdded, LoggedAction.ClientModified, LoggedAction.ClientDeleted,
-            builder =>
-            {
-                builder.details.Add("id", client.Id);
-                builder.details.Add("name", client.Name);
-            }
+            LoggedAction.ClientAdded,
+            LoggedAction.ClientModified,
+            LoggedAction.ClientDeleted
         ), IClientEntryBuilder
     {
+        protected override void AddDetails()
+        {
+            this.Root.details.Add("id", client.Id);
+            this.Root.details.Add("name", client.Name);
+        }
+
         public AuditLogEntryBuilder NewSecretGenerated(string purpose)
         {
             this.Root.action = LoggedAction.ClientNewSecretGenerated;

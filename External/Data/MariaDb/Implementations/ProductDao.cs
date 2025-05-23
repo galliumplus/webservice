@@ -82,7 +82,8 @@ namespace GalliumPlus.Data.MariaDb.Implementations
                 (Availability)row.GetInt32("availability"),
                 new Category(
                     row.GetInt32("categoryId"),
-                    row.GetString("categoryName")
+                    row.GetString("categoryName"),
+                    (CategoryType)row.GetInt32("categoryType")
                 )
             );
         }
@@ -94,20 +95,23 @@ namespace GalliumPlus.Data.MariaDb.Implementations
             var cmd = connection.CreateCommand();
             cmd.CommandText = @"
                 WITH pv AS (
-                  SELECT p.price, p.item, pt.requiresMembership FROM Price p JOIN PriceList pt ON p.type = pt.id AND pt.applicableDuring = 1
+                  SELECT p.price, p.item, pt.requiresMembership
+                  FROM Price p
+                      JOIN PriceList pt ON p.type = pt.id AND pt.applicableDuring = 1
                 )
                 SELECT i.id AS productId
                      , i.name AS productName
                      , c.id AS categoryId
                      , c.name AS categoryName
+                     , c.type AS categoryType
                      , i.currentStock AS stock
                      , i.isAvailable AS availability
                      , nmp.price AS nonMemberPrice
                      , mp.price AS memberPrice
                 FROM `Item` i
-                JOIN Category c ON i.category = c.id
-                JOIN pv nmp ON nmp.item = i.id AND nmp.requiresMembership = 0
-                JOIN pv mp ON mp.item = i.id AND mp.requiresMembership = 1
+                    JOIN Category c ON i.category = c.id
+                    JOIN pv nmp ON nmp.item = i.id AND nmp.requiresMembership = 0
+                    JOIN pv mp ON mp.item = i.id AND mp.requiresMembership = 1
                 WHERE i.deleted = 0
             ";
             using var results = cmd.ExecuteReader();
@@ -123,20 +127,23 @@ namespace GalliumPlus.Data.MariaDb.Implementations
             var cmd = connection.CreateCommand();
             cmd.CommandText = @"
                 WITH pv AS (
-                  SELECT p.price, p.item, pt.requiresMembership FROM Price p JOIN PriceList pt ON p.type = pt.id AND pt.applicableDuring = 1
+                  SELECT p.price, p.item, pt.requiresMembership 
+                  FROM Price p 
+                      JOIN PriceList pt ON p.type = pt.id AND pt.applicableDuring = 1
                 )
                 SELECT i.id AS productId
                      , i.name AS productName
                      , c.id AS categoryId
                      , c.name AS categoryName
+                     , c.type AS categoryType
                      , i.currentStock AS stock
                      , i.isAvailable AS availability
                      , nmp.price AS nonMemberPrice
                      , mp.price AS memberPrice
                 FROM `Item` i
-                JOIN Category c ON i.category = c.id
-                JOIN pv nmp ON nmp.item = i.id AND nmp.requiresMembership = 0
-                JOIN pv mp ON mp.item = i.id AND mp.requiresMembership = 1
+                    JOIN Category c ON i.category = c.id
+                    JOIN pv nmp ON nmp.item = i.id AND nmp.requiresMembership = 0
+                    JOIN pv mp ON mp.item = i.id AND mp.requiresMembership = 1
                 WHERE i.deleted = 0 AND i.id = @key
             ";
             cmd.Parameters.AddWithValue("key", key);

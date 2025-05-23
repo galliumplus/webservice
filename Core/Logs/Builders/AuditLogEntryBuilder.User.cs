@@ -9,16 +9,19 @@ public partial class AuditLogEntryBuilder
         AuditLogEntryBuilder DepositClosed();
     }
 
-    private class UserEntryBuilder(User user, AuditLogEntryBuilder root)
+    private class UserEntryBuilder(AuditLogEntryBuilder root, User user)
         : GenericEntryBuilder(
             root,
-            LoggedAction.UserAdded, LoggedAction.UserModified, LoggedAction.UserDeleted,
-            builder =>
-            {
-                builder.details.Add("id", user.Id);
-            }
+            LoggedAction.UserAdded,
+            LoggedAction.UserModified,
+            LoggedAction.UserDeleted
         ), IUserEntryBuilder
     {
+        protected override void AddDetails()
+        {
+            this.Root.details.Add("id", user.Id);
+        }
+
         public AuditLogEntryBuilder DepositClosed()
         {
             this.Root.action = LoggedAction.UserDepositClosed;
