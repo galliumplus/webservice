@@ -210,7 +210,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
-ServerInfo.Current.SetVersion(1, 4, 1, "beta");
+ServerInfo.Current.SetVersion(1, 5, 0, "beta");
 Console.WriteLine(ServerInfo.Current);
 
 #if !FAKE_DB

@@ -1,14 +1,16 @@
-using GalliumPlus.Core.Checkout;
 using GalliumPlus.Core.Data;
+using GalliumPlus.WebService.Dto.Checkout;
 
 namespace GalliumPlus.WebService.Services;
 
 [ScopedService]
-public class CheckoutService(IProductDao productDao)
+public class ItemService(IProductDao productDao)
 {
-    public IEnumerable<ItemsSoldCategory> GetItemsSold()
+    public IEnumerable<ItemSoldCategory> GetItemsSold()
     {
         var products = productDao.Read();
-        return ItemsSoldCategory.FromLegacyProducts(products);
+        return products
+            .GroupBy(product => product.Category.Name)
+            .Select(groupe => new ItemSoldCategory(groupe.Key, groupe));
     }
 }
