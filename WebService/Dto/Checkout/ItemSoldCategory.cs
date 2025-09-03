@@ -1,3 +1,5 @@
+using GalliumPlus.Core.Stocks;
+
 namespace GalliumPlus.WebService.Dto.Checkout;
 
 /// <summary>
@@ -14,4 +16,10 @@ public class ItemSoldCategory
     /// Les articles appartenant à la catégorie.
     /// </summary>
     public IList<ItemSold> Items { get; }
+    
+    public ItemSoldCategory(string name, IEnumerable<Product> products)
+    {
+        this.Name = name;
+        this.Items = products.Select(p => new ItemSold(p)).ToList();
+    }
 }

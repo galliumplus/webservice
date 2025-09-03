@@ -40,20 +40,20 @@ public class ItemSold
     /// pour indiquer un stock indéfini.
     /// </summary>
     public int? AvailableStock { get; }
-    
+
     /// <summary>
     /// Indique si l'article est une formule ou non.
     /// </summary>
     public bool IsBundle { get; }
 
-    public ItemSold(Item item)
+    public ItemSold(Product product)
     {
-        this.Id = item.Id;
-        this.Name = item.Name;
-        this.MemberPrice = 0;
-        this.NonMemberPrice = 0;
-        this.IsAvailable = item.IsAvailable == Availability.Always;
-        this.AvailableStock = item.CurrentStock;
-        this.IsBundle = item.IsBundle;
+        this.Id = product.Id;
+        this.Name = product.Name;
+        this.MemberPrice = product.MemberPrice;
+        this.NonMemberPrice = product.NonMemberPrice;
+        this.IsAvailable = product.Availability == Availability.Always;
+        this.AvailableStock = product.Stock;
+        this.IsBundle = false;
     }
 }

@@ -9,6 +9,8 @@ public class ItemService(IProductDao productDao)
     public IEnumerable<ItemSoldCategory> GetItemsSold()
     {
         var products = productDao.Read();
-        return [new ItemSoldCategory()];
+        return products
+            .GroupBy(product => product.Category.Name)
+            .Select(groupe => new ItemSoldCategory(groupe.Key, groupe));
     }
 }
